@@ -1,37 +1,20 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.auth.ApiKeyAuth;
 import com.mastercard.finicity.client.model.ConnectUrlRequest;
-import com.mastercard.finicity.client.model.PartnerCredentials;
-import org.junit.jupiter.api.BeforeEach;
+import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-class ConnectApiTest extends BaseTest {
+class ConnectApiTest extends BaseAppKeyAppTokenTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
-
-    @BeforeEach
-    void setUp() throws ApiException {
-        // Add 'Finicity-App-Key'
-        super.setUp();
-
-        // Add 'Finicity-App-Token'
-        var response = authenticationApi.createToken(new PartnerCredentials()
-                .partnerId(PARTNER_ID)
-                .partnerSecret(PARTNER_SECRET));
-        var token = response.getToken();
-        assertNotNull(token);
-        var appToken = (ApiKeyAuth) apiClient.getAuthentication("FinicityAppToken");
-        appToken.setApiKey(token);
-    }
 
     @Test
     void generateConnectUrlV2Test() throws ApiException {
         var request = new ConnectUrlRequest()
-                .customerId("5022257668")
+                .customerId(CUSTOMER_ID)
                 .partnerId(PARTNER_ID);
         var response = api.generateConnectUrlV2(request);
         assertNotNull(response);
