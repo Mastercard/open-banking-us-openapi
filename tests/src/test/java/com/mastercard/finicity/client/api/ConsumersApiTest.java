@@ -9,9 +9,9 @@ import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-class ConsumerApiTest extends BaseAppKeyAppTokenTest {
+class ConsumersApiTest extends BaseAppKeyAppTokenTest {
 
-    private final ConsumerApi api = new ConsumerApi();
+    private final ConsumersApi api = new ConsumersApi();
 
     @Test
     @Disabled
