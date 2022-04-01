@@ -44,7 +44,6 @@ paths:
       description: |-
         Sends Partner ID and Partner Secret to the Partner Authentication
         service to obtain a token for accessing Finicity APIs.
-
         * The token is valid for two hours and is required on all calls to the
         Finicity APIs
         * As a best practice, use a single token for all calls. Assign a
@@ -104,8 +103,8 @@ paths:
         Note: Contact your Sales Account Team to set up the `experience`
         parameter.
          
-        MVS Developers: You can pre-populate the consumer's SSN on the Find
-        employment records page at the beginning of the MVS payroll app. Pass
+        MVS Developers: You can pre-populate the consumer's SSN on the "Find
+        employment records" page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
       operationId: GenerateConnectUrlV2
       requestBody:
@@ -123,9 +122,8 @@ paths:
         - Connect
       summary: Generate Lite Connect URL V2
       description: |-
-        Connect Lite is a variation of Connect Full, which has a limited set of
+        Connect Lite is a variation of Connect Full (`POST /connect/v2/generate`), which has a limited set of
         features.
-
         * Sign in, user's credentials, and Multi-Factor Authentication (MFA).
         * No user account management.
 
@@ -148,7 +146,7 @@ paths:
         - Connect
       summary: Generate Fix Connect URL V2
       description: |-
-        Use the connect fix endpoint when the following conditions occur:
+        Use the Connect Fix endpoint when the following conditions occur:
         * The connection to the user's financial institution is lost
         * The user's credentials were updated (for any number of reasons)
         * The user's MFA challenge has expired
@@ -170,19 +168,7 @@ paths:
         - Connect
       summary: Send Connect Email V2
       description: |-
-        Sends a Connect email to a consumer. 
-
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect application completes, and more.
-
-        Note: Contact your Sales Account Team to set up the `experience`
-        parameter.
-         
-        MVS Developers: You can pre-populate the consumer's SSN on the Find
-        employment records page at the beginning of the MVS payroll app. Pass
-        the SSN value for the consumer in the body of the request call.
+        Same as Connect Full (`POST /connect/v2/generate`) but sends a Connect email to a consumer.
       operationId: SendConnectEmailV2
       requestBody:
         $ref: '#/components/requestBodies/SendConnectEmailRequestV2'
@@ -199,23 +185,11 @@ paths:
         - Connect
       summary: Generate Connect URL V2 - Joint Borrower
       description: |-
-        Generates a Connect 2.0 URL link to add within your own applications.
-
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect application completes, and more.
-
-        Note: Contact your Sales Account Team to set up the `experience`
-        parameter.
+        Same as Connect Full (`POST /connect/v2/generate`) but for joint borrowers.
 
         MVS prompts both the primary and joint borrower to enter each of their
         financial, payroll, and paystub information in the same Connect
-        session. 
-         
-        You can prepopulate the consumer's SSN to display on the "Find employment"
-        records page at the beginning of the MVS payroll app. Pass the SSN value
-        for the consumer in the body of the request call.
+        session.
       operationId: GenerateJointBorrowerConnectUrlV2
       requestBody:
         $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequestV2'
@@ -232,24 +206,12 @@ paths:
         - Connect
       summary: Send Connect Email V2 - Joint Borrower
       description: |-
-        Send a Connect email to at least one of the joint borrower's email
-        addresses. 
+        Same as Connect Joint Borrower (`POST /connect/v2/generate/jointBorrower`) but sends a Connect email 
+        to at least one of the joint borrower's email addresses. 
 
         When the consumer opens the email, MVS prompts both the
         primary and joint borrower to enter each of their financial, payroll,
         and paystub information in the same Connect session.
-
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect application completes, and more.
-
-        Note: Contact your Sales Account Team to set up the `experience`
-        parameter.
-
-        MVS Developers: You can pre-populate the consumer's SSN on the Find
-        employment records page at the beginning of the MVS payroll app. Pass
-        the SSN value for the consumer in the body of the request call.
       operationId: SendJointBorrowerConnectEmailV2
       requestBody:
         $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequestV2'
@@ -270,7 +232,7 @@ paths:
       parameters:
         - name: search
           in: query
-          description: 'Search term, * returns all institutions'
+          description: 'Search term, `*` returns all institutions'
           required: true
           schema:
             type: string
@@ -317,14 +279,14 @@ paths:
       description: >-
         Search for all the connected financial institutions (FI) that we
         support. This returns all the FIs that match the search text for the
-        financial institution's *name* field.
+        financial institution's `name` field.
 
-        To get a list of all FIs, leave the *search* parameter out of the body
-        of the API call. If the *search* parameter is in the body of the call
+        To get a list of all FIs, leave the `search` parameter out of the body
+        of the API call. If the `search` parameter is in the body of the call
         but has no value, then the call returns an error.
 
-        If the value for *moreAvailable* in the response is true, you can
-        retrieve the next page of results by increasing the value of the *start*
+        If the value for `moreAvailable` in the response is true, you can
+        retrieve the next page of results by increasing the value of the `start`
         parameter in your next request:
 
 
@@ -340,20 +302,23 @@ paths:
       parameters:
         - name: search
           in: query
-          description: >-
+          description: |-
             Match the text for the query. URL-encoded required. See Handling
-            Spaces in Queries. <br> <br> Note: To get a list of all FIs,
-            leave the *search* parameter out of the body of the API call. <br> 
-            <br> If the *search* parameter is in the body of the call but has no
+            Spaces in Queries.
+
+            Note: To get a list of all FIs, leave the `search` parameter out of the body of the API call.
+
+            If the `search` parameter is in the body of the call but has no
             value, then the call returns an error.
           schema:
             type: string
             example: finbank
         - name: start
           in: query
-          description: >-
-            The starting page number of records returned. The default is 1. <br>
-            <br>Example: If the limit for each call is 25, then start=1
+          description: |-
+            The starting page number of records returned. The default is 1.
+
+            Example: If the limit for each call is 25, then start=1
             returns 1-25 records. If start=2 then records 26-51 are returned.
           schema:
             type: integer
@@ -389,7 +354,7 @@ paths:
       parameters:
         - name: search
           in: query
-          description: Text to match or * to return all supported institutions.
+          description: Text to match or `*` to return all supported institutions.
           required: true
           schema:
             type: string
@@ -1967,47 +1932,32 @@ paths:
       tags:
         - Bank Statements
       summary: "\U0001F6A7 Get Customer Account Statement"
-      description: >-
+      description: |-
         Retrieve the customer's bank statements in PDF format. Up to 24 months
         of history is available depending on the financial institution. Since
         this is a premium service, charges incur per each successful statement
         retrieved. 
 
-
         Our list of [Supported
         Institutions](https://docs.finicity.com/institutions/) confirms that you
         can retrieve statements for the following account types:
-
         * Checking
-
         * Savings 
-
         * Money market
-
         * CDs
-
         * Investments
-
         * Mortgage
-
         * Credit cards
-
         * Loans
-
         * Line of credit
 
-
-         Set request timeout :  We recommend setting the timeout to 180
+        Set request timeout: we recommend setting the timeout to 180
         seconds to allow plenty of time for a response. 
 
-
-         Error codes 
-
+        Error codes:
         * HTTP 200: Success. The response is a binary string that you can
-        save as a PDF file.  
-
-
-        *  HTTP 203 : The response contains an MFA challenge question in
+        save as a PDF file.
+        * HTTP 203 : The response contains an MFA challenge question in
         JSON format. 
 
         Contact one of our system engineers for help in resolving this error.
@@ -3495,35 +3445,28 @@ paths:
       tags:
         - Verify Employment
       summary: "\U0001F6A7 Generate VOE - Payroll Report"
-      description: >-
+      description: |-
         Premium Service: A billable event when the API response is
         successful. 
 
-
         MVS Implementation Options: Direct API Integration
-
 
         Used as a complementary report to the VOIE-Payroll report. This report
         is used to fulfill the pre-close VOE requirements. It retrieves the
         customer's employment details and employment status through the payroll
         source without any income information. 
 
-
         To generate this report, pass the values from the customer `SSN`, `DOB`,
         and the `reportId` from the first VOIE-Payroll report generated after
         the Connect session.
 
-
-        After the call
-
+        After the call:
         * Returns status HTTP 202 (accepted)
-
         * A notification gets sent to the report callback URL if specified.
-
         * The application making the call receives a notification sent by the
         Report Listener Service indicating the report is ready. 
 
-           Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
+        Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-PayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3570,18 +3513,15 @@ paths:
       tags:
         - Verify Employment
       summary: "\U0001F6A7 Generate VOE - Transactions Report"
-      description: >-
+      description: |-
         Premium Service: A billable event when the API response is
-        successful. 
-
+        successful.
 
         MVS-Direct integration developers only
-
 
         Used as a complimentary report to the VOA with Income and VOIE - Paystub
         (with TXVerify) reports. It's used to fulfill the pre-close VOE
         requirements. 
-
 
         It retrieves the latest credit transaction information from the
         borrower's connected bank accounts and groups them into income streams
@@ -3590,17 +3530,13 @@ paths:
         descriptions without any dollar amounts so that income re-verification
         isn't necessary.
 
-
-        After the call
-
+        After the call:
         * Returns status HTTP 202 (accepted)
-
         * A notification gets sent to the report callback URL if specified.
-
         * The application making the call receives a notification sent by the
         Report Listener Service indicating the report is ready. 
 
-            Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
+        Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-TransactionsReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3614,13 +3550,16 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
-          description: >-
+          description: |-
             The fromDate parameter is an Epoch Timestamp (in seconds), such as
             ?1494449017. Without this parameter, the report defaults to 120 days
             if available. This field will limit the amount of credit
             transactions included in the report up to the date specified, up to
-            120 days. <br> Example: ?fromDate={fromDate} <br> If included, the
-            epoch timestamp should be 10 digits long and be within 120 days of
+            120 days.
+
+            Example: ?fromDate={fromDate}
+
+            If included, the epoch timestamp should be 10 digits long and be within 120 days of
             the present day. Extending the epoch timestamp beyond 10 digits or
             beyond 120 days from the present date will default back to 120 days
             of data. This query is optional.
@@ -3722,37 +3661,26 @@ paths:
       tags:
         - Analytics and Attributes
       summary: "\U0001F6A7 Get Consumer Attributes By ID - Beta"
-      description: >-
+      description: |-
         Used to retrieve a Consumer Attributes (CA) report for a customer. The
         `analytic_id` and the `created_date` are generated from the [Generate
         Consumer Attributes API-Beta]
         (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/generate-consumer-attributes-beta). 
 
-
         Use the `analytic_id` and `customerId` to retrieve 12 months of data
         attributes according to the `To` and `From` date range of the report at
         the time it was created. 
 
-
         If the current date is before the end of the calendar month, then the
         most recent month provides all available data up to the current date.
 
-
         The CA data response is grouped into the following attribute objects:
-
-
         * `accountIds`
-
         * `dateRange`
-
         * `income`
-
         * `expenses`
-
         * `netAmount`
-
         * `nsf` (insufficient funds)
-
         * `assets`
             * `customer`
             * `account`
@@ -4015,7 +3943,7 @@ components:
       properties:
         code:
           type: string
-          description: Error code
+          description: Error code (can be a number or a string)
           example: '10001'
         status:
           type: string
@@ -4044,7 +3972,6 @@ components:
         accountId:
           type: string
           description: The generated Finicity ID of the account that encountered the error
-          format: int64
           example: '5003507225'
         tags:
           type: string
@@ -4360,8 +4287,8 @@ components:
       type: string
       description: |-
         The URL that customers will be redirected to after completing
-        Finicity Connect. *Required unless Connect is embedded inside our
-        application (iframe)*
+        Finicity Connect. Required unless Connect is embedded inside our
+        application (iframe).
       example: 'https://www.finicity.com/connect/'
     Webhook:
       type: string
@@ -4394,7 +4321,6 @@ components:
       type: string
       description: |-
         The `experience` field allows you to customize: 
-
         * Brand: color and logo
         * Icon: displayed on the Share your data page
         * Popular institutions: displayed on the Bank Search page
@@ -4408,7 +4334,6 @@ components:
         APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
                     
         Experience values options:
-
         * "default": your default experience (must be defined)
         * GUID: the code for a different experience
         * Not defined: If you don't pass the experience parameter, then
@@ -4418,7 +4343,7 @@ components:
     SingleUseUrl:
       type: boolean
       description: |-
-        true: The URL link expires after a Connect session successfully
+        `true`: The URL link expires after a Connect session successfully
         completes. 
 
         Note: When the `singleUseUrl` and the `experience` parameters
@@ -4452,7 +4377,6 @@ components:
         report when it's generated. Every custom field consists of three
         variables: `label`, `value`, and `shown`. The `shown` variable is
         true or false.
-
         * `true`: (default) display the custom field in the PDF report. 
         * `false`: don't display the custom field in the PDF report. 
 
@@ -4825,9 +4749,9 @@ components:
           type: string
           description: >-
             The account number from a financial institution in truncated format:
-            <br> <br> <br> <br> * Last four digits - 1234 <br> * Last four
-            digits with suffix - 1234-9 <br> * Full value for string accounts -
-            john@gmail.com.
+            * Last four digits - 1234
+            * Last four digits with suffix - 1234-9
+            * Full value for string accounts - john@gmail.com.
           example: '8888'
         realAccountNumberLast4:
           type: integer
@@ -5907,56 +5831,60 @@ components:
           description: The name of the institution
         transAgg:
           type: boolean
-          description: >-
-            true: The institution is certified for the Transaction
-            Aggregation product. <br> <br> false: The institution is
-            decertified for the Transaction Aggregation product
+          description: |-
+            `true`: The institution is certified for the Transaction Aggregation product.
+
+            `false`: The institution is decertified for the Transaction Aggregation product
           example: true
         ach:
           type: boolean
-          description: >-
-            true: The institution is certified for the ACH product. <br>
-            <br> false: The institution is decertified for the ACH product.
+          description: |-
+            `true`: The institution is certified for the ACH product.
+
+            `false`: The institution is decertified for the ACH product.
           example: true
         stateAgg:
           type: boolean
-          description: >-
-            true: The institution is certified for the Statement Aggregation
-            product. <br> <br> false: The institution is decertified for the
-            Statement Aggregation product
+          description: |-
+            `true`: The institution is certified for the Statement Aggregation
+            product. 
+
+            `false`: The institution is decertified for the Statement Aggregation product
           example: false
         voi:
           type: boolean
-          description: >-
-            true: The institution is certified for the VOI product. <br>
-            <br> false: The institution is decertified for the VOI product.
+          description: |-
+            `true`: The institution is certified for the VOI product.
+
+            `false`: The institution is decertified for the VOI product.
           example: true
         voa:
           type: boolean
-          description: >-
-            true: The institution is certified for the VOA product. <br>
-            <br> false: The institution is decertified for the VOA product.
+          description: |-
+            `true`: The institution is certified for the VOA product.
+
+            `false`: The institution is decertified for the VOA product.
           example: true
         aha:
           type: boolean
-          description: >-
-            true: The institution is certified for the Account History
-            Aggregation product. <br> <br> false: The institution is
-            decertified for the Account History Aggregation product
+          description: |-
+            `true`: The institution is certified for the Account History Aggregation product. 
+
+            `false`: The institution is decertified for the Account History Aggregation product
           example: false
         availBalance:
           type: boolean
-          description: >-
-            true: The institution is certified for the Account Balance Check
-            (ABC) product. <br> <br> false: The institution is decertified
-            for the Account Balance Check product.
+          description: |-
+            `true`: The institution is certified for the Account Balance Check (ABC) product.
+
+            `false`: The institution is decertified for the Account Balance Check product.
           example: false
         accountOwner:
           type: boolean
-          description: >-
-            true: The institution is certified for the Account Owner
-            product. <br> <br> false: The institution is decertified for the
-            Account Owner product.
+          description: |-
+            `true`: The institution is certified for the Account Owner product.
+
+            `false`: The institution is decertified for the Account Owner product.
           example: true
         accountTypeDescription:
           type: string
@@ -5974,7 +5902,7 @@ components:
           description: The URL of the institution's login page
         oauthEnabled:
           type: boolean
-          description: 'true: The institution is an OAuth connection.'
+          description: '`true`: The institution is an OAuth connection.'
         urlForgotPassword:
           type: string
           description: Institution's forgot password page
@@ -5991,9 +5919,10 @@ components:
           type: array
           items:
             type: string
-          description: >-
+          description: |-
             Instructions given to the customer before they are sent to the
-            institution website to login for OAuth institutions. <br> <br>
+            institution website to login for OAuth institutions.
+
             Note: This helps the customer to provide the proper permission
             for data needed for the application.
           example:
@@ -6547,7 +6476,7 @@ components:
       properties:
         type:
           type: string
-          description: checking / savings / moneyMarket / cd / investment*
+          description: checking / savings / moneyMarket / cd / investment
           example: checking
         currentBalance:
           type: number
@@ -7348,17 +7277,16 @@ components:
       properties:
         label:
           type: string
-          description: >-
-            The label to be associated with the pay statement: <br> *
-            `lastPayPeriod` This label will allow the paystub to go through data
+          description: |-
+            The label to be associated with the pay statement:
+            * `lastPayPeriod` This label will allow the paystub to go through data
             extraction. This is the default label that should be used for our
-            VOIE - Paystub products. <br> * `lastPayPeriodMinusOne` The second
-            most recent pay statement. <br> * `lastPayPeriodMinusTwo` The third
-            most recent pay statement. <br> * `previousYearLastPayPeriod`  Last
-            pay statement of the previous calendar year. <br> *
-            `previousYear2LastPayPeriod`  Last pay statement of the calendar
-            year 2 years prior. <br> * `earliestPayPeriod`  The earliest pay
-            statement.
+            VOIE - Paystub products.
+            * `lastPayPeriodMinusOne` The second most recent pay statement.
+            * `lastPayPeriodMinusTwo` The third most recent pay statement.
+            * `previousYearLastPayPeriod` Last pay statement of the previous calendar year.
+            * `previousYear2LastPayPeriod` Last pay statement of the calendar year 2 years prior.
+            * `earliestPayPeriod` The earliest pay statement.
           example: lastPayPeriod
         statement:
           type: string
@@ -10967,7 +10895,7 @@ components:
       properties:
         type:
           type: string
-          description: checking / savings / moneyMarket / cd / investment*
+          description: checking / savings / moneyMarket / cd / investment
           example: checking
         availableBalance:
           type: number
