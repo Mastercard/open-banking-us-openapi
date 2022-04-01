@@ -16,14 +16,14 @@ servers:
 tags:
   - name: Authentication
   - name: Connect
-  - name: Institutions
+  - name: Customer
   - name: Consumer
+  - name: Institutions
   - name: Verify Income
   - name: Verify Assets
   - name: Verify Income and Employment
   - name: Accounts
   - name: Account Owner
-  - name: Customer
   - name: Bank Statements
   - name: Transactions
   - name: Pay Statements
@@ -122,9 +122,9 @@ paths:
         Connect Lite is a variation of Connect Full, which has a limited set of
         features.
 
-        • Sign in, user's credentials, and Multi-Factor Authentication (MFA).
+        * Sign in, user's credentials, and Multi-Factor Authentication (MFA).
 
-        • No user account management.
+        * No user account management.
 
 
         The Connect Web SDK isn't a requirement when using Connect lite.
@@ -140,7 +140,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -167,7 +167,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -242,7 +242,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -310,7 +310,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -391,7 +391,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -410,7 +410,6 @@ paths:
           in: query
           description: 'Search term, * returns all institutions'
           required: true
-          explode: true
           schema:
             type: string
             example: finbank
@@ -418,7 +417,6 @@ paths:
           in: query
           description: 'Page (Default: 1)'
           required: true
-          explode: true
           schema:
             type: integer
             format: int32
@@ -427,7 +425,6 @@ paths:
           in: query
           description: 'Limits the number of results returned (max: 1000)'
           required: true
-          explode: true
           schema:
             type: integer
             format: int32
@@ -438,13 +435,12 @@ paths:
             Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
             accountOwner.
           required: true
-          explode: true
           schema:
             type: string
             example: voa
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -488,7 +484,6 @@ paths:
             leave the *search* parameter out of the body of the API call. <br> 
             <br> If the *search* parameter is in the body of the call but has no
             value, then the call returns an error.
-          explode: true
           schema:
             type: string
             example: finbank
@@ -498,7 +493,6 @@ paths:
             The starting page number of records returned. The default is 1. <br>
             <br>**Example**: If the limit for each call is 25, then start=1
             returns 1-25 records. If start=2 then records 26-51 are returned.
-          explode: true
           schema:
             type: integer
             format: int32
@@ -509,7 +503,6 @@ paths:
           description: >-
             The maximum number of records per page returned for the search
             request. The default is 25 records per page.
-          explode: true
           schema:
             type: integer
             format: int32
@@ -517,7 +510,7 @@ paths:
             example: 25
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -536,7 +529,6 @@ paths:
           in: query
           description: Text to match or * to return all supported institutions.
           required: true
-          explode: true
           schema:
             type: string
             example: finbank
@@ -545,7 +537,6 @@ paths:
           description: >-
             Starting index for this page of results (ignored if returning all
             institutions). This will default to 1.
-          explode: true
           schema:
             type: integer
             format: int32
@@ -557,7 +548,6 @@ paths:
             Maximum number of entries for this page of results (ignored if
             returning all institutions). This will default to 25. Limits the
             number of results returned to 1000.
-          explode: true
           schema:
             type: integer
             format: int32
@@ -568,13 +558,12 @@ paths:
           description: >-
             Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
             accountOwner.
-          explode: true
           schema:
             type: string
             example: voa
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -599,7 +588,7 @@ paths:
             example: 101732
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -626,7 +615,7 @@ paths:
             example: 5
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -662,7 +651,7 @@ paths:
             type: string
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -724,7 +713,6 @@ paths:
           description: Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
           schema:
-            pattern: ''
             type: string
             example: b06cf32dd2222b32e31083221063f561
       responses:
@@ -843,7 +831,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -897,7 +884,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -910,7 +896,6 @@ paths:
             timestamp should be 10 digits long and be within twelve months of
             the present day. Extending the epoch timestamp beyond 10 digits will
             default back to twelve months of data. This query is optional
-          explode: true
           schema:
             type: integer
             format: int64
@@ -992,7 +977,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1010,7 +994,6 @@ paths:
             digits long and be within two years of the present day. Extending
             the epoch timestamp beyond 10 digits will default back to 2 years of
             data. This query is optional.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -1083,7 +1066,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1156,7 +1138,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1223,7 +1204,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1299,7 +1279,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1373,7 +1352,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1448,7 +1426,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -1506,7 +1483,7 @@ paths:
             example: 1007302745
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1569,7 +1546,7 @@ paths:
             example: '1007302745'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1603,7 +1580,7 @@ paths:
             example: 1007302745
       responses:
         '200':
-          description: default response
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
@@ -1625,7 +1602,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1652,7 +1629,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts':
@@ -1670,13 +1647,12 @@ paths:
             append, ?status=pending, to return accounts in the pending status.
             Pending accounts were discovered but not activated and will not have
             transactions or have balance updates
-          explode: true
           schema:
             type: string
             example: pending
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1723,7 +1699,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1751,7 +1727,7 @@ paths:
             example: 102224
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1841,7 +1817,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
@@ -1883,7 +1859,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1917,21 +1893,18 @@ paths:
           description: >-
             The text you wish to match. Leave this empty if you wish to return
             all customers. Must be URL-encoded (see Handling Spaces in Queries)
-          explode: true
           schema:
             type: string
             example: searchvalue
         - name: username
           in: query
           description: Username for exact match. (Will return 0 or 1 records.)
-          explode: true
           schema:
             type: string
             example: customerusername1
         - name: start
           in: query
           description: Starting index for this page of results. The default value is 1.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -1942,7 +1915,6 @@ paths:
           description: >-
             Maximum number of entries for this page of results. The default
             value is 25.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -1953,13 +1925,12 @@ paths:
           description: >-
             One of the values testing or active to return only customers of that
             type, or leave empty to return all customers.
-          explode: true
           schema:
             type: string
             example: active
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -1989,7 +1960,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
     get:
@@ -2012,7 +1983,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2042,7 +2013,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: default response
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v2/customers/active:
@@ -2076,7 +2047,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2120,7 +2091,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2145,7 +2116,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2227,7 +2198,6 @@ paths:
             Request statements from 1- 24. By default, 1 is the most recent
             statement. Increase the index value to count back (by month) and
             retrieve its most recent statement.
-          explode: true
           schema:
             type: integer
             format: int32
@@ -2235,12 +2205,12 @@ paths:
             example: 1
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/octet-stream:
               schema:
                 type: string
-                description: default response
+                description: ''
                 format: binary
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
@@ -2283,7 +2253,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -2295,7 +2264,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -2339,7 +2308,6 @@ paths:
             Starting timestamp for the date range (required) (see Handling Dates
             and Times)
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2350,7 +2318,6 @@ paths:
             Ending timestamp for the date range (required, must be greater than
             fromDate) (see Handling Dates and Times)
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2358,7 +2325,6 @@ paths:
         - name: start
           in: query
           description: Starting index for this page of results
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2367,7 +2333,6 @@ paths:
         - name: limit
           in: query
           description: Maximum number of entries for this page of results (max is 1000)
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2378,7 +2343,6 @@ paths:
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
-          explode: true
           schema:
             type: string
             default: desc
@@ -2386,14 +2350,13 @@ paths:
         - name: includePending
           in: query
           description: true to include pending transactions if available.
-          explode: true
           schema:
             type: boolean
             default: false
             example: false
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2418,7 +2381,7 @@ paths:
             example: '102122887150'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2469,7 +2432,6 @@ paths:
             Starting timestamp for the date range (required) (see Handling Dates
             and Times)
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2480,7 +2442,6 @@ paths:
             Ending timestamp for the date range (required, must be greater than
             fromDate) (see Handling Dates and Times)
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2488,7 +2449,6 @@ paths:
         - name: start
           in: query
           description: Starting index for this page of results
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2497,7 +2457,6 @@ paths:
         - name: limit
           in: query
           description: Maximum number of entries for this page of results (max is 1000)
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2508,7 +2467,6 @@ paths:
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
-          explode: true
           schema:
             type: string
             default: desc
@@ -2516,14 +2474,13 @@ paths:
         - name: includePending
           in: query
           description: true to include pending transactions if available.
-          explode: true
           schema:
             type: boolean
             default: false
             example: false
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2574,7 +2531,6 @@ paths:
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
           required: true
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -2588,7 +2544,6 @@ paths:
             10 digits, the transaction report history defaults to 24 months of
             data.    (Optional)
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2599,7 +2554,6 @@ paths:
             The ending timestamp for the date range. The value must be greater
             than fromDate. See Handling Dates and Times.
           required: true
-          explode: true
           schema:
             type: integer
             format: int64
@@ -2610,7 +2564,6 @@ paths:
             True: Include pending transactions in the report. False: Set by
             default.
           required: true
-          explode: true
           schema:
             type: boolean
             example: true
@@ -2622,7 +2575,7 @@ paths:
         required: false
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -2672,7 +2625,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2705,7 +2658,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2799,7 +2752,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -2829,225 +2782,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: default response
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v1/customers/{customerId}/reports/{reportId}':
-    get:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Get Report by Customer"
-      description: >-
-        Get a report that has been generated by calling one of the Generate
-        Report services.
-
-
-        The report's status field will contain inProgress, failure, or success.
-        If the status shows inProgress, the client app should wait 20 seconds
-        and then call again to see if the report is finished.
-
-
-        See Permissible Purpose Codes for a list of permissible purposes for
-        retrieving a report.
-      operationId: GetReportbyCustomer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: reportId
-          in: path
-          description: Finicity's ID of the report
-          required: true
-          schema:
-            type: string
-            example: 41h4nzppn37u
-        - name: onBehalfOf
-          in: query
-          description: The name of the entity you are retrieving the report on behalf of.
-          explode: true
-          schema:
-            type: string
-        - $ref: '#/components/parameters/PurposeParameter'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuditableReport'
-              example:
-                id: rfcfa3iy5gx7
-                portfolioId: fkmz2dhbcneq-1-port
-                gseEnabled: true
-                customerType: testing
-                customerId: 1000005494
-                requestId: vg7bsqbxwg
-                title: Finicity Verification of Assets
-                consumerId: 6558691f5211e3a63ae39e0848de540a
-                consumerSsn: '6789'
-                requesterName: Decisioning API Tests
-                type: voa
-                status: success
-                createdDate: 1587576291
-                startDate: 1571765091
-                endDate: 1587576291
-                days: 183
-                seasoned: true
-                institutions:
-                  - id: 102105
-                    name: FinBank Profiles - A
-                    urlHomeApp: 'http://www.finbank.com'
-                    accounts:
-                      - id: 1000018102
-                        number: '5015'
-                        ownerName: JOHN SMITH AND JANE SMITH
-                        ownerAddress: '1000 N 2222 E OREM, UT 84097'
-                        name: Super Checking
-                        type: checking
-                        availableBalance: 1000
-                        aggregationStatusCode: 0
-                        balance: 1000
-                        balanceDate: 1587576294
-                        averageMonthlyBalance: -7781.98
-                        transactions:
-                          - id: 100000408449
-                            amount: -32
-                            postedDate: 1587297600
-                            description: 'MAVERIK #435'
-                            institutionTransactionId: 0
-                          - id: 100000408504
-                            amount: -953.73
-                            postedDate: 1572004800
-                            description: WF HOME MTG AUTO PAY
-                            institutionTransactionId: 0
-                        asset:
-                          type: checking
-                          currentBalance: 1000
-                          twoMonthAverage: -1865.96
-                          sixMonthAverage: -7616.01
-                          beginningBalance: -17795.6
-                        details:
-                          interestMarginBalance: null
-                          availableCashBalance: null
-                          vestedBalance: null
-                          currentLoanBalance: null
-                          availableBalanceAmount: 1000
-                assets:
-                  currentBalance: 1000
-                  twoMonthAverage: -1865.96
-                  sixMonthAverage: -7616.01
-                  beginningBalance: -17795.6
-                consolidatedAvailableBalance: 1000
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /connect/v1/generate:
-    post:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Generate Connect URL All Types"
-      description: >-
-        No matter how you plan on implementing Finicity Connect, you'll need to
-        generate and retrieve a Finicity Connect Link.  You will need to specify
-        what type of Finicity Connect you need depending on what will happen
-        once the customer accounts and transaction data are gathered.  Below
-        you'll find how to generate the Connect link as well as where to specify
-        what type of Finicity Connect you need.
-
-
-        Once you have generated the link it will only last until the access
-        token under which it was generated expires.  After that you will need to
-        regenerate the Connect link under a new authentication token. We
-        recommend generating a new access token when you generate a Connect
-        link, to guarantee a full two hour life-span.
-
-
-        Several Finicity products utilize Finicity Connect, and most products
-        have their own type of Connect.  The Connect type is controlled by the
-        "type" code in the call.  Many times the type also corresponds to the
-        report that will be run upon completing the Connect flow.
-
-
-        It is best to use the documentation for the specific use case you are
-        interested in as the documentation here is a list of all the possible
-        parameters you can send for this endpoint depending on the use case. See
-        the following more specific documentation for your use case.......
-
-        Generate Finicity Connect URL (Data and Payments)
-
-        Generate Finicity Connect URL (Lending)
-
-        Generate Finicity Connect URL (Lite)
-
-        Generate Finicity Connect URL (Fix)
-      operationId: GenerateConnectURLAllTypes
-      requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateConnectURLRequest'
-            example:
-              partnerId: '1234583871234'
-              customerId: '1005061234'
-              type: aggregation
-              webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-              webhookContentType: application/json
-              analytics: 'google:UA-123456789-1'
-        required: true
-      responses:
-        '200':
-          description: todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectUrl'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/institutions/{newInstitutionId}':
-    put:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Migrate Institution Login Accounts V1"
-      description: >-
-        This service has been replaced by version 2 call now "Migrate
-        Institution Login Accounts"
-
-
-        This service is to migrate accounts from legacy FI to new OAuth FI. 
-
-
-        A successful API response will return a list of accounts for the given
-        institution login id with an http status code as 200.
-      operationId: MigrateInstitutionLoginAccountsV1
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionLoginId
-          in: path
-          description: Finicity's institutionLoginId for the set of accounts to be migrated
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1007302745
-        - name: newInstitutionId
-          in: path
-          description: New OAuth FI ID where accounts  will be migrated
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 102224
-      responses:
-        '200':
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
@@ -3120,154 +2855,11 @@ paths:
             example: '1014136057'
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ACHDetails'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v1/customers/testing:
-    post:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Add Testing Customer V1"
-      description: >-
-        Enroll a testing customer. A testing customer may only register accounts
-        with FinBank institutions.
-      operationId: AddTestingCustomerV1
-      requestBody:
-        description: The Fields For The New Testing Customer
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddCustomerRequest'
-        required: true
-      responses:
-        '200':
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddCustomerResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v1/consumers/{consumerId}/reports/{reportId}':
-    get:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Get Report by Consumer"
-      description: >-
-        Get a report that has been generated by calling one of the Generate
-        Report services.
-
-
-        The report's status field will contain inProgress, failure, or success.
-        If the status shows inProgress, the client app should wait 20 seconds
-        and then call again to see if the report is finished.
-
-
-        See Permissible Purpose Codes for a list of permissible purposes for
-        retrieving a report.
-      operationId: GetReportbyConsumer
-      parameters:
-        - name: consumerId
-          in: path
-          description: Finicity's ID of the consumer (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
-        - name: reportId
-          in: path
-          description: Finicity's ID of the report (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: 41h4nzppn37u
-        - name: onBehalfOf
-          in: query
-          description: The name of the entity you are retrieving the report on behalf of.
-          explode: true
-          schema:
-            type: string
-        - $ref: '#/components/parameters/PurposeParameter'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuditableReport'
-              example:
-                id: rfcfa3iy5gx7
-                portfolioId: fkmz2dhbcneq-1-port
-                gseEnabled: true
-                customerType: testing
-                customerId: 1000005494
-                requestId: vg7bsqbxwg
-                title: Finicity Verification of Assets
-                consumerId: 6558691f5211e3a63ae39e0848de540a
-                consumerSsn: '6789'
-                requesterName: Decisioning API Tests
-                type: voa
-                status: success
-                createdDate: 1587576291
-                startDate: 1571765091
-                endDate: 1587576291
-                days: 183
-                seasoned: true
-                institutions:
-                  - id: 102105
-                    name: FinBank Profiles - A
-                    urlHomeApp: 'http://www.finbank.com'
-                    accounts:
-                      - id: 1000018102
-                        number: '5015'
-                        ownerName: JOHN SMITH AND JANE SMITH
-                        ownerAddress: '1000 N 2222 E OREM, UT 84097'
-                        name: Super Checking
-                        type: checking
-                        availableBalance: 1000
-                        aggregationStatusCode: 0
-                        balance: 1000
-                        balanceDate: 1587576294
-                        averageMonthlyBalance: -7781.98
-                        transactions:
-                          - id: 100000408449
-                            amount: -32
-                            postedDate: 1587297600
-                            description: 'MAVERIK #435'
-                            institutionTransactionId: 0
-                          - id: 100000408504
-                            amount: -953.73
-                            postedDate: 1572004800
-                            description: WF HOME MTG AUTO PAY
-                            institutionTransactionId: 0
-                        asset:
-                          type: checking
-                          currentBalance: 1000
-                          twoMonthAverage: -1865.96
-                          sixMonthAverage: -7616.01
-                          beginningBalance: -17795.6
-                        details:
-                          interestMarginBalance: null
-                          availableCashBalance: null
-                          vestedBalance: null
-                          currentLoanBalance: null
-                          availableBalanceAmount: 1000
-                assets:
-                  currentBalance: 1000
-                  twoMonthAverage: -1865.96
-                  sixMonthAverage: -7616.01
-                  beginningBalance: -17795.6
-                consolidatedAvailableBalance: 1000
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
@@ -3309,7 +2901,7 @@ paths:
         required: true
       responses:
         '200':
-          description: default response
+          description: ''
           content:
             application/json:
               schema:
@@ -3346,7 +2938,6 @@ paths:
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          explode: true
           schema:
             type: string
         - $ref: '#/components/parameters/PurposeParameter'
@@ -3363,46 +2954,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v1/customers/active:
-    post:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Add Customer V1"
-      description: >-
-        This version 1 service has been replaced with version 2
-
-
-        Enroll an active customer, which is the actual owner of one or more
-        real-world accounts. This is a billable customer.
-
-
-        This service is not available from the Test Drive. Calls to this service
-        before enrolling in a paid plan will return HTTP 429 (Too Many
-        Requests).
-      operationId: AddCustomerV1
-      requestBody:
-        description: The Fields For The New Customer
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddCustomerRequest'
-            example:
-              username: USERNAME
-              firstName: FIRST_NAME
-              lastName: LAST_NAME
-        required: true
-      responses:
-        '200':
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddCustomerResponse'
-              example:
-                id: '41442'
-                createdDate: '1412792539'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
@@ -3429,70 +2980,7 @@ paths:
             example: 12345678
       responses:
         '200':
-          description: default response
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /connect/v1/send/email:
-    post:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Send Connect Email"
-      description: >-
-        A connect email sends an email to the customer which will contain a link
-        to the connect flow. You will need to specify what type of Finicity
-        Connect you need depending on what will happen once the customer
-        accounts and transaction data are gathered. 
-
-
-        Several Finicity products utilize Finicity Connect, and most products
-        have their own type of Connect.  The Connect type is controlled by the
-        "type" code in the call.  Many times the type also corresponds to the
-        report that will be run upon completing the Connect flow.
-
-
-        For Send Connect Email service it does not support the types
-        aggregation, lite and fix.
-
-
-        See the endpoint Generate Finicity Connect URL (Lending) for additional
-        details on a non email implementation.
-      operationId: SendConnectEmail
-      requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateConnectEmailRequest'
-            example:
-              partnerId: '1234583871234'
-              customerId: '1005061234'
-              consumerId: 86238nvnw7269e224a4e3de12352d87d
-              type: voa
-              webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-              webhookContentType: application/json
-              analytics: 'google:UA-123456789-1'
-              email:
-                to: fin.user@finicity.com
-                supportPhone: 800-555-5555
-                subject: Verify your income
-                firstName: Bob
-                brandColor: '#4287f5'
-                brandLogo: 'https://acme-lending.com/logo.png'
-                institutionName: Acme Lending
-                institutionAddress: '222 Winipeg Drive SLC UT, 84109'
-                signature:
-                  - Cindy Mayfield
-                  - Senior Loan Officer
-                  - Direct 123-456-7890
-        required: true
-      responses:
-        '200':
-          description: todo
-          content:
-            application/json:
-              schema:
-                $ref: >-
-                  #/components/schemas/GenerateConnectEmailResponseMulti-Borrowers
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
@@ -3521,7 +3009,7 @@ paths:
             example: 12345
       responses:
         '200':
-          description: todo
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/partners/applications:
@@ -3533,7 +3021,6 @@ paths:
         Register new applications to access financial institutions using OAuth
         connections.
       operationId: AppRegistration
-      parameters: []
       requestBody:
         description: The values for the new app registration
         content:
@@ -3543,29 +3030,11 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppRegistrationResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    get:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Get App Registration Status V1"
-      description: >-
-        Get the status of your application registration to access FI's with
-        OAuth connections.
-      operationId: GetAppRegistrationStatusV1
-      parameters: []
-      responses:
-        '200':
-          description: todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppStatusesV1'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/partners/applications/{preAppId}':
@@ -3597,7 +3066,7 @@ paths:
         required: true
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -3632,7 +3101,7 @@ paths:
             example: 1007302745
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -3652,7 +3121,6 @@ paths:
         - name: preAppId
           in: query
           description: Look up the status of an app by the preAppId
-          explode: true
           schema:
             type: integer
             format: int64
@@ -3660,7 +3128,6 @@ paths:
         - name: applicationId
           in: query
           description: Look up the status of an app by the applicationId
-          explode: true
           schema:
             type: string
             example: '123456789'
@@ -3670,14 +3137,12 @@ paths:
             Look up the status of app registration requests by the registration
             request status. Valid values P (For Pending), A (For Approved), R
             (For Rejected)
-          explode: true
           schema:
             type: string
             example: A
         - name: appName
           in: query
           description: Look up app registration requests by the application name
-          explode: true
           schema:
             type: string
         - name: submittedDate
@@ -3685,7 +3150,6 @@ paths:
           description: >-
             Look up app registration requests by the date they were submitted in
             epoch format.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -3696,7 +3160,6 @@ paths:
             Look up app registration requests by the date the request was
             updated. This could be used to determine when the app was updated to
             approved or rejected.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -3704,7 +3167,6 @@ paths:
         - name: page
           in: query
           description: Select which page of results to return
-          explode: true
           schema:
             type: integer
             format: int64
@@ -3713,7 +3175,6 @@ paths:
         - name: pageSize
           in: query
           description: Select how many results per page to return
-          explode: true
           schema:
             type: integer
             format: int64
@@ -3721,7 +3182,7 @@ paths:
             example: 20
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -3788,7 +3249,6 @@ paths:
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          explode: true
           schema:
             type: string
       responses:
@@ -3880,7 +3340,6 @@ paths:
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          explode: true
           schema:
             type: string
       responses:
@@ -3979,77 +3438,7 @@ paths:
         - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
-          description: todo
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v1/partners/{partnerId}/billing/reseller':
-    get:
-      tags:
-        - Deprecated
-      summary: "\U0001F6A7 Invoice Billing Endpoint"
-      description: >-
-        Partners would like the capability to see the reports generated for a
-        specific date range as well as the custom fields associated with the
-        report. This will allow partners to determine which branches have
-        generated specific reports to better bill those branches
-      operationId: InvoiceBillingEndpoint
-      parameters:
-        - name: partnerId
-          in: path
-          description: Partner ID From Developer Portal
-          required: true
-          schema:
-            type: string
-        - name: startDate
-          in: query
-          description: >-
-            The earliest date to be analyzed in this report. This is required. 
-            Note: The range between startDate and endDate must be 31 days or
-            less.
-          required: true
-          explode: true
-          schema:
-            type: string
-        - name: endDate
-          in: query
-          description: The latest date to be analyzed in this report. This is required.
-          required: true
-          explode: true
-          schema:
-            type: string
-        - name: size
-          in: query
-          description: >-
-            The size of the results returned per page. By default, this is 100
-            results per page and can be no more than 1000 results per page. This
-            is optional.
-          explode: true
-          schema:
-            type: string
-        - name: page
-          in: query
-          description: >-
-            The page to be viewed. Zero based index. This is optional. Default
-            0.
-          explode: true
-          schema:
-            type: string
-        - name: viewTestingReports
-          in: query
-          description: >-
-            Designate as true to only display testing reports in the response.
-            By default, this is false.
-          required: true
-          explode: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvoiceBillingResponse'
+          description: ''
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance/live':
@@ -4080,7 +3469,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -4118,7 +3507,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -4166,7 +3555,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -4177,7 +3565,6 @@ paths:
             10 digits long and within two years of the present day.  If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -4190,7 +3577,7 @@ paths:
         required: false
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -4249,7 +3636,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -4260,7 +3646,6 @@ paths:
             10 digits long and within two years of the present day.  If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -4273,7 +3658,7 @@ paths:
         required: false
       responses:
         '200':
-          description: todo
+          description: ''
           content:
             application/json:
               schema:
@@ -4322,7 +3707,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -4400,7 +3784,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          explode: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -4416,7 +3799,6 @@ paths:
             the present day. Extending the epoch timestamp beyond 10 digits or
             beyond 120 days from the present date will default back to 120 days
             of data. This query is optional.
-          explode: true
           schema:
             type: integer
             format: int64
@@ -4729,7 +4111,6 @@ components:
       description: |-
         2-digit code from Permissible Purpose Codes, specifying the reason for
         retrieving this report.
-      explode: true
       schema:
         type: string
   schemas:
