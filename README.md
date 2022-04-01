@@ -17,28 +17,28 @@ The following workflows ensure the API specification stays in good shape and can
 If you see some red, please [contact us](https://www.finicity.com/contact/)!
 
 ## Download the Specification
-[⭳ finicity.yaml](./finicity.yaml)
+[⭳ finicity.yaml](./finicity.yaml?raw=true)
 
-## About the Tests
+## Run the Tests
 #### Things to Know
 
 * The [integration test project](./tests) generates an API client library from [finicity.yaml](./finicity.yaml) ([OpenAPI Generator](https://openapi-generator.tech/) is used for that)
-* A [free Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**:
-![](./res/dashboard.png)
+* A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
+
+[![](./res/dashboard.png)](./res/dashboard.png?raw=true)
+
 * Before running the tests, you must:
-   1. Call `addTestingCustomer` and note the **Customer ID** returned
-   2. Use `generateConnectUrlV2` to add to this customer all accounts from the test [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3) using [Finicity Connect](https://docs.finicity.com/):
-   ![](./res/connect-for-tests.png)
-   3. Call `refreshCustomerAccounts`
+  1. Call `addTestingCustomer` and note the **Customer ID** returned
+  2. Use [Finicity Connect](https://docs.finicity.com/) and `generateConnectUrlV2`. Open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
+  3. Call `refreshCustomerAccounts`
+
+[![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true)
 
 #### Run Tests Locally
 
 1. Clone this repository
-2. Simply run:
-```sh
-cd tests
-mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***
-```
+2. Run `cd tests && mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***`
+2. Expected result: :heavy_check_mark:
 
 #### Run Tests In GitHub
 
@@ -50,7 +50,7 @@ mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***
 
 ## Guidelines
 
-When updating the API specification:
+When updating the Finicity API specification:
 1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using:
