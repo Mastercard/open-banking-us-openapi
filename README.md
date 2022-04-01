@@ -9,10 +9,11 @@ The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/), along
 
 The following workflows ensure the API specification stays in good shape and can be used to consume the Finicity APIs:
 
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml)
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml)
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/redoc.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/redoc.yml)
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml)
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml)
 
 If you see some red, please [contact us](https://www.finicity.com/contact/)!
 
