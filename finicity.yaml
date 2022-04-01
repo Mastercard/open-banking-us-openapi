@@ -97,14 +97,6 @@ paths:
         employment records page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
       operationId: GenerateV2ConnectURL
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -114,7 +106,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -143,14 +135,6 @@ paths:
         However, if you want to use the SDK events, routes, and user events,
         then you need to integrate with the Connect Web SDK.
       operationId: GenerateV2LiteConnectURL
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -160,7 +144,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -182,14 +166,6 @@ paths:
         * The user's credentials were updated (for any number of reasons).
         * The user's MFA challenge has expired.
       operationId: GenerateV2FixConnectURL
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -199,7 +175,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -237,14 +213,6 @@ paths:
         app. Pass the SSN value for the consumer in the body of the request
         call.
       operationId: SendV2ConnectEmail
-      parameters:
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -286,7 +254,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -322,14 +290,6 @@ paths:
         records page at the beginning of the MVS payroll app. Pass the SSN value
         for the consumer in the body of the request call.
       operationId: GenerateV2ConnectURL-JointBorrower
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -366,7 +326,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -403,14 +363,6 @@ paths:
         records page at the beginning of the MVS payroll app. Pass the SSN value
         for the consumer in the body of the request call.
       operationId: SendV2ConnectEmail-JointBorrower
-      parameters:
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -459,7 +411,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -478,13 +430,6 @@ paths:
       description: Get Certified Institution List w/RSSD
       operationId: GetCertifiedInstitutionsWithRSSD
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: search
           in: query
           description: 'Search term, * returns all institutions'
@@ -523,7 +468,7 @@ paths:
             example: voa
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -563,13 +508,6 @@ paths:
         …start=2&limit=25 (next 25 from list 26-51)
       operationId: GetInstitutions
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: search
           in: query
           description: >-
@@ -607,7 +545,7 @@ paths:
             example: 25
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -626,13 +564,6 @@ paths:
       description: Search for institutions by certified product.
       operationId: GetCertifiedInstitutions
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: search
           in: query
           description: Text to match or * to return all supported institutions.
@@ -675,7 +606,7 @@ paths:
             example: voa
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -694,13 +625,6 @@ paths:
       description: Get details for the specified institution
       operationId: GetInstitution
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: institutionId
           in: path
           description: Finicity's ID of the institution to retrieve
@@ -711,7 +635,7 @@ paths:
             example: 101732
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -732,13 +656,6 @@ paths:
         the `id`
       operationId: GetInstitutionBranding
       parameters:
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: id
           in: path
           description: ID of the institution
@@ -749,7 +666,7 @@ paths:
             example: 5
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -787,15 +704,9 @@ paths:
           description: Token returned from Partner Authentication
           schema:
             type: string
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          schema:
-            type: string
-            example: 'application/json, application/xml'
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -828,13 +739,6 @@ paths:
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Consumer details
         content:
@@ -875,20 +779,6 @@ paths:
             pattern: ''
             type: string
             example: b06cf32dd2222b32e31083221063f561
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: Success
@@ -923,20 +813,6 @@ paths:
       operationId: GetConsumerForCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: Success
@@ -974,13 +850,6 @@ paths:
       operationId: CreateConsumer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1042,13 +911,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1125,13 +987,6 @@ paths:
             type: integer
             format: int64
             example: 1580558400
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1236,13 +1091,6 @@ paths:
             type: integer
             format: int64
             example: 1580558400
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1319,13 +1167,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1402,13 +1243,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1480,13 +1314,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1567,13 +1394,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: application/json or application/xml
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1652,13 +1472,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1738,13 +1551,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -1792,13 +1598,6 @@ paths:
         credentials on a single institution.
       operationId: GetCustomerAccountsByInstitutionLogin
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: institutionLoginId
           in: path
@@ -1858,13 +1657,6 @@ paths:
             type: integer
             format: int32
             example: 0
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: interactive
           in: header
           description: 'False'
@@ -1937,13 +1729,6 @@ paths:
       description: Get details for the specified account.
       operationId: GetCustomerAccount
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -2001,13 +1786,6 @@ paths:
       description: Get details for all accounts owned by the specified customer.
       operationId: GetCustomerAccounts
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: status
           in: query
@@ -2069,13 +1847,6 @@ paths:
             type: integer
             format: int32
             example: 0
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
@@ -2100,13 +1871,6 @@ paths:
         the specified institution.
       operationId: GetCustomerAccountsByInstitution
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: institutionId
           in: path
@@ -2201,13 +1965,6 @@ paths:
             type: integer
             format: int32
             example: 0
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -2254,13 +2011,6 @@ paths:
         complete. In the event of a timeout condition, retry the call.
       operationId: GetAccountOwner
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -2305,13 +2055,6 @@ paths:
           …&start=6&limit=5
       operationId: GetCustomers
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: search
           in: query
           description: >-
@@ -2417,13 +2160,6 @@ paths:
           schema:
             type: string
             example: '0'
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
@@ -2487,14 +2223,6 @@ paths:
         before enrolling in a paid plan will return HTTP 429 (Too Many
         Requests).
       operationId: AddCustomer
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: The Fields For The New Customer
         content:
@@ -2543,14 +2271,6 @@ paths:
         OAuth for testing OAuth implementation as well as other Finbank testing
         institutions.
       operationId: AddTestingCustomer
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: The Fields For The New Customer
         content:
@@ -2589,13 +2309,6 @@ paths:
         return HTTP 404.
       operationId: GetCustomerWithApplicationData
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
@@ -2739,13 +2452,6 @@ paths:
         been created, the service will return HTTP 400 (Bad Request).
       operationId: GenerateStatementReport
       parameters:
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
@@ -2764,7 +2470,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -2805,13 +2511,6 @@ paths:
           …&start=6&limit=5
       operationId: GetCustomerTransactions(All)
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: fromDate
           in: query
@@ -2892,13 +2591,6 @@ paths:
       description: Get details for the specified transaction.
       operationId: GetCustomerTransaction
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: transactionId
           in: path
@@ -2951,13 +2643,6 @@ paths:
         …&start=6&limit=5
       operationId: GetCustomerAccountTransactions
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -3074,13 +2759,6 @@ paths:
         There cannot be more than 24 months between fromDate and toDate.
       operationId: GenerateTransactionsReport
       parameters:
-        - name: Accept
-          in: header
-          description: JSON or XML output.
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: callbackUrl
           in: query
           description: >-
@@ -3135,7 +2813,7 @@ paths:
         required: false
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -3220,13 +2898,6 @@ paths:
         Get Loan Payment Details V2
       operationId: GetLoanPaymentDetails
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -3275,20 +2946,6 @@ paths:
           schema:
             type: string
             example: xh67j3xmt47e-1-port
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -3335,13 +2992,6 @@ paths:
         Service.
       operationId: SubscribeToTxPushNotifications
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -3436,20 +3086,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/PurposeParameter'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -3572,14 +3208,6 @@ paths:
 
         Generate Finicity Connect URL (Fix)
       operationId: GenerateConnectURLAllTypes
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -3596,7 +3224,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -3686,20 +3314,6 @@ paths:
           schema:
             type: string
             example: xh67j3xmt47e-1-port
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -3732,13 +3346,6 @@ paths:
         Note: This is a premium service, billable per every successful API call.
       operationId: GetAccountACHDetails
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -3769,14 +3376,6 @@ paths:
         Enroll a testing customer. A testing customer may only register accounts
         with FinBank institutions.
       operationId: AddTestingCustomerV1
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: The Fields For The New Testing Customer
         content:
@@ -3837,20 +3436,6 @@ paths:
           schema:
             type: string
         - $ref: '#/components/parameters/PurposeParameter'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -3947,13 +3532,6 @@ paths:
         for testing accounts (accounts on institution 101732).
       operationId: CreateTxPushTestTransaction
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -4023,20 +3601,6 @@ paths:
           explode: true
           schema:
             type: string
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/PurposeParameter'
       responses:
         '200':
@@ -4074,14 +3638,6 @@ paths:
         before enrolling in a paid plan will return HTTP 429 (Too Many
         Requests).
       operationId: AddCustomerV1
-      parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: The Fields For The New Customer
         content:
@@ -4165,14 +3721,6 @@ paths:
         See the endpoint Generate Finicity Connect URL (Lending) for additional
         details on a non email implementation.
       operationId: SendConnectEmail
-      parameters:
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         description: Expected body to be sent with the request
         content:
@@ -4203,7 +3751,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4241,7 +3789,7 @@ paths:
             example: 12345
       responses:
         '200':
-          description: 'todo'
+          description: todo
         default:
           description: The token has expired.
           content:
@@ -4267,7 +3815,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4289,7 +3837,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4329,7 +3877,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4368,7 +3916,7 @@ paths:
             example: 1007302745
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4389,13 +3937,6 @@ paths:
         institutions using OAuth connections.
       operationId: GetAppRegistrationStatusV2
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          schema:
-            type: string
-            default: application/json
-            example: application/json
         - name: preAppId
           in: query
           description: Look up the status of an app by the preAppId
@@ -4468,7 +4009,7 @@ paths:
             example: 20
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4495,20 +4036,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/PurposeParameter'
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -4550,20 +4077,6 @@ paths:
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -4623,20 +4136,6 @@ paths:
           explode: true
           schema:
             type: string
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
-        - name: Content-Type
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       responses:
         '200':
           description: OK
@@ -4737,7 +4236,7 @@ paths:
         - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
-          description: 'todo'
+          description: todo
         default:
           description: The token has expired.
           content:
@@ -4756,13 +4255,6 @@ paths:
         generated specific reports to better bill those branches
       operationId: InvoiceBillingEndpoint
       parameters:
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: partnerId
           in: path
           description: Partner ID From Developer Portal
@@ -4814,7 +4306,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4842,13 +4334,6 @@ paths:
         call.
       operationId: GetAvailableBalance-Live
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -4860,7 +4345,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4891,13 +4376,6 @@ paths:
         call. Enrollment is required.
       operationId: GetAvailableBalance
       parameters:
-        - name: Accept
-          in: header
-          description: 'application/json, application/xml'
-          required: true
-          schema:
-            type: string
-            example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
@@ -4909,7 +4387,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -4965,13 +4443,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: JSON or XML output.
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: fromDate
           in: query
           description: >-
@@ -4992,7 +4463,7 @@ paths:
         required: false
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -5059,13 +4530,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: JSON or XML output.
-          required: true
-          schema:
-            type: string
-            example: application/json
         - name: fromDate
           in: query
           description: >-
@@ -5086,7 +4550,7 @@ paths:
         required: false
       responses:
         '200':
-          description: 'todo'
+          description: todo
           content:
             application/json:
               schema:
@@ -5143,13 +4607,6 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -5249,13 +4706,6 @@ paths:
             type: integer
             format: int64
             example: 1580558400
-        - name: Accept
-          in: header
-          description: Replace 'json' with 'xml' if preferred
-          required: true
-          schema:
-            type: string
-            example: application/json
       requestBody:
         content:
           application/json:
@@ -17722,8 +17172,8 @@ components:
           example: '123412134'
     BorrowerType:
       enum:
-        - 'primary'
-        - 'jointBorrower'
+        - primary
+        - jointBorrower
       type: string
       example: primary
     Content:
