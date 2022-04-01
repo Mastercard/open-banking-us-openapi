@@ -1,5 +1,6 @@
 # finicity-openapi
-[![](https://prod-finweb-frontend.s3-us-west-2.amazonaws.com/wp-content/uploads/20210512010711/Finicity_mc-logo-400x162.png)](https://www.finicity.com/)
+[![](./res/logo.png)](https://www.finicity.com/#gh-light-mode-only)
+[![](./res/logo-dark.png)](https://www.finicity.com/#gh-dark-mode-only)
 
 ## Overview
 
@@ -26,14 +27,16 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 * The [integration test project](./tests) generates an API client library from [finicity.yaml](./finicity.yaml) ([OpenAPI Generator](https://openapi-generator.tech/) is used for that)
 * A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
 
-[![](./res/dashboard.png)](./res/dashboard.png?raw=true)
+[![](./res/dashboard.png)](./res/dashboard.png?raw=true#gh-light-mode-only)
+[![](./res/dashboard-dark.png)](./res/dashboard.png?raw=true#gh-dark-mode-only)
 
 * Before running the tests, you must:
   1. Call `addTestingCustomer` and note the **Customer ID** returned
   2. Use [Finicity Connect](https://docs.finicity.com/) and `generateConnectUrlV2`. Open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
   3. Call `refreshCustomerAccounts`
 
-[![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true)
+[![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)
+[![](./res/connect-for-tests-dark.png)](./res/connect-for-tests.png?raw=true#gh-dark-mode-only)
 
 #### Run Tests Locally
 
