@@ -8,14 +8,17 @@ info:
     ![](https://prod-finweb-frontend.s3-us-west-2.amazonaws.com/wp-content/uploads/20210512010711/Finicity_mc-logo-400x162.png)
   contact:
     name: Finicity
-    url: 'https://www.finicity.com'
+    email: business.development@finicity.com
+    url: 'https://www.finicity.com/contact/'
   version: 1.0.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
 tags:
   - name: Authentication
+    description: Generate authentication tokens and manage credentials
   - name: Connect
+    description: Allow your customers to grant Finicity authorization and access their financial data
   - name: Customer
   - name: Consumer
   - name: Institutions
@@ -194,142 +197,62 @@ paths:
     post:
       tags:
         - Connect
-      summary: "\U0001F6A7 Generate V2 Connect URL - Joint Borrower"
-      description: >-
+      summary: Generate Connect URL V2 - Joint Borrower
+      description: |-
         Generates a Connect 2.0 URL link to add within your own applications.
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect App completes, and more.
-
-
-        Note: Contact your Sales Account Team to set up the `experience`
-        parameter.
-
-
-        MVS prompts both the primary and joint borrower to enter each of their
-        financial, payroll, and paystub information in the same Connect
-        session. 
-         
-        You can prepopulate the consumer's SSN to display on the Find employment
-        records page at the beginning of the MVS payroll app. Pass the SSN value
-        for the consumer in the body of the request call.
-      operationId: GenerateV2ConnectURL-JointBorrower
-      requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConnectUrlRequest-JointBorrower'
-            example:
-              partnerId: '1234583871234'
-              borrowers:
-                - customerId: '1005061234'
-                  consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-                  type: primary
-                  optionalConsumerInfo:
-                    ssn: '123412134'
-                    dob: 315576000
-                - customerId: '1005061235'
-                  consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-                  type: jointBorrower
-                  optionalConsumerInfo:
-                    ssn: '351225513'
-                    dob: 625726800
-              webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-              webhookContentType: application/json
-              experience: default
-              fromDate: 1607450357
-              reportCustomFields:
-                - label: loanID
-                  value: '12345'
-                  shown: true
-                - label: branchID
-                  value: '55555'
-                  shown: false
-              singleUseUrl: true
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectUrl'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /connect/v2/send/email/jointBorrower:
-    post:
-      tags:
-        - Connect
-      summary: "\U0001F6A7 Send V2 Connect Email - Joint Borrower"
-      description: >-
-        Send a Connect email to at least one of the joint borrower's email
-        addresses. When the consumer opens the email, MVS prompts both the
-        primary and joint borrower to enter each of their financial, payroll,
-        and paystub information in the same Connect session.
-
 
         Use the `experience` parameter to call Connect (per session) in the body
         of the request. Configure the `experience` parameter to change the brand
         color, logo, icon, which credit decisioning report to generate when the
         Connect application completes, and more.
 
+        Note: Contact your Sales Account Team to set up the `experience`
+        parameter.
+
+        MVS prompts both the primary and joint borrower to enter each of their
+        financial, payroll, and paystub information in the same Connect
+        session. 
+         
+        You can prepopulate the consumer's SSN to display on the "Find employment"
+        records page at the beginning of the MVS payroll app. Pass the SSN value
+        for the consumer in the body of the request call.
+      operationId: GenerateJointBorrowerConnectUrlV2
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequestV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateJointBorrowerConnectUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/v2/send/email/jointBorrower:
+    post:
+      tags:
+        - Connect
+      summary: Send Connect Email V2 - Joint Borrower
+      description: |-
+        Send a Connect email to at least one of the joint borrower's email
+        addresses. 
+
+        When the consumer opens the email, MVS prompts both the
+        primary and joint borrower to enter each of their financial, payroll,
+        and paystub information in the same Connect session.
+
+        Use the `experience` parameter to call Connect (per session) in the body
+        of the request. Configure the `experience` parameter to change the brand
+        color, logo, icon, which credit decisioning report to generate when the
+        Connect application completes, and more.
 
         Note: Contact your Sales Account Team to set up the `experience`
         parameter.
 
-
-        You can prepopulate the consumer's SSN to display on the Find employment
-        records page at the beginning of the MVS payroll app. Pass the SSN value
-        for the consumer in the body of the request call.
-      operationId: SendV2ConnectEmail-JointBorrower
+        MVS Developers: You can pre-populate the consumer's SSN on the Find
+        employment records page at the beginning of the MVS payroll app. Pass
+        the SSN value for the consumer in the body of the request call.
+      operationId: SendJointBorrowerConnectEmailV2
       requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/V2ConnectEmailRequest-JointBorrower'
-            example:
-              partnerId: '1234583871234'
-              borrowers:
-                - customerId: '1005061234'
-                  consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-                  type: primary
-                  optionalConsumerInfo:
-                    ssn: '123412134'
-                    dob: '315576000'
-                - customerId: '1005061235'
-                  consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-                  type: jointBorrower
-                  optionalConsumerInfo:
-                    ssn: '351225513'
-                    dob: '625726800'
-              experience: default
-              webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-              webhookContentType: application/json
-              email:
-                to: fin.user@finicity.com
-                from: testLender@test.com
-                supportPhone: 800-555-5555
-                subject: 'Verify your assets, income and employment'
-                firstName: Marvin and Jenny
-                institutionName: Acme Lending
-                institutionAddress: '222 Winipeg Drive SLC UT, 84109'
-                signature:
-                  - Cindy Mayfield
-                  - Senior Loan Officer
-                  - Direct 123-456-7890
-              fromDate: 12345678
-              reportCustomFields:
-                - label: loanID
-                  value: '12345'
-                  shown: true
-                - label: branchID
-                  value: '55555'
-                  shown: false
-              singleUseUrl: true
-        required: true
+        $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequestV2'
       responses:
         '200':
           $ref: '#/components/responses/SendConnectEmailResponse'
@@ -1294,8 +1217,8 @@ paths:
                 $ref: '#/components/schemas/RefreshVOIE-PayrollReportResponse'
               example:
                 payrollData:
-                  ssn: '999990000'
-                  dob: 315576000
+                  ssn: '999999999'
+                  dob: 470275200
                   reportId: abcdefghijkl-voiepayroll
                 reportCustomFields:
                   - label: loanID
@@ -3627,8 +3550,8 @@ paths:
                 $ref: '#/components/schemas/GenerateVOE-PayrollReportResponse'
               example:
                 payrollData:
-                  ssn: '999990000'
-                  dob: 315576000
+                  ssn: '999999999'
+                  dob: 470275200
                   reportId: abcdefghijkl-voiepayroll
                 reportCustomFields:
                   - label: loanID
@@ -3902,6 +3825,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectEmailRequest'
+    GenerateJointBorrowerConnectUrlRequestV2:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectJointBorrowerUrlRequest'
+    SendJointBorrowerConnectEmailRequestV2:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectJointBorrowerEmailRequest'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3934,6 +3869,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectEmailUrl'
+    GenerateJointBorrowerConnectUrlResponse:
+      description: The URL link was successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectUrl'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -4191,7 +4132,7 @@ components:
         webhookHeaders:
           $ref: '#/components/schemas/WebhookHeaders'
         optionalConsumerInfo:
-          $ref: '#/components/schemas/OptionalConsumerInfo'
+          $ref: '#/components/schemas/ConsumerInfo'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
         experience:
@@ -4295,7 +4236,126 @@ components:
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
         optionalConsumerInfo:
-          $ref: '#/components/schemas/OptionalConsumerInfo'
+          $ref: '#/components/schemas/ConsumerInfo'
+    ConnectJointBorrowerUrlRequest:
+      required:
+        - partnerId
+        - borrowers
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        borrowers:
+          $ref: '#/components/schemas/Borrowers'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        institutionSettings:
+          $ref: '#/components/schemas/InstitutionSettings'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        fromDate:
+          $ref: '#/components/schemas/ConnectFromDate'
+        reportCustomFields:
+          $ref: '#/components/schemas/ReportCustomFields'
+        singleUseUrl:
+          $ref: '#/components/schemas/SingleUseUrl'
+    ConnectJointBorrowerEmailRequest:
+      required:
+        - partnerId
+        - borrowers
+        - email
+        - experience
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        borrowers:
+          $ref: '#/components/schemas/Borrowers'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        institutionSettings:
+          $ref: '#/components/schemas/InstitutionSettings'
+        email:
+          $ref: '#/components/schemas/EmailOptions'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        fromDate:
+          $ref: '#/components/schemas/ConnectFromDate'
+        reportCustomFields:
+          $ref: '#/components/schemas/ReportCustomFields'
+        singleUseUrl:
+          $ref: '#/components/schemas/SingleUseUrl'
+    Borrowers:
+      type: array
+      items:
+        $ref: '#/components/schemas/Borrower'
+      description: >-
+        (MVS) Array of borrowers to pass the primary and joint borrower's
+        customer and consumer IDs.
+    Borrower:
+      required:
+        - customerId
+        - consumerId
+        - type
+      type: object
+      properties:
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        consumerId:
+          $ref: '#/components/schemas/ConsumerId'
+        type:
+          $ref: '#/components/schemas/BorrowerType'
+        optionalConsumerInfo:
+          $ref: '#/components/schemas/ConsumerInfo'
+    BorrowerType:
+      enum:
+        - primary
+        - jointBorrower
+      type: string
+      example: primary
+    ConsumerInfo:
+      required:
+        - ssn
+      type: object
+      properties:
+        ssn:
+          $ref: '#/components/schemas/ConsumerFullSocialSecurityNumberNoHyphens'
+        dob:
+          $ref: '#/components/schemas/ConsumerDateOfBirth'
+    ConsumerFullSocialSecurityNumberNoHyphens:
+      type: string
+      description: (MVS-optional) The full SSN without hyphens that matches the consumer's SSN.
+      example: '999999999'
+    ConsumerDateOfBirth:
+      type: integer
+      format: int64
+      description: |-
+        The consumer's date of birth in Unix epoch time (in seconds). 
+        The timestamp is UTC at the start of day of birth.
+
+        Example: If the DOB is 1/1/1980, then the timestamp passed is 315576000. 
+
+        Note: DOB's prior to 1970 result in a negative timestamp; this is acceptable. 
+        To avoid errors, the DOB and consumer's DOB must match.
+
+        Note: All other timestamps in Decisioning are in MST.
+      example: 470275200
     RedirectUri:
       type: string
       description: |-
@@ -4478,7 +4538,7 @@ components:
         from:
           type: string
           description: The name of a person or business sending the Connect email.
-          example: testLender@test.com
+          example: test.lender@test.com
         supportPhone:
           type: string
           description: (Optional) The support phone number listed in the email.
@@ -4515,7 +4575,7 @@ components:
         customers.
       example:
         to: fin.user@finicity.com
-        from: testLender@test.com
+        from: test.lender@test.com
         supportPhone: 800-555-5555
         subject: Verify your income
         firstName: Bob
@@ -10104,20 +10164,9 @@ components:
       type: object
       properties:
         ssn:
-          type: string
-          description: The full SSN without hyphens that matches the consumer's SSN.
-          example: '999990000'
+          $ref: '#/components/schemas/ConsumerFullSocialSecurityNumberNoHyphens'
         dob:
-          type: string
-          description: >-
-            The consumer's date of birth is in Unix epoch time (in seconds). 
-            The timestamp is UTC at the start of day of birth. <br>   <br>
-            Example: If the DOB is 1/1/1980, then the timestamp passed is
-            315576000. <br>   <br> Note: DOB's prior to 1970 result in a
-            negative timestamp; this is acceptable. To avoid errors, the DOB and
-            consumer's DOB must match.   <br> Note: All other timestamps in
-            Decisioning are in MST.
-          example: '315576000'
+          $ref: '#/components/schemas/ConsumerDateOfBirth'
         reportId:
           type: string
           description: The `reportId` of the original VOIE Payroll report.
@@ -10236,23 +10285,6 @@ components:
         employerNames:
           - ACME INC
         reportId: abcdefghijkl-voiepayroll
-    OptionalConsumerInfo:
-      required:
-        - ssn
-      type: object
-      properties:
-        ssn:
-          type: string
-          description: >-
-            (MVS-optional) The full SSN without hyphens that matches the
-            consumer's SSN.
-          example: '123412134'
-    BorrowerType:
-      enum:
-        - primary
-        - jointBorrower
-      type: string
-      example: primary
     PayrollReportConstraints:
       required:
         - payrollData
@@ -10264,219 +10296,13 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
       example:
         payrollData:
-          ssn: '999990000'
-          dob: 315576000
+          ssn: '999999999'
+          dob: 470275200
           reportId: abcdefghijkl-voiepayroll
         reportCustomFields:
           - label: loanID
             value: '12345'
             shown: true
-    ConnectUrlRequest-JointBorrower:
-      required:
-        - partnerId
-        - borrowers
-      type: object
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        borrowers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Borrowers'
-          description: >-
-            (MVS) Array of borrowers to pass the primary and joint borrower's
-            customer and consumer IDs.
-          example:
-            - customerId: '1005061234'
-              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-              type: primary
-              optionalConsumerInfo:
-                ssn: '123412134'
-                dob: '315576000'
-            - customerId: '1005061235'
-              consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-              type: jointBorrower
-              optionalConsumerInfo:
-                ssn: '351225513'
-                dob: '625726800'
-        redirectUri:
-          type: string
-          description: >-
-            The URL that customers will be redirected to after completing
-            Finicity Connect. <br> *Required unless Connect is embedded inside
-            your application. (iframe)*
-          example: 'https://www.finicity.com/connect/'
-        webhook:
-          type: string
-          description: >-
-            The publicly available URL you want to be notified with events as
-            the user progresses through the application. See [Connect Webhook
-            Event](https://docs.finicity.com/connect-webhooks/) for event
-            details.
-          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType:
-          $ref: '#/components/schemas/WebhookContentType'
-        webhookData:
-          $ref: '#/components/schemas/WebhookData'
-        webhookHeaders:
-          $ref: '#/components/schemas/WebhookHeaders'
-        institutionSettings:
-          $ref: '#/components/schemas/InstitutionSettings'
-        experience:
-          $ref: '#/components/schemas/Experience'
-        fromDate:
-          $ref: '#/components/schemas/ConnectFromDate'
-        reportCustomFields:
-          $ref: '#/components/schemas/ReportCustomFields'
-        singleUseUrl:
-          type: boolean
-          description: >-
-            True: The URL link expires after a Connect session successfully
-            completes. <br> <br> Note: When the `singleUseUrl` and the
-            `experience` parameters are passed in the same call, the
-            `singleUseUrl` value overrides the `singleUseUrl` value configured
-            in the `experience` parameter.
-          example: true
-      example:
-        partnerId: '1234583871234'
-        borrowers:
-          - customerId: '1005061234'
-            consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-            type: primary
-            optionalConsumerInfo:
-              ssn: '123412134'
-              dob: '315576000'
-          - customerId: '1005061235'
-            consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-            type: jointBorrower
-            optionalConsumerInfo:
-              ssn: '351225513'
-              dob: '625726800'
-        webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType: application/json
-        experience: default
-        fromDate: 1607450357
-        reportCustomFields:
-          - label: loanID
-            value: '12345'
-            shown: true
-          - label: branchID
-            value: '55555'
-            shown: false
-        singleUseUrl: true
-    Borrowers:
-      required:
-        - customerId
-        - consumerId
-        - type
-      type: object
-      properties:
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        type:
-          $ref: '#/components/schemas/BorrowerType'
-        optionalConsumerInfo:
-          $ref: '#/components/schemas/OptionalConsumerInfo'
-    V2ConnectEmailRequest-JointBorrower:
-      required:
-        - partnerId
-        - borrowers
-        - email
-        - experience
-      type: object
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        borrowers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Borrowers'
-          description: >-
-            (MVS) Array of borrowers to pass the primary and joint borrower's
-            customer and consumer IDs.
-          example:
-            - customerId: '1005061234'
-              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-              type: primary
-              optionalConsumerInfo:
-                ssn: '123412134'
-                dob: '315576000'
-            - customerId: '1005061235'
-              consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-              type: jointBorrower
-              optionalConsumerInfo:
-                ssn: '351225513'
-                dob: '625726800'
-        redirectUri:
-          type: string
-          description: >-
-            The URL that customers are redirected after they complete the
-            Connect application.  If this parameter isn't specified, then a
-            thank you screen appears and the customer ends Connect.
-          example: 'https://www.finicity.com/connect/'
-        webhook:
-          type: string
-          description: >-
-            The URL used to send notifications about events as the user
-            interacts with screens throughout the Connect application. See
-            [Connect Webhooks]( https://docs.finicity.com/connect-webhooks/)
-          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType:
-          $ref: '#/components/schemas/WebhookContentType'
-        webhookData:
-          $ref: '#/components/schemas/WebhookData'
-        webhookHeaders:
-          $ref: '#/components/schemas/WebhookHeaders'
-        institutionSettings:
-          $ref: '#/components/schemas/InstitutionSettings'
-        email:
-          $ref: '#/components/schemas/EmailOptions'
-        experience:
-          $ref: '#/components/schemas/Experience'
-        fromDate:
-          $ref: '#/components/schemas/ConnectFromDate'
-        reportCustomFields:
-          $ref: '#/components/schemas/ReportCustomFields'
-        singleUseUrl:
-          type: boolean
-          description: >-
-            True: The URL link expires after a Connect session successfully
-            completes. <br> <br> Note: When the `singleUseUrl` and the
-            `experience` parameters are passed in the same call, the
-            `singleUseUrl` value overrides the `singleUseUrl` value configured
-            in the `experience` parameter.
-          example: true
-      example:
-        partnerId: '1234583871234'
-        borrowers:
-          - customerId: '1005061234'
-            consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
-            type: primary
-            optionalConsumerInfo:
-              ssn: '123412134'
-              dob: '315576000'
-          - customerId: '1005061235'
-            consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
-            type: jointBorrower
-            optionalConsumerInfo:
-              ssn: '351225513'
-              dob: '625726800'
-        email:
-          to: fin.user@finicity.com
-          from: testLender@test.com
-          supportPhone: 800-555-5555
-          subject: Verify your income
-          firstName: Bob
-          institutionName: Acme Lending
-          institutionAddress: '222 Winipeg Drive SLC UT, 84109'
-          signature:
-            - Cindy Mayfield
-            - Senior Loan Officer
-            - Direct 123-456-7890
-        experience: default
-        singleUseUrl: true
     GetAvailableBalance-LiveResponse:
       required:
         - id
