@@ -57,7 +57,7 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 When updating the Finicity API specification:
 1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) or [Redoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/finicity.yaml)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
-3. Prettify the YAML using `npx prettier --write --single-quote finicity.yaml`
+3. Prettify the YAML using `npx prettier --write --single-quote --prose-wrap always finicity.yaml`
 4. Update and/or add tests to the [integration test project](./tests)
 
 ## Support

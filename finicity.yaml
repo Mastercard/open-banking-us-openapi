@@ -20,9 +20,13 @@ tags:
   - name: Customers
     description: Enroll and manage customers
   - name: Connect 🔗
-    description: Allow customers to log into their financial institutions and grant Finicity authorization
+    description:
+      Allow customers to log into their financial institutions and grant
+      Finicity authorization
   - name: Consumers
-    description: Create and manage consumers associated with customers in order to use report services
+    description:
+      Create and manage consumers associated with customers in order to use
+      report services
   - name: Accounts
   - name: Institutions
   - name: Verify Income
@@ -50,15 +54,18 @@ paths:
       tags:
         - Authentication
       summary: Create Access Token
-      description: |-
-        Send Partner ID and Partner Secret to the Partner Authentication
-        service to obtain a token for accessing Finicity APIs.
+      description: >-
+        Send Partner ID and Partner Secret to the Partner Authentication service
+        to obtain a token for accessing Finicity APIs.
+
         * The token is valid for two hours and is required on all calls to the
         Finicity APIs
+
         * As a best practice, use a single token for all calls. Assign a
         timestamp for each token, and then check the current timestamp before
         making any calls. If the token is greater than 90 minutes, generate a
         new one.
+
         * ⚠️ After five failed attempts to authenticate, your account is locked.
         Contact support@finicity.com to get help resetting your account.
       operationId: CreateToken
@@ -77,12 +84,14 @@ paths:
       tags:
         - Authentication
       summary: Modify Partner Secret
-      description: |-
+      description: >-
         Change the Partner Secret that is used to authenticate this partner.
-        The secret does not expire, but can be changed by calling this
-        endpoint. A valid Partner Secret may contain upper and lowercase
-        characters, numbers, and the characters !, @, #, $, %, &, *, _, -, +. It
-        must include at least one number and at least one letter, and its length
+
+
+        The secret does not expire, but can be changed by calling this endpoint.
+        A valid Partner Secret may contain upper and lowercase characters,
+        numbers, and the characters !, @, #, $, %, &, *, _, -, +. It must
+        include at least one number and at least one letter, and its length
         should be between 12 and 255 characters.
       operationId: ModifyPartnerSecret
       requestBody:
@@ -101,16 +110,19 @@ paths:
       tags:
         - Connect 🔗
       summary: Generate Connect URL V2
-      description: |-
+      description: >-
         Generate a Connect 2.0 URL link to add within your own applications.
+
 
         Use the `experience` parameter to call Connect (per session) in the body
         of the request. Configure the `experience` parameter to change the brand
         color, logo, icon, which credit decisioning report to generate when the
         Connect application completes, and more.
 
+
         Note: Contact your Sales Account Team to set up the `experience`
         parameter.
+
          
         MVS Developers: You can pre-populate the consumer's SSN on the "Find
         employment records" page at the beginning of the MVS payroll app. Pass
@@ -130,11 +142,14 @@ paths:
       tags:
         - Connect 🔗
       summary: Generate Lite Connect URL V2
-      description: |-
-        Connect Lite is a variation of Connect Full (`POST /connect/v2/generate`), which has a limited set of
-        features.
+      description: >-
+        Connect Lite is a variation of Connect Full (`POST
+        /connect/v2/generate`), which has a limited set of features.
+
         * Sign in, user's credentials, and Multi-Factor Authentication (MFA).
+
         * No user account management.
+
 
         The Connect Web SDK isn't a requirement when using Connect lite.
         However, if you want to use the SDK events, routes, and user events,
@@ -154,10 +169,13 @@ paths:
       tags:
         - Connect 🔗
       summary: Generate Fix Connect URL V2
-      description: |-
+      description: >-
         Use the Connect Fix endpoint when the following conditions occur:
+
         * The connection to the user's financial institution is lost
+
         * The user's credentials were updated (for any number of reasons)
+
         * The user's MFA challenge has expired
       operationId: GenerateFixConnectUrlV2
       requestBody:
@@ -176,8 +194,9 @@ paths:
       tags:
         - Connect 🔗
       summary: Send Connect Email V2
-      description: |-
-        Same as Connect Full (`POST /connect/v2/generate`) but send a Connect email to a consumer.
+      description: >-
+        Same as Connect Full (`POST /connect/v2/generate`) but send a Connect
+        email to a consumer.
       operationId: SendConnectEmailV2
       requestBody:
         $ref: '#/components/requestBodies/SendConnectEmailRequestV2'
@@ -193,12 +212,13 @@ paths:
       tags:
         - Connect 🔗
       summary: Generate Connect URL V2 - Joint Borrower
-      description: |-
-        Same as Connect Full (`POST /connect/v2/generate`) but for joint borrowers.
+      description: >-
+        Same as Connect Full (`POST /connect/v2/generate`) but for joint
+        borrowers.
+
 
         MVS prompts both the primary and joint borrower to enter each of their
-        financial, payroll, and paystub information in the same Connect
-        session.
+        financial, payroll, and paystub information in the same Connect session.
       operationId: GenerateJointBorrowerConnectUrlV2
       requestBody:
         $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequestV2'
@@ -214,13 +234,15 @@ paths:
       tags:
         - Connect 🔗
       summary: Send Connect Email V2 - Joint Borrower
-      description: |-
-        Same as Connect Joint Borrower (`POST /connect/v2/generate/jointBorrower`) but send a Connect email 
-        to at least one of the joint borrower's email addresses. 
+      description: >-
+        Same as Connect Joint Borrower (`POST
+        /connect/v2/generate/jointBorrower`) but send a Connect email  to at
+        least one of the joint borrower's email addresses. 
 
-        When the consumer opens the email, MVS prompts both the
-        primary and joint borrower to enter each of their financial, payroll,
-        and paystub information in the same Connect session.
+
+        When the consumer opens the email, MVS prompts both the primary and
+        joint borrower to enter each of their financial, payroll, and paystub
+        information in the same Connect session.
       operationId: SendJointBorrowerConnectEmailV2
       requestBody:
         $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequestV2'
@@ -240,17 +262,17 @@ paths:
         Enroll a testing customer (Test Drive accounts).
 
 
-        For using Testing customers, register a test application with your systems
-        engineer or account manager. Then use that testing `applicationId` when
-        creating testing customers. Testing customers can only be assigned to
-        testing OAuth applications and can only add accounts to Finbank OAuth for
-        testing OAuth implementation as well as other Finbank testing
-        institutions.
+        For using Testing customers, register a test application with your
+        systems engineer or account manager. Then use that testing
+        `applicationId` when creating testing customers. Testing customers can
+        only be assigned to testing OAuth applications and can only add accounts
+        to Finbank OAuth for testing OAuth implementation as well as other
+        Finbank testing institutions.
 
 
         Note: this is a v2 service that replaces v1. The new version supports
-        passing an `applicationId` for assigning `applicationId`'s to customers if
-        a partner has more than one registered app.
+        passing an `applicationId` for assigning `applicationId`'s to customers
+        if a partner has more than one registered app.
       operationId: AddTestingCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -272,8 +294,8 @@ paths:
 
 
         Note: this is a v2 service that replaces v1. The new version supports
-        passing an `applicationId` for assigning `applicationId`'s to customers if
-        a partner has more than one registered app.
+        passing an `applicationId` for assigning `applicationId`'s to customers
+        if a partner has more than one registered app.
       operationId: AddCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -293,14 +315,14 @@ paths:
       summary: 'Get Customers'
       description: >-
         Find all customers enrolled by the current partner, where the search
-        text is found in the customer's username or any combination of `firstName`
-        and `lastName` fields. If no search text is provided, return all
-        customers.
+        text is found in the customer's username or any combination of
+        `firstName` and `lastName` fields. If no search text is provided, return
+        all customers.
 
 
-        If the value of `moreAvailable` in the response is `true`, you can retrieve
-        the next page of results by increasing the value of the start parameter
-        in your next request: `…&start=6&limit=5`.
+        If the value of `moreAvailable` in the response is `true`, you can
+        retrieve the next page of results by increasing the value of the start
+        parameter in your next request: `…&start=6&limit=5`.
       operationId: GetCustomers
       parameters:
         - name: search
@@ -318,7 +340,8 @@ paths:
             $ref: '#/components/schemas/CustomerUsername'
         - name: start
           in: query
-          description: Starting index for this page of results. The default value is 1.
+          description:
+            Starting index for this page of results. The default value is 1.
           schema:
             type: integer
             format: int64
@@ -337,8 +360,8 @@ paths:
         - name: type
           in: query
           description: >-
-            "testing" or "active" to return only customers of that
-            type, or leave empty to return all customers.
+            "testing" or "active" to return only customers of that type, or
+            leave empty to return all customers.
           schema:
             $ref: '#/components/schemas/CustomerType'
       responses:
@@ -354,7 +377,8 @@ paths:
         - Customers
       summary: Get Customer With App Data
       description: >-
-        Retrieve a customer by ID along with additional details about the OAuth application.
+        Retrieve a customer by ID along with additional details about the OAuth
+        application.
       operationId: GetCustomerWithAppData
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -505,11 +529,12 @@ paths:
       parameters:
         - name: search
           in: query
-          description: |-
+          description: >-
             Match the text for the query. URL-encoded required. See Handling
             Spaces in Queries.
 
-            Note: To get a list of all FIs, leave the `search` parameter out of the body of the API call.
+            Note: To get a list of all FIs, leave the `search` parameter out of
+            the body of the API call.
 
             If the `search` parameter is in the body of the call but has no
             value, then the call returns an error.
@@ -518,11 +543,11 @@ paths:
             example: finbank
         - name: start
           in: query
-          description: |-
+          description: >-
             The starting page number of records returned. The default is 1.
 
-            Example: If the limit for each call is 25, then start=1
-            returns 1-25 records. If start=2 then records 26-51 are returned.
+            Example: If the limit for each call is 25, then start=1 returns 1-25
+            records. If start=2 then records 26-51 are returned.
           schema:
             type: integer
             format: int32
@@ -557,7 +582,8 @@ paths:
       parameters:
         - name: search
           in: query
-          description: Text to match or `*` to return all supported institutions.
+          description:
+            Text to match or `*` to return all supported institutions.
           required: true
           schema:
             type: string
@@ -690,7 +716,8 @@ paths:
       parameters:
         - name: consumerId
           in: path
-          description: Finicity ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity ID of the consumer (UUID with max length 32 characters)
           required: true
           schema:
             type: string
@@ -725,7 +752,8 @@ paths:
       parameters:
         - name: consumerId
           in: path
-          description: Finicity's ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
           schema:
             type: string
@@ -1816,7 +1844,8 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
-          description: The Finicity ID of the account to pull transaction history for
+          description:
+            The Finicity ID of the account to pull transaction history for
           required: true
           schema:
             type: integer
@@ -1837,8 +1866,8 @@ paths:
         institution.
 
 
-        Note: This is a premium service, billable per every successful API
-        call. 
+        Note: This is a premium service, billable per every successful API call.
+
 
 
         HTTP status of 200 means the account owner's name and address were
@@ -1878,7 +1907,7 @@ paths:
       tags:
         - Bank Statements
       summary: "\U0001F6A7 Get Customer Account Statement"
-      description: |-
+      description: >-
         Retrieve the customer's bank statements in PDF format. Up to 24 months
         of history is available depending on the financial institution. Since
         this is a premium service, charges incur per each successful statement
@@ -1886,25 +1915,16 @@ paths:
 
         Our list of [Supported
         Institutions](https://docs.finicity.com/institutions/) confirms that you
-        can retrieve statements for the following account types:
-        * Checking
-        * Savings 
-        * Money market
-        * CDs
-        * Investments
-        * Mortgage
-        * Credit cards
-        * Loans
-        * Line of credit
+        can retrieve statements for the following account types: * Checking *
+        Savings  * Money market * CDs * Investments * Mortgage * Credit cards *
+        Loans * Line of credit
 
-        Set request timeout: we recommend setting the timeout to 180
-        seconds to allow plenty of time for a response. 
+        Set request timeout: we recommend setting the timeout to 180 seconds to
+        allow plenty of time for a response. 
 
-        Error codes:
-        * HTTP 200: Success. The response is a binary string that you can
-        save as a PDF file.
-        * HTTP 203 : The response contains an MFA challenge question in
-        JSON format. 
+        Error codes: * HTTP 200: Success. The response is a binary string that
+        you can save as a PDF file. * HTTP 203 : The response contains an MFA
+        challenge question in JSON format. 
 
         Contact one of our system engineers for help in resolving this error.
       operationId: GetCustomerAccountStatement
@@ -2067,7 +2087,8 @@ paths:
             example: 1
         - name: limit
           in: query
-          description: Maximum number of entries for this page of results (max is 1000)
+          description:
+            Maximum number of entries for this page of results (max is 1000)
           schema:
             type: integer
             format: int64
@@ -2157,7 +2178,8 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
-          description: Finicity's ID of the account whose transactions are to be retrieved
+          description:
+            Finicity's ID of the account whose transactions are to be retrieved
           required: true
           schema:
             type: string
@@ -2191,7 +2213,8 @@ paths:
             example: 1
         - name: limit
           in: query
-          description: Maximum number of entries for this page of results (max is 1000)
+          description:
+            Maximum number of entries for this page of results (max is 1000)
           schema:
             type: integer
             format: int64
@@ -2337,7 +2360,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/StorePayStatementRequest'
-            example: |-
+            example: >-
               {
 
                   "label":lastPayPeriod,
@@ -2366,8 +2389,7 @@ paths:
         This returns the loan payment details of the customer for a loan-type
         account.
 
-        Note: This is a premium service, billable per every successful API
-        call.
+        Note: This is a premium service, billable per every successful API call.
       operationId: GetLoanPaymentDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2660,7 +2682,8 @@ paths:
             example: rceiqx616awa-assetsummary
         - name: onBehalfOf
           in: query
-          description: The name of the entity you are retrieving the report on behalf of.
+          description:
+            The name of the entity you are retrieving the report on behalf of.
           schema:
             type: string
         - $ref: '#/components/parameters/PurposeParameter'
@@ -2723,8 +2746,8 @@ paths:
           in: path
           description: >-
             Application ID you want to assign the customer to. This is the
-            `applicationId` value returned from the "Get App Registration Status"
-            endpoint
+            `applicationId` value returned from the "Get App Registration
+            Status" endpoint
           required: true
           schema:
             $ref: '#/components/schemas/ApplicationId'
@@ -2966,7 +2989,8 @@ paths:
             example: 88w4fbssrbja-prequalvoa
         - name: onBehalfOf
           in: query
-          description: The name of the entity you are retrieving the report on behalf of.
+          description:
+            The name of the entity you are retrieving the report on behalf of.
           schema:
             type: string
       responses:
@@ -3001,7 +3025,8 @@ paths:
         - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
-          description: Finicity's ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
           schema:
             type: string
@@ -3043,21 +3068,24 @@ paths:
         - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
-          description: Finicity's ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
         - name: reportId
           in: path
-          description: Finicity's ID of the report (UUID with max length 32 characters)
+          description:
+            Finicity's ID of the report (UUID with max length 32 characters)
           required: true
           schema:
             type: string
             example: 41h4nzppn37u
         - name: onBehalfOf
           in: query
-          description: The name of the entity you are retrieving the report on behalf of.
+          description:
+            The name of the entity you are retrieving the report on behalf of.
           schema:
             type: string
       responses:
@@ -3172,8 +3200,7 @@ paths:
         Timestamps are in Unix Epoch time.
 
 
-        Note: This is a premium service, billable per every successful API
-        call.
+        Note: This is a premium service, billable per every successful API call.
       operationId: GetAvailableBalance-Live
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3210,8 +3237,8 @@ paths:
         Timestamps are in Unix Epoch time.
 
 
-        Note: This is a premium service, billable per every successful API
-        call. Enrollment is required.
+        Note: This is a premium service, billable per every successful API call.
+        Enrollment is required.
       operationId: GetAvailableBalance
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3388,9 +3415,8 @@ paths:
       tags:
         - Verify Employment
       summary: "\U0001F6A7 Generate VOE - Payroll Report"
-      description: |-
-        Premium Service: A billable event when the API response is
-        successful. 
+      description: >-
+        Premium Service: A billable event when the API response is successful. 
 
         MVS Implementation Options: Direct API Integration
 
@@ -3403,13 +3429,13 @@ paths:
         and the `reportId` from the first VOIE-Payroll report generated after
         the Connect session.
 
-        After the call:
-        * Returns status HTTP 202 (accepted)
-        * A notification gets sent to the report callback URL if specified.
-        * The application making the call receives a notification sent by the
-        Report Listener Service indicating the report is ready. 
+        After the call: * Returns status HTTP 202 (accepted) * A notification
+        gets sent to the report callback URL if specified. * The application
+        making the call receives a notification sent by the Report Listener
+        Service indicating the report is ready. 
 
-        Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
+        Or it could enter a loop, wait about 20 seconds, and then call the
+        service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-PayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3456,9 +3482,8 @@ paths:
       tags:
         - Verify Employment
       summary: "\U0001F6A7 Generate VOE - Transactions Report"
-      description: |-
-        Premium Service: A billable event when the API response is
-        successful.
+      description: >-
+        Premium Service: A billable event when the API response is successful.
 
         MVS-Direct integration developers only
 
@@ -3473,13 +3498,13 @@ paths:
         descriptions without any dollar amounts so that income re-verification
         isn't necessary.
 
-        After the call:
-        * Returns status HTTP 202 (accepted)
-        * A notification gets sent to the report callback URL if specified.
-        * The application making the call receives a notification sent by the
-        Report Listener Service indicating the report is ready. 
+        After the call: * Returns status HTTP 202 (accepted) * A notification
+        gets sent to the report callback URL if specified. * The application
+        making the call receives a notification sent by the Report Listener
+        Service indicating the report is ready. 
 
-        Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
+        Or it could enter a loop, wait about 20 seconds, and then call the
+        service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-TransactionsReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3493,7 +3518,7 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
-          description: |-
+          description: >-
             The fromDate parameter is an Epoch Timestamp (in seconds), such as
             ?1494449017. Without this parameter, the report defaults to 120 days
             if available. This field will limit the amount of credit
@@ -3502,10 +3527,10 @@ paths:
 
             Example: ?fromDate={fromDate}
 
-            If included, the epoch timestamp should be 10 digits long and be within 120 days of
-            the present day. Extending the epoch timestamp beyond 10 digits or
-            beyond 120 days from the present date will default back to 120 days
-            of data. This query is optional.
+            If included, the epoch timestamp should be 10 digits long and be
+            within 120 days of the present day. Extending the epoch timestamp
+            beyond 10 digits or beyond 120 days from the present date will
+            default back to 120 days of data. This query is optional.
           schema:
             type: integer
             format: int64
@@ -3604,11 +3629,12 @@ paths:
       tags:
         - Analytics and Attributes
       summary: "\U0001F6A7 Get Consumer Attributes By ID - Beta"
-      description: |-
+      description: >-
         Used to retrieve a Consumer Attributes (CA) report for a customer. The
         `analytic_id` and the `created_date` are generated from the [Generate
         Consumer Attributes API-Beta]
-        (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/generate-consumer-attributes-beta). 
+        (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/generate-consumer-attributes-beta).
+
 
         Use the `analytic_id` and `customerId` to retrieve 12 months of data
         attributes according to the `To` and `From` date range of the report at
@@ -3617,14 +3643,9 @@ paths:
         If the current date is before the end of the calendar month, then the
         most recent month provides all available data up to the current date.
 
-        The CA data response is grouped into the following attribute objects:
-        * `accountIds`
-        * `dateRange`
-        * `income`
-        * `expenses`
-        * `netAmount`
-        * `nsf` (insufficient funds)
-        * `assets`
+        The CA data response is grouped into the following attribute objects: *
+        `accountIds` * `dateRange` * `income` * `expenses` * `netAmount` * `nsf`
+        (insufficient funds) * `assets`
             * `customer`
             * `account`
         * `liabilities`
@@ -3658,7 +3679,7 @@ components:
       name: Finicity-App-Token
       type: apiKey
       in: header
-      description: A token returned by the /authentication endpoint
+      description: A token returned by the `/authentication` endpoint
   requestBodies:
     CreateTokenRequest:
       required: true
@@ -3846,7 +3867,9 @@ components:
             CustomerNotFoundExample:
               $ref: '#/components/examples/CustomerNotFoundExample'
     ToManyRequestsErrorResponse:
-      description: The service can't accept more requests or is not available from the Test Drive.
+      description:
+        The service can't accept more requests or is not available from the
+        [Test Drive](https://signup.finicity.com/).
       content:
         application/json:
           schema:
@@ -3887,7 +3910,9 @@ components:
         code: '10010'
         status: '400'
         message: '"experience" must be a valid GUID'
-        user_message: 'One or more of the fields could not be validated. Please ensure you have entered the correct data.'
+        user_message:
+          'One or more of the fields could not be validated. Please ensure you
+          have entered the correct data.'
         tags: ''
     InvalidNewPartnerSecretExample:
       value:
@@ -3905,10 +3930,14 @@ components:
         code: '38007'
         status: '404'
         title: Connecting accounts error
-        user_message: Customer does not have any accounts associated with institutionLoginId.
+        user_message:
+          Customer does not have any accounts associated with
+          institutionLoginId.
         tags: ''
         level: 'error'
-        message: 'Customer does not have any accounts associated with institutionLoginId.'
+        message:
+          'Customer does not have any accounts associated with
+          institutionLoginId.'
     CustomerNotFoundExample:
       value:
         code: 14001
@@ -3929,7 +3958,7 @@ components:
     PurposeParameter:
       name: purpose
       in: query
-      description: |-
+      description: >-
         2-digit code from Permissible Purpose Codes, specifying the reason for
         retrieving this report.
       schema:
@@ -3973,7 +4002,8 @@ components:
           example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
         accountId:
           type: string
-          description: The generated Finicity ID of the account that encountered the error
+          description:
+            The generated Finicity ID of the account that encountered the error
           example: '5003507225'
         tags:
           type: string
@@ -3996,8 +4026,8 @@ components:
     InstitutionLoginId:
       type: string
       description: >-
-        An "Institution Login ID" (from the account record). Used in type "fix" in
-        order to pull up a fix flow for a specific set of accounts under one
+        An "Institution Login ID" (from the account record). Used in type "fix"
+        in order to pull up a fix flow for a specific set of accounts under one
         "Institution Login ID".
       example: '1007302745'
     PartnerCredentials:
@@ -4030,7 +4060,7 @@ components:
       required:
         - token
       type: object
-      description: |-
+      description: >-
         A temporary access token to be passed in the `Finicity-App-Token` HTTP
         Header of all subsequent API requests
       properties:
@@ -4269,88 +4299,101 @@ components:
           $ref: '#/components/schemas/ConsumerDateOfBirth'
     ConsumerFullSocialSecurityNumberNoHyphens:
       type: string
-      description: (MVS-optional) The full SSN without hyphens that matches the consumer's SSN.
+      description:
+        (MVS-optional) The full SSN without hyphens that matches the consumer's
+        SSN.
       example: '999999999'
     ConsumerDateOfBirth:
       type: integer
       format: int64
-      description: |-
-        The consumer's date of birth in Unix epoch time (in seconds). 
-        The timestamp is UTC at the start of day of birth.
+      description: >-
+        The consumer's date of birth in Unix epoch time (in seconds). The
+        timestamp is UTC at the start of day of birth. Example: If the DOB is
+        1/1/1980, then the timestamp passed is 315576000.
 
-        Example: If the DOB is 1/1/1980, then the timestamp passed is 315576000. 
 
-        Note: DOB's prior to 1970 result in a negative timestamp; this is acceptable. 
-        To avoid errors, the DOB and consumer's DOB must match.
+        Note: DOB's prior to 1970 result in a negative timestamp; this is
+        acceptable. To avoid errors, the DOB and consumer's DOB must match.
+
 
         Note: All other timestamps in Decisioning are in MST.
       example: 470275200
     RedirectUri:
       type: string
-      description: |-
-        The URL that customers will be redirected to after completing
-        Finicity Connect. Required unless Connect is embedded inside our
-        application (iframe).
+      description: >-
+        The URL that customers will be redirected to after completing Finicity
+        Connect. Required unless Connect is embedded inside our application
+        (iframe).
       example: 'https://www.finicity.com/connect/'
     Webhook:
       type: string
-      description: |-
-        The publicly available URL you want to be notified with events as
-        the user progresses through the application. See [Connect Webhook
-        Event](https://docs.finicity.com/connect-webhooks/) for event
-        details.
+      description: >-
+        The publicly available URL you want to be notified with events as the
+        user progresses through the application. See [Connect Webhook
+        Event](https://docs.finicity.com/connect-webhooks/) for event details.
       example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
     WebhookContentType:
       type: string
-      description: |-
-        The content type the webhook events will be sent in. Supported
-        types: `application/json` and `application/xml`
+      description: >-
+        The content type the webhook events will be sent in. Supported types:
+        `application/json` and `application/xml`
       default: application/json
       example: application/json
     WebhookData:
       type: object
-      description: |-
+      description: >-
         Allows additional identifiable information to be inserted into the
         payload of connect webhook events. See this article for
         [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
     WebhookHeaders:
       type: object
-      description: |-
-        Allows additional identifiable information to be included as headers
-        of connect webhook event. See this article for
+      description: >-
+        Allows additional identifiable information to be included as headers of
+        connect webhook event. See this article for
         [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
     Experience:
       type: string
-      description: |-
-        The `experience` field allows you to customize: 
+      description: >-
+        The `experience` field allows you to customize:  
+
         * Brand: color and logo
-        * Icon: displayed on the Share your data page
-        * Popular institutions: displayed on the Bank Search page
-        * Report: the credit decisioning report to send when Connect completes.
+
+        * Icon: displayed on the "Share your data" page 
+
+        * Popular institutions: displayed on the Bank Search page 
+
+        * Report: the credit decisioning report to send when Connect completes. 
+
         * MVS modules: financial, payroll, paystub
 
-        Note: The Finicity sales engineers (SE) help you set up a
-        default experience for your company when you migrate to Connect 2.0.
-        For each additional experience you create thereafter, they'll give
-        you a unique ID. See [Generate 2.0 ConnectURL
+
+        Note: The Finicity sales engineers (SE) help you set up a default
+        experience for your company when you migrate to Connect 2.0. For each
+        additional experience you create thereafter, they'll give you a unique
+        ID. See [Generate 2.0 ConnectURL
         APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
                     
-        Experience values options:
-        * "default": your default experience (must be defined)
+
+        Experience values options: 
+
+        * "default": your default experience (must be defined) 
+
         * GUID: the code for a different experience
+
         * Not defined: If you don't pass the experience parameter, then
         Connect's out of the box default experience (add accounts but no
         branding) is used, and the MVS modules will not run.
       example: 'default'
     SingleUseUrl:
       type: boolean
-      description: |-
+      description: >-
         `true`: The URL link expires after a Connect session successfully
-        completes. 
+        completes.
 
-        Note: When the `singleUseUrl` and the `experience` parameters
-        are passed in the same call, the `singleUseUrl` value overrides the
-        `singleUseUrl` value configured in the `experience` parameter.
+
+        Note: When the `singleUseUrl` and the `experience` parameters are passed
+        in the same call, the `singleUseUrl` value overrides the `singleUseUrl`
+        value configured in the `experience` parameter.
       example: true
     ReportCustomField:
       type: object
@@ -4365,25 +4408,31 @@ components:
           example: '123456'
         shown:
           type: boolean
-          description: When shown is `true`, the custom field will show on the PDF.
+          description:
+            When shown is `true`, the custom field will show on the PDF.
           example: true
     ReportCustomFields:
       type: array
       items:
         $ref: '#/components/schemas/ReportCustomField'
-      description: |-
+      description: >-
         The `reportCustomFields` parameter is used when experiences are
         associated with a credit decisioning report.
 
+
         Designate up to 5 custom fields that you'd like associated with the
         report when it's generated. Every custom field consists of three
-        variables: `label`, `value`, and `shown`. The `shown` variable is
-        true or false.
-        * `true`: (default) display the custom field in the PDF report. 
-        * `false`: don't display the custom field in the PDF report. 
+        variables: `label`, `value`, and `shown`. The `shown` variable is true
+        or false. 
+
+        * `true`: (default) display the custom field in the PDF report
+
+        * `false`: don't display the custom field in the PDF report
+
 
         For an experience that generates multiple reports, the
         `reportCustomFields` parameter gets passed to all reports.
+
 
         All custom fields display in the Reseller Billing endpoint.
       example:
@@ -4401,34 +4450,40 @@ components:
           shown: false
     ConnectFromDate:
       type: integer
-      description: |-
-        The `fromDate` parameter is used when experiences are associated
-        with a credit decisioning report and any other reports with
-        transaction data. The value is in epoch time and must be 10 digits.
-        Example: 1494449017. If it's greater than 10 digits, then the
-        `fromDate` is set to the credit decisioning report's default
-        `fromDate`.
+      description: >-
+        The `fromDate` parameter is used when experiences are associated with a
+        credit decisioning report and any other reports with transaction data.
+        The value is in epoch time and must be 10 digits. Example: 1494449017.
+        If it's greater than 10 digits, then the `fromDate` is set to the credit
+        decisioning report's default `fromDate`.
 
-        For an experience that generates multiple reports, the `fromDate`
-        gets passed to the reports that support it.
 
-        However, Connect doesn't pass this parameter to the following
-        reports:
-        * Pay Statement ExtractionReport
-        * VOIE - Paystub (with TXVerify) Report
-        * Statement Report
-        * Verification of Income Report
+        For an experience that generates multiple reports, the `fromDate` gets
+        passed to the reports that support it.
+
+
+        However, Connect doesn't pass this parameter to the following reports:
+
+        * Pay Statement ExtractionReport 
+
+        * VOIE - Paystub (with TXVerify) Report 
+
+        * Statement Report 
+
+        * Verification of Income Report 
+
         * VOIE -Payroll Report 
 
-        Note: this field isn't used if you're only collecting transaction
-        data without a report.
+
+        Note: this field isn't used if you're only collecting transaction data
+        without a report.
       format: int64
       example: 1607450357
     InstitutionSettings:
       type: object
-      description: |-
-        Advanced options for configuration of which institutions to display
-        in. See [Institution
+      description: >-
+        Advanced options for configuration of which institutions to display in.
+        See [Institution
         Settings](https://docs.finicity.com/connect-institution-settings/)
     ConnectUrl:
       description: A Connect URL object
@@ -4460,11 +4515,13 @@ components:
       properties:
         to:
           type: string
-          description: The email address for the customer receiving the Connect email.
+          description:
+            The email address for the customer receiving the Connect email.
           example: alex.salido@finicity.com
         from:
           type: string
-          description: The name of a person or business sending the Connect email.
+          description:
+            The name of a person or business sending the Connect email.
           example: test.lender@test.com
         supportPhone:
           type: string
@@ -4472,11 +4529,15 @@ components:
           example: 800-555-5555
         subject:
           type: string
-          description: The subject line of the email. The default is "Verify your Financial Information".
+          description:
+            The subject line of the email. The default is "Verify your Financial
+            Information".
           example: Verify your income
         firstName:
           type: string
-          description: 'The first name of the customer or both names of the customers for joint borrowers. Example: "Marvin and Jenny".'
+          description:
+            'The first name of the customer or both names of the customers for
+            joint borrowers. Example: "Marvin and Jenny".'
           example: Bob
         institutionName:
           type: string
@@ -4484,7 +4545,8 @@ components:
           example: Acme Lending
         institutionAddress:
           type: string
-          description: The institution address to appear in the footer of the email.
+          description:
+            The institution address to appear in the footer of the email.
           example: '222 Winipeg Drive SLC UT, 84109'
         signature:
           type: array
@@ -4499,11 +4561,11 @@ components:
       type: string
       description: >-
         The customer's username, assigned by the partner (a unique identifier),
-        following these rules: minimum 6 characters maximum 255 characters any mix
-        of uppercase, lowercase, numeric, and non-alphabet special characters ! @ .
-        # $ % & * _ – + the use of email in this field is discouraged it is
-        recommended to use a unique non-email identifier Use of special characters
-        may result in an error (e.g. í, ü, etc.)
+        following these rules: minimum 6 characters maximum 255 characters any
+        mix of uppercase, lowercase, numeric, and non-alphabet special
+        characters ! @ . # $ % & * _ – + the use of email in this field is
+        discouraged it is recommended to use a unique non-email identifier. Use
+        of special characters may result in an error (e.g. í, ü, etc.)
       example: customerusername1
     CustomerFirstName:
       type: string
@@ -4516,15 +4578,17 @@ components:
     ApplicationId:
       type: string
       description: >-
-        An application ID for the app the partner would like to assign the customer
-        to. This cannot be changed once set. Only applicable in cases of partners
-        with multiple registered applications. If the partner only has one app this
-        can be omitted.  This is the `applicationId` from the "Get App Registration
-        Status" endpoint and is populated after the app is in a status for approved.
+        An application ID for the app the partner would like to assign the
+        customer to. This cannot be changed once set. Only applicable in cases
+        of partners with multiple registered applications. If the partner only
+        has one app this can be omitted.  This is the `applicationId` from the
+        "Get App Registration Status" endpoint and is populated after the app is
+        in a status for approved.
       example: '123456789'
     ApplicationName:
       type: string
-      description: The application name of the application assigned to the customer
+      description:
+        The application name of the application assigned to the customer
       example: Awesome Budget App
     UnixDate:
       type: integer
@@ -4533,7 +4597,9 @@ components:
       example: 1607450357
     CustomerType:
       type: string
-      description: The type of Finicity Customer ("active" or "testing" or "" for all types)
+      description:
+        The type of Finicity Customer ("active" or "testing" or "" for all
+        types)
       example: active
     NewCustomer:
       description: A new customer to be enrolled
@@ -4579,8 +4645,6 @@ components:
       required:
         - id
         - username
-        - firstName
-        - lastName
         - type
         - createdDate
       type: object
@@ -4596,6 +4660,8 @@ components:
         type:
           $ref: '#/components/schemas/CustomerType'
         createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        lastModifiedDate:
           $ref: '#/components/schemas/UnixDate'
     CustomerWithAppData:
       description: A finicity customer record with application info
@@ -4637,7 +4703,8 @@ components:
           example: 2
         moreAvailable:
           type: boolean
-          description: If this response does not contain the last record in the result set
+          description:
+            If this response does not contain the last record in the result set
           example: true
         customers:
           type: array
@@ -4666,8 +4733,8 @@ components:
         moreAvailable:
           type: boolean
           description: >-
-            True: There are more institutions, matching the search
-            parameters, that you can display.
+            True: There are more institutions, matching the search parameters,
+            that you can display.
           example: true
         createdDate:
           type: integer
@@ -4745,7 +4812,8 @@ components:
           example: 1522562400
         net:
           type: number
-          description: 'Total income during the given month, across all income streams'
+          description:
+            'Total income during the given month, across all income streams'
           example: 2004.77
     CertifiedInstitution:
       required:
@@ -4840,11 +4908,13 @@ components:
           example: 1500
         vestedBalance:
           type: number
-          description: Only available for investment accounts. Vested amount in account
+          description:
+            Only available for investment accounts. Vested amount in account
           example: 300000
         currentLoanBalance:
           type: number
-          description: Only available for investment accounts. Current loan balance
+          description:
+            Only available for investment accounts. Current loan balance
           example: 0
         availableBalanceAmount:
           type: number
@@ -4884,8 +4954,11 @@ components:
           type: string
           description: >-
             The account number from a financial institution in truncated format:
-            * Last four digits - 1234
-            * Last four digits with suffix - 1234-9
+
+            * Last four digits - 1234 
+
+            * Last four digits with suffix - 1234-9 
+
             * Full value for string accounts - john@gmail.com.
           example: '8888'
         realAccountNumberLast4:
@@ -5116,7 +5189,8 @@ components:
           example: 3678.9
         accountId:
           type: integer
-          description: The Finicity ID of the account associated with this transaction
+          description:
+            The Finicity ID of the account associated with this transaction
           format: int64
           example: 1014136057
         customerId:
@@ -5177,24 +5251,29 @@ components:
           $ref: '#/components/schemas/TransactionType'
         checkNum:
           type: integer
-          description: 'The check number of the transaction, as provided by the institution'
+          description:
+            'The check number of the transaction, as provided by the institution'
           format: int32
           example: 1876
         escrowAmount:
           type: number
-          description: 'The portion of the transaction allocated to escrow, if available'
+          description:
+            'The portion of the transaction allocated to escrow, if available'
           example: 134.01
         feeAmount:
           type: number
-          description: 'The portion of the transaction allocated to fee, if available'
+          description:
+            'The portion of the transaction allocated to fee, if available'
           example: 25
         interestAmount:
           type: number
-          description: 'The portion of the transaction allocated to interest, if available'
+          description:
+            'The portion of the transaction allocated to interest, if available'
           example: 256.78
         principalAmount:
           type: number
-          description: 'The portion of the transaction allocated to principal, if available'
+          description:
+            'The portion of the transaction allocated to principal, if available'
           example: 1345.56
         unitQuantity:
           type: integer
@@ -5205,7 +5284,8 @@ components:
           example: 50
         unitPrice:
           type: number
-          description: 'Share Price for investment unit (e.g., stocks, mutual funds)'
+          description:
+            'Share Price for investment unit (e.g., stocks, mutual funds)'
           example: 5
         categorization:
           $ref: '#/components/schemas/Categorization'
@@ -5220,7 +5300,8 @@ components:
           example: 0
         ticker:
           type: string
-          description: Ticker symbol for the investment related to the transaction
+          description:
+            Ticker symbol for the investment related to the transaction
           example: DAL
         investmentTransactionType:
           type: string
@@ -5263,7 +5344,8 @@ components:
       properties:
         id:
           type: string
-          description: Finicity ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity ID of the consumer (UUID with max length 32 characters)
         createdDate:
           type: integer
           description: Consumer created date
@@ -5499,7 +5581,8 @@ components:
           items:
             type: integer
             format: int64
-          description: 'The accounts added by the consumer in Connect, if applicable'
+          description:
+            'The accounts added by the consumer in Connect, if applicable'
       example:
         assetId: 6f8fb0a0-e882-4f57-b672-cf53f1397581
         accounts: []
@@ -5546,11 +5629,13 @@ components:
           example: JPMORGAN CHASE & CO
         transactionType:
           type: string
-          description: 'The transaction type of the holding. Cash, Margin, POSSTOCK, Etc'
+          description:
+            'The transaction type of the holding. Cash, Margin, POSSTOCK, Etc'
           example: Cash
         marketValue:
           type: number
-          description: Market value of an investment position at the time of retrieval
+          description:
+            Market value of an investment position at the time of retrieval
           example: 914.2
         costBasis:
           type: number
@@ -5562,7 +5647,8 @@ components:
           example: A
         currentPriceDate:
           type: integer
-          description: The latest date the price date was updated. In epoch time.
+          description:
+            The latest date the price date was updated. In epoch time.
           format: int64
           example: 1559196000
         invSecurityType:
@@ -5579,11 +5665,13 @@ components:
           example: Long
         totalGLDollar:
           type: number
-          description: 'Total Gain/Loss of the position, at the time of aggregation ($)'
+          description:
+            'Total Gain/Loss of the position, at the time of aggregation ($)'
           example: 81.83
         totalGLPercent:
           type: number
-          description: 'Total Gain/Loss of the position, at the time of aggregation (%)'
+          description:
+            'Total Gain/Loss of the position, at the time of aggregation (%)'
           example: 43.07
       description: Details for investment account holdings
       example:
@@ -5621,7 +5709,8 @@ components:
           example: Mad Science Research
         category:
           type: string
-          description: One of the values from Categories (assigned based on the payee name)
+          description:
+            One of the values from Categories (assigned based on the payee name)
           example: Paycheck
         city:
           type: string
@@ -5703,7 +5792,8 @@ components:
               net: 2004.77
         netAnnual:
           type: number
-          description: Sum of all values in netMonthlyIncome over the previous 12 months
+          description:
+            Sum of all values in netMonthlyIncome over the previous 12 months
           example: 110475.7
         projectedNetAnnual:
           type: number
@@ -5787,7 +5877,8 @@ components:
           example: Finicity
         institutionTransactionId:
           type: string
-          description: The unique identifier given by the FI for each transaction.
+          description:
+            The unique identifier given by the FI for each transaction.
           example: '100000000'
         category:
           type: string
@@ -5799,7 +5890,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ReportTransactionPayStatementMatchTypes'
-          description: Field to indicate how transaction is matched with pay statement
+          description:
+            Field to indicate how transaction is matched with pay statement
         bestRepresentation:
           type: string
           description: >-
@@ -5932,60 +6024,68 @@ components:
           description: The name of the institution
         transAgg:
           type: boolean
-          description: |-
-            `true`: The institution is certified for the Transaction Aggregation product.
+          description: >-
+            `true`: The institution is certified for the Transaction Aggregation
+            product.
 
-            `false`: The institution is decertified for the Transaction Aggregation product
+            `false`: The institution is decertified for the Transaction
+            Aggregation product
           example: true
         ach:
           type: boolean
-          description: |-
+          description: >-
             `true`: The institution is certified for the ACH product.
 
             `false`: The institution is decertified for the ACH product.
           example: true
         stateAgg:
           type: boolean
-          description: |-
+          description: >-
             `true`: The institution is certified for the Statement Aggregation
             product. 
 
-            `false`: The institution is decertified for the Statement Aggregation product
+            `false`: The institution is decertified for the Statement
+            Aggregation product
           example: false
         voi:
           type: boolean
-          description: |-
+          description: >-
             `true`: The institution is certified for the VOI product.
 
             `false`: The institution is decertified for the VOI product.
           example: true
         voa:
           type: boolean
-          description: |-
+          description: >-
             `true`: The institution is certified for the VOA product.
 
             `false`: The institution is decertified for the VOA product.
           example: true
         aha:
           type: boolean
-          description: |-
-            `true`: The institution is certified for the Account History Aggregation product. 
+          description: >-
+            `true`: The institution is certified for the Account History
+            Aggregation product. 
 
-            `false`: The institution is decertified for the Account History Aggregation product
+            `false`: The institution is decertified for the Account History
+            Aggregation product
           example: false
         availBalance:
           type: boolean
-          description: |-
-            `true`: The institution is certified for the Account Balance Check (ABC) product.
+          description: >-
+            `true`: The institution is certified for the Account Balance Check
+            (ABC) product.
 
-            `false`: The institution is decertified for the Account Balance Check product.
+            `false`: The institution is decertified for the Account Balance
+            Check product.
           example: false
         accountOwner:
           type: boolean
-          description: |-
+          description: >-
             `true`: The institution is certified for the Account Owner product.
 
-            `false`: The institution is decertified for the Account Owner product.
+            `false`: The institution is decertified for the Account Owner
+            product.
           example: true
         accountTypeDescription:
           type: string
@@ -6020,12 +6120,12 @@ components:
           type: array
           items:
             type: string
-          description: |-
+          description: >-
             Instructions given to the customer before they are sent to the
             institution website to login for OAuth institutions.
 
-            Note: This helps the customer to provide the proper permission
-            for data needed for the application.
+            Note: This helps the customer to provide the proper permission for
+            data needed for the application.
           example:
             - Account details
             - Balances and transactions
@@ -6041,7 +6141,8 @@ components:
           example: finbank.ds5@finicity.com
         status:
           type: string
-          description: "Institution's status: online, offline, maintenance, testing"
+          description:
+            "Institution's status: online, offline, maintenance, testing"
           example: online
         newInstitutionId:
           $ref: '#/components/schemas/InstitutionId'
@@ -6072,7 +6173,8 @@ components:
         urlForgotPassword: 'https://developer.finicity.com/admin/account/password/new'
         urlOnlineRegistration: 'https://www.finicity.com/signup/'
         class: testfi
-        specialText: Please enter your FinBank Username and Password required for login.
+        specialText:
+          Please enter your FinBank Username and Password required for login.
         specialInstructions:
           - Account details
           - Balances and transactions
@@ -6131,7 +6233,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -6168,12 +6271,14 @@ components:
           example: Finicity Verification of Assets
         startDate:
           type: integer
-          description: The postedDate of the earliest transaction analyzed for this report
+          description:
+            The postedDate of the earliest transaction analyzed for this report
           format: int64
           example: 1572625469
         endDate:
           type: integer
-          description: The postedDate of the latest transaction analyzed for this report
+          description:
+            The postedDate of the latest transaction analyzed for this report
           format: int64
           example: 1588350269
         days:
@@ -6182,14 +6287,16 @@ components:
           format: int64
         seasoned:
           type: boolean
-          description: This will display true if the report covers more than 180 days
+          description:
+            This will display true if the report covers more than 180 days
           example: true
         gseEnabled:
           type: boolean
           example: true
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6qvqd2yhb-1-port
         consolidatedAvailableBalance:
           type: number
@@ -6209,7 +6316,8 @@ components:
                 - id: 1000023996
                   number: '1111'
                   ownerName: JOHN DOE
-                  ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+                  ownerAddress:
+                    '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                   name: Checking
                   type: checking
                   availableBalance: 501.24
@@ -6423,7 +6531,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '5123'
         requesterName:
           type: string
@@ -6495,7 +6604,8 @@ components:
       properties:
         id:
           type: string
-          description: Finicity ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity ID of the consumer (UUID with max length 32 characters)
           example: 1973f901305e2ab3ba8840f411f6b057
         firstName:
           type: string
@@ -6529,7 +6639,8 @@ components:
           example: '6786786786'
         ssn:
           type: string
-          description: The last 4 digits of the consumer's Social Security number
+          description:
+            The last 4 digits of the consumer's Social Security number
           example: '2333'
         birthday:
           $ref: '#/components/schemas/Birthday'
@@ -6591,7 +6702,8 @@ components:
           example: -7616.01
         beginningBalance:
           type: number
-          description: Beginning balance of account per the time period in the report
+          description:
+            Beginning balance of account per the time period in the report
           example: -17795.6
     ReportAccount:
       required:
@@ -6771,7 +6883,8 @@ components:
           example: Murray
         state:
           type: string
-          description: Two-letter code for the state of the institution's headquarters
+          description:
+            Two-letter code for the state of the institution's headquarters
           example: UT
         country:
           type: string
@@ -6804,7 +6917,8 @@ components:
       properties:
         postedDate:
           type: integer
-          description: (All Account Types) Most recent date of the following information
+          description:
+            (All Account Types) Most recent date of the following information
           format: int64
           example: 1588797048
         availableBalanceAmount:
@@ -6816,7 +6930,8 @@ components:
           example: 5678.78
         openDate:
           type: integer
-          description: (Checking/Savings/CD/MoneyMarket) Date when account was opened
+          description:
+            (Checking/Savings/CD/MoneyMarket) Date when account was opened
           format: int64
           example: 1588797048
         periodStartDate:
@@ -6837,7 +6952,8 @@ components:
           example: 13.245
         periodDepositAmount:
           type: number
-          description: (Checking/Savings/CD/MoneyMarket) Amount deposited in period
+          description:
+            (Checking/Savings/CD/MoneyMarket) Amount deposited in period
           example: 2356.56
         periodInterestAmount:
           type: number
@@ -6847,15 +6963,18 @@ components:
           example: 1234.56
         interestYtdAmount:
           type: number
-          description: (Checking/Savings/CD/MoneyMarket) Interest accrued year-to-date
+          description:
+            (Checking/Savings/CD/MoneyMarket) Interest accrued year-to-date
           example: 1056.67
         interestPriorYtdAmount:
           type: number
-          description: (Checking/Savings/CD/MoneyMarket) Interest earned in prior year
+          description:
+            (Checking/Savings/CD/MoneyMarket) Interest earned in prior year
           example: 3056.79
         maturityDate:
           type: integer
-          description: (Checking/Savings/CD/MoneyMarket) Maturity date of account type
+          description:
+            (Checking/Savings/CD/MoneyMarket) Maturity date of account type
           format: int64
           example: 1588797048
         interestRate:
@@ -6876,7 +6995,8 @@ components:
           example: 7000
         cashAdvanceAvailableAmount:
           type: number
-          description: (Credit Card/Line Of Credit) Currently available cash advance
+          description:
+            (Credit Card/Line Of Credit) Currently available cash advance
           example: 2000
         cashAdvanceMaxAmount:
           type: number
@@ -6884,32 +7004,39 @@ components:
           example: 3000
         cashAdvanceBalance:
           type: number
-          description: (Credit Card/Line Of Credit) Balance of current cash advance
+          description:
+            (Credit Card/Line Of Credit) Balance of current cash advance
           example: 1000
         cashAdvanceInterestRate:
           type: number
-          description: (Credit Card/Line Of Credit) Interest rate for cash advances
+          description:
+            (Credit Card/Line Of Credit) Interest rate for cash advances
           example: 21.5
         currentBalance:
           type: number
-          description: (Credit Card/Line Of Credit) and (Investment) Current balance
+          description:
+            (Credit Card/Line Of Credit) and (Investment) Current balance
           example: 5789.34
         paymentMinAmount:
           type: number
-          description: (Credit Card/Line Of Credit) and (Mortgage/Loan) Minimum payment due
+          description:
+            (Credit Card/Line Of Credit) and (Mortgage/Loan) Minimum payment due
           example: 456.78
         paymentDueDate:
           type: integer
-          description: (Credit Card/Line Of Credit) Due date for the next payment
+          description:
+            (Credit Card/Line Of Credit) Due date for the next payment
           format: int64
           example: 1588797048
         previousBalance:
           type: number
-          description: (Credit Card/Line Of Credit) Prior balance in last statement
+          description:
+            (Credit Card/Line Of Credit) Prior balance in last statement
           example: 1234.56
         statementStartDate:
           type: integer
-          description: (Credit Card/Line Of Credit) Start date of statement period
+          description:
+            (Credit Card/Line Of Credit) Start date of statement period
           format: int64
           example: 1588797048
         statementEndDate:
@@ -6919,11 +7046,13 @@ components:
           example: 1588797048
         statementPurchaseAmount:
           type: number
-          description: (Credit Card/Line Of Credit) Purchase amount of statement period
+          description:
+            (Credit Card/Line Of Credit) Purchase amount of statement period
           example: 2345.9
         statementFinanceAmount:
           type: number
-          description: (Credit Card/Line Of Credit) Finance amount of statement period
+          description:
+            (Credit Card/Line Of Credit) Finance amount of statement period
           example: 156.78
         statementCreditAmount:
           type: number
@@ -6953,7 +7082,8 @@ components:
           example: 1588797048
         statementCloseBalance:
           type: number
-          description: (Credit Card/Line Of Credit) Balance of statement at close
+          description:
+            (Credit Card/Line Of Credit) Balance of statement at close
           example: 2456.69
         termOfMl:
           type: string
@@ -7129,7 +7259,8 @@ components:
           example: 10456.78
         interestPaidLtd:
           type: number
-          description: (Mortgage/Loan) Interest paid since inception of loan (life to date)
+          description:
+            (Mortgage/Loan) Interest paid since inception of loan (life to date)
           example: 56789.34
         interestRateType:
           type: string
@@ -7141,16 +7272,19 @@ components:
           example: principle
         repaymentPlan:
           type: string
-          description: (Mortgage/Loan) Type of repayment plan for the student loan
+          description:
+            (Mortgage/Loan) Type of repayment plan for the student loan
           example: 'Standard, Graduated, Extended, Pay As You Earn, and more.'
         paymentsRemaining:
           type: integer
-          description: (Mortgage/Loan) Number of payments remaining before loan is paid off
+          description:
+            (Mortgage/Loan) Number of payments remaining before loan is paid off
           format: int32
           example: 45
         interestMarginBalance:
           type: number
-          description: (Investment) Net interest earned after deducting interest paid out
+          description:
+            (Investment) Net interest earned after deducting interest paid out
           example: 456
         shortBalance:
           type: number
@@ -7178,7 +7312,8 @@ components:
           example: 450
         empPretaxContribAmountYtd:
           type: number
-          description: (Investment) Employer pretax contribution amount year to date
+          description:
+            (Investment) Employer pretax contribution amount year to date
           example: 700
         contribTotalYtd:
           type: number
@@ -7278,7 +7413,8 @@ components:
             balances at the group level, in APY
         repaymentPlanStartDate:
           type: integer
-          description: (Student Loan) The start date of the current repayment plan
+          description:
+            (Student Loan) The start date of the current repayment plan
           format: int64
         repaymentPlanEndDate:
           type: integer
@@ -7302,7 +7438,8 @@ components:
           format: int32
         totalPrincipalPaid:
           type: number
-          description: (Student Loan) The total amount paid towards the principal balance
+          description:
+            (Student Loan) The total amount paid towards the principal balance
         totalInterestPaid:
           type: number
           description: (Student Loan) The total amount paid towards interest
@@ -7376,16 +7513,16 @@ components:
       properties:
         label:
           type: string
-          description: |-
-            The label to be associated with the pay statement:
-            * `lastPayPeriod` This label will allow the paystub to go through data
-            extraction. This is the default label that should be used for our
-            VOIE - Paystub products.
-            * `lastPayPeriodMinusOne` The second most recent pay statement.
-            * `lastPayPeriodMinusTwo` The third most recent pay statement.
-            * `previousYearLastPayPeriod` Last pay statement of the previous calendar year.
-            * `previousYear2LastPayPeriod` Last pay statement of the calendar year 2 years prior.
-            * `earliestPayPeriod` The earliest pay statement.
+          description: >-
+            The label to be associated with the pay statement: * `lastPayPeriod`
+            This label will allow the paystub to go through data extraction.
+            This is the default label that should be used for our VOIE - Paystub
+            products. * `lastPayPeriodMinusOne` The second most recent pay
+            statement. * `lastPayPeriodMinusTwo` The third most recent pay
+            statement. * `previousYearLastPayPeriod` Last pay statement of the
+            previous calendar year. * `previousYear2LastPayPeriod` Last pay
+            statement of the calendar year 2 years prior. * `earliestPayPeriod`
+            The earliest pay statement.
           example: lastPayPeriod
         statement:
           type: string
@@ -7429,7 +7566,8 @@ components:
         ownerAddress:
           type: string
           description: The address of the account owner
-          example: 'APT C 5600 S SPRINGFIELD GARDENS CIR SPRINGFIELD, VA 22162-1058'
+          example:
+            'APT C 5600 S SPRINGFIELD GARDENS CIR SPRINGFIELD, VA 22162-1058'
       description: The account owner information for the customer account
     LoanPaymentDetails:
       required:
@@ -7458,7 +7596,8 @@ components:
       example:
         loanNumber: '123456789'
         loanPaymentNumber: '5231123456789'
-        loanPaymentAddress: Heartland ECSI       PO Box 718       Wexford PA 15090
+        loanPaymentAddress:
+          Heartland ECSI       PO Box 718       Wexford PA 15090
         accountDetail: null
     StorePayStatementResponse:
       required:
@@ -7557,9 +7696,11 @@ components:
           example: '123456789'
         realAccountNumber:
           type: string
-          description: The account number for initiating ACH transfers for this account
+          description:
+            The account number for initiating ACH transfers for this account
           example: 002345678901
-      description: The routing and account number information to initiate ACH transfers
+      description:
+        The routing and account number information to initiate ACH transfers
     PrequalificationReportNon-CRA:
       required:
         - id
@@ -7623,12 +7764,14 @@ components:
           example: Finicity Asset Ready Report (non-CRA)
         startDate:
           type: integer
-          description: The postedDate of the earliest transaction analyzed for this report
+          description:
+            The postedDate of the earliest transaction analyzed for this report
           format: int64
           example: 1572625469
         endDate:
           type: integer
-          description: The postedDate of the latest transaction analyzed for this report
+          description:
+            The postedDate of the latest transaction analyzed for this report
           format: int64
           example: 1588350269
         days:
@@ -7638,7 +7781,8 @@ components:
           example: 230
         seasoned:
           type: boolean
-          description: This will display true if the report covers more than 180 days
+          description:
+            This will display true if the report covers more than 180 days
           example: true
         gseEnabled:
           type: boolean
@@ -7652,7 +7796,8 @@ components:
           example: 1929.57
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 0whcism47ttt-5-port
         institutions:
           type: array
@@ -7669,7 +7814,8 @@ components:
                 - id: 1000023996
                   number: '1111'
                   ownerName: JOHN DOE
-                  ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+                  ownerAddress:
+                    '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                   name: Checking
                   type: checking
                   availableBalance: 501.24
@@ -7742,7 +7888,8 @@ components:
               - id: 1000023996
                 number: '1111'
                 ownerName: JOHN DOE
-                ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+                ownerAddress:
+                  '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                 name: Checking
                 type: checking
                 availableBalance: 0
@@ -8039,12 +8186,14 @@ components:
           example: Finicity Asset Ready Report (CRA)
         startDate:
           type: integer
-          description: The postedDate of the earliest transaction analyzed for this report
+          description:
+            The postedDate of the earliest transaction analyzed for this report
           format: int64
           example: 1572625469
         endDate:
           type: integer
-          description: The postedDate of the latest transaction analyzed for this report
+          description:
+            The postedDate of the latest transaction analyzed for this report
           format: int64
           example: 1588350269
         days:
@@ -8054,7 +8203,8 @@ components:
           example: 230
         seasoned:
           type: boolean
-          description: This will display true if the report covers more than 180 days
+          description:
+            This will display true if the report covers more than 180 days
           example: true
         gseEnabled:
           type: boolean
@@ -8068,13 +8218,15 @@ components:
           example: 1929.57
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 0whcism47a34-5-port
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         institutions:
           type: array
@@ -8091,7 +8243,8 @@ components:
                 - id: 1000023996
                   number: '1111'
                   ownerName: JOHN DOE
-                  ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+                  ownerAddress:
+                    '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                   name: Checking
                   type: checking
                   availableBalance: 501.24
@@ -8203,7 +8356,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -8306,7 +8460,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -8528,7 +8683,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -8632,7 +8788,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/PayStatementConstraints'
@@ -8707,7 +8864,8 @@ components:
           example: 2f3z55zuwewm-voietxverify
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerId:
           $ref: '#/components/schemas/CustomerId'
@@ -8715,7 +8873,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -8923,15 +9082,18 @@ components:
           example: true
         fromDate:
           type: string
-          description: Value of the fromDate request parameter that generated this response
+          description:
+            Value of the fromDate request parameter that generated this response
           example: 1588365858
         toDate:
           type: string
-          description: Value of the toDate request parameter that generated this response
+          description:
+            Value of the toDate request parameter that generated this response
           example: '1588970681'
         sort:
           type: string
-          description: Value of the sort request parameter that generated this response
+          description:
+            Value of the sort request parameter that generated this response
           example: desc
         transactions:
           type: array
@@ -9228,7 +9390,8 @@ components:
           example: The app that makes your budgeting experience awesome
         appName:
           type: string
-          description: App Name. This will be visible to end users in the FI interface.
+          description:
+            App Name. This will be visible to end users in the FI interface.
           example: Awesome Budget App
         appUrl:
           type: string
@@ -9290,7 +9453,8 @@ components:
       properties:
         preAppId:
           type: integer
-          description: An identifier to track the application registration request
+          description:
+            An identifier to track the application registration request
           format: int64
           example: 1234
         status:
@@ -9322,11 +9486,13 @@ components:
           example: The app that makes your budgeting experience awesome
         appName:
           type: string
-          description: App Name. This will be visible to end users in the FI interface.
+          description:
+            App Name. This will be visible to end users in the FI interface.
           example: Awesome Budget App
         appUrl:
           type: string
-          description: App URL. This will be visible to end users in the FI interface.
+          description:
+            App URL. This will be visible to end users in the FI interface.
           example: 'https://www.finicity.com/'
         ownerAddressLine1:
           type: string
@@ -9381,7 +9547,8 @@ components:
         Body for the request when you are submitting and app modification
         request
       example:
-        appDescription: The app that makes your budgeting experience even more awesome
+        appDescription:
+          The app that makes your budgeting experience even more awesome
         appName: New Awesome Budget App
         appUrl: 'https://www.finicity.com/'
         ownerAddressLine1: 434 W Ascension Way
@@ -9501,7 +9668,8 @@ components:
       properties:
         id:
           type: string
-          description: Finicity ID of the consumer (UUID with max length 32 characters)
+          description:
+            Finicity ID of the consumer (UUID with max length 32 characters)
           example: 1973f901305e2ab3ba8840f411f6b057
         firstName:
           type: string
@@ -9561,7 +9729,8 @@ components:
             https://prod-direct-integration-client.s3.us-west-2.amazonaws.com/976521f99-7b36-4b3b-a3e0-faff9545836d/102224/90x90.png
         decryptionKeyActivated:
           type: boolean
-          description: Status of decryption keys for financial institution app registration
+          description:
+            Status of decryption keys for financial institution app registration
           example: false
         createdDate:
           type: integer
@@ -9570,7 +9739,8 @@ components:
           example: 1595484000
         lastModifiedDate:
           type: integer
-          description: Last modified date of the app's financial institution registration
+          description:
+            Last modified date of the app's financial institution registration
           format: int64
           example: 1595484000
         status:
@@ -9628,7 +9798,8 @@ components:
           example: 1000076901
         index:
           type: integer
-          description: 'Index of statement to retrieve (default is 1, maximum is 6)'
+          description:
+            'Index of statement to retrieve (default is 1, maximum is 6)'
           format: int64
           example: 1
     GenerateStatementReportResponse:
@@ -9685,7 +9856,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '1234'
         constraints:
           $ref: '#/components/schemas/GenerateStatementReportConstraints'
@@ -9817,7 +9989,8 @@ components:
             160 x 72
           example: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/tile.svg
-      description: All assets are SVGs so can be slightly resized without any issues.
+      description:
+        All assets are SVGs so can be slightly resized without any issues.
     InstitutionBrandingResponse:
       required:
         - branding
@@ -9853,7 +10026,8 @@ components:
           example: 2
         numberOfRecordsPerPage:
           type: integer
-          description: The number of records per page as per the application query
+          description:
+            The number of records per page as per the application query
           format: int64
           example: 10
         applications:
@@ -9890,8 +10064,8 @@ components:
                   lastModifiedDate: 1595526300
                   status: true
       description: >-
-        The response for the "Get App Registration Status" endpoint which returns
-        an array of App Status objects to be able to determine their
+        The response for the "Get App Registration Status" endpoint which
+        returns an array of App Status objects to be able to determine their
         registration status. This is version 2 of this response.
     AppStatus:
       required:
@@ -9907,7 +10081,8 @@ components:
           $ref: '#/components/schemas/PartnerId'
         preAppId:
           type: integer
-          description: An identifier to track the application registration request
+          description:
+            An identifier to track the application registration request
           format: int64
           example: 1234
         note:
@@ -9953,7 +10128,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AppFIStatus'
-          description: A list of the registration status for each FI for the application
+          description:
+            A list of the registration status for each FI for the application
           example:
             - id: 102224
               decryptionKeyActivated: false
@@ -10031,7 +10207,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -10066,7 +10243,8 @@ components:
           example: Finicity Verification of Income and Employment - Payroll
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-2-port
     PayrollReportRefreshResponseConstraints:
       required:
@@ -10162,7 +10340,8 @@ components:
           example: 173.47
         availableBalanceDate:
           type: integer
-          description: Epoch Unix Timestamp for when the available balance was retrieved
+          description:
+            Epoch Unix Timestamp for when the available balance was retrieved
           format: int64
           example: 1613992231
         clearedBalance:
@@ -10173,7 +10352,8 @@ components:
           example: 222.25
         clearedBalanceDate:
           type: integer
-          description: Epoch Unix Timestamp for when the cleared balance was retrieved
+          description:
+            Epoch Unix Timestamp for when the cleared balance was retrieved
           format: int64
           example: 1613985946
         aggregationStatusCode:
@@ -10216,7 +10396,8 @@ components:
           example: 173.47
         availableBalanceDate:
           type: integer
-          description: Epoch Unix Timestamp for when the available balance was retrieved
+          description:
+            Epoch Unix Timestamp for when the available balance was retrieved
           format: int64
           example: 1613992231
         clearedBalance:
@@ -10227,7 +10408,8 @@ components:
           example: 222.25
         clearedBalanceDate:
           type: integer
-          description: Epoch Unix Timestamp for when the cleared balance was retrieved
+          description:
+            Epoch Unix Timestamp for when the cleared balance was retrieved
           format: int64
           example: 1613985946
         aggregationStatusCode:
@@ -10247,7 +10429,8 @@ components:
       properties:
         logo:
           type: string
-          description: The logo of the institution that's used for white backgrounds
+          description:
+            The logo of the institution that's used for white backgrounds
           example: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
         alternateLogo:
@@ -10371,7 +10554,8 @@ components:
           example: 2f3z55zuwewm-voietxverify
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerType:
           $ref: '#/components/schemas/CustomerType'
@@ -10398,7 +10582,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/VOIEWithStatementConstraints'
@@ -10430,7 +10615,8 @@ components:
           example: -7616.01
         beginningBalance:
           type: number
-          description: Beginning balance of account per the time period in the report
+          description:
+            Beginning balance of account per the time period in the report
           example: -17795.6
     GenerateCashFlowReport-BusinessResponse:
       required:
@@ -10526,7 +10712,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '1234'
         constraints:
           $ref: '#/components/schemas/RequestConstraints'
@@ -10561,7 +10748,8 @@ components:
           example: 41h4nzppn47u-voepayroll
         portfolioId:
           type: string
-          description: Finicity's portfolio ID associated with the consumer on the report.
+          description:
+            Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-3-port
         customerType:
           $ref: '#/components/schemas/CustomerType'
@@ -10588,7 +10776,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
@@ -10702,7 +10891,8 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer's Social Security number
+          description:
+            Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/VOETransactionsRequestConstraints'
@@ -10774,7 +10964,8 @@ components:
           example: -7616.01
         beginningBalance:
           type: number
-          description: Beginning balance of account per the time period in the report
+          description:
+            Beginning balance of account per the time period in the report
           example: -17795.6
     PrequalificationReportCRAAssetSummary:
       required:
@@ -10808,7 +10999,8 @@ components:
           example: -7616.01
         beginningBalance:
           type: number
-          description: Beginning balance of account per the time period in the report
+          description:
+            Beginning balance of account per the time period in the report
           example: -17795.6
     PrequalificationReportAccountNon-CRA:
       required:
@@ -11036,7 +11228,8 @@ components:
           example: 00001234895413
         accountPaymentAddress:
           type: string
-          description: The payment address to which send manual payments should be sent
+          description:
+            The payment address to which send manual payments should be sent
           example: 'P.O. Box 123 Sioux Falls, IA 51054'
         accountFuturePayoffAmount:
           type: number
@@ -11125,7 +11318,8 @@ components:
           example: 00001234895413-A
         groupPaymentAddress:
           type: string
-          description: The payment address to which send manual payments should be sent
+          description:
+            The payment address to which send manual payments should be sent
           example: 'P.O. Box 123 Sioux Falls, IA 51054'
         groupFuturePayoffAmount:
           type: number
@@ -11201,7 +11395,8 @@ components:
           example: 00001234895413-A-1
         loanPaymentAddress:
           type: string
-          description: The payment address to which send manual payments should be sent
+          description:
+            The payment address to which send manual payments should be sent
           example: 'P.O. Box 123 Sioux Falls, IA 51054'
         loanFuturePayoffAmount:
           type: number
@@ -11225,7 +11420,8 @@ components:
           example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
         created_date:
           type: string
-          description: The date and time (Epoch) that the data analytics report generated.
+          description:
+            The date and time (Epoch) that the data analytics report generated.
           example: '2/2/2022 18:14:13'
       description: ''
       example:
@@ -11313,7 +11509,8 @@ components:
       properties:
         netAnnualIncome:
           type: number
-          description: Net annual of all income by customer for the last 12 months.
+          description:
+            Net annual of all income by customer for the last 12 months.
           example: 68068.25
         netAnnualIncomeByAccount:
           type: object
@@ -11502,7 +11699,8 @@ components:
       properties:
         monthlyNSFOccurrences:
           type: object
-          description: The number of non-sufficient funds occurrences per calendar month.
+          description:
+            The number of non-sufficient funds occurrences per calendar month.
           example:
             monthlyNSFOccurrences:
               'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
@@ -11579,7 +11777,8 @@ components:
       properties:
         monthlyMinimumBalance:
           type: object
-          description: The minimum balance for the month across all customer accounts.
+          description:
+            The minimum balance for the month across all customer accounts.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20841.81
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16014.16
@@ -11595,7 +11794,8 @@ components:
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 19705.31
         monthlyMaximumBalance:
           type: object
-          description: The maximum balance for the month across all customer accounts.
+          description:
+            The maximum balance for the month across all customer accounts.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26321.24
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26528.01
@@ -11611,7 +11811,8 @@ components:
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 26827.62
         monthlyAverageBalance:
           type: object
-          description: The average balance for the month across all customer accounts.
+          description:
+            The average balance for the month across all customer accounts.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23166.96
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21500.16
@@ -12033,7 +12234,8 @@ components:
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2326.82
         monthlyDaysWithPositiveBalance:
           type: object
-          description: Number of days in a month with a positive account balance.
+          description:
+            Number of days in a month with a positive account balance.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
@@ -12049,7 +12251,8 @@ components:
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 22
         monthlyDaysWithNegativeBalance:
           type: object
-          description: Number of days in a month with a negative account balance.
+          description:
+            Number of days in a month with a negative account balance.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
@@ -12145,7 +12348,8 @@ components:
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3023.26
         twelveMonthStandardDeviationOfBalance:
           type: object
-          description: Standard deviation of account balance across twelve months.
+          description:
+            Standard deviation of account balance across twelve months.
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2799.08
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2947.63
