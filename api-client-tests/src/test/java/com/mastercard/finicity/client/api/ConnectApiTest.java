@@ -31,7 +31,7 @@ class ConnectApiTest extends BaseTest {
     @Test
     void generateConnectUrlV2Test() throws ApiException {
         var request = new ConnectUrlRequest()
-                .customerId("5021068136")
+                .customerId("5022257668")
                 .partnerId(PARTNER_ID);
         var response = api.generateConnectUrlV2(request);
         assertNotNull(response);
