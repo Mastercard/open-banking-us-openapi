@@ -5115,6 +5115,7 @@ paths:
       operationId: GetAssetbyCustomerID
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
           description: ''
@@ -5705,6 +5706,12 @@ paths:
       deprecated: false
 components:
   parameters:
+    AssetIdParameter:
+      name: assetId
+      in: path
+      required: true
+      schema:
+        type: string
     CustomerIdParameter:
       name: customerId
       in: path
