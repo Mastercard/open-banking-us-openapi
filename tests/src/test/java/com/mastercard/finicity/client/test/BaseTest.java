@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.mastercard.finicity.client.ApiClient;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.Configuration;
-import com.mastercard.finicity.client.api.AuthenticationApi;
 import com.mastercard.finicity.client.model.ErrorMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,18 +18,19 @@ public abstract class BaseTest {
     protected final static String CUSTOMER_ID = System.getProperty("customerId");
 
     protected final static ApiClient apiClient = Configuration.getDefaultApiClient();
-    protected final static AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
 
     @BeforeEach
-    void setUp() throws ApiException {
+    void setUp() {
         // Prism
         // apiClient.setBasePath("http://localhost:4010");
 
         // Client logging
         apiClient.setDebugging(true);
+        apiClient.setConnectTimeout(60000);
+        apiClient.setReadTimeout(60000);
     }
 
-    protected void logApiException(ApiException e) {
+    protected static void logApiException(ApiException e) {
         System.err.println("Status code: " + e.getCode());
         System.err.println("Reason: " + e.getResponseBody());
         System.err.println("Response headers: " + e.getResponseHeaders());
@@ -40,15 +40,15 @@ public abstract class BaseTest {
         return new Gson().fromJson(e.getResponseBody(), ErrorMessage.class);
     }
 
-    protected void assertErrorCodeEquals(int code, ApiException e) {
+    protected static void assertErrorCodeEquals(int code, ApiException e) {
         assertEquals(code, parseError(e).getCode());
     }
 
-    protected void assertErrorMessageEquals(String message, ApiException e) {
+    protected static void assertErrorMessageEquals(String message, ApiException e) {
         assertEquals(message, parseError(e).getMessage());
     }
 
-    protected void fail() {
+    protected static void fail() {
         Assertions.fail("Shouldn't reach this line");
     }
 }
