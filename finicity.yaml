@@ -29,7 +29,6 @@ tags:
       report services
   - name: Accounts
   - name: Institutions
-  - name: Verify Income
   - name: Verify Assets
   - name: Verify Income and Employment
   - name: Bank Statements
@@ -44,7 +43,6 @@ tags:
   - name: App Registration and OAuth Migration
   - name: Assets
   - name: Cash Flow
-  - name: Verify Employment
 security:
   - FinicityAppKey: []
   - FinicityAppToken: []
@@ -188,7 +186,7 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/ConnectNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /connect/v2/send/email:
     post:
       tags:
@@ -287,7 +285,7 @@ paths:
     post:
       tags:
         - Customers
-      summary: 'Add Customer'
+      summary: Add Real Customer
       description: >-
         Enroll an active customer, which is the actual owner of one or more
         real-world accounts. This is a billable customer.
@@ -307,12 +305,12 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '429':
-          $ref: '#/components/responses/ToManyRequestsErrorResponse'
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
   /aggregation/v1/customers:
     get:
       tags:
         - Customers
-      summary: 'Get Customers'
+      summary: Get Customers
       description: >-
         Find all customers enrolled by the current partner, where the search
         text is found in the customer's username or any combination of
@@ -375,9 +373,9 @@ paths:
     get:
       tags:
         - Customers
-      summary: Get Customer With App Data
+      summary: Get Customer With App Data by ID
       description: >-
-        Retrieve a customer by ID along with additional details about the OAuth
+        Retrieve a customer along with additional details about the OAuth
         application.
       operationId: GetCustomerWithAppData
       parameters:
@@ -390,13 +388,13 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}':
     get:
       tags:
         - Customers
-      summary: Get Customer
-      description: Retrieve a customer by ID
+      summary: Get Customer by ID
+      description: Retrieve a customer
       operationId: GetCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -408,11 +406,11 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     put:
       tags:
         - Customers
-      summary: 'Modify Customer'
+      summary: Modify Customer by ID
       description: Modify an enrolled customer
       operationId: ModifyCustomer
       parameters:
@@ -427,11 +425,11 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     delete:
       tags:
         - Customers
-      summary: 'Delete Customer'
+      summary: Delete Customer by ID
       description: >-
         Completely remove a customer from the system. This will remove the
         customer and all associated accounts and transactions.
@@ -448,7 +446,91 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v1/customers/{customerId}/consumer':
+    post:
+      tags:
+        - Consumers
+      summary: Create Consumer
+      description: >-
+        Create a consumer record associated with the given customer. A consumer
+        persists as the owner of any reports that are generated, even after the
+        original customer is deleted from the system. A consumer must be created
+        for the given customer before calling any of the "Generate Report"
+        services.
+      operationId: CreateConsumer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateConsumerRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateConsumerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '409':
+          $ref: '#/components/responses/ConflictErrorResponse'
+    get:
+      tags:
+        - Consumers
+      summary: Get Consumer For Customer
+      description: >-
+        Get the details of a consumer record by customer ID.
+      operationId: GetConsumerForCustomer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetConsumerForCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v1/consumers/{consumerId}':
+    get:
+      tags:
+        - Consumers
+      summary: Get Consumer by ID
+      description: >-
+        Get the details of a consumer record by consumer ID.
+      operationId: GetConsumer
+      parameters:
+        - $ref: '#/components/parameters/ConsumerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetConsumerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+    put:
+      tags:
+        - Consumers
+      summary: Modify Consumer by ID
+      description: >-
+        Modify the details for an existing consumer. All fields are required for
+        a consumer record, but individual fields for this call are optional
+        because fields that are not specified will be left unchanged.
+      operationId: ModifyConsumer
+      parameters:
+        - $ref: '#/components/parameters/ConsumerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/ModifyConsumerRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/ModifyConsumerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /institution/v2/certifiedInstitutions/rssd:
     get:
       tags:
@@ -699,153 +781,10 @@ paths:
                 $ref: '#/components/schemas/GetInstitutionsResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v1/consumers/{consumerId}':
-    put:
-      tags:
-        - Consumers
-      summary: "\U0001F6A7 ModifyConsumer"
-      description: >-
-        Modify the details for an existing consumer. All fields are required for
-        a consumer record, but individual fields for this call are optional
-        because fields that are not specified will be left unchanged.
-
-
-        If the service is successful, HTTP 204 (No Content) will be returned. If
-        the consumer does not exist, the service will return HTTP 404.
-      operationId: ModifyConsumer
-      parameters:
-        - name: consumerId
-          in: path
-          description:
-            Finicity ID of the consumer (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
-      requestBody:
-        description: Consumer details
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ModifyConsumerRequest'
-        required: true
-      responses:
-        '204':
-          description: No Content
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    get:
-      tags:
-        - Consumers
-      summary: "\U0001F6A7 GetConsumer"
-      description: >-
-        Get the details of a consumer record. If the service successfully
-        retrieves the consumer record, HTTP 200 will be returned. If the
-        consumer does not exist, the service will return HTTP 404.
-      operationId: GetConsumer
-      parameters:
-        - name: consumerId
-          in: path
-          description:
-            Finicity's ID of the consumer (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Consumer'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-  '/decisioning/v1/customers/{customerId}/consumer':
-    get:
-      tags:
-        - Consumers
-      summary: "\U0001F6A7 GetConsumerForCustomer"
-      description: >-
-        Get the details of a consumer record.
-
-
-        If the service is successful, HTTP 200 (Accepted) will be returned. If
-        the customer does not exist, the service will return HTTP 404 (Not
-        Found)
-      operationId: GetConsumerForCustomer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Consumer'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-    post:
-      tags:
-        - Consumers
-      summary: "\U0001F6A7 Create Consumer"
-      description: >-
-        Create a consumer record associated with the given customer. A consumer
-        persists as the owner of any reports that are generated, even after the
-        original customer is deleted from the system. A consumer must be created
-        for the given customer before calling any of the Generate Report
-        services.
-
-
-        If a consumer already exists for this customer, this service will return
-        HTTP 409 (Conflict). If the consumer is successfully created, the
-        service will return HTTP 201 (Created).
-      operationId: CreateConsumer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateConsumerRequest'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateConsumerResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
   '/decisioning/v2/customers/{customerId}/voi':
     post:
       tags:
-        - Verify Income
+        - Verify Income and Employment
       summary: "\U0001F6A7 Generate VOI Report"
       description: >-
         Generate a Verification of Income (VOI) report for all checking,
@@ -2545,13 +2484,7 @@ paths:
         portfolio. HTTP 200 (OK) status means that the call was successful.
       operationId: GetPortfoliobyConsumer
       parameters:
-        - name: consumerId
-          in: path
-          description: Finicity report consumer ID (max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
+        - $ref: '#/components/parameters/ConsumerIdParameter'
         - name: portfolioId
           in: path
           description: >-
@@ -3023,14 +2956,7 @@ paths:
       operationId: GetReportsbyConsumer
       parameters:
         - $ref: '#/components/parameters/PurposeParameter'
-        - name: consumerId
-          in: path
-          description:
-            Finicity's ID of the consumer (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
+        - $ref: '#/components/parameters/ConsumerIdParameter'
       responses:
         '200':
           description: OK
@@ -3066,14 +2992,7 @@ paths:
       operationId: GetReportbyConsumer1
       parameters:
         - $ref: '#/components/parameters/PurposeParameter'
-        - name: consumerId
-          in: path
-          description:
-            Finicity's ID of the consumer (UUID with max length 32 characters)
-          required: true
-          schema:
-            type: string
-            example: b06cf32dd2222b32e31083221063f561
+        - $ref: '#/components/parameters/ConsumerIdParameter'
         - name: reportId
           in: path
           description:
@@ -3413,7 +3332,7 @@ paths:
   '/decisioning/v2/customers/{customerId}/voePayroll':
     post:
       tags:
-        - Verify Employment
+        - Verify Income and Employment
       summary: "\U0001F6A7 Generate VOE - Payroll Report"
       description: >-
         Premium Service: A billable event when the API response is successful. 
@@ -3480,7 +3399,7 @@ paths:
   '/decisioning/v2/customers/{customerId}/voeTransactions':
     post:
       tags:
-        - Verify Employment
+        - Verify Income and Employment
       summary: "\U0001F6A7 Generate VOE - Transactions Report"
       description: >-
         Premium Service: A billable event when the API response is successful.
@@ -3741,6 +3660,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CustomerUpdate'
+    CreateConsumerRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewConsumer'
+    ModifyConsumerRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerUpdate'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3807,6 +3738,26 @@ components:
       description: The customer was successfully updated
     DeleteCustomerResponse:
       description: The customer was successfully deleted
+    CreateConsumerResponse:
+      description: The consumer was successfully created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedConsumer'
+    GetConsumerForCustomerResponse:
+      description: The consumer was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Consumer'
+    GetConsumerResponse:
+      description: The consumer was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Consumer'
+    ModifyConsumerResponse:
+      description: The consumer was successfully updated
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3848,25 +3799,7 @@ components:
               $ref: '#/components/examples/InvalidExperienceFieldExample'
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
-    ConnectNotFoundErrorResponse:
-      description: No account found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            NoAccountForInstitutionLoginIdExample:
-              $ref: '#/components/examples/NoAccountForInstitutionLoginIdExample'
-    CustomerNotFoundErrorResponse:
-      description: The customer doesn't exist
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            CustomerNotFoundExample:
-              $ref: '#/components/examples/CustomerNotFoundExample'
-    ToManyRequestsErrorResponse:
+    TooManyRequestsErrorResponse:
       description:
         The service can't accept more requests or is not available from the
         [Test Drive](https://signup.finicity.com/).
@@ -3874,6 +3807,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Empty'
+    ResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ConsumerNotFoundExample:
+              $ref: '#/components/examples/ConsumerNotFoundExample'
+            NoAccountForInstitutionLoginIdExample:
+              $ref: '#/components/examples/NoAccountForInstitutionLoginIdExample'
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+            ResourceNotFoundExample:
+              $ref: '#/components/examples/ResourceNotFoundExample'
+    ConflictErrorResponse:
+      description: The resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ConsumerExistsConflictExample:
+              $ref: '#/components/examples/ConsumerExistsConflictExample'
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -3942,6 +3899,18 @@ components:
       value:
         code: 14001
         message: 'Customer not found.'
+    ConsumerNotFoundExample:
+      value:
+        code: 10100
+        message: 'Cannot find consumer with id 1234.'
+    ResourceNotFoundExample:
+      value:
+        code: 14001
+        message: 'Resource not found.'
+    ConsumerExistsConflictExample:
+      value:
+        code: 11000
+        message: 'A consumer already exists for customer 4025024821'
   parameters:
     AssetIdParameter:
       name: assetId
@@ -3963,6 +3932,12 @@ components:
         retrieving this report.
       schema:
         type: string
+    ConsumerIdParameter:
+      name: consumerId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ConsumerId'
   schemas:
     Empty:
       description: A schema for empty payloads
@@ -4294,15 +4269,25 @@ components:
       type: object
       properties:
         ssn:
-          $ref: '#/components/schemas/ConsumerFullSocialSecurityNumberNoHyphens'
+          $ref: '#/components/schemas/SocialSecurityNumberNoHyphens'
         dob:
           $ref: '#/components/schemas/ConsumerDateOfBirth'
-    ConsumerFullSocialSecurityNumberNoHyphens:
+    SocialSecurityNumberNoHyphens:
       type: string
-      description:
-        (MVS-optional) The full SSN without hyphens that matches the consumer's
-        SSN.
+      description: A full SSN without hyphens
       example: '999999999'
+    SocialSecurityNumber:
+      type: string
+      description: A full SSN with or without hyphens
+      example: '999-99-9999'
+    SocialSecurityNumberLastDigits:
+      type: string
+      description: Last 4 digits of a SSN
+      example: '9999'
+    EmailAddress:
+      type: string
+      description: An email address
+      example: finicity@test.com
     ConsumerDateOfBirth:
       type: integer
       format: int64
@@ -4567,14 +4552,38 @@ components:
         discouraged it is recommended to use a unique non-email identifier. Use
         of special characters may result in an error (e.g. í, ü, etc.)
       example: customerusername1
-    CustomerFirstName:
+    FirstName:
       type: string
-      description: The customer's first name(s) / given name(s)
+      description: First name(s) / given name(s)
       example: John
-    CustomerLastName:
+    LastName:
       type: string
-      description: The customer's last name(s) / surname(s)
+      description: Last name(s) / surname(s)
       example: Smith
+    Address:
+      type: string
+      description: A street address
+      example: 434 W Ascension Way
+    City:
+      type: string
+      description: A city
+      example: Murray
+    State:
+      type: string
+      description: A state
+      example: UT
+    ZipCode:
+      type: string
+      description: A ZIP code
+      example: '84123'
+    PhoneNumber:
+      type: string
+      description: A phone number
+      example: '6786786786'
+    Suffix:
+      type: string
+      description: A person suffix
+      example: Mr
     ApplicationId:
       type: string
       description: >-
@@ -4610,9 +4619,9 @@ components:
         username:
           $ref: '#/components/schemas/CustomerUsername'
         firstName:
-          $ref: '#/components/schemas/CustomerFirstName'
+          $ref: '#/components/schemas/FirstName'
         lastName:
-          $ref: '#/components/schemas/CustomerLastName'
+          $ref: '#/components/schemas/LastName'
         applicationId:
           $ref: '#/components/schemas/ApplicationId'
     CustomerUpdate:
@@ -4623,9 +4632,9 @@ components:
       type: object
       properties:
         firstName:
-          $ref: '#/components/schemas/CustomerFirstName'
+          $ref: '#/components/schemas/FirstName'
         lastName:
-          $ref: '#/components/schemas/CustomerLastName'
+          $ref: '#/components/schemas/LastName'
     CreatedCustomer:
       description: A new customer that was just enrolled
       required:
@@ -4654,9 +4663,9 @@ components:
         username:
           $ref: '#/components/schemas/CustomerUsername'
         firstName:
-          $ref: '#/components/schemas/CustomerFirstName'
+          $ref: '#/components/schemas/FirstName'
         lastName:
-          $ref: '#/components/schemas/CustomerLastName'
+          $ref: '#/components/schemas/LastName'
         type:
           $ref: '#/components/schemas/CustomerType'
         createdDate:
@@ -4711,6 +4720,123 @@ components:
           items:
             $ref: '#/components/schemas/Customer'
           description: A list of customer records
+    NewConsumer:
+      description: A new consumer to be created
+      required:
+        - firstName
+        - lastName
+        - address
+        - city
+        - state
+        - zip
+        - phone
+        - ssn
+        - birthday
+      type: object
+      properties:
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        address:
+          $ref: '#/components/schemas/Address'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        zip:
+          $ref: '#/components/schemas/ZipCode'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        ssn:
+          $ref: '#/components/schemas/SocialSecurityNumber'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        suffix:
+          $ref: '#/components/schemas/Suffix'
+    ConsumerUpdate:
+      type: object
+      properties:
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        address:
+          $ref: '#/components/schemas/Address'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        zip:
+          $ref: '#/components/schemas/ZipCode'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        ssn:
+          $ref: '#/components/schemas/SocialSecurityNumber'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        suffix:
+          $ref: '#/components/schemas/Suffix'
+    CreatedConsumer:
+      description: A consumer that was just created
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ConsumerId'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+    Consumer:
+      description: A finicity consumer record
+      required:
+        - id
+        - firstName
+        - lastName
+        - customerId
+        - address
+        - city
+        - state
+        - zip
+        - phone
+        - ssn
+        - birthday
+        - email
+        - createdDate
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ConsumerId'
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        address:
+          $ref: '#/components/schemas/Address'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        zip:
+          $ref: '#/components/schemas/ZipCode'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        ssn:
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        suffix:
+          $ref: '#/components/schemas/Suffix'
     GetInstitutionsResponse:
       required:
         - found
@@ -5339,23 +5465,6 @@ components:
           state: UT
           postalCode: '84123'
           country: USA
-    CreateConsumerResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          description:
-            Finicity ID of the consumer (UUID with max length 32 characters)
-        createdDate:
-          type: integer
-          description: Consumer created date
-          format: int64
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-      example:
-        id: 1973f901305e2ab3ba8840f411f6b057
-        createdDate: 1587586444
-        customerId: '1005061234'
     PortfolioSummary:
       required:
         - portfolioId
@@ -6232,10 +6341,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -6530,10 +6636,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '5123'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -6585,96 +6688,6 @@ components:
           example: 'WELLS FARGO BANK, LTD.'
         institutionId:
           $ref: '#/components/schemas/InstitutionId'
-    Consumer:
-      required:
-        - id
-        - firstName
-        - lastName
-        - customerId
-        - address
-        - city
-        - state
-        - zip
-        - phone
-        - ssn
-        - birthday
-        - email
-        - createdDate
-      type: object
-      properties:
-        id:
-          type: string
-          description:
-            Finicity ID of the consumer (UUID with max length 32 characters)
-          example: 1973f901305e2ab3ba8840f411f6b057
-        firstName:
-          type: string
-          description: The consumer first name(s) / given name(s)
-          example: John
-        lastName:
-          type: string
-          description: The consumer last name(s) / surname(s)
-          example: Smith
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        address:
-          type: string
-          description: The consumer's street address
-          example: 434 W Ascension Way
-        city:
-          type: string
-          description: The consumer's city
-          example: Murray
-        state:
-          type: string
-          description: The consumer's state
-          example: UT
-        zip:
-          type: string
-          description: The consumer's ZIP code
-          example: '84123'
-        phone:
-          type: string
-          description: The consumer's phone number
-          example: '6786786786'
-        ssn:
-          type: string
-          description:
-            The last 4 digits of the consumer's Social Security number
-          example: '2333'
-        birthday:
-          $ref: '#/components/schemas/Birthday'
-        email:
-          type: string
-          description: The consumer's email address
-          example: finicity@test.com
-        createdDate:
-          type: integer
-          description: Consumer created date
-          format: int64
-          example: 1588284854
-        suffix:
-          type: string
-          description: The consumer suffix
-          example: Mr
-      example:
-        id: 1973f901305e2ab3ba8840f411f6b057
-        firstName: John
-        lastName: Smith
-        customerId: '1005061234'
-        address: 434 W Ascension Way
-        city: Murray
-        state: UT
-        zip: '84123'
-        phone: '6786786786'
-        ssn: '2333'
-        birthday:
-          year: 1989
-          month: 8
-          dayOfMonth: 13
-        email: finicity@test.com
-        createdDate: 1588284854
-        suffix: Mr
     AssetSummary:
       required:
         - type
@@ -8224,10 +8237,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         institutions:
           type: array
           items:
@@ -8355,10 +8365,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
@@ -8459,10 +8466,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
@@ -8682,10 +8686,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
@@ -8787,10 +8788,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/PayStatementConstraints'
         type:
@@ -8872,10 +8870,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -8938,78 +8933,6 @@ components:
           Finicity Verification of Income and Employment - Paystub (with
           TXVerify)
         portfolioId: 9qud7dtuzbew-2-port
-    CreateConsumerRequest:
-      required:
-        - firstName
-        - lastName
-        - address
-        - city
-        - state
-        - zip
-        - phone
-        - ssn
-        - birthday
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: The consumer first name(s) / given name(s)
-          example: John
-        lastName:
-          type: string
-          description: The consumer last name(s) / surname(s)
-          example: Smith
-        address:
-          type: string
-          description: The consumer's street address
-          example: 434 W Ascension Way
-        city:
-          type: string
-          description: The consumer's city
-          example: Murray
-        state:
-          type: string
-          description: The consumer's state
-          example: UT
-        zip:
-          type: string
-          description: The consumer's ZIP code
-          example: '84123'
-        phone:
-          type: string
-          description: The consumer's phone number
-          example: '6786786786'
-        ssn:
-          type: string
-          description: >-
-            The consumer's 9-digit Social Security number (may include
-            separators: nnn-nn-nnnn)
-          example: '111222333'
-        birthday:
-          $ref: '#/components/schemas/Birthday'
-        email:
-          type: string
-          description: The consumer's email address
-          example: finicity@test.com
-        suffix:
-          type: string
-          description: The consumer suffix
-          example: Mr
-      example:
-        firstName: John
-        lastName: Smith
-        address: 434 W Ascension Way
-        city: Murray
-        state: UT
-        zip: '84123'
-        phone: '6786786786'
-        ssn: '111222333'
-        birthday:
-          year: 1989
-          month: 8
-          dayOfMonth: 13
-        email: finicity@test.com
-        suffix: Mr
     AccountType:
       enum:
         - checking
@@ -9231,9 +9154,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description: The last four of the consumer's social security
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/TransactionReportConstraints'
         type:
@@ -9682,11 +9603,7 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         ssn:
-          type: string
-          description: >-
-            The consumer's 9-digit Social Security number (may include
-            separators: nnn-nn-nnnn)
-          example: XXX-XX-2333
+          $ref: '#/components/schemas/SocialSecurityNumber'
         birthday:
           $ref: '#/components/schemas/Birthday'
         suffix:
@@ -9855,10 +9772,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '1234'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/GenerateStatementReportConstraints'
         type:
@@ -9867,85 +9781,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-    ModifyConsumerRequest:
-      required:
-        - firstName
-        - lastName
-        - address
-        - city
-        - state
-        - zip
-        - phone
-        - ssn
-        - birthday
-        - email
-        - emailAddress
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: The consumer first name(s) / given name(s)
-          example: John
-        lastName:
-          type: string
-          description: The consumer last name(s) / surname(s)
-          example: Smith
-        address:
-          type: string
-          description: The consumer's street address
-          example: 434 W Ascension Way
-        city:
-          type: string
-          description: The consumer's city
-          example: Murray
-        state:
-          type: string
-          description: The consumer's state
-          example: UT
-        zip:
-          type: string
-          description: The consumer's ZIP code
-          example: '84123'
-        phone:
-          type: string
-          description: The consumer's phone number
-          example: '6786786786'
-        ssn:
-          type: string
-          description: >-
-            The consumer's 9-digit Social Security number (may include
-            separators: nnn-nn-nnnn)
-          example: '111222333'
-        birthday:
-          $ref: '#/components/schemas/Birthday'
-        email:
-          type: string
-          description: The consumer's email address
-          example: finicity@test.com
-        suffix:
-          type: string
-          description: The consumer suffix
-          example: Mr
-        emailAddress:
-          type: string
-          description: The consumer's email address
-          example: finicity@test.com
-      example:
-        firstName: John
-        lastName: Smith
-        address: 434 W Ascension Way
-        city: Murray
-        state: UT
-        zip: '84123'
-        phone: '6786786786'
-        ssn: '111222333'
-        birthday:
-          year: 1989
-          month: 8
-          dayOfMonth: 13
-        email: finicity@test.com
-        suffix: Mr
-        emailAddress: finicity@test.com
     Branding:
       required:
         - logo
@@ -10173,7 +10008,7 @@ components:
       type: object
       properties:
         ssn:
-          $ref: '#/components/schemas/ConsumerFullSocialSecurityNumberNoHyphens'
+          $ref: '#/components/schemas/SocialSecurityNumberNoHyphens'
         dob:
           $ref: '#/components/schemas/ConsumerDateOfBirth'
         reportId:
@@ -10206,10 +10041,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -10581,10 +10413,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/VOIEWithStatementConstraints'
         type:
@@ -10711,10 +10540,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '1234'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/RequestConstraints'
         type:
@@ -10775,10 +10601,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
         type:
@@ -10890,10 +10713,7 @@ components:
         consumerId:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
-          type: string
-          description:
-            Last 4 digits of the report consumer's Social Security number
-          example: '6789'
+          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
         constraints:
           $ref: '#/components/schemas/VOETransactionsRequestConstraints'
         type:

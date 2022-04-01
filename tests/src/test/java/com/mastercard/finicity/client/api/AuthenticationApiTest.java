@@ -13,12 +13,17 @@ class AuthenticationApiTest extends BaseAppKeyTest {
     private final AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
 
     @Test
-    void createTokenTest() throws ApiException {
-        var response = authenticationApi.createToken(new PartnerCredentials()
-                .partnerId(PARTNER_ID)
-                .partnerSecret(PARTNER_SECRET));
-        assertNotNull(response);
-        assertNotNull(response.getToken());
+    void createTokenTest() {
+        try {
+            var response = authenticationApi.createToken(new PartnerCredentials()
+                    .partnerId(PARTNER_ID)
+                    .partnerSecret(PARTNER_SECRET));
+            assertNotNull(response);
+            assertNotNull(response.getToken());
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 
     @Test
