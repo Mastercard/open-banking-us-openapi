@@ -9,7 +9,6 @@ info:
 servers:
   - url: 'https://api.finicity.com'
     description: Production
-    variables: {}
 paths:
   /connect/v2/generate:
     post:
@@ -27,7 +26,7 @@ paths:
         **Note**: Contact your Sales Account Team to set up the `experience`
         parameter.
          
-        **MVS Developers** : You can pre-populate the consumer’s SSN on the Find
+        **MVS Developers** : You can pre-populate the consumer's SSN on the Find
         employment records page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
       operationId: GenerateV2ConnectURL
@@ -36,7 +35,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -50,7 +48,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -61,7 +58,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v2/generate/lite:
     post:
       tags:
@@ -71,12 +67,12 @@ paths:
         Connect Lite is a variation of Connect Full, which has a limited set of
         features.
 
-        • Sign in, user’s credentials, and Multi-Factor Authentication (MFA).
+        • Sign in, user's credentials, and Multi-Factor Authentication (MFA).
 
         • No user account management.
 
 
-        The Connect Web SDK isn’t a requirement when using Connect lite.
+        The Connect Web SDK isn't a requirement when using Connect lite.
         However, if you want to use the SDK events, routes, and user events,
         then you need to integrate with the Connect Web SDK.
       operationId: GenerateV2LiteConnectURL
@@ -85,7 +81,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -99,7 +94,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -110,7 +104,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v2/generate/fix:
     post:
       tags:
@@ -118,16 +111,15 @@ paths:
       summary: Generate V2 Fix Connect URL
       description: |-
         Use the connect fix endpoint when the following conditions occur:
-        * The connection to the user’s financial institution is lost.
-        * The user’s credentials were updated (for any number of reasons).
-        * The user’s MFA challenge has expired.
+        * The connection to the user's financial institution is lost.
+        * The user's credentials were updated (for any number of reasons).
+        * The user's MFA challenge has expired.
       operationId: GenerateV2FixConnectURL
       parameters:
         - name: Accept
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -141,7 +133,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -152,7 +143,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v2/send/email:
     post:
       tags:
@@ -162,7 +152,7 @@ paths:
         Send a Connect email to the consumer. 
 
         Use the `experience` parameter to call Connect (per session) in the body
-        of the request. When the consumer opens the email, they’ll click a
+        of the request. When the consumer opens the email, they'll click a
         button that opens the Connect application.
 
 
@@ -175,7 +165,7 @@ paths:
         parameter.
 
 
-        **MVS Developers**: You can prepopulate the consumer’s SSN to display on
+        **MVS Developers**: You can prepopulate the consumer's SSN to display on
         the Find employment records page at the beginning of the MVS payroll
         app. Pass the SSN value for the consumer in the body of the request
         call.
@@ -185,7 +175,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -231,7 +220,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -242,7 +230,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v2/generate/jointBorrower:
     post:
       tags:
@@ -264,7 +251,7 @@ paths:
         financial, payroll, and paystub information in the same Connect
         session. 
          
-        You can prepopulate the consumer’s SSN to display on the Find employment
+        You can prepopulate the consumer's SSN to display on the Find employment
         records page at the beginning of the MVS payroll app. Pass the SSN value
         for the consumer in the body of the request call.
       operationId: GenerateV2ConnectURL-JointBorrower
@@ -273,7 +260,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -314,7 +300,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -325,14 +310,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v2/send/email/jointBorrower:
     post:
       tags:
         - Connect
       summary: Send V2 Connect Email - Joint Borrower
       description: >-
-        Send a Connect email to at least one of the joint borrower’s email
+        Send a Connect email to at least one of the joint borrower's email
         addresses. When the consumer opens the email, MVS prompts both the
         primary and joint borrower to enter each of their financial, payroll,
         and paystub information in the same Connect session.
@@ -348,7 +332,7 @@ paths:
         parameter.
 
 
-        You can prepopulate the consumer’s SSN to display on the Find employment
+        You can prepopulate the consumer's SSN to display on the Find employment
         records page at the beginning of the MVS payroll app. Pass the SSN value
         for the consumer in the body of the request call.
       operationId: SendV2ConnectEmail-JointBorrower
@@ -357,7 +341,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -410,7 +393,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -421,7 +403,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /institution/v2/certifiedInstitutions/rssd:
     get:
       tags:
@@ -434,7 +415,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -442,7 +422,6 @@ paths:
           in: query
           description: 'Search term, * returns all institutions'
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -451,7 +430,6 @@ paths:
           in: query
           description: 'Page (Default: 1)'
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -461,7 +439,6 @@ paths:
           in: query
           description: 'Limits the number of results returned (max: 1000)'
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -473,7 +450,6 @@ paths:
             Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
             accountOwner.
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -481,7 +457,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -492,7 +467,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /institution/v2/institutions:
     get:
       tags:
@@ -501,7 +475,7 @@ paths:
       description: >-
         Search for all the connected financial institutions (FI) that we
         support. This returns all the FIs that match the search text for the
-        financial institution’s *name* field.
+        financial institution's *name* field.
 
         To get a list of all FIs, leave the *search* parameter out of the body
         of the API call. If the *search* parameter is in the body of the call
@@ -526,7 +500,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -538,7 +511,6 @@ paths:
             leave the *search* parameter out of the body of the API call. <br> 
             <br> If the *search* parameter is in the body of the call but has no
             value, then the call returns an error.
-          style: form
           explode: true
           schema:
             type: string
@@ -549,7 +521,6 @@ paths:
             The starting page number of records returned. The default is 1. <br>
             <br>**Example**: If the limit for each call is 25, then start=1
             returns 1-25 records. If start=2 then records 26-51 are returned.
-          style: form
           explode: true
           schema:
             type: integer
@@ -561,7 +532,6 @@ paths:
           description: >-
             The maximum number of records per page returned for the search
             request. The default is 25 records per page.
-          style: form
           explode: true
           schema:
             type: integer
@@ -571,7 +541,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -582,7 +551,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /institution/v2/certifiedInstitutions:
     get:
       tags:
@@ -595,7 +563,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -603,7 +570,6 @@ paths:
           in: query
           description: Text to match or * to return all supported institutions.
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -613,7 +579,6 @@ paths:
           description: >-
             Starting index for this page of results (ignored if returning all
             institutions). This will default to 1.
-          style: form
           explode: true
           schema:
             type: integer
@@ -626,7 +591,6 @@ paths:
             Maximum number of entries for this page of results (ignored if
             returning all institutions). This will default to 25. Limits the
             number of results returned to 1000.
-          style: form
           explode: true
           schema:
             type: integer
@@ -638,7 +602,6 @@ paths:
           description: >-
             Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
             accountOwner.
-          style: form
           explode: true
           schema:
             type: string
@@ -646,7 +609,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -657,7 +619,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/institution/v2/institutions/{institutionId}':
     get:
       tags:
@@ -670,15 +631,13 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
         - name: institutionId
           in: path
-          description: Finicity’s ID of the institution to retrieve
+          description: Finicity's ID of the institution to retrieve
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -686,7 +645,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -697,7 +655,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/institution/v2/institutions/{id}/branding':
     get:
       tags:
@@ -712,7 +669,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -720,7 +676,6 @@ paths:
           in: path
           description: ID of the institution
           required: true
-          style: simple
           schema:
             type: integer
             format: int32
@@ -728,7 +683,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -744,7 +698,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /institution/v2/institutions/subscription:
     get:
       tags:
@@ -760,26 +713,22 @@ paths:
         - name: Finicity-App-Key
           in: header
           description: Finicity-App-Key from the Developer Portal
-          style: simple
           schema:
             type: string
         - name: Finicity-App-Token
           in: header
           description: Token returned from Partner Authentication
-          style: simple
           schema:
             type: string
         - name: Accept
           in: header
           description: 'application/json, application/xml'
-          style: simple
           schema:
             type: string
             example: 'application/json, application/xml'
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -790,7 +739,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/consumers/{consumerId}':
     put:
       tags:
@@ -810,7 +758,6 @@ paths:
           in: path
           description: Finicity ID of the consumer (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
@@ -818,7 +765,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -832,7 +778,6 @@ paths:
       responses:
         '204':
           description: No Content
-          headers: {}
         '404':
           description: Bad Request
           content:
@@ -845,7 +790,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     get:
       tags:
         - Consumer
@@ -858,9 +802,8 @@ paths:
       parameters:
         - name: consumerId
           in: path
-          description: Finicity’s ID of the consumer (UUID with max length 32 characters)
+          description: Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             pattern: ''
             type: string
@@ -869,7 +812,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -877,14 +819,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: Success
-          headers: {}
           content:
             application/json:
               schema:
@@ -901,7 +841,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/customers/{customerId}/consumer':
     get:
       tags:
@@ -921,7 +860,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -929,14 +867,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: Success
-          headers: {}
           content:
             application/json:
               schema:
@@ -953,7 +889,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     post:
       tags:
         - Consumer
@@ -976,7 +911,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -989,7 +923,6 @@ paths:
       responses:
         '201':
           description: Created
-          headers: {}
           content:
             application/json:
               schema:
@@ -1006,7 +939,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voi':
     post:
       tags:
@@ -1039,7 +971,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1048,7 +979,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1061,7 +991,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1078,7 +1007,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v3/customers/{customerId}/voa':
     post:
       tags:
@@ -1112,7 +1040,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1126,7 +1053,6 @@ paths:
             timestamp should be 10 digits long and be within six months of the
             present day. Extending the epoch timestamp beyond 10 digits will
             default back to six months of data. This query is optional
-          style: form
           explode: true
           schema:
             type: integer
@@ -1136,7 +1062,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1149,7 +1074,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1166,7 +1090,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voaHistory':
     post:
       tags:
@@ -1223,7 +1146,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1242,7 +1164,6 @@ paths:
             digits long and be within two years of the present day. Extending
             the epoch timestamp beyond 10 digits will default back to 2 years of
             data. This query is optional.
-          style: form
           explode: true
           schema:
             type: integer
@@ -1252,7 +1173,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1265,7 +1185,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1282,7 +1201,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/preQualVoa':
     post:
       tags:
@@ -1330,7 +1248,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1339,7 +1256,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1352,7 +1268,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1370,7 +1285,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/assetSummary':
     post:
       tags:
@@ -1417,7 +1331,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1426,7 +1339,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1439,7 +1351,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1457,7 +1368,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/payStatement':
     post:
       tags:
@@ -1499,7 +1409,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1508,7 +1417,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1521,7 +1429,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1538,7 +1445,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withInterview':
     post:
       tags:
@@ -1590,7 +1496,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1599,7 +1504,6 @@ paths:
           in: header
           description: application/json or application/xml
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1621,7 +1525,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1639,7 +1542,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voiePayroll':
     post:
       tags:
@@ -1648,12 +1550,12 @@ paths:
       description: >-
         The VOIE – Payroll report generates when the customer completes Connect.
         Lenders, who commonly use this report for pre-close verification
-        employment check, can refresh this report by passing the consumer’s SSN,
+        employment check, can refresh this report by passing the consumer's SSN,
         DOB, and the `reportId` from the first VOIE – Payroll report they
         received.
          
-        We’ll refresh this report and update any new pay histories since the
-        first report generated, including borrower’s employment status as active
+        We'll refresh this report and update any new pay histories since the
+        first report generated, including borrower's employment status as active
         or not.
          
         Note: Lenders can only refresh this report one time in a 60-day period
@@ -1663,12 +1565,12 @@ paths:
         The service immediately returns the status HTTP 202 (accepted). A
         notification gets sent to the report callback URL, if specified.
          
-        After the call is made, the client’s application can wait for a
+        After the call is made, the client's application can wait for a
         notification sent by the Report Listener Service. Or it may enter a
         loop, which waits about 20 seconds and then calls the service, Get
         Report to check if the report is finished.
          
-        While the report’s generating, Get Report returns a minimal report with
+        While the report's generating, Get Report returns a minimal report with
         a status of InProgress.  The loop repeats every 20 seconds until Get
         Report returns a different status.
       operationId: RefreshVOIE-PayrollReport
@@ -1679,7 +1581,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1688,7 +1589,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1701,7 +1601,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1727,7 +1626,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withStatement':
     post:
       tags:
@@ -1769,7 +1667,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -1778,7 +1675,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1802,7 +1698,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -1819,7 +1714,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts':
     get:
       tags:
@@ -1835,7 +1729,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1845,7 +1738,6 @@ paths:
           in: path
           description: The institution login ID (from the account record)
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -1853,7 +1745,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -1864,7 +1755,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     post:
       tags:
         - Accounts
@@ -1898,7 +1788,6 @@ paths:
           in: header
           description: Must be 0 (this request has no body)
           required: true
-          style: simple
           schema:
             type: integer
             format: int32
@@ -1907,7 +1796,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -1915,7 +1803,6 @@ paths:
           in: header
           description: 'False'
           required: true
-          style: simple
           schema:
             enum:
               - false
@@ -1927,14 +1814,12 @@ paths:
           in: path
           description: The institution login ID from the account records
           required: true
-          style: simple
           schema:
             type: string
             example: '1007302745'
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -1945,7 +1830,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}':
     delete:
       tags:
@@ -1968,7 +1852,6 @@ paths:
             The Finicity ID of the Institution Login for the set of accounts to
             be deleted
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -1976,14 +1859,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
     get:
       tags:
@@ -1996,7 +1877,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2004,9 +1884,8 @@ paths:
           # description: The ID of the customer who owns the account
         - name: accountId
           in: path
-          description: Finicity’s ID of the account to be retrieved
+          description: Finicity's ID of the account to be retrieved
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2014,7 +1893,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2025,7 +1903,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     delete:
       tags:
         - Accounts
@@ -2039,9 +1916,8 @@ paths:
           # description: The ID of the customer who owns the account
         - name: accountId
           in: path
-          description: Finicity’s ID of the account to be deleted
+          description: Finicity's ID of the account to be deleted
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2049,14 +1925,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts':
     get:
       tags:
@@ -2069,7 +1943,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2081,7 +1954,6 @@ paths:
             append, ?status=pending, to return accounts in active and pending
             status. Pending accounts were discovered but not activated and will
             not have transactions or have balance updates
-          style: form
           explode: true
           schema:
             type: string
@@ -2089,7 +1961,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2100,7 +1971,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     post:
       tags:
         - Accounts
@@ -2134,7 +2004,6 @@ paths:
           in: header
           description: Must be 0 (this request has no body)
           required: true
-          style: simple
           schema:
             type: integer
             format: int32
@@ -2143,7 +2012,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2152,7 +2020,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2163,7 +2030,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/institutions/{institutionId}/accounts':
     get:
       tags:
@@ -2178,7 +2044,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2186,9 +2051,8 @@ paths:
           # description: The ID of the customer who owns the account
         - name: institutionId
           in: path
-          description: Finicity’s ID of the institution
+          description: Finicity's ID of the institution
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2196,7 +2060,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2207,14 +2070,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
     post:
       tags:
         - Accounts
       summary: Load Historic Transactions For Customer Account
       description: >-
-        Connect to the account’s financial institution and load up to 24 months
+        Connect to the account's financial institution and load up to 24 months
         of historic transactions for the account. Length of history varies by
         institution.
 
@@ -2247,7 +2109,7 @@ paths:
         it is a POST request with no request body.
 
 
-        The date range sent to the institution is calculated from the account’s
+        The date range sent to the institution is calculated from the account's
         createdDate. This means that calling this service a second time for the
         same account normally will not add any new transactions for the account.
         For this reason, a second call to this service for a known accountId
@@ -2258,7 +2120,7 @@ paths:
         connection to the institution for a known accountId. Some examples are:
 
 
-        - The institution’s policy has changed, making more transactions
+        - The institution's policy has changed, making more transactions
         available.
 
         - Finicity has now added a longer transaction history support for the
@@ -2276,7 +2138,6 @@ paths:
           in: header
           description: Must be 0 (this request has no body)
           required: true
-          style: simple
           schema:
             type: integer
             format: int32
@@ -2285,7 +2146,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2295,7 +2155,6 @@ paths:
           in: path
           description: The Finicity ID of the account to pull transaction history for
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2303,14 +2162,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
@@ -2325,7 +2182,7 @@ paths:
         call. 
 
 
-        HTTP status of 200 means the account owner’s name and address were
+        HTTP status of 200 means the account owner's name and address were
         retrieved successfully.
 
 
@@ -2343,16 +2200,14 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
-          description: Finicity’s ID of the account
+          description: Finicity's ID of the account
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2360,7 +2215,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2371,7 +2225,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v1/customers:
     get:
       tags:
@@ -2379,7 +2232,7 @@ paths:
       summary: Get Customers
       description: >-
         Find all customers enrolled by the current partner, where the search
-        text is found in the customer’s username or any combination of firstName
+        text is found in the customer's username or any combination of firstName
         and lastName fields. If no search text is provided, return all
         customers.
 
@@ -2398,7 +2251,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2407,7 +2259,6 @@ paths:
           description: >-
             The text you wish to match. Leave this empty if you wish to return
             all customers. Must be URL-encoded (see Handling Spaces in Queries)
-          style: form
           explode: true
           schema:
             type: string
@@ -2415,7 +2266,6 @@ paths:
         - name: username
           in: query
           description: Username for exact match. (Will return 0 or 1 records.)
-          style: form
           explode: true
           schema:
             type: string
@@ -2423,7 +2273,6 @@ paths:
         - name: start
           in: query
           description: Starting index for this page of results. The default value is 1.
-          style: form
           explode: true
           schema:
             type: integer
@@ -2435,7 +2284,6 @@ paths:
           description: >-
             Maximum number of entries for this page of results. The default
             value is 25.
-          style: form
           explode: true
           schema:
             type: integer
@@ -2447,7 +2295,6 @@ paths:
           description: >-
             One of the values testing or active to return only customers of that
             type, or leave empty to return all customers.
-          style: form
           explode: true
           schema:
             type: string
@@ -2455,7 +2302,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2466,7 +2312,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}':
     put:
       tags:
@@ -2491,14 +2336,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     get:
       tags:
         - Customer
@@ -2513,7 +2356,6 @@ paths:
           in: header
           description: Must be 0 (this request has no body)
           required: true
-          style: simple
           schema:
             type: string
             example: '0'
@@ -2521,7 +2363,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2529,7 +2370,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2540,7 +2380,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     delete:
       tags:
         - Customer
@@ -2565,14 +2404,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v2/customers/active:
     post:
       tags:
@@ -2597,7 +2434,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2614,7 +2450,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2628,7 +2463,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v2/customers/testing:
     post:
       tags:
@@ -2656,7 +2490,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2673,7 +2506,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2687,7 +2519,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/application':
     get:
       tags:
@@ -2704,7 +2535,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2712,7 +2542,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -2723,7 +2552,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
     get:
       tags:
@@ -2781,16 +2609,14 @@ paths:
             application/pdf, application/json (the document will be in PDF
             format, but errors will be JSON)
           required: true
-          style: simple
           schema:
             type: string
             example: 'application/pdf, application/json'
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
-          description: Finicity’s ID of the account
+          description: Finicity's ID of the account
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -2801,7 +2627,6 @@ paths:
             Request statements from 1- 24. By default, 1 is the most recent
             statement. Increase the index value to count back (by month) and
             retrieve its most recent statement.
-          style: form
           explode: true
           schema:
             type: integer
@@ -2811,7 +2636,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/octet-stream:
               schema:
@@ -2824,7 +2648,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/statement':
     post:
       tags:
@@ -2862,7 +2685,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2872,7 +2694,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          style: form
           explode: true
           schema:
             type: string
@@ -2887,7 +2708,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -2898,7 +2718,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v3/customers/{customerId}/transactions':
     get:
       tags:
@@ -2933,7 +2752,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -2945,7 +2763,6 @@ paths:
             Starting timestamp for the date range (required) (see Handling Dates
             and Times)
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -2957,7 +2774,6 @@ paths:
             Ending timestamp for the date range (required, must be greater than
             fromDate) (see Handling Dates and Times)
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -2966,7 +2782,6 @@ paths:
         - name: start
           in: query
           description: Starting index for this page of results
-          style: form
           explode: true
           schema:
             type: integer
@@ -2976,7 +2791,6 @@ paths:
         - name: limit
           in: query
           description: Maximum number of entries for this page of results (max is 1000)
-          style: form
           explode: true
           schema:
             type: integer
@@ -2988,7 +2802,6 @@ paths:
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
-          style: form
           explode: true
           schema:
             type: string
@@ -2997,7 +2810,6 @@ paths:
         - name: includePending
           in: query
           description: true to include pending transactions if available.
-          style: form
           explode: true
           schema:
             type: boolean
@@ -3006,7 +2818,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3017,7 +2828,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v2/customers/{customerId}/transactions/{transactionId}':
     get:
       tags:
@@ -3030,7 +2840,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3040,14 +2849,12 @@ paths:
           in: path
           description: The transaction to be retrieved
           required: true
-          style: simple
           schema:
             type: string
             example: '102122887150'
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3058,7 +2865,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/transactions':
     get:
       tags:
@@ -3094,7 +2900,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3102,9 +2907,8 @@ paths:
           # description: The ID of the customer whose transactions are to be retrieved
         - name: accountId
           in: path
-          description: Finicity’s ID of the account whose transactions are to be retrieved
+          description: Finicity's ID of the account whose transactions are to be retrieved
           required: true
-          style: simple
           schema:
             type: string
         - name: fromDate
@@ -3113,7 +2917,6 @@ paths:
             Starting timestamp for the date range (required) (see Handling Dates
             and Times)
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -3125,7 +2928,6 @@ paths:
             Ending timestamp for the date range (required, must be greater than
             fromDate) (see Handling Dates and Times)
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -3134,7 +2936,6 @@ paths:
         - name: start
           in: query
           description: Starting index for this page of results
-          style: form
           explode: true
           schema:
             type: integer
@@ -3144,7 +2945,6 @@ paths:
         - name: limit
           in: query
           description: Maximum number of entries for this page of results (max is 1000)
-          style: form
           explode: true
           schema:
             type: integer
@@ -3156,7 +2956,6 @@ paths:
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
-          style: form
           explode: true
           schema:
             type: string
@@ -3165,7 +2964,6 @@ paths:
         - name: includePending
           in: query
           description: true to include pending transactions if available.
-          style: form
           explode: true
           schema:
             type: boolean
@@ -3174,7 +2972,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3185,7 +2982,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/transactions':
     post:
       tags:
@@ -3228,7 +3024,6 @@ paths:
           in: header
           description: JSON or XML output.
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3238,7 +3033,6 @@ paths:
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -3249,11 +3043,10 @@ paths:
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds).  It must be
             10 digits long and within two years of the present day.    Example:
-            ?fromDate=1494449017.   If fromDate is not used or it’s longer than
+            ?fromDate=1494449017.   If fromDate is not used or it's longer than
             10 digits, the transaction report history defaults to 24 months of
             data.    (Optional)
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -3265,7 +3058,6 @@ paths:
             The ending timestamp for the date range. The value must be greater
             than fromDate. See Handling Dates and Times.
           required: true
-          style: form
           explode: true
           schema:
             type: integer
@@ -3277,7 +3069,6 @@ paths:
             True: Include pending transactions in the report. False: Set by
             default.
           required: true
-          style: form
           explode: true
           schema:
             type: boolean
@@ -3292,7 +3083,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -3303,7 +3093,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/payStatements':
     post:
       tags:
@@ -3319,14 +3108,12 @@ paths:
           in: header
           description: Finicity-App-Key from Developer Portal
           required: true
-          style: simple
           schema:
             type: string
         - name: Finicity-App-Token
           in: header
           description: Token returned from Partner Authentication
           required: true
-          style: simple
           schema:
             type: string
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -3350,7 +3137,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3363,7 +3149,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/loanDetails':
     get:
       tags:
@@ -3386,7 +3171,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3395,7 +3179,6 @@ paths:
           in: path
           description: The Finicity ID of the account
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -3403,7 +3186,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3414,7 +3196,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v2/partners/authentication:
     put:
       tags:
@@ -3445,14 +3226,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
       security: []
     post:
       tags:
@@ -3485,7 +3264,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3502,7 +3280,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3515,7 +3292,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
       security: []
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
     get:
@@ -3540,7 +3316,6 @@ paths:
             number. Using the portfolio number without a version number will
             return the most recently generated reports for the consumer.
           required: true
-          style: simple
           schema:
             type: string
             example: xh67j3xmt47e-1-port
@@ -3548,7 +3323,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3556,14 +3330,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -3580,28 +3352,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/txpush':
     post:
       tags:
         - TxPush
       summary: Subscribe To TxPush Notifications
       description: >-
-        Register a client app’s TxPUSH Listener to receive TxPUSH notifications
+        Register a client app's TxPUSH Listener to receive TxPUSH notifications
         related to the given account.
 
 
         Each call to this service will return two records, one with class
         account and one with class transaction. Account events are sent when
-        values change in the account’s fields (such as balance or interestRate).
+        values change in the account's fields (such as balance or interestRate).
         Transaction events are sent whenever a new transaction is posted for the
         account. For institutions that do not provide TxPUSH services,
         notifications are sent as soon as Finicity finds a new transaction or
         new account data through regular aggregation processes.
 
 
-        The listener’s URL must be secure (https) for any real-world account. In
-        addition, the client’sTxPUSH Listener will need to be verified. HTTP and
+        The listener's URL must be secure (https) for any real-world account. In
+        addition, the client'sTxPUSH Listener will need to be verified. HTTP and
         HTTPS connections are only allowed on the standard ports 80 (HTTP) and
         443 (HTTPS). The use of other ports will result with the call failing.
         For additional details on this process please see, TxPUSH Listener
@@ -3612,7 +3383,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3624,7 +3394,6 @@ paths:
             The Finicity ID of the account whose events will be sent to the
             TxPUSH Listener
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -3638,7 +3407,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3649,7 +3417,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     delete:
       tags:
         - TxPush
@@ -3668,7 +3435,6 @@ paths:
             The Finicity ID of the account whose events will be sent to the
             TxPUSH Listener
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -3676,14 +3442,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/customers/{customerId}/reports/{reportId}':
     get:
       tags:
@@ -3706,16 +3470,14 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: reportId
           in: path
-          description: Finicity’s ID of the report
+          description: Finicity's ID of the report
           required: true
-          style: simple
           schema:
             type: string
             example: 41h4nzppn37u
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          style: form
           explode: true
           schema:
             type: string
@@ -3724,7 +3486,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3732,14 +3493,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -3819,18 +3578,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v1/generate:
     post:
       tags:
         - Deprecated
       summary: Generate Connect URL All Types
       description: >-
-        No matter how you plan on implementing Finicity Connect, you’ll need to
+        No matter how you plan on implementing Finicity Connect, you'll need to
         generate and retrieve a Finicity Connect Link.  You will need to specify
         what type of Finicity Connect you need depending on what will happen
         once the customer accounts and transaction data are gathered.  Below
-        you’ll find how to generate the Connect link as well as where to specify
+        you'll find how to generate the Connect link as well as where to specify
         what type of Finicity Connect you need.
 
 
@@ -3865,7 +3623,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3886,7 +3643,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -3897,7 +3653,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/institutions/{newInstitutionId}':
     put:
       tags:
@@ -3916,12 +3671,11 @@ paths:
       operationId: MigrateInstitutionLoginAccountsV1
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity’s ID of the customer for the institutionLoginId of accounts
+          # description: Finicity's ID of the customer for the institutionLoginId of accounts
         - name: institutionLoginId
           in: path
           description: Finicity's institutionLoginId for the set of accounts to be migrated
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -3930,7 +3684,6 @@ paths:
           in: path
           description: New OAuth FI ID where accounts  will be migrated
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -3938,7 +3691,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -3949,7 +3701,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
     get:
       tags:
@@ -3969,7 +3720,6 @@ paths:
           in: path
           description: Finicity report consumer ID (max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
@@ -3980,7 +3730,6 @@ paths:
             number. Using the portfolio number without a version number will
             return the most recently generated reports for the consumer.
           required: true
-          style: simple
           schema:
             type: string
             example: xh67j3xmt47e-1-port
@@ -3988,7 +3737,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -3996,14 +3744,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -4020,7 +3766,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details':
     get:
       tags:
@@ -4038,24 +3783,21 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity’s ID for the customer who owns the account
+          # description: Finicity's ID for the customer who owns the account
         - name: accountId
           in: path
-          description: Finicity’s ID of the account
+          description: Finicity's ID of the account
           required: true
-          style: simple
           schema:
             type: string
             example: '1014136057'
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -4066,7 +3808,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v1/customers/testing:
     post:
       tags:
@@ -4081,7 +3822,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4095,7 +3835,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -4106,7 +3845,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
@@ -4128,24 +3866,21 @@ paths:
       parameters:
         - name: consumerId
           in: path
-          description: Finicity’s ID of the consumer (UUID with max length 32 characters)
+          description: Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
         - name: reportId
           in: path
-          description: Finicity’s ID of the report (UUID with max length 32 characters)
+          description: Finicity's ID of the report (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: 41h4nzppn37u
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          style: form
           explode: true
           schema:
             type: string
@@ -4154,7 +3889,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4162,14 +3896,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -4249,7 +3981,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
     post:
       tags:
@@ -4258,7 +3989,7 @@ paths:
       description: >-
         Inject a transaction into the transaction list for a testing account.
         This allows an app to trigger TxPush notifications for the account in
-        order to test the app’s TxPush Listener service. This causes the
+        order to test the app's TxPush Listener service. This causes the
         platform to send one transaction event and one account event (showing
         that the account balance has changed). This service is only supported
         for testing accounts (accounts on institution 101732).
@@ -4268,7 +3999,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4280,7 +4010,6 @@ paths:
             The Finicity ID of the account whose events will be sent to the
             TxPUSH Listener
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -4300,7 +4029,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -4311,7 +4039,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
     get:
       tags:
@@ -4334,16 +4061,14 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: reportId
           in: path
-          description: Finicity’s ID of the report
+          description: Finicity's ID of the report
           required: true
-          style: simple
           schema:
             type: string
             example: rceiqx616awa-assetsummary
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          style: form
           explode: true
           schema:
             type: string
@@ -4351,7 +4076,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4359,7 +4083,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4367,7 +4090,6 @@ paths:
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -4384,7 +4106,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v1/customers/active:
     post:
       tags:
@@ -4407,7 +4128,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4425,7 +4145,6 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
           content:
             application/json:
               schema:
@@ -4439,7 +4158,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
     delete:
       tags:
@@ -4459,7 +4177,6 @@ paths:
             The ID of the specific subscription to be deleted, returned from
             Enable TxPUSH Notifications
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -4467,14 +4184,12 @@ paths:
       responses:
         '200':
           description: default response
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /connect/v1/send/email:
     post:
       tags:
@@ -4505,7 +4220,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4540,7 +4254,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4552,7 +4265,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
     put:
       tags:
@@ -4574,7 +4286,6 @@ paths:
             "applicationId" value returned from the Get App Registration Status
             endpoint
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -4582,14 +4293,12 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v1/partners/applications:
     post:
       tags:
@@ -4610,7 +4319,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4621,7 +4329,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
     get:
       tags:
         - Deprecated
@@ -4634,7 +4341,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4645,7 +4351,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/partners/applications/{preAppId}':
     put:
       tags:
@@ -4662,7 +4367,6 @@ paths:
             The preAppId from the App Registration and Get App Registration
             Status endpoints
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -4677,7 +4381,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4688,14 +4391,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v2/customers/{customerId}/institutionLogins/{institutionLoginId}/migration':
     put:
       tags:
         - App Registration and OAuth Migration
       summary: Migrate Institution Login Accounts V2
       description: >-
-        The institutionLoginId parameter uses Finicity’s internal FI mapping to
+        The institutionLoginId parameter uses Finicity's internal FI mapping to
         move accounts from the current FI legacy connection to the new OAuth FI
         connection.
 
@@ -4712,7 +4414,6 @@ paths:
             The institutionLoginId for the set of accounts to be migrated from
             the legacy FI ID to the new OAuth FI ID
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -4720,7 +4421,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4731,7 +4431,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   /aggregation/v2/partners/applications:
     get:
       tags:
@@ -4745,7 +4444,6 @@ paths:
         - name: Accept
           in: header
           description: 'application/json, application/xml'
-          style: simple
           schema:
             type: string
             default: application/json
@@ -4753,7 +4451,6 @@ paths:
         - name: preAppId
           in: query
           description: Look up the status of an app by the preAppId
-          style: form
           explode: true
           schema:
             type: integer
@@ -4762,7 +4459,6 @@ paths:
         - name: applicationId
           in: query
           description: Look up the status of an app by the applicationId
-          style: form
           explode: true
           schema:
             type: string
@@ -4773,7 +4469,6 @@ paths:
             Look up the status of app registration requests by the registration
             request status. Valid values P (For Pending), A (For Approved), R
             (For Rejected)
-          style: form
           explode: true
           schema:
             type: string
@@ -4781,7 +4476,6 @@ paths:
         - name: appName
           in: query
           description: Look up app registration requests by the application name
-          style: form
           explode: true
           schema:
             type: string
@@ -4790,7 +4484,6 @@ paths:
           description: >-
             Look up app registration requests by the date they were submitted in
             epoch format.
-          style: form
           explode: true
           schema:
             type: integer
@@ -4802,7 +4495,6 @@ paths:
             Look up app registration requests by the date the request was
             updated. This could be used to determine when the app was updated to
             approved or rejected.
-          style: form
           explode: true
           schema:
             type: integer
@@ -4811,7 +4503,6 @@ paths:
         - name: page
           in: query
           description: Select which page of results to return
-          style: form
           explode: true
           schema:
             type: integer
@@ -4821,7 +4512,6 @@ paths:
         - name: pageSize
           in: query
           description: Select how many results per page to return
-          style: form
           explode: true
           schema:
             type: integer
@@ -4831,7 +4521,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -4842,7 +4531,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/customers/{customerId}/reports':
     get:
       tags:
@@ -4858,13 +4546,12 @@ paths:
       operationId: GetReportsbyCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity’s ID of the customer
+          # description: Finicity's ID of the customer
         - $ref: '#/components/parameters/PurposeParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4872,14 +4559,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -4896,7 +4581,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/consumers/{consumerId}/reports':
     get:
       tags:
@@ -4914,9 +4598,8 @@ paths:
         - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
-          description: Finicity’s ID of the consumer (UUID with max length 32 characters)
+          description: Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
@@ -4924,7 +4607,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -4932,14 +4614,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -4956,7 +4636,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
@@ -4979,24 +4658,21 @@ paths:
         - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
-          description: Finicity’s ID of the consumer (UUID with max length 32 characters)
+          description: Finicity's ID of the consumer (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: b06cf32dd2222b32e31083221063f561
         - name: reportId
           in: path
-          description: Finicity’s ID of the report (UUID with max length 32 characters)
+          description: Finicity's ID of the report (UUID with max length 32 characters)
           required: true
-          style: simple
           schema:
             type: string
             example: 41h4nzppn37u
         - name: onBehalfOf
           in: query
           description: The name of the entity you are retrieving the report on behalf of.
-          style: form
           explode: true
           schema:
             type: string
@@ -5004,7 +4680,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5012,14 +4687,12 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
@@ -5099,7 +4772,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
@@ -5109,7 +4781,7 @@ paths:
         Retrieve a binary file with the given assetId. The returned content type
         is always application/octet-stream. If the service successfully
         retrieves the asset, HTTP 200 (OK) will be returned. If the asset
-        doesn’t exist, HTTP 404 (Not Found) will be returned. If you would like
+        doesn't exist, HTTP 404 (Not Found) will be returned. If you would like
         to see an error message on the return, include application/json or
         application/xml in your desired format for the Accept header.
       operationId: GetAssetbyCustomerID
@@ -5119,14 +4791,12 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
         default:
           description: The token has expired.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v1/partners/{partnerId}/billing/reseller':
     get:
       tags:
@@ -5143,7 +4813,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5151,7 +4820,6 @@ paths:
           in: path
           description: Partner ID From Developer Portal
           required: true
-          style: simple
           schema:
             type: string
         - name: startDate
@@ -5161,7 +4829,6 @@ paths:
             Note: The range between startDate and endDate must be 31 days or
             less.
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -5169,7 +4836,6 @@ paths:
           in: query
           description: The latest date to be analyzed in this report. This is required.
           required: true
-          style: form
           explode: true
           schema:
             type: string
@@ -5179,7 +4845,6 @@ paths:
             The size of the results returned per page. By default, this is 100
             results per page and can be no more than 1000 results per page. This
             is optional.
-          style: form
           explode: true
           schema:
             type: string
@@ -5188,7 +4853,6 @@ paths:
           description: >-
             The page to be viewed. Zero based index. This is optional. Default
             0.
-          style: form
           explode: true
           schema:
             type: string
@@ -5198,14 +4862,12 @@ paths:
             Designate as true to only display testing reports in the response.
             By default, this is false.
           required: true
-          style: form
           explode: true
           schema:
             type: string
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -5216,7 +4878,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance/live':
     get:
       tags:
@@ -5238,7 +4899,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5246,9 +4906,8 @@ paths:
           # description: ID for the customer who owns the account
         - name: accountId
           in: path
-          description: ID for the customer’s account
+          description: ID for the customer's account
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -5256,7 +4915,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -5267,7 +4925,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance':
     get:
       tags:
@@ -5292,7 +4949,6 @@ paths:
           in: header
           description: 'application/json, application/xml'
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5300,9 +4956,8 @@ paths:
           # description: ID for the customer who owns the account
         - name: accountId
           in: path
-          description: ID for the customer’s account
+          description: ID for the customer's account
           required: true
-          style: simple
           schema:
             type: integer
             format: int64
@@ -5310,7 +4965,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -5321,7 +4975,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/cashFlowBusiness':
     post:
       tags:
@@ -5363,7 +5016,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          style: form
           explode: true
           schema:
             type: string
@@ -5372,7 +5024,6 @@ paths:
           in: header
           description: JSON or XML output.
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5381,9 +5032,8 @@ paths:
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
             10 digits long and within two years of the present day.  If fromDate
-            is not used or it’s longer than 10 digits, the cash flow report
+            is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
-          style: form
           explode: true
           schema:
             type: integer
@@ -5399,7 +5049,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -5410,7 +5059,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/cashFlowPersonal':
     post:
       tags:
@@ -5463,7 +5111,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          style: form
           explode: true
           schema:
             type: string
@@ -5472,7 +5119,6 @@ paths:
           in: header
           description: JSON or XML output.
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5481,9 +5127,8 @@ paths:
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
             10 digits long and within two years of the present day.  If fromDate
-            is not used or it’s longer than 10 digits, the cash flow report
+            is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
-          style: form
           explode: true
           schema:
             type: integer
@@ -5499,7 +5144,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -5510,7 +5154,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voePayroll':
     post:
       tags:
@@ -5526,7 +5169,7 @@ paths:
 
         Used as a complementary report to the VOIE-Payroll report. This report
         is used to fulfill the pre-close VOE requirements. It retrieves the
-        customer’s employment details and employment status through the payroll
+        customer's employment details and employment status through the payroll
         source without any income information. 
 
 
@@ -5553,7 +5196,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -5562,7 +5204,6 @@ paths:
           in: header
           description: application/json
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5575,7 +5216,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -5601,7 +5241,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
   '/decisioning/v2/customers/{customerId}/voeTransactions':
     post:
       tags:
@@ -5621,11 +5260,11 @@ paths:
 
 
         It retrieves the latest credit transaction information from the
-        borrower’s connected bank accounts and groups them into income streams
+        borrower's connected bank accounts and groups them into income streams
         so that you can view their payment history to ensure a direct deport was
         made within the expected cadence. The report displays transaction
         descriptions without any dollar amounts so that income re-verification
-        isn’t necessary.
+        isn't necessary.
 
 
         **After the call**
@@ -5646,7 +5285,6 @@ paths:
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
-          style: form
           explode: true
           schema:
             type: string
@@ -5663,7 +5301,6 @@ paths:
             the present day. Extending the epoch timestamp beyond 10 digits or
             beyond 120 days from the present date will default back to 120 days
             of data. This query is optional.
-          style: form
           explode: true
           schema:
             type: integer
@@ -5673,7 +5310,6 @@ paths:
           in: header
           description: Replace 'json' with 'xml' if preferred
           required: true
-          style: simple
           schema:
             type: string
             example: application/json
@@ -5686,7 +5322,6 @@ paths:
       responses:
         '202':
           description: Accepted
-          headers: {}
           content:
             application/json:
               schema:
@@ -5703,7 +5338,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-      deprecated: false
 components:
   parameters:
     AssetIdParameter:
@@ -5717,7 +5351,6 @@ components:
       in: path
       description: Finicity's ID of the customer
       required: true
-      style: simple
       schema:
         type: integer
         format: int64
@@ -5728,7 +5361,6 @@ components:
       description: >-
         2-digit code from Permissible Purpose Codes, specifying the reason
         for retrieving this report.
-      style: form
       explode: true
       schema:
         type: string
@@ -5850,8 +5482,8 @@ components:
         subject:
           type: string
           description: >-
-            The “subject” line that will appear in user’s inboxes. Defaults to
-            ‘Verify your Financial Information’ This field is optional.
+            The “subject” line that will appear in user's inboxes. Defaults to
+            ‘Verify your Financial Information' This field is optional.
           example: Verify your income
         firstName:
           type: string
@@ -6451,7 +6083,7 @@ components:
       properties:
         id:
           type: integer
-          description: Finicity’s ID for the customer
+          description: Finicity's ID for the customer
           format: int64
           example: 1005061234
         username:
@@ -6537,7 +6169,7 @@ components:
           description: Finicity ID of the consumer
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
@@ -6983,7 +6615,7 @@ components:
         normalizedPayeeName:
           type: string
           description: >-
-            A normalized payee, derived from the transaction’s description and
+            A normalized payee, derived from the transaction's description and
             memo fields.
           example: Mad Science Research
         category:
@@ -7204,7 +6836,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voi1
         name:
           type: string
@@ -7462,12 +7094,12 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         consumerId:
           type: string
           description: >-
-            Finicity’s consumer ID. Obtained from the Create Consumer call. <br>
+            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
             *Required for any connect type that generate a report*
           example: 86238nvnw7269e224a4e3de12352d87d
         type:
@@ -7603,7 +7235,7 @@ components:
       properties:
         id:
           type: integer
-          description: The institution’s ID
+          description: The institution's ID
           format: int64
         name:
           type: string
@@ -7668,13 +7300,13 @@ components:
             Retirement, Mortgages and Loans, Insurance
         phone:
           type: string
-          description: The institution’s primary phone number
+          description: The institution's primary phone number
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
         urlLogonApp:
           type: string
-          description: The URL of the institution’s login page
+          description: The URL of the institution's login page
         oauthEnabled:
           type: boolean
           description: '**true**: The institution is an OAuth connection.'
@@ -7710,7 +7342,7 @@ components:
           description: Institution's currency
         email:
           type: string
-          description: The institution’s primary contact email
+          description: The institution's primary contact email
           example: finbank.ds5@finicity.com
         status:
           type: string
@@ -7719,7 +7351,7 @@ components:
         newInstitutionId:
           type: integer
           description: >-
-            The new id for the financial institution’s ID you are replacing.
+            The new id for the financial institution's ID you are replacing.
             <br> <br> **Note**: This is the same as the `oauthInstitutionId`
             field, which will eventually be replaced by this field.
           format: int32
@@ -7728,7 +7360,7 @@ components:
           $ref: '#/components/schemas/GetInstitutions-InstitutionBranding'
         oauthInstitutionId:
           type: integer
-          description: The new ID for the OAuth institution’s ID you are replacing.
+          description: The new ID for the OAuth institution's ID you are replacing.
           format: int32
           nullable: true
           example: 102224
@@ -7817,7 +7449,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -7877,7 +7509,7 @@ components:
           example: true
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6qvqd2yhb-1-port
         consolidatedAvailableBalance:
           type: number
@@ -8000,7 +7632,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -8172,7 +7804,7 @@ components:
           example: 'WELLS FARGO BANK, LTD.'
         institutionId:
           type: integer
-          description: Finicity’s institution ID
+          description: Finicity's institution ID
           format: int32
           example: 31
     ReportNotification:
@@ -8182,12 +7814,12 @@ components:
         consumerId:
           type: string
           description: >-
-            Finicity’s consumer ID. This field is optional and may not always
+            Finicity's consumer ID. This field is optional and may not always
             return.
         consumerSsn:
           type: string
           description: >-
-            The last four of the consumer’s social security number. This field
+            The last four of the consumer's social security number. This field
             is optional and may not always return.
         eventName:
           type: string
@@ -8196,14 +7828,14 @@ components:
             failed, primaryFieldUpdate, or done.
         id:
           type: string
-          description: Finicity’s report ID
+          description: Finicity's report ID
         status:
           type: string
           description: 'inProgress, success, failure, or editing'
         type:
           type: string
           description: >-
-            Finicity’s report type. This field is optional and may not always
+            Finicity's report type. This field is optional and may not always
             return.
     Consumer:
       title: Consumer
@@ -8242,33 +7874,33 @@ components:
           example: 1000005540
         address:
           type: string
-          description: The consumer’s street address
+          description: The consumer's street address
           example: 434 W Ascension Way
         city:
           type: string
-          description: The consumer’s city
+          description: The consumer's city
           example: Murray
         state:
           type: string
-          description: The consumer’s state
+          description: The consumer's state
           example: UT
         zip:
           type: string
-          description: The consumer’s ZIP code
+          description: The consumer's ZIP code
           example: '84123'
         phone:
           type: string
-          description: The consumer’s phone number
+          description: The consumer's phone number
           example: '6786786786'
         ssn:
           type: string
-          description: The last 4 digits of the consumer’s Social Security number
+          description: The last 4 digits of the consumer's Social Security number
           example: '2333'
         birthday:
           $ref: '#/components/schemas/Birthday'
         email:
           type: string
-          description: The consumer’s email address
+          description: The consumer's email address
           example: finicity@test.com
         createdDate:
           type: integer
@@ -8540,27 +8172,27 @@ components:
       properties:
         city:
           type: string
-          description: The city of the institution’s headquarters
+          description: The city of the institution's headquarters
           example: Murray
         state:
           type: string
-          description: Two-letter code for the state of the institution’s headquarters
+          description: Two-letter code for the state of the institution's headquarters
           example: UT
         country:
           type: string
-          description: The country of the institution’s headquarters
+          description: The country of the institution's headquarters
           example: USA
         postalCode:
           type: string
-          description: The postal code of the institution’s headquarters
+          description: The postal code of the institution's headquarters
           example: '84123'
         addressLine1:
           type: string
-          description: Address information for the institution’s headquarters
+          description: Address information for the institution's headquarters
           example: 434 W Ascension Way
         addressLine2:
           type: string
-          description: Address information for the institution’s headquarters
+          description: Address information for the institution's headquarters
           example: '#200'
       description: The address for the financial institution
       example:
@@ -8595,7 +8227,7 @@ components:
           type: string
           description: >-
             The report type you wish to have generated for you. Valid types
-            include ‘voa’, ‘voi’, and ‘aggregation’
+            include ‘voa', ‘voi', and ‘aggregation'
         webhook:
           type: string
           description: >-
@@ -8606,7 +8238,7 @@ components:
           type: string
           description: >-
             The format of the data you wish to be posted to your server. Valid
-            values are ‘application/json’ and ‘application/xml’ This field is
+            values are ‘application/json' and ‘application/xml' This field is
             optional.
         webhookData:
           type: object
@@ -8732,7 +8364,7 @@ components:
         interestRate:
           type: string
           description: >-
-            (Credit Card/Line Of Credit) and (Mortgage/Loan) The account’s
+            (Credit Card/Line Of Credit) and (Mortgage/Loan) The account's
             current interest rate
           example: '15.789'
         creditAvailableAmount:
@@ -8743,7 +8375,7 @@ components:
           example: 3000
         creditMaxAmount:
           type: number
-          description: (Credit Card/Line Of Credit) The account’s credit limit
+          description: (Credit Card/Line Of Credit) The account's credit limit
           example: 7000
         cashAdvanceAvailableAmount:
           type: number
@@ -9777,7 +9409,7 @@ components:
         username:
           type: string
           description: >-
-            The customer’s username, assigned by the partner (a unique
+            The customer's username, assigned by the partner (a unique
             identifier), following these rules: minimum 6 characters maximum 255
             characters any mix of uppercase, lowercase, numeric, and
             non-alphabet special characters ! @ . # $ % & * _ – + the use of
@@ -9787,11 +9419,11 @@ components:
           example: customerusername1
         firstName:
           type: string
-          description: The customer’s first name(s) / given name(s) (optional)
+          description: The customer's first name(s) / given name(s) (optional)
           example: John
         lastName:
           type: string
-          description: The customer’s last name(s) / surname(s) (optional)
+          description: The customer's last name(s) / surname(s) (optional)
           example: Smith
         applicationId:
           type: string
@@ -9845,7 +9477,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -9911,7 +9543,7 @@ components:
           example: 2345
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6qvqd2yhb-1-port
         institutions:
           minItems: 1
@@ -10063,7 +9695,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -10405,7 +10037,7 @@ components:
           example: 1929.57
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 0whcism47ttt-5-port
         institutions:
           type: array
@@ -10543,7 +10175,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -10834,7 +10466,7 @@ components:
           example: 1929.57
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 0whcism47a34-5-port
         consumerId:
           type: string
@@ -10842,7 +10474,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         institutions:
           type: array
@@ -10926,7 +10558,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -10994,7 +10626,7 @@ components:
           example: 2345
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6weqd2yhb-1-port
         institutions:
           type: array
@@ -11163,7 +10795,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -11593,7 +11225,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -11704,7 +11336,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -11915,7 +11547,7 @@ components:
           example: cb619e10185177cd92271c4da2df3fa3
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -12068,7 +11700,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
@@ -12157,7 +11789,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -12217,7 +11849,7 @@ components:
           example: true
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6qvqd2erw-1-port
         institutions:
           minItems: 1
@@ -12404,7 +12036,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -12606,7 +12238,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voi1
         name:
           type: string
@@ -12777,7 +12409,7 @@ components:
           example: 4089f408963dd6b90b28a935e9903c0e
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -12826,7 +12458,7 @@ components:
           example: 1588350269
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: spd8aehuw63i-10-port
         gseEnabled:
           type: boolean
@@ -13044,14 +12676,14 @@ components:
           type: string
           description: >-
             The normalized category of the earnings with a number appended. The
-            number is the will be the iterating number of the type’s occurrence
+            number is the will be the iterating number of the type's occurrence
             starting at one.
           example: regular 1
         type:
           $ref: '#/components/schemas/PayStatEarningsCategorization-Type'
         description:
           type: string
-          description: The earnings line’s pay type description
+          description: The earnings line's pay type description
           example: regular income
         amountCurrent:
           type: number
@@ -13081,27 +12713,27 @@ components:
           description: >-
             The normalized category of the deductions in the format
             [type][number]. The number is the will be the iterating number of
-            the type’s occurrence starting at one.
+            the type's occurrence starting at one.
           example: '401'
         description:
           type: string
-          description: The deduction line’s deduction type description
+          description: The deduction line's deduction type description
           example: 401k
         amountCurrent:
           type: number
           description: >-
-            The amount for the deduction line deducted from employee’s pay for
+            The amount for the deduction line deducted from employee's pay for
             the specified pay period.
           example: 1744.61
         amountYTD:
           type: number
           description: >-
-            The amount for the deduction line being deducted from the employee’s
+            The amount for the deduction line being deducted from the employee's
             pay for the current pay year.
           example: 1744.6
         type:
           type: string
-          description: Categorization based on the deduction line’s description.
+          description: Categorization based on the deduction line's description.
           example: 401 Deductions
       description: ''
       example:
@@ -13188,7 +12820,7 @@ components:
           example: 4089f408963dd6b90b28a935e9903c0e
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/PayStatementConstraints'
@@ -13260,7 +12892,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -13486,7 +13118,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voietxverify
         name:
           type: string
@@ -13657,7 +13289,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -13694,7 +13326,7 @@ components:
           example: active
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         numberOfBillableAssets:
           type: integer
@@ -14024,7 +13656,7 @@ components:
           example: 2f3z55zuwewm-voietxverify
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerId:
           type: integer
@@ -14037,7 +13669,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -14353,7 +13985,7 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
@@ -14435,12 +14067,12 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         consumerId:
           type: string
           description: >-
-            Finicity’s consumer ID. Obtained from the Create Consumer call. <br>
+            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
             *Required for any connect type that generate a report*
           example: 86238nvnw7269e224a4e3de12352d87d
         type:
@@ -14568,7 +14200,7 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
@@ -14648,7 +14280,7 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
@@ -14740,35 +14372,35 @@ components:
           example: Smith
         address:
           type: string
-          description: The consumer’s street address
+          description: The consumer's street address
           example: 434 W Ascension Way
         city:
           type: string
-          description: The consumer’s city
+          description: The consumer's city
           example: Murray
         state:
           type: string
-          description: The consumer’s state
+          description: The consumer's state
           example: UT
         zip:
           type: string
-          description: The consumer’s ZIP code
+          description: The consumer's ZIP code
           example: '84123'
         phone:
           type: string
-          description: The consumer’s phone number
+          description: The consumer's phone number
           example: '6786786786'
         ssn:
           type: string
           description: >-
-            The consumer’s 9-digit Social Security number (may include
+            The consumer's 9-digit Social Security number (may include
             separators: nnn-nn-nnnn)
           example: '111222333'
         birthday:
           $ref: '#/components/schemas/Birthday'
         email:
           type: string
-          description: The consumer’s email address
+          description: The consumer's email address
           example: finicity@test.com
         suffix:
           type: string
@@ -14968,7 +14600,7 @@ components:
         postedDate:
           type: integer
           description: >-
-            An optional timestamp for the transaction’s posted date value for
+            An optional timestamp for the transaction's posted date value for
             this transaction (see Handling Dates and Times). Timestamp must be
             no more than 6 months from the current date.
           format: int64
@@ -14976,7 +14608,7 @@ components:
         transactionDate:
           type: integer
           description: >-
-            An optional timestamp for the transaction’s posted date value for
+            An optional timestamp for the transaction's posted date value for
             this transaction (see Handling Dates and Times)
           format: int64
           example: 1588801769
@@ -15129,12 +14761,12 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         consumerId:
           type: string
           description: >-
-            Finicity’s consumer ID. Obtained from the Create Consumer call. <br>
+            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
             *Required for any connect type that generate a report*
           example: 86238nvnw7269e224a4e3de12352d87d
         type:
@@ -15343,7 +14975,7 @@ components:
           example: a925b07c9e028c680ad9c1d18d2e7199
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number.
+          description: Last 4 digits of the report consumer's Social Security number.
           example: '6789'
         type:
           $ref: '#/components/schemas/Type'
@@ -15383,7 +15015,7 @@ components:
           example: true
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: wqbh0r2kbv5g-4-port
         institutions:
           type: array
@@ -15574,7 +15206,7 @@ components:
           type: string
           description: >-
             The financial institution provides the description of the
-            transaction (often known as the payee), but if it’s left blank, then
+            transaction (often known as the payee), but if it's left blank, then
             Finicity passes the value: No description provided by institution.
           example: TMOBILE*AUTO PAY
         normalizedPayee:
@@ -15640,11 +15272,11 @@ components:
           example: 1000018865
         requestID:
           type: string
-          description: Finicity’s request ID
+          description: Finicity's request ID
           example: ky2nhsufhv
         requesterName:
           type: string
-          description: Finicity’s name for the requester
+          description: Finicity's name for the requester
           example: Decisioning API Tests
         createdDate:
           type: integer
@@ -15663,7 +15295,7 @@ components:
           example: a925b07c9e028c680ad9c1d18d2e7199
         consumerSsn:
           type: string
-          description: The last four of the consumer’s social security
+          description: The last four of the consumer's social security
           example: '6789'
         constraints:
           $ref: '#/components/schemas/TransactionReportConstraints'
@@ -16329,7 +15961,7 @@ components:
         ssn:
           type: string
           description: >-
-            The consumer’s 9-digit Social Security number (may include
+            The consumer's 9-digit Social Security number (may include
             separators: nnn-nn-nnnn)
           example: XXX-XX-2333
         birthday:
@@ -16572,7 +16204,7 @@ components:
           example: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '1234'
         constraints:
           $ref: '#/components/schemas/GenerateStatementReportConstraints'
@@ -16609,35 +16241,35 @@ components:
           example: Smith
         address:
           type: string
-          description: The consumer’s street address
+          description: The consumer's street address
           example: 434 W Ascension Way
         city:
           type: string
-          description: The consumer’s city
+          description: The consumer's city
           example: Murray
         state:
           type: string
-          description: The consumer’s state
+          description: The consumer's state
           example: UT
         zip:
           type: string
-          description: The consumer’s ZIP code
+          description: The consumer's ZIP code
           example: '84123'
         phone:
           type: string
-          description: The consumer’s phone number
+          description: The consumer's phone number
           example: '6786786786'
         ssn:
           type: string
           description: >-
-            The consumer’s 9-digit Social Security number (may include
+            The consumer's 9-digit Social Security number (may include
             separators: nnn-nn-nnnn)
           example: '111222333'
         birthday:
           $ref: '#/components/schemas/Birthday'
         email:
           type: string
-          description: The consumer’s email address
+          description: The consumer's email address
           example: finicity@test.com
         suffix:
           type: string
@@ -16645,7 +16277,7 @@ components:
           example: Mr
         emailAddress:
           type: string
-          description: The consumer’s email address
+          description: The consumer's email address
           example: finicity@test.com
       example:
         firstName: John
@@ -16713,7 +16345,7 @@ components:
           example: d15ff15ed0c8627eae61c452928d7fc3
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '1111'
         requesterName:
           type: string
@@ -16828,12 +16460,12 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         consumerId:
           type: string
           description: >-
-            Finicity’s consumer ID. Obtained from the Create Consumer call. <br>
+            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
             *Required for any connect type that generate a report*
           example: 86238nvnw7269e224a4e3de12352d87d
         redirectUri:
@@ -16887,13 +16519,13 @@ components:
             paystub <br>      <br>**Note**: The Finicity sales engineers (SE)
             help you set up a default experience for your company when you
             migrate to Connect 2.0. For each additional experience you create
-            thereafter, they’ll give you a unique ID. See [Generate 2.0 Connect
+            thereafter, they'll give you a unique ID. See [Generate 2.0 Connect
             URL
             APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>       <br>**Experience values options**: <br> * **default**:
             your default experience <br> * **unique ID**: the code for a
-            different experience <br> * **not defined**: If you don’t pass the
-            experience parameter, then Connect’s out of the box default
+            different experience <br> * **not defined**: If you don't pass the
+            experience parameter, then Connect's out of the box default
             experience (add accounts but no branding) is used, and the MVS
             modules will not run. <br>
           example: default
@@ -16903,15 +16535,15 @@ components:
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
             transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it’s greater than 10
+            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
             digits, then the `fromDate` is set to the credit decisioning
-            report’s default `fromDate`.<br>  <br>For an experience that
+            report's default `fromDate`.<br>  <br>For an experience that
             generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn’t pass this
+            that support it. <br>  <br>However, Connect doesn't pass this
             parameter to the following reports: <br> * Pay Statement Extraction
             Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
             Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn’t used if you’re
+            Payroll Report  <br> <br>**Note**: this field isn't used if you're
             only collecting transaction data without a report.
           format: int64
           example: 1607450357
@@ -16922,11 +16554,11 @@ components:
           description: >-
             The `reportCustomFields` parameter is used when experiences are
             associated with a credit decisioning report. <br>  <br>Designate up
-            to 5 custom fields that you’d like associated with the report when
-            it’s generated. Every custom field consists of three variables:
+            to 5 custom fields that you'd like associated with the report when
+            it's generated. Every custom field consists of three variables:
             `label`, `value`, and `shown`. The `shown` variable is true or
             false. <br>* **True**: (default) display the custom field in the PDF
-            report. <br>  <br>* **False**: don’t display the custom field in the
+            report. <br>  <br>* **False**: don't display the custom field in the
             PDF report. <br>  <br>For an experience that generates multiple
             reports, the `reportCustomFields` parameter gets passed to all
             reports.<br>  <br>All custom fields display in the Reseller Billing
@@ -16971,7 +16603,7 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         institutionId:
           type: integer
@@ -17022,12 +16654,12 @@ components:
             page <br>      <br>**Note**: The Finicity sales engineers (SE) help
             you set up a default experience for your company when you migrate to
             Connect 2. For each additional experience you create thereafter,
-            they’ll give you a unique ID. See [Generate 2.0 Connect URL APIs](
+            they'll give you a unique ID. See [Generate 2.0 Connect URL APIs](
             https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>  <br>**Experience values options**: <br> * **default**: your
             default experience <br> * **unique ID**: the code for a different
-            experience <br> * **not defined**: If you don’t pass the experience
-            parameter, then Connect’s out of the box default experience (add
+            experience <br> * **not defined**: If you don't pass the experience
+            parameter, then Connect's out of the box default experience (add
             accounts but no branding) is used. <br>
           example: default
         singleUseUrl:
@@ -17061,7 +16693,7 @@ components:
           example: '1445585709680'
         customerId:
           type: string
-          description: Finicity’s customer ID. Obtained from the Add Customer call.
+          description: Finicity's customer ID. Obtained from the Add Customer call.
           example: '1005061234'
         institutionLoginId:
           type: integer
@@ -17113,12 +16745,12 @@ components:
             page <br>      <br>**Note**: The Finicity sales engineers (SE) help
             you set up a default experience for your company when you migrate to
             Connect 2. For each additional experience you create thereafter,
-            they’ll give you a unique ID. See [Generate 2.0 Connect URL APIs](
+            they'll give you a unique ID. See [Generate 2.0 Connect URL APIs](
             https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>  <br>**Experience values options**: <br> * **default**: your
             default experience <br> * **unique ID**: the code for a different
-            experience <br> * **not defined**: If you don’t pass the experience
-            parameter, then Connect’s out of the box default experience (add
+            experience <br> * **not defined**: If you don't pass the experience
+            parameter, then Connect's out of the box default experience (add
             accounts but no branding) is used. <br>
         singleUseUrl:
           type: boolean
@@ -17167,7 +16799,7 @@ components:
           type: string
           description: >-
             The URL that customers are redirected after they complete the
-            Connect application.  If this parameter isn’t specified, then a
+            Connect application.  If this parameter isn't specified, then a
             thank you screen appears and the customer ends Connect.
           example: 'https://www.finicity.com/connect/'
         webhook:
@@ -17213,7 +16845,7 @@ components:
             paystub <br>      <br>**Note**: The Finicity sales engineers (SE)
             help you set up a default experience for your company when you
             migrate to Connect 2.0. For each additional experience you create
-            thereafter, they’ll give you a unique ID. See [Generate 2.0 Connect
+            thereafter, they'll give you a unique ID. See [Generate 2.0 Connect
             URL
             APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>       <br>**Experience values options**: <br> * **default**:
@@ -17226,15 +16858,15 @@ components:
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
             transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it’s greater than 10
+            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
             digits, then the `fromDate` is set to the credit decisioning
-            report’s default `fromDate`.<br>  <br>For an experience that
+            report's default `fromDate`.<br>  <br>For an experience that
             generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn’t pass this
+            that support it. <br>  <br>However, Connect doesn't pass this
             parameter to the following reports: <br> * Pay Statement Extraction
             Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
             Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn’t used if you’re
+            Payroll Report  <br> <br>**Note**: this field isn't used if you're
             only collecting transaction data without a report.
           format: int64
           example: 1588609361
@@ -17246,15 +16878,15 @@ components:
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
             transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it’s greater than 10
+            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
             digits, then the `fromDate` is set to the credit decisioning
-            report’s default `fromDate`.<br>  <br>For an experience that
+            report's default `fromDate`.<br>  <br>For an experience that
             generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn’t pass this
+            that support it. <br>  <br>However, Connect doesn't pass this
             parameter to the following reports: <br> * Pay Statement Extraction
             Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
             Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn’t used if you’re
+            Payroll Report  <br> <br>**Note**: this field isn't used if you're
             only collecting transaction data without a report.
         optionalConsumerInfo:
           $ref: '#/components/schemas/OptionalConsumerInfo'
@@ -17557,7 +17189,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s ID for the customer
+          description: Finicity's ID for the customer
           example: '1005061234'
         username:
           type: string
@@ -17620,17 +17252,17 @@ components:
       properties:
         ssn:
           type: string
-          description: The full SSN without hyphens that matches the consumer’s SSN.
+          description: The full SSN without hyphens that matches the consumer's SSN.
           example: '999990000'
         dob:
           type: string
           description: >-
-            The consumer’s date of birth is in Unix epoch time (in seconds). 
+            The consumer's date of birth is in Unix epoch time (in seconds). 
             The timestamp is UTC at the start of day of birth. <br>   <br>
             **Example**: If the DOB is 1/1/1980, then the timestamp passed is
-            315576000. <br>   <br> **Note**: DOB’s prior to 1970 result in a
+            315576000. <br>   <br> **Note**: DOB's prior to 1970 result in a
             negative timestamp; this is acceptable. To avoid errors, the DOB and
-            consumer’s DOB must match.   <br> **Note**: All other timestamps in
+            consumer's DOB must match.   <br> **Note**: All other timestamps in
             Decisioning are in MST.
           example: '315576000'
         reportId:
@@ -17670,7 +17302,7 @@ components:
           example: 656cf7083c5c06e0c125a698579f0000
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -17707,7 +17339,7 @@ components:
           example: Finicity Verification of Income and Employment - Payroll
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-2-port
       description: ''
     PayrollReportRefreshResponseConstraints:
@@ -17873,7 +17505,7 @@ components:
           example: 41h4nzppn37u-voiepayroll
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         gseEnabled:
           type: boolean
@@ -17898,7 +17530,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -18279,7 +17911,7 @@ components:
           type: string
           description: >-
             (MVS-optional) The full SSN without hyphens that matches the
-            consumer’s SSN.
+            consumer's SSN.
           example: '123412134'
     BorrowerType:
       title: BorrowerType
@@ -18841,7 +18473,7 @@ components:
           items:
             $ref: '#/components/schemas/Borrowers'
           description: >-
-            (MVS) Array of borrowers to pass the primary and joint borrower’s
+            (MVS) Array of borrowers to pass the primary and joint borrower's
             customer and consumer IDs.
           example:
             - customerId: '1005061234'
@@ -18907,13 +18539,13 @@ components:
             paystub <br>      <br>**Note**: The Finicity sales engineers (SE)
             help you set up a default experience for your company when you
             migrate to Connect 2.0. For each additional experience you create
-            thereafter, they’ll give you a unique ID. See [Generate 2.0 Connect
+            thereafter, they'll give you a unique ID. See [Generate 2.0 Connect
             URL
             APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>       <br>**Experience values options**: <br> * **default**:
             your default experience <br> * **unique ID**: the code for a
-            different experience<br> * **not defined**: If you don’t pass the
-            experience parameter, then Connect’s out of the box default
+            different experience<br> * **not defined**: If you don't pass the
+            experience parameter, then Connect's out of the box default
             experience (add accounts but no branding) is used, and the MVS
             modules will not run. <br>
           example: default
@@ -18923,15 +18555,15 @@ components:
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
             transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it’s greater than 10
+            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
             digits, then the `fromDate` is set to the credit decisioning
-            report’s default `fromDate`.<br>  <br>For an experience that
+            report's default `fromDate`.<br>  <br>For an experience that
             generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn’t pass this
+            that support it. <br>  <br>However, Connect doesn't pass this
             parameter to the following reports: <br> * Pay Statement Extraction
             Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
             Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn’t used if you’re
+            Payroll Report  <br> <br>**Note**: this field isn't used if you're
             only collecting transaction data without a report.
           format: int64
           example: 1607450357
@@ -18942,11 +18574,11 @@ components:
           description: >-
             The `reportCustomFields` parameter is used when experiences are
             associated with a credit decisioning report. <br>  <br>Designate up
-            to 5 custom fields that you’d like associated with the report when
-            it’s generated. Every custom field consists of three variables:
+            to 5 custom fields that you'd like associated with the report when
+            it's generated. Every custom field consists of three variables:
             `label`, `value`, and `shown`. The `shown` variable is true or
             false. <br>* **True**: (default) display the custom field in the PDF
-            report. <br>  <br>* **False**: don’t display the custom field in the
+            report. <br>  <br>* **False**: don't display the custom field in the
             PDF report. <br>  <br>For an experience that generates multiple
             reports, the `reportCustomFields` parameter gets passed to all
             reports.<br>  <br>All custom fields display in the Reseller Billing
@@ -19032,7 +18664,7 @@ components:
           items:
             $ref: '#/components/schemas/Borrowers'
           description: >-
-            (MVS) Array of borrowers to pass the primary and joint borrower’s
+            (MVS) Array of borrowers to pass the primary and joint borrower's
             customer and consumer IDs.
           example:
             - customerId: '1005061234'
@@ -19051,7 +18683,7 @@ components:
           type: string
           description: >-
             The URL that customers are redirected after they complete the
-            Connect application.  If this parameter isn’t specified, then a
+            Connect application.  If this parameter isn't specified, then a
             thank you screen appears and the customer ends Connect.
           example: 'https://www.finicity.com/connect/'
         webhook:
@@ -19097,7 +18729,7 @@ components:
             paystub <br>      <br>**Note**: The Finicity sales engineers (SE)
             help you set up a default experience for your company when you
             migrate to Connect 2.0. For each additional experience you create
-            thereafter, they’ll give you a unique ID. See [Generate 2.0 Connect
+            thereafter, they'll give you a unique ID. See [Generate 2.0 Connect
             URL
             APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
             <br>       <br>**Experience values options**: <br> * **default**:
@@ -19110,15 +18742,15 @@ components:
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
             transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it’s greater than 10
+            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
             digits, then the `fromDate` is set to the credit decisioning
-            report’s default `fromDate`.<br>  <br>For an experience that
+            report's default `fromDate`.<br>  <br>For an experience that
             generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn’t pass this
+            that support it. <br>  <br>However, Connect doesn't pass this
             parameter to the following reports: <br> * Pay Statement Extraction
             Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
             Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn’t used if you’re
+            Payroll Report  <br> <br>**Note**: this field isn't used if you're
             only collecting transaction data without a report.
           format: int64
           example: 1588609361
@@ -19129,11 +18761,11 @@ components:
           description: >-
             The `reportCustomFields` parameter is used when experiences are
             associated with a credit decisioning report. <br>  <br>Designate up
-            to 5 custom fields that you’d like associated with the report when
-            it’s generated. Every custom field consists of three variables:
+            to 5 custom fields that you'd like associated with the report when
+            it's generated. Every custom field consists of three variables:
             `label`, `value`, and `shown`. The `shown` variable is true or
             false. <br>* **True**: (default) display the custom field in the PDF
-            report. <br>  <br>* **False**: don’t display the custom field in the
+            report. <br>  <br>* **False**: don't display the custom field in the
             PDF report. <br>  <br>For an experience that generates multiple
             reports, the `reportCustomFields` parameter gets passed to all
             reports.<br>  <br>All custom fields display in the Reseller Billing
@@ -19488,7 +19120,7 @@ components:
           example: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '1111'
         requesterName:
           type: string
@@ -21207,13 +20839,13 @@ components:
       properties:
         logo:
           type: string
-          description: The logo of the institution that’s used for white backgrounds
+          description: The logo of the institution that's used for white backgrounds
           example: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
         alternateLogo:
           type: string
           description: >-
-            The alternate logo of the institution that’s used for branded or
+            The alternate logo of the institution that's used for branded or
             colored backgrounds.
           example: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/alternateLogo.svg
@@ -21224,7 +20856,7 @@ components:
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
         primaryColor:
           type: string
-          description: The branding’s primary color for the institution
+          description: The branding's primary color for the institution
           example: '#1B3E4A'
         tile:
           type: string
@@ -21263,7 +20895,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voi1
         name:
           type: string
@@ -21526,7 +21158,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -21676,7 +21308,7 @@ components:
           example: 2f3z55zuwewm-voietxverify
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerType:
           type: string
@@ -21710,7 +21342,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/VOIEWithStatementConstraints'
@@ -21750,7 +21382,7 @@ components:
           example: 2f3z55zuwewm-voietxverify
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         gseEnabled:
           type: boolean
@@ -21771,7 +21403,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -22027,7 +21659,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voah
         name:
           type: string
@@ -22265,7 +21897,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '1234'
         constraints:
           $ref: '#/components/schemas/RequestConstraints'
@@ -22302,7 +21934,7 @@ components:
           example: 41h4nzppn47u-voepayroll
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-3-port
         customerType:
           type: string
@@ -22336,7 +21968,7 @@ components:
           example: 656cf7083c5c06e0c125a698579f0000
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
@@ -22377,7 +22009,7 @@ components:
           example: 41h4nzppn47u-voepayroll
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-3-port
         gseEnabled:
           type: boolean
@@ -22411,7 +22043,7 @@ components:
           example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         type:
           $ref: '#/components/schemas/Type'
@@ -22712,7 +22344,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         constraints:
           $ref: '#/components/schemas/VOETransactionsRequestConstraints'
@@ -22786,7 +22418,7 @@ components:
           example: n1rndg1iz8yy-voetransactions
         portfolioId:
           type: string
-          description: Finicity’s portfolio ID associated with the consumer on the report.
+          description: Finicity's portfolio ID associated with the consumer on the report.
           example: dyr6weqd2yhb-1-port
         gseEnabled:
           type: boolean
@@ -22815,7 +22447,7 @@ components:
           example: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn:
           type: string
-          description: Last 4 digits of the report consumer’s Social Security number
+          description: Last 4 digits of the report consumer's Social Security number
           example: '6789'
         requesterName:
           type: string
@@ -22966,7 +22598,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -23048,7 +22680,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voetransactions
         name:
           type: string
@@ -23158,7 +22790,7 @@ components:
         - unknown
         - vacation
       type: string
-      description: The categorization based on the earning line’s description.
+      description: The categorization based on the earning line's description.
       example: bereavement
     AssetSummaryforPrequalificationReports:
       title: AssetSummaryforPrequalificationReports
@@ -23370,7 +23002,7 @@ components:
           example: FinBank
         urlHomeApp:
           type: string
-          description: The URL of the institution’s primary home page
+          description: The URL of the institution's primary home page
           example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
         accounts:
           type: array
@@ -23444,11 +23076,9 @@ security:
   - Finicity-App-Token: []
 tags:
   - name: Connect
-    description: Connect API
+    description: ''
   - name: Institutions
     description: ''
-  - name: FICO API
-    description: Fico Process Controller
   - name: Consumer
     description: ''
   - name: Verify Income
@@ -23457,15 +23087,11 @@ tags:
     description: ''
   - name: Verify Income and Employment
     description: ''
-  - name: Retrieve Reports
-    description: ''
   - name: Accounts
     description: ''
   - name: Account Owner
     description: ''
   - name: Customer
-    description: ''
-  - name: TXpush
     description: ''
   - name: Bank Statements
     description: ''
