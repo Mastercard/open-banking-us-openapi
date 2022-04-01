@@ -114,7 +114,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -160,7 +160,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -199,7 +199,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -286,7 +286,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -366,7 +366,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -459,7 +459,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -523,7 +523,7 @@ paths:
             example: voa
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -607,7 +607,7 @@ paths:
             example: 25
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -675,7 +675,7 @@ paths:
             example: voa
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -711,7 +711,7 @@ paths:
             example: 101732
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -749,7 +749,7 @@ paths:
             example: 5
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -795,7 +795,7 @@ paths:
             example: 'application/json, application/xml'
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -2757,7 +2757,6 @@ paths:
             type: string
             example: 'https://finicity-test/webhook'
       requestBody:
-        description: ''
         content:
           application/json:
             schema:
@@ -2765,7 +2764,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -3129,7 +3128,6 @@ paths:
             type: boolean
             example: true
       requestBody:
-        description: ''
         content:
           application/json:
             schema:
@@ -3137,7 +3135,7 @@ paths:
         required: false
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -3598,7 +3596,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4205,7 +4203,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4243,7 +4241,7 @@ paths:
             example: 12345
       responses:
         '200':
-          description: ''
+          description: 'todo'
         default:
           description: The token has expired.
           content:
@@ -4269,7 +4267,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4291,7 +4289,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4331,7 +4329,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4370,7 +4368,7 @@ paths:
             example: 1007302745
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4470,7 +4468,7 @@ paths:
             example: 20
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4739,7 +4737,7 @@ paths:
         - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
-          description: ''
+          description: 'todo'
         default:
           description: The token has expired.
           content:
@@ -4816,7 +4814,7 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4862,7 +4860,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4911,7 +4909,7 @@ paths:
             example: 1014136057
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -4987,7 +4985,6 @@ paths:
             format: int64
             example: 1578952809
       requestBody:
-        description: ''
         content:
           application/json:
             schema:
@@ -4995,7 +4992,7 @@ paths:
         required: false
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -5082,7 +5079,6 @@ paths:
             format: int64
             example: 1578952809
       requestBody:
-        description: ''
         content:
           application/json:
             schema:
@@ -5090,7 +5086,7 @@ paths:
         required: false
       responses:
         '200':
-          description: ''
+          description: 'todo'
           content:
             application/json:
               schema:
@@ -5495,7 +5491,6 @@ components:
             supportPhone: 801-987-6543
             from: noreply@finicity.com
             to: fin.user@finicity.com
-      description: ''
       example:
         links:
           - >-
@@ -9330,7 +9325,6 @@ components:
         - assetSummary
         - preQualVoa
       type: string
-      description: ''
       example: aggregation
     AddCustomerResponse:
       required:
@@ -9884,7 +9878,6 @@ components:
       properties:
         institutionId:
           $ref: '#/components/schemas/Type'
-      description: ''
       example:
         '5': aggregation
         '31': voa
@@ -10156,7 +10149,6 @@ components:
                 availableBalanceAmount: 0
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 1000024444
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 1000024445
-      description: ''
       example:
         - id: 101732
           name: FinBank
@@ -10286,7 +10278,6 @@ components:
             six months
           format: int32
           example: 0
-      description: ''
       example:
         - id: 1000023996
           number: '1111'
@@ -11391,7 +11382,6 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
         source:
           type: string
-      description: ''
       example:
         id: rceiqx616awa-assetsummary
         portfolioId: 0whcism47ttt-5-port
@@ -11843,7 +11833,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ReportIncomeStreamSummary'
-          description: ''
           example:
             - confidenceType: MODERATE
               netMonthly:
@@ -11854,7 +11843,6 @@ components:
                 projectedNetAnnual: 1500.23
                 estimatedGrossAnnual: 2000.12
                 projectedGrossAnnual: 2500.23
-      description: ''
       example:
         id: u4hstnnaewetr-voi
         customerId: 1000006677
@@ -12404,7 +12392,6 @@ components:
           type: array
           items:
             type: string
-          description: ''
           example:
             - 6f8fb0a0-e882-4f57-b672-cf53f1397581
         payStatementTxVerifyDaoList:
@@ -12458,7 +12445,6 @@ components:
                   amountCurrent: 1744.61
                   accountLastFour: XX34
                   description: Payroll
-      description: ''
     VOIEPayStatement:
       required:
         - payPeriod
@@ -12573,7 +12559,6 @@ components:
               amountCurrent: 1744.61
               accountLastFour: XX34
               description: Payroll
-      description: ''
     Employer:
       type: object
       properties:
@@ -12581,7 +12566,6 @@ components:
           type: string
           description: The name of the employer
           example: Rocket Surgery
-      description: ''
       example:
         name: Rocket Surgery
     Employee:
@@ -12591,7 +12575,6 @@ components:
           type: string
           description: The name of the employee
           example: Patrick Purchaser
-      description: ''
       example:
         name: Patrick Purchaser
     PayStat:
@@ -12622,7 +12605,6 @@ components:
             The amount for the earning line being paid out to the employee for
             the current pay year.
           example: 18000
-      description: ''
       example:
         name: regular 1
         type: regular
@@ -12659,7 +12641,6 @@ components:
           type: string
           description: Categorization based on the deduction line's description.
           example: 401 Deductions
-      description: ''
       example:
         name: '401'
         description: 401k
@@ -12677,7 +12658,6 @@ components:
           type: string
           description: The last four numbers of the account the deposit went into.
           example: '1234'
-      description: ''
       example:
         amountCurrent: 1744.61
         accountLastFour: '1234'
@@ -13358,7 +13338,6 @@ components:
           items:
             $ref: '#/components/schemas/VOIETXVerifyReportInstitution'
           description: Details of the financial institution accounts included in the report
-      description: ''
       example:
         id: 2f3z55zuwewm-voietxverify
         customerId: 1275320
@@ -13622,7 +13601,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-      description: ''
       example:
         id: 2f3z55zuwewm-voietxverify
         customerId: 1275320
@@ -13774,7 +13752,6 @@ components:
         errorMessage:
           type: string
           description: Error message for the asset
-      description: ''
       example:
         payPeriod: LastPayPeriod
         billable: true
@@ -14443,7 +14420,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Transaction'
-          description: ''
           example:
             - id: 102122887150
               amount: 3678.9
@@ -15572,7 +15548,6 @@ components:
             App Logo. The base 64 encoded value for the logo. 1:1 .svg file less
             than 50 KB
           example: '{bytes of image}'
-      description: ''
     AppRegistrationResponse:
       required:
         - preAppId
@@ -15590,7 +15565,6 @@ components:
             The status of the app registration request. When submitted starts as
             P for pending.
           example: P
-      description: ''
     ModifyAppRegistrationRequest:
       required:
         - appDescription
@@ -15953,7 +15927,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NetMonthly'
-          description: ''
         incomeEstimate:
           $ref: '#/components/schemas/ReportIncomeEstimate'
       description: ReportIncomeStreamSummary
@@ -15986,7 +15959,6 @@ components:
             to false to limit seeing the variable to JSON, XML report but not in
             the PDF report. All custom fields will display in the Reseller
             Billing endpoint. This is optional.
-      description: ''
       example:
         statementReportData:
           accountId: 1000076901
@@ -16012,7 +15984,6 @@ components:
           description: 'Index of statement to retrieve (default is 1, maximum is 6)'
           format: int64
           example: 1
-      description: ''
     GenerateStatementReportResponse:
       required:
         - id
@@ -16084,7 +16055,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-      description: ''
     ModifyConsumerRequest:
       required:
         - firstName
@@ -16238,7 +16208,6 @@ components:
           type: string
           description: The asset ID of the statement that was retrieved.
           example: aaaa3be2-6f1a-4aac-a360-4ad240aa652d
-      description: ''
       example:
         id: 38dknche83oh-statement
         gseEnabled: true
@@ -16312,7 +16281,6 @@ components:
       properties:
         branding:
           $ref: '#/components/schemas/Branding'
-      description: ''
     GenerateV2ConnectURLRequest:
       required:
         - partnerId
@@ -17195,7 +17163,6 @@ components:
           type: string
           description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-2-port
-      description: ''
     PayrollReportRefreshResponseConstraints:
       required:
         - payrollData
@@ -17413,7 +17380,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-      description: ''
       example:
         id: 41h4nzppn37u-voiepayroll
         portfolioId: 9qud7dtuzbew-13-port
@@ -17549,18 +17515,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PayrollEarningsRecord'
-          description: ''
         deductions:
           type: array
           items:
             $ref: '#/components/schemas/PayrollDeductionsRecord'
-          description: ''
         directDeposits:
           type: array
           items:
             $ref: '#/components/schemas/PayrollDirectDepositRecord'
-          description: ''
-      description: ''
       example:
         payrollPayHistoryId: cy1a742k28
         lastPayPeriodIndicator: true
@@ -17760,10 +17722,9 @@ components:
           example: '123412134'
     BorrowerType:
       enum:
-        - ''
-        - ''
+        - 'primary'
+        - 'jointBorrower'
       type: string
-      description: ''
       example: primary
     Content:
       required:
@@ -18042,7 +18003,6 @@ components:
           type: number
           description: Earnings YTD amount if available
           example: 5500
-      description: ''
       example:
         name: basePayAmount
         type: base
@@ -18089,7 +18049,6 @@ components:
           type: number
           description: The YTD total amount for each deduction (if available).
           example: 717.25
-      description: ''
       example:
         type: Federal tax
         amount: 143.45
@@ -18115,7 +18074,6 @@ components:
           type: string
           description: Routing number for the deposit account
           example: 0
-      description: ''
       example:
         accountTypeCode: Savings
         amount: 1401.95
@@ -18148,7 +18106,6 @@ components:
             The estimated monthly other pay amount for the employment record, as
             calculated by Finicity.
           example: 50
-      description: ''
       example:
         estimatedMonthlyBasePay: 2000
         estimatedMonthlyOvertimePay: 100
@@ -18212,7 +18169,6 @@ components:
           type: string
           description: 'The pay type is `Salary`, `Hourly`, or `Daily`.'
           example: Hourly
-      description: ''
       example:
         payDate: 1596175200
         startDate: 1595138400
@@ -18283,7 +18239,6 @@ components:
             The estimated commission bonus pay amount for the employment from
             the paystub, calculated by Finicity.
           example: 50
-      description: ''
       example:
         estimatedMonthlyBasePay: 2000
         estimatedMonthlyOvertimePay: 50
@@ -18473,7 +18428,6 @@ components:
           $ref: '#/components/schemas/BorrowerType'
         optionalConsumerInfo:
           $ref: '#/components/schemas/OptionalConsumerInfo'
-      description: ''
     V2ConnectEmailRequest-JointBorrower:
       required:
         - partnerId
@@ -18670,7 +18624,6 @@ components:
           $ref: '#/components/schemas/PayrollEmploymentRecord'
         income:
           $ref: '#/components/schemas/PayrollIncomeRecord'
-      description: ''
     PayrollIncomeRecord:
       required:
         - payFrequency
@@ -18702,7 +18655,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PayrollAnnualIncomeRecord'
-          description: ''
           example:
             - year: '2021'
               grossPayAmountYTD: 73925
@@ -18758,7 +18710,6 @@ components:
                   amount: 1401.95
                   accountLastFour: '1234'
                   routingNumber: 0
-      description: ''
       example:
         payFrequency: Weekly
         payType: Hourly
@@ -18850,7 +18801,6 @@ components:
             The YTD other pay amount for the year indicated. Other pay is pay
             not categorized, commission pay, car allowances, and more.
           example: 0
-      description: ''
       example:
         year: '2021'
         grossPayAmountYTD: 73925.12
@@ -20577,7 +20527,6 @@ components:
           type: string
           description: The currency code of the balance values provided
           example: USD
-      description: ''
     GetAvailableBalanceResponse:
       required:
         - id
@@ -20632,7 +20581,6 @@ components:
           type: string
           description: The currency of the account
           example: USD
-      description: ''
     GetInstitutions-InstitutionBranding:
       type: object
       properties:
@@ -20664,7 +20612,6 @@ components:
             page.
           example: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-      description: ''
       example:
         logo: >-
           https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
@@ -21144,7 +21091,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-      description: ''
     VOIE-PaystubReportRecord:
       required:
         - id
@@ -21248,8 +21194,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-          description: ''
-      description: ''
     VOIEPaystubWithStatementPayStatement:
       required:
         - payPeriod
@@ -21372,7 +21316,6 @@ components:
         errorMessage:
           type: string
           description: Error message for the asset
-      description: ''
       example:
         payPeriod: LastPayPeriod
         billable: true
@@ -21629,7 +21572,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-      description: ''
     GenerateCashFlowReport-PersonalResponse:
       required:
         - id
@@ -21694,7 +21636,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-      description: ''
     GenerateVOE-PayrollReportResponse:
       required:
         - id
@@ -21766,7 +21707,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-      description: ''
     VOE-PayrollReportRecord:
       required:
         - id
@@ -21851,7 +21791,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-      description: ''
       example:
         id: 41h4nzppn47u-voepayroll
         portfolioId: 9qud7dtuzbew-3-port
@@ -21943,7 +21882,6 @@ components:
           $ref: '#/components/schemas/PayrollEmploymentRecord'
         income:
           $ref: '#/components/schemas/PayrollVOEIncomeRecord'
-      description: ''
     PayrollVOEIncomeRecord:
       required:
         - payFrequency
@@ -21959,7 +21897,6 @@ components:
             `Semi-Annual` <br> * `Annual` <br>  * `Every 2.6 wks` <br> * `Every
             4 wks` <br> * `Every 5.2 wks`
           example: Weekly
-      description: ''
     PayrollVOEReportConstraints:
       required:
         - payrollData
@@ -22294,7 +22231,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-      description: ''
       example:
         id: n1rndg1iz8yy-voetransactions
         portfolioId: dyr6weqd2yhb-2-port
@@ -22498,7 +22434,6 @@ components:
           items:
             $ref: '#/components/schemas/VOETReportTransactionsforIncomeStreams'
           description: A list of transaction records
-      description: ''
     VOETReportTransactionsforIncomeStreams:
       required:
         - id
@@ -22724,7 +22659,6 @@ components:
             six months
           format: int32
           example: 0
-      description: ''
       example:
         - id: 1000023996
           number: '1111'
@@ -22802,7 +22736,6 @@ components:
                 availableBalanceAmount: 0
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 1000024444
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 1000024445
-      description: ''
       example:
         - id: 101732
           name: FinBank
