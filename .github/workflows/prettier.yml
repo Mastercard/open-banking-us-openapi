@@ -1,0 +1,20 @@
+# https://github.com/marketplace/actions/swagger-editor-validator
+name: Prettier
+'on':
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: 0 1 * * *
+  workflow_dispatch: null
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - name: Check YAML Prettified
+        run: |
+          npx prettier --check --single-quote finicity.yaml

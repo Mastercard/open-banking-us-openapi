@@ -3,3 +3,9 @@
 
 [![](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/swagger-editor.yml)
 [![](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/openapi-generator.yml)
+[![](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/prettier.yml)
+
+The YAML content is formatted using:
+```sh
+npx prettier --write --single-quote finicity.yaml
+```
