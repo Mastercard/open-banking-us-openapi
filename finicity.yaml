@@ -514,9 +514,9 @@ paths:
         - Consumers
       summary: Modify Consumer by ID
       description: >-
-        Modify the details for an existing consumer. All fields are required for
-        a consumer record, but individual fields for this call are optional
-        because fields that are not specified will be left unchanged.
+        Modify an existing consumer. All fields are required for a consumer
+        record, but individual fields for this call are optional because fields
+        that are not specified will be left unchanged.
       operationId: ModifyConsumer
       parameters:
         - $ref: '#/components/parameters/ConsumerIdParameter'
@@ -525,6 +525,320 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/ModifyConsumerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts':
+    get:
+      tags:
+        - Accounts
+      summary: Get Customer Accounts by Institution Login ID
+      description: >-
+        Get all accounts associated with the given institution login. All
+        accounts returned are accessible by a single set of credentials on a
+        single institution.
+      operationId: GetCustomerAccountsByInstitutionLogin
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+    post:
+      tags:
+        - Accounts
+      summary: Refresh Customer Accounts by Institution Login ID
+      description: >-
+        Refresh account and transaction data for all accounts associated with a
+        given `institutionLoginId` with a connection to the institution.
+
+
+        Client apps are not permitted to automate calls to the "Refresh"
+        services. Active accounts are automatically refreshed by Finicity once
+        per day. Because many financial institutions only post transactions once
+        per day, calling Refresh repeatedly is usually a waste of resources and
+        is not recommended.
+
+
+        Apps may call Refresh services for a specific customer when there is a
+        specific business case for the need of data that is up to date as of the
+        moment. Please discuss with your account manager and systems engineer
+        for further clarification.
+
+
+        The recommended timeout setting for this request is 120 seconds in order
+        to receive a response. However you can terminate the connection after
+        making the call the operation will still complete. You will have to pull
+        the account records to check for an updated aggregation attempt date to
+        know when the refresh is complete.
+      operationId: RefreshCustomerAccountsByInstitutionLogin
+      parameters:
+        - $ref: '#/components/parameters/InteractiveParameter'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/RefreshCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}':
+    delete:
+      tags:
+        - Accounts
+      summary: Delete Customer Accounts by Institution Login ID
+      description:
+        Remove from the Finicity system the set of accounts matching the
+        institution login ID.
+      operationId: DeleteCustomerAccountsByInstitutionLogin
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/DeleteCustomerAccountsByInstitutionLoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
+    get:
+      tags:
+        - Accounts
+      summary: Get Customer Account by ID
+      description: Get the specified account
+      operationId: GetCustomerAccount
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+    delete:
+      tags:
+        - Accounts
+      summary: Delete Customer Account by ID
+      description: Remove the specified account from the Finicity system.
+      operationId: DeleteCustomerAccount
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/DeleteCustomerAccountResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts':
+    get:
+      tags:
+        - Accounts
+      summary: Get Customer Accounts
+      description: Get all accounts owned by the specified customer.
+      operationId: GetCustomerAccounts
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - name: status
+          in: query
+          description: >-
+            append, ?status=pending, to return accounts in the pending status.
+            Pending accounts were discovered but not activated and will not have
+            transactions or have balance updates
+          schema:
+            type: string
+            example: pending
+      responses:
+        '204':
+          $ref: '#/components/responses/GetCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+    post:
+      tags:
+        - Accounts
+      summary: Refresh Customer Accounts
+      description: >-
+        Refresh account and transaction data for all accounts associated with
+        the  given `customerId` with a connection to the institution.
+
+
+        Client apps are not permitted to automate calls to the "Refresh"
+        services. Active accounts are automatically refreshed by Finicity once
+        per day. Because many financial institutions only post transactions once
+        per day, calling Refresh repeatedly is usually a waste of resources and
+        is not recommended.
+
+
+        Apps may call Refresh services for a specific customer when there is a
+        specific business case for the need of data that is up to date as of the
+        moment. Please discuss with your account manager and systems engineer
+        for further clarification.
+
+
+        The recommended timeout setting for this request is 120 seconds in order
+        to receive a response. However you can terminate the connection after
+        making the call the operation will still complete. You will have to pull
+        the account records to check for an updated aggregation attempt date to
+        know when the refresh is complete.
+      operationId: RefreshCustomerAccounts
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/RefreshCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/institutions/{institutionId}/accounts':
+    get:
+      tags:
+        - Accounts
+      summary: Get Customer Accounts by Institution ID
+      description: >-
+        Get all active accounts owned by the specified customer at the specified
+        institution.
+      operationId: GetCustomerAccountsByInstitution
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
+    post:
+      tags:
+        - Accounts
+      summary: Load Historic Transactions for Customer Account
+      description: >-
+        Connect to the account's financial institution and load up to 24 months
+        of historic transactions for the account. Length of history varies by
+        institution.
+
+
+        This is a premium service. The billable event is a call to this service
+        specifying a customer ID that has not been seen before by this service.
+        (If this service is called multiple times with the same customer ID, to
+        load transactions from multiple accounts, only one billable event has
+        occurred.)
+
+
+        The recommended timeout setting for this request is 180 seconds in order
+        to receive a response. However you can terminate the connection after
+        making the call the operation will still complete. You will have to pull
+        the account records to check for an updated aggregation attempt date to
+        know when the refresh is complete.
+
+
+        The date range sent to the institution is calculated from the account's
+        `createdDate`. This means that calling this service a second time for
+        the same account normally will not add any new transactions for the
+        account. For this reason, a second call to this service for a known
+        account ID will usually return immediately.
+
+
+        In a few specific scenarios, it may be desirable to force a second
+        connection to the institution for a known account ID. Some examples are:
+
+
+        * The institution's policy has changed, making more transactions
+        available.
+
+        * Finicity has now added a longer transaction history support for the
+        institution.
+
+        * The first call encountered an error, and the resulting Aggregation
+        Ticket has now been fixed by the Finicity Support Team.
+
+
+        In these cases, the POST request can contain the parameter `force=true`
+        in the request body to force the second connection.
+      operationId: LoadHistoricTransactionsForCustomerAccount
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '203':
+          $ref: '#/components/responses/MFAChallengeNeededResponse'
+        '204':
+          $ref: '#/components/responses/LoadHistoricTransactionsForCustomerAccountResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
+    get:
+      tags:
+        - Accounts
+      summary: Get Account Owner
+      description: >-
+        Retrieve the names and addresses of the account owner from a financial
+        institution.
+
+
+        Note: This is a premium service, billable per every successful API call.
+
+
+        This service retrieves account data from the institution. This usually
+        returns quickly, but in some scenarios may take a few minutes to
+        complete. In the event of a timeout condition, retry the call.
+      operationId: GetAccountOwner
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAccountOwnerResponse'
+        '203':
+          $ref: '#/components/responses/MFAChallengeNeededResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -716,12 +1030,7 @@ paths:
       description: Get details for the specified institution
       operationId: GetInstitution
       parameters:
-        - name: institutionId
-          in: path
-          description: Finicity's ID of the institution to retrieve
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionId'
+        - $ref: '#/components/parameters/InstitutionIdParameter'
       responses:
         '200':
           description: ''
@@ -731,7 +1040,7 @@ paths:
                 $ref: '#/components/schemas/Institution'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/institution/v2/institutions/{id}/branding':
+  '/institution/v2/institutions/{institutionId}/branding':
     get:
       tags:
         - Institutions
@@ -741,12 +1050,7 @@ paths:
         the `id`
       operationId: GetInstitutionBranding
       parameters:
-        - name: id
-          in: path
-          description: ID of the institution
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionId'
+        - $ref: '#/components/parameters/InstitutionIdParameter'
       responses:
         '200':
           description: ''
@@ -871,17 +1175,12 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
-          description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            '1494449017'. Without this parameter, the report defaults to 61 days
-            if available. Example: ?fromDate={fromDate}. If included, the epoch
-            timestamp should be 10 digits long and be within twelve months of
-            the present day. Extending the epoch timestamp beyond 10 digits will
-            default back to twelve months of data. This query is optional
+          description:
+            Without this parameter, the report defaults to 6 months if
+            available. If included, the epoch timestamp should be 10 digits long
+            and be within two years of the present day.
           schema:
-            type: integer
-            format: int64
-            example: 1580558400
+            $ref: '#/components/schemas/UnixDate'
       requestBody:
         content:
           application/json:
@@ -965,21 +1264,18 @@ paths:
         - name: fromDate
           in: query
           description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            ?1494449017?. Without this parameter, the report defaults to 61 days
-            if available. This will limit the amount of credit and debit
-            transactions included in the report up to the date specified, but
-            will not limit the amount of income stream transactions. The income
-            stream transactions are all included, up to 24 months, to help the
-            lender and GSE's have the full history to validate income. Example:
-            ?fromDate={fromDate}If included, the epoch timestamp should be 10
-            digits long and be within two years of the present day. Extending
-            the epoch timestamp beyond 10 digits will default back to 2 years of
-            data. This query is optional.
+            Without this parameter, the report defaults to 61 days if available.
+            This will limit the amount of credit and debit transactions included
+            in the report up to the date specified, but will not limit the
+            amount of income stream transactions. The income stream transactions
+            are all included, up to 24 months, to help the lender and GSE's have
+            the full history to validate income. Example: ?fromDate={fromDate}If
+            included, the epoch timestamp should be 10 digits long and be within
+            two years of the present day. Extending the epoch timestamp beyond
+            10 digits will default back to 2 years of data. This query is
+            optional.
           schema:
-            type: integer
-            format: int64
-            example: 1580558400
+            $ref: '#/components/schemas/UnixDate'
       requestBody:
         content:
           application/json:
@@ -1443,404 +1739,6 @@ paths:
                 $ref: '#/components/schemas/ErrorMessage'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts':
-    get:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Get Customer Accounts By Institution Login"
-      description: >-
-        Get details for all accounts associated with the given institution
-        login. All accounts returned are accessible by a single set of
-        credentials on a single institution.
-      operationId: GetCustomerAccountsByInstitutionLogin
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionLoginId
-          in: path
-          description: The institution login ID (from the account record)
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionLoginId'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    post:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Refresh Customer Accounts By Institution Login"
-      description: >-
-        Refresh account and transaction data for all accounts associated with a
-        given institutionLoginId with a connection to the institution.
-
-
-        Client apps are not permitted to automate calls to the Refresh services.
-        Active accounts are automatically refreshed by Finicity once per day.
-        Because many financial institutions only post transactions once per day,
-        calling Refresh repeatedly is usually a waste of resources and is not
-        recommended.
-
-
-        Apps may call Refresh services for a specific customer when there is a
-        specific business case for the need of data that is up to date as of the
-        moment. Please discuss with your account manager and systems engineer
-        for further clarification.
-
-
-        The recommended timeout setting for this request is 120 seconds in order
-        to receive a response. However you can terminate the connection after
-        making the call the operation will still complete. You will have to pull
-        the account records to check for an updated aggregation attempt date to
-        know when the refresh is complete.
-      operationId: RefreshCustomerAccountsByInstitutionLogin
-      parameters:
-        - name: Content-Length
-          in: header
-          description: Must be 0 (this request has no body)
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 0
-        - name: interactive
-          in: header
-          description: 'False'
-          required: true
-          schema:
-            enum:
-              - false
-            type: boolean
-            example: false
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionLoginId
-          in: path
-          description: The institution login ID from the account records
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionLoginId'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}':
-    delete:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Delete Customer Accounts By Institution Login"
-      description: >-
-        Remove the specified set of accounts by institution login id from the
-        Finicity system.
-
-
-        (Note that the request and response are the same for JSON and XML
-        clients.)
-      operationId: DeleteCustomerAccountsByInstitutionLogin
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionLoginId
-          in: path
-          description: >-
-            The Finicity ID of the Institution Login for the set of accounts to
-            be deleted
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionLoginId'
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
-    get:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Get Customer Account"
-      description: Get details for the specified account.
-      operationId: GetCustomerAccount
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: Finicity's ID of the account to be retrieved
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccount'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    delete:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Delete Customer Account"
-      description: |+
-        Remove the specified account from Finicity Aggregation.
-
-      operationId: DeleteCustomerAccount
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: Finicity's ID of the account to be deleted
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts':
-    get:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Get Customer Accounts"
-      description: Get details for all accounts owned by the specified customer.
-      operationId: GetCustomerAccounts
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: status
-          in: query
-          description: >-
-            append, ?status=pending, to return accounts in the pending status.
-            Pending accounts were discovered but not activated and will not have
-            transactions or have balance updates
-          schema:
-            type: string
-            example: pending
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    post:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Refresh Customer Accounts"
-      description: >-
-        Refresh account and transaction data for all accounts associated with a
-        given customerId with a connection to the institution.
-
-
-        Client apps are not permitted to automate calls to the Refresh services.
-        Active accounts are automatically refreshed by Finicity once per day.
-        Because many financial institutions only post transactions once per day,
-        calling Refresh repeatedly is usually a waste of resources and is not
-        recommended.
-
-
-        Apps may call Refresh services for a specific customer when there is a
-        specific business case for the need of data that is up to date as of the
-        moment. Please discuss with your account manager and systems engineer
-        for further clarification.
-
-
-        The recommended timeout setting for this request is 120 seconds in order
-        to receive a response. However you can terminate the connection after
-        making the call the operation will still complete. You will have to pull
-        the account records to check for an updated aggregation attempt date to
-        know when the refresh is complete.
-      operationId: RefreshCustomerAccounts
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Empty'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/institutions/{institutionId}/accounts':
-    get:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Get Customer Accounts By Institution"
-      description: >-
-        Get details for all active accounts owned by the specified customer at
-        the specified institution.
-      operationId: GetCustomerAccountsByInstitution
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionId
-          in: path
-          description: Finicity's ID of the institution
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 102224
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
-    post:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Load Historic Transactions For Customer Account"
-      description: >-
-        Connect to the account's financial institution and load up to 24 months
-        of historic transactions for the account. Length of history varies by
-        institution.
-
-
-        This is a premium service. The billable event is a call to this service
-        specifying a customerId that has not been seen before by this service.
-        (If this service is called multiple times with the same customerId, to
-        load transactions from multiple accounts, only one billable event has
-        occurred.)
-
-
-        HTTP status of 204 means historic transactions have been loaded
-        successfully. The transactions are now available by calling Get Customer
-        Account Transactions.
-
-
-        HTTP status of 203 means the response contains an MFA challenge. Contact
-        your Account Manager or Systems Engineers to determine the best route to
-        handle this HTTP status code.
-
-
-        The recommended timeout setting for this request is 180 seconds in order
-        to receive a response. However you can terminate the connection after
-        making the call the operation will still complete. You will have to pull
-        the account records to check for an updated aggregation attempt date to
-        know when the refresh is complete.
-
-
-        This service usually requires the HTTP header Content-Length: 0 because
-        it is a POST request with no request body.
-
-
-        The date range sent to the institution is calculated from the account's
-        createdDate. This means that calling this service a second time for the
-        same account normally will not add any new transactions for the account.
-        For this reason, a second call to this service for a known accountId
-        will usually return immediately with HTTP 204.
-
-
-        In a few specific scenarios, it may be desirable to force a second
-        connection to the institution for a known accountId. Some examples are:
-
-
-        - The institution's policy has changed, making more transactions
-        available.
-
-        - Finicity has now added a longer transaction history support for the
-        institution.
-
-        - The first call encountered an error, and the resulting Aggregation
-        Ticket has now been fixed by the Finicity Support Team.
-
-
-        In these cases, the POST request can contain the parameter force=true in
-        the request body to force the second connection.
-      operationId: LoadHistoricTransactionsForCustomerAccount
-      parameters:
-        - name: Content-Length
-          in: header
-          description: Must be 0 (this request has no body)
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 0
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description:
-            The Finicity ID of the account to pull transaction history for
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
-    get:
-      tags:
-        - Accounts
-      summary: "\U0001F6A7 Get Account Owner"
-      description: >-
-        Retrieve the names and addresses of the account owner from a financial
-        institution.
-
-
-        Note: This is a premium service, billable per every successful API call.
-
-
-
-        HTTP status of 200 means the account owner's name and address were
-        retrieved successfully.
-
-
-        HTTP status of 203 means the response contains an MFA challenge in XML
-        or JSON format. Contact your Account Manager or Systems Engineers to
-        determine the best route to handle this HTTP status code.
-
-
-        This service retrieves account data from the institution. This usually
-        returns quickly, but in some scenarios may take a few minutes to
-        complete. In the event of a timeout condition, retry the call.
-      operationId: GetAccountOwner
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: Finicity's ID of the account
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountOwnerv1'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
     get:
       tags:
@@ -1852,20 +1750,36 @@ paths:
         this is a premium service, charges incur per each successful statement
         retrieved. 
 
+
         Our list of [Supported
         Institutions](https://docs.finicity.com/institutions/) confirms that you
-        can retrieve statements for the following account types: * Checking *
-        Savings  * Money market * CDs * Investments * Mortgage * Credit cards *
-        Loans * Line of credit
+        can retrieve statements for the following account types: 
+
+        * Checking
+
+        * Savings
+
+        * Money market
+
+        * CDs
+
+        * Investments
+
+        * Mortgage
+
+        * Credit cards
+
+        * Loans
+
+        * Line of credit
+
 
         Set request timeout: we recommend setting the timeout to 180 seconds to
         allow plenty of time for a response. 
 
-        Error codes: * HTTP 200: Success. The response is a binary string that
-        you can save as a PDF file. * HTTP 203 : The response contains an MFA
-        challenge question in JSON format. 
 
-        Contact one of our system engineers for help in resolving this error.
+        HTTP 200: Success. The response is a binary string that you can save as
+        a PDF file.
       operationId: GetCustomerAccountStatement
       parameters:
         - name: Accept
@@ -1878,14 +1792,7 @@ paths:
             type: string
             example: 'application/pdf, application/json'
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: Finicity's ID of the account
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+        - $ref: '#/components/parameters/AccountIdParameter'
         - name: index
           in: query
           description: >-
@@ -1906,6 +1813,8 @@ paths:
                 type: string
                 description: ''
                 format: binary
+        '203':
+          $ref: '#/components/responses/MFAChallengeNeededResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/statement':
@@ -2013,9 +1922,7 @@ paths:
             fromDate) (see Handling Dates and Times)
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 1588970681
+            $ref: '#/components/schemas/UnixDate'
         - name: start
           in: query
           description: Starting index for this page of results
@@ -2115,13 +2022,7 @@ paths:
       operationId: GetCustomerAccountTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description:
-            Finicity's ID of the account whose transactions are to be retrieved
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/AccountIdParameter'
         - name: fromDate
           in: query
           description: >-
@@ -2129,9 +2030,7 @@ paths:
             and Times)
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 1588365858
+            $ref: '#/components/schemas/UnixDate'
         - name: toDate
           in: query
           description: >-
@@ -2139,9 +2038,7 @@ paths:
             fromDate) (see Handling Dates and Times)
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 1588970681
+            $ref: '#/components/schemas/UnixDate'
         - name: start
           in: query
           description: Starting index for this page of results
@@ -2252,9 +2149,7 @@ paths:
             than fromDate. See Handling Dates and Times.
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 1594677609
+            $ref: '#/components/schemas/UnixDate'
         - name: includePending
           in: query
           description: >-
@@ -2332,14 +2227,7 @@ paths:
       operationId: GetLoanPaymentDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: The Finicity ID of the account
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+        - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
           description: ''
@@ -2418,16 +2306,8 @@ paths:
       operationId: SubscribeToTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: >-
-            The Finicity ID of the account whose events will be sent to the
-            TxPUSH Listener
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+          # ID of the account whose events will be sent to the TxPush Listener
+        - $ref: '#/components/parameters/AccountIdParameter'
       requestBody:
         content:
           application/json:
@@ -2454,16 +2334,8 @@ paths:
       operationId: DisableTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: >-
-            The Finicity ID of the account whose events will be sent to the
-            TxPUSH Listener
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+          # ID of the account whose events will be sent to the TxPush Listener
+        - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
           description: ''
@@ -2524,13 +2396,7 @@ paths:
       operationId: GetAccountACHDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: Finicity's ID of the account
-          required: true
-          schema:
-            type: string
-            example: '1014136057'
+        - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
           description: ''
@@ -2555,16 +2421,8 @@ paths:
       operationId: CreateTxPushTestTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: >-
-            The Finicity ID of the account whose events will be sent to the
-            TxPUSH Listener
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 789656
+          # ID of the account whose events will be sent to the TxPush Listener
+        - $ref: '#/components/parameters/AccountIdParameter'
       requestBody:
         content:
           application/json:
@@ -2756,24 +2614,17 @@ paths:
         - App Registration and OAuth Migration
       summary: "\U0001F6A7 Migrate Institution Login Accounts V2"
       description: >-
-        The institutionLoginId parameter uses Finicity's internal FI mapping to
-        move accounts from the current FI legacy connection to the new OAuth FI
-        connection.
+        The `institutionLoginId` parameter uses Finicity's internal FI mapping
+        to move accounts from the current FI legacy connection to the new OAuth
+        FI connection.
 
 
-        The API returns a list of accounts for the institution login id
+        The API returns a list of accounts for the institution login ID
         specified with an HTTP status code 200.
       operationId: MigrateInstitutionLoginAccountsV2
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: institutionLoginId
-          in: path
-          description: >-
-            The institutionLoginId for the set of accounts to be migrated from
-            the legacy FI ID to the new OAuth FI ID
-          required: true
-          schema:
-            $ref: '#/components/schemas/InstitutionLoginId'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
       responses:
         '200':
           description: ''
@@ -2835,9 +2686,7 @@ paths:
             updated. This could be used to determine when the app was updated to
             approved or rejected.
           schema:
-            type: integer
-            format: int64
-            example: 1595303316
+            $ref: '#/components/schemas/UnixDate'
         - name: page
           in: query
           description: Select which page of results to return
@@ -3123,14 +2972,7 @@ paths:
       operationId: GetAvailableBalance-Live
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: ID for the customer's account
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+        - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
           description: ''
@@ -3161,14 +3003,7 @@ paths:
       operationId: GetAvailableBalance
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: accountId
-          in: path
-          description: ID for the customer's account
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1014136057
+        - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
           description: ''
@@ -3451,9 +3286,7 @@ paths:
             beyond 10 digits or beyond 120 days from the present date will
             default back to 120 days of data. This query is optional.
           schema:
-            type: integer
-            format: int64
-            example: 1580558400
+            $ref: '#/components/schemas/UnixDate'
       requestBody:
         content:
           application/json:
@@ -3559,15 +3392,33 @@ paths:
         attributes according to the `To` and `From` date range of the report at
         the time it was created. 
 
+
         If the current date is before the end of the calendar month, then the
         most recent month provides all available data up to the current date.
 
-        The CA data response is grouped into the following attribute objects: *
-        `accountIds` * `dateRange` * `income` * `expenses` * `netAmount` * `nsf`
-        (insufficient funds) * `assets`
+
+        The CA data response is grouped into the following attribute objects: 
+
+        * `accountIds` 
+
+        * `dateRange` 
+
+        * `income` 
+
+        * `expenses` 
+
+        * `netAmount` 
+
+        * `nsf` (insufficient funds) 
+
+        * `assets`
+
             * `customer`
+
             * `account`
+
         * `liabilities`
+
       operationId: GetConsumerAttributesByID-Beta
       parameters:
         - name: analytics_id
@@ -3758,6 +3609,43 @@ components:
             $ref: '#/components/schemas/Consumer'
     ModifyConsumerResponse:
       description: The consumer was successfully updated
+    GetCustomerAccountsResponse:
+      description: The account list was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccounts'
+    RefreshCustomerAccountsResponse:
+      description: The account list was successfully refreshed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccounts'
+    DeleteCustomerAccountsByInstitutionLoginResponse:
+      description: The customer accounts were successfully deleted
+    DeleteCustomerAccountResponse:
+      description: The customer account was successfully deleted
+    LoadHistoricTransactionsForCustomerAccountResponse:
+      description:
+        Historic transactions have been loaded successfully. The transactions
+        are now available by calling "Get Customer Account Transactions".
+    GetCustomerAccountResponse:
+      description: The account was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccount'
+    GetAccountOwnerResponse:
+      description: The account owner was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountOwner'
+    MFAChallengeNeededResponse:
+      description:
+        The response contains an MFA challenge in XML or JSON format. Contact
+        your Account Manager or Systems Engineers to determine the best route to
+        handle this error.
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3805,8 +3693,7 @@ components:
         [Test Drive](https://signup.finicity.com/).
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/Empty'
+          schema: {}
     ResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -3924,6 +3811,31 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+    InteractiveParameter:
+      name: interactive
+      in: header
+      required: true
+      schema:
+        type: boolean
+        example: false
+    AccountIdParameter:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/AccountId'
+    InstitutionLoginIdParameter:
+      name: institutionLoginId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/InstitutionLoginId'
+    InstitutionIdParameter:
+      name: institutionId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/InstitutionId'
     PurposeParameter:
       name: purpose
       in: query
@@ -3939,9 +3851,6 @@ components:
       schema:
         $ref: '#/components/schemas/ConsumerId'
   schemas:
-    Empty:
-      description: A schema for empty payloads
-      type: object
     ErrorMessage:
       required:
         - code
@@ -3976,10 +3885,7 @@ components:
           description: Finicity asset ID
           example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
         accountId:
-          type: string
-          description:
-            The generated Finicity ID of the account that encountered the error
-          example: '5003507225'
+          $ref: '#/components/schemas/AccountId'
         tags:
           type: string
     PartnerId:
@@ -3994,16 +3900,17 @@ components:
       type: string
       description: A Finicity customer ID. See also, "Add Customer"
       example: '1005061234'
+    AccountId:
+      type: string
+      description: A Finicity account ID
+      example: '5011648377'
     InstitutionId:
       description: The ID of a Financial Institution.
       type: string
       example: '102105'
     InstitutionLoginId:
       type: string
-      description: >-
-        An "Institution Login ID" (from the account record). Used in type "fix"
-        in order to pull up a fix flow for a specific set of accounts under one
-        "Institution Login ID".
+      description: An Institution Login ID (from the account record).
       example: '1007302745'
     PartnerCredentials:
       required:
@@ -4116,6 +4023,7 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         institutionLoginId:
+          # Used in type "fix" in order to pull up a fix flow for a specific set of accounts under one Institution Login ID
           $ref: '#/components/schemas/InstitutionLoginId'
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
@@ -4289,20 +4197,8 @@ components:
       description: An email address
       example: finicity@test.com
     ConsumerDateOfBirth:
-      type: integer
-      format: int64
-      description: >-
-        The consumer's date of birth in Unix epoch time (in seconds). The
-        timestamp is UTC at the start of day of birth. Example: If the DOB is
-        1/1/1980, then the timestamp passed is 315576000.
-
-
-        Note: DOB's prior to 1970 result in a negative timestamp; this is
-        acceptable. To avoid errors, the DOB and consumer's DOB must match.
-
-
-        Note: All other timestamps in Decisioning are in MST.
-      example: 470275200
+      #  Note: DOB's prior to 1970 result in a negative timestamp; this is acceptable. Note: All other timestamps in Decisioning are in MST.
+      $ref: '#/components/schemas/UnixDate'
     RedirectUri:
       type: string
       description: >-
@@ -4604,6 +4500,10 @@ components:
       description: A date in Unix epoch time (in seconds).
       format: int64
       example: 1607450357
+    Currency:
+      type: string
+      description: A currency code
+      example: 'USD'
     CustomerType:
       type: string
       description:
@@ -4626,9 +4526,6 @@ components:
           $ref: '#/components/schemas/ApplicationId'
     CustomerUpdate:
       description: Represent an update to customer fields
-      required:
-        - firstName
-        - lastName
       type: object
       properties:
         firstName:
@@ -4837,6 +4734,728 @@ components:
           $ref: '#/components/schemas/UnixDate'
         suffix:
           $ref: '#/components/schemas/Suffix'
+    AccountOwner:
+      required:
+        - ownerName
+        - ownerAddress
+      type: object
+      properties:
+        ownerName:
+          type: string
+          description:
+            The name of the account owner. Can be multiple account owners in one
+            string. This is how the source data is returned from the
+            institution.
+          example: John Smith
+        ownerAddress:
+          $ref: '#/components/schemas/Address'
+        asOfDate:
+          $ref: '#/components/schemas/UnixDate'
+      description: Owner of a customer account
+    CustomerAccount:
+      required:
+        - id
+        - number
+        - accountNumberDisplay
+        - name
+        - balance
+        - type
+        - status
+        - customerId
+        - institutionId
+        - balanceDate
+        - createdDate
+        - currency
+        - oldestTransactionDate
+        - institutionLoginId
+        - displayPosition
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/AccountId'
+        number:
+          type: string
+          deprecated: true
+          description: >-
+            Use `accountNumberDisplay` field. Starting July 1, 2021 the `number`
+            field will sunset with limited support until April 1, 2022, at which
+            time it will be deprecated (no longer available).
+          example: '2000004444'
+        accountNumberDisplay:
+          type: string
+          description: >-
+            The account number from a financial institution in truncated format:
+
+            * Last four digits: "1234"
+
+            * Last four digits with suffix: "1234-9"
+
+            * Full value for string accounts: "john@gmail.com"
+          example: '1234-9'
+        realAccountNumberLast4:
+          type: string
+          description: The last 4 digits of the ACH account number
+          example: '5678'
+        name:
+          type: string
+          description: The account name from the institution
+          example: Super Checking
+        balance:
+          type: number
+          description: The cleared balance of the account as-of balanceDate
+          example: 401.26
+        type:
+          $ref: '#/components/schemas/AccountType'
+        aggregationStatusCode:
+          type: integer
+          description: >-
+            The status of the most recent aggregation attempt. This will not be
+            present until you have run your first aggregation for the account.
+          format: int32
+          example: 0
+        status:
+          type: string
+          description: >-
+            "pending" during account discovery, always "active" following
+            successful account activation
+          example: active
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        institutionId:
+          $ref: '#/components/schemas/InstitutionId'
+        balanceDate:
+          # A timestamp showing when the balance was captured
+          $ref: '#/components/schemas/UnixDate'
+        aggregationSuccessDate:
+          # A timestamp showing the last successful aggregation of the account.
+          # This will not be present until you have run your first aggregation for the account.
+          $ref: '#/components/schemas/UnixDate'
+        aggregationAttemptDate:
+          #  A timestamp showing the last aggregation attempt
+          # This will not be present until you have run your first aggregation for the account.
+          $ref: '#/components/schemas/UnixDate'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        lastUpdatedDate:
+          $ref: '#/components/schemas/UnixDate'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        lastTransactionDate:
+          $ref: '#/components/schemas/UnixDate'
+        oldestTransactionDate:
+          $ref: '#/components/schemas/UnixDate'
+        institutionLoginId:
+          $ref: '#/components/schemas/InstitutionLoginId'
+        detail:
+          $ref: '#/components/schemas/CustomerAccountDetail'
+        position:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerAccountPosition'
+          description: Investment holdings
+        displayPosition:
+          type: integer
+          description: >-
+            Display position of the account at the financial institution, 1
+            being the top listed account
+          format: int32
+          example: 2
+        parentAccount:
+          # The Finicity assigned account ID for the account one level higher in the student loan account hierarchy
+          $ref: '#/components/schemas/AccountId'
+        financialinstitutionAccountStatus:
+          type: string
+          example: 'OPEN'
+        accountNickname:
+          type: string
+          example: 'Roth IRA'
+        marketSegment:
+          type: string
+          example: 'personal'
+      description: >-
+        A customer account represents a bank account such as a checking or
+        savings that the customer has added via the Connect interface.
+    CustomerAccountPosition:
+      description: Details for investment account holdings
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the investment position
+          format: int64
+          example: 454678080
+        description:
+          type: string
+          description: The description of the holding
+          example: 'EMB:iShares Emerging Markets USD Bond ETF'
+        cusipNo:
+          type: string
+          description: >-
+            A nine-digit numeric or nine-character alphanumeric code that
+            identifies a North American financial security (will be changed to
+            SecurityIdType in the next API version, v2)
+          example: '464287242'
+        cusipNoType:
+          type: string
+          description: >-
+            Type of the security, attached Finicity's cusipNo field (will be
+            changed to SecurityIdType in the next API version, v2)
+          example: '464287242'
+        symbol:
+          type: string
+          description: The investment position's market/ticker symbol
+          example: JPM
+        units:
+          type: number
+          description: The quantity of investment holdings
+          example: 3.54117
+        currentPrice:
+          type: number
+          description: The current price of the investment holding
+          example: 49.01
+        securityName:
+          type: string
+          description: The security name for the investment holding
+          example: JPMORGAN CHASE & CO
+        transactionType:
+          type: string
+          description:
+            'The transaction type of the holding. Cash, Margin, POSSTOCK, Etc'
+          example: Cash
+        marketValue:
+          type: number
+          description:
+            Market value of an investment position at the time of retrieval
+          example: 914.2
+        costBasis:
+          type: number
+          description: The total cost of acquiring the ssecurity
+          example: 925.5
+        status:
+          type: string
+          description: The status of the holding
+          example: A
+        currentPriceDate:
+          # The latest date the price date was updated
+          $ref: '#/components/schemas/UnixDate'
+        invSecurityType:
+          type: string
+          description: The investment holding security type
+          example: OTHERINFO
+        mfType:
+          type: string
+          description: 'Type of mutual fund (e.g., open-ended)'
+          example: Open-Ended
+        posType:
+          type: string
+          description: Fund Type assigned by the FI (long or short)
+          example: Long
+        totalGLDollar:
+          type: number
+          description:
+            'Total Gain/Loss of the position, at the time of aggregation ($)'
+          example: 81.83
+        totalGLPercent:
+          type: number
+          description:
+            'Total Gain/Loss of the position, at the time of aggregation (%)'
+          example: 43.07
+    CustomerAccountDetail:
+      description: >-
+        Additional customer account details. Not all data points will return for
+        each account type. You can see the account type that each data point
+        will return for in descriptions. The data point are also subject to
+        availability by the institution.
+      required:
+        - availableBalanceAmount
+      type: object
+      properties:
+        postedDate:
+          # (All Account Types) Most recent date of the following information
+          $ref: '#/components/schemas/UnixDate'
+        availableBalanceAmount:
+          type: number
+          description: >-
+            (Checking/Savings/CD/MoneyMarket) and (Mortgage/Loan)  The available
+            balance (typically the current balance with adjustments for any
+            pending transactions)
+          example: 5678.78
+        openDate:
+          # Checking/Savings/CD/MoneyMarket
+          $ref: '#/components/schemas/UnixDate'
+        periodStartDate:
+          # Checking/Savings/CD/MoneyMarket
+          $ref: '#/components/schemas/UnixDate'
+        periodEndDate:
+          $ref: '#/components/schemas/UnixDate'
+        periodInterestRate:
+          type: number
+          description: >-
+            (Checking/Savings/CD/MoneyMarket) The APY for the current period
+            interest rate
+          example: 13.245
+        periodDepositAmount:
+          type: number
+          description:
+            (Checking/Savings/CD/MoneyMarket) Amount deposited in period
+          example: 2356.56
+        periodInterestAmount:
+          type: number
+          description: >-
+            (Checking/Savings/CD/MoneyMarket) Interest accrued during the
+            current period
+          example: 1234.56
+        interestYtdAmount:
+          type: number
+          description:
+            (Checking/Savings/CD/MoneyMarket) Interest accrued year-to-date
+          example: 1056.67
+        interestPriorYtdAmount:
+          type: number
+          description:
+            (Checking/Savings/CD/MoneyMarket) Interest earned in prior year
+          example: 3056.79
+        maturityDate:
+          # Checking/Savings/CD/MoneyMarket
+          $ref: '#/components/schemas/UnixDate'
+        interestRate:
+          type: string
+          description: >-
+            (Credit Card/Line Of Credit) and (Mortgage/Loan) The account's
+            current interest rate
+          example: '15.789'
+        creditAvailableAmount:
+          type: number
+          description: >-
+            (Credit Card/Line Of Credit) The available credit (typically the
+            credit limit minus the current balance)
+          example: 3000
+        creditMaxAmount:
+          type: number
+          description: (Credit Card/Line Of Credit) The account's credit limit
+          example: 7000
+        cashAdvanceAvailableAmount:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Currently available cash advance
+          example: 2000
+        cashAdvanceMaxAmount:
+          type: number
+          description: (Credit Card/Line Of Credit) Maximum cash advance amount
+          example: 3000
+        cashAdvanceBalance:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Balance of current cash advance
+          example: 1000
+        cashAdvanceInterestRate:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Interest rate for cash advances
+          example: 21.5
+        currentBalance:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) and (Investment) Current balance
+          example: 5789.34
+        paymentMinAmount:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) and (Mortgage/Loan) Minimum payment due
+          example: 456.78
+        paymentDueDate:
+          # Credit Card/Line Of Credit
+          $ref: '#/components/schemas/UnixDate'
+        previousBalance:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Prior balance in last statement
+          example: 1234.56
+        statementStartDate:
+          # Credit Card/Line Of Credit
+          $ref: '#/components/schemas/UnixDate'
+        statementEndDate:
+          # Credit Card/Line Of Credit
+          $ref: '#/components/schemas/UnixDate'
+        statementPurchaseAmount:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Purchase amount of statement period
+          example: 2345.9
+        statementFinanceAmount:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Finance amount of statement period
+          example: 156.78
+        statementCreditAmount:
+          type: number
+          description: >-
+            (Credit Card/Line Of Credit) Credit amount applied in statement
+            period
+          example: 345
+        rewardEarnedBalance:
+          type: integer
+          description: (Credit Card/Line Of Credit) Earned reward balance
+          format: int32
+          example: 500
+        pastDueAmount:
+          type: number
+          description: (Credit Card/Line Of Credit) Balance past due
+          example: 3688.99
+        lastPaymentAmount:
+          type: number
+          description: >-
+            (Credit Card/Line Of Credit) and (Mortgage/Loan) The amount received
+            in the last payment
+          example: 567.89
+        lastPaymentDate:
+          # Credit Card/Line Of Credit
+          $ref: '#/components/schemas/UnixDate'
+        statementCloseBalance:
+          type: number
+          description:
+            (Credit Card/Line Of Credit) Balance of statement at close
+          example: 2456.69
+        termOfMl:
+          type: string
+          description: (Mortgage/Loan) Length of loan in months
+          example: '36'
+        mlHolderName:
+          type: string
+          description: (Mortgage/Loan) Holder of the mortgage or loan
+          example: John Smith
+        description:
+          type: string
+          description: (Mortgage/Loan) Description of loan
+          example: a description
+        lateFeeAmount:
+          type: number
+          description: (Mortgage/Loan) Late fee charged
+          example: 35
+        payoffAmount:
+          type: number
+          description: (Mortgage/Loan) The amount required to payoff the loan
+          example: 45567.98
+        payoffAmountDate:
+          type: integer
+          description: (Mortgage/Loan) Date of final payment
+          format: int64
+          example: 1588797048
+        originalMaturityDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        principalBalance:
+          type: number
+          description: (Mortgage/Loan) The principal balance
+          example: 45056.7
+        escrowBalance:
+          type: number
+          description: (Mortgage/Loan) The escrow balance
+          example: 2345.01
+        interestPeriod:
+          type: string
+          description: (Mortgage/Loan) Period of interest
+          example: monthly
+        initialMlAmount:
+          type: number
+          description: (Mortgage/Loan) Original loan amount
+          example: 65000
+        initialMlDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        nextPaymentPrincipalAmount:
+          type: number
+          description: (Mortgage/Loan) Amount towards principal in next payment
+          example: 1256.67
+        nextPaymentInterestAmount:
+          type: number
+          description: (Mortgage/Loan) Amount of interest in next payment
+          example: 234.56
+        nextPayment:
+          type: number
+          description: (Mortgage/Loan) Minimum payment due
+          example: 1578
+        nextPaymentDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        lastPaymentDueDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        lastPaymentReceiveDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        lastPaymentPrincipalAmount:
+          type: number
+          description: (Mortgage/Loan) Amount towards principal in last payment
+          example: 1256.67
+        lastPaymentInterestAmount:
+          type: number
+          description: (Mortgage/Loan) Amount of interest in last payment
+          example: 234.56
+        lastPaymentEscrowAmount:
+          type: number
+          description: (Mortgage/Loan) Amount towards escrow in last payment
+          example: 456.78
+        lastPaymentLastFeeAmount:
+          type: number
+          description: (Mortgage/Loan) Amount of last fee in last payment
+          example: 150
+        lastPaymentLateCharge:
+          type: number
+          description: (Mortgage/Loan) Amount of late charge in last payment
+          example: 50
+        ytdPrincipalPaid:
+          type: number
+          description: (Mortgage/Loan) Principal paid year-to-date
+          example: 5432.01
+        ytdInterestPaid:
+          type: number
+          description: (Mortgage/Loan) Interest paid year-to-date
+          example: 3948.56
+        ytdInsurancePaid:
+          type: number
+          description: (Mortgage/Loan) Insurance paid year-to-date
+          example: 1345.89
+        ytdTaxPaid:
+          type: number
+          description: (Mortgage/Loan) Tax paid year-to-date
+          example: 1489
+        autoPayEnrolled:
+          type: boolean
+          description: (Mortgage/Loan) Enrolled in autopay (F/Y)
+          example: true
+        collateral:
+          type: string
+          description: (Mortgage/Loan) Collateral on loan
+          example: nissan sentra
+        currentSchool:
+          type: string
+          description: (Mortgage/Loan) Current school
+          example: utah valley university
+        firstPaymentDate:
+          # Mortgage/Loan
+          $ref: '#/components/schemas/UnixDate'
+        firstMortgage:
+          type: boolean
+          description: (Mortgage/Loan) First mortgage (F/Y)
+          example: true
+        loanPaymentFreq:
+          type: string
+          description: '(Mortgage/Loan) Frequency of payments (monthly, etc.)'
+          example: monthly
+        originalSchool:
+          type: string
+          description: (Mortgage/Loan) Original school
+          example: brigham young university
+        recurringPaymentAmount:
+          type: number
+          description: (Mortgage/Loan) Recurring payment amount
+          example: 456.23
+        lender:
+          type: string
+          description: (Mortgage/Loan) Owner of loan
+          example: utah community credit union
+        endingBalanceAmount:
+          type: number
+          description: (Mortgage/Loan) Ending balance
+          example: 234789.45
+        loanTermType:
+          type: string
+          description: (Mortgage/Loan) Type of loan term
+          example: fixed
+        paymentsMade:
+          type: integer
+          description: (Mortgage/Loan) Number of payments made
+          format: int32
+          example: 14
+        balloonAmount:
+          type: number
+          description: (Mortgage/Loan) Balloon payment amount
+          example: 1678.56
+        projectedInterest:
+          type: number
+          description: (Mortgage/Loan) Projected interest on the loan
+          example: 10456.78
+        interestPaidLtd:
+          type: number
+          description:
+            (Mortgage/Loan) Interest paid since inception of loan (life to date)
+          example: 56789.34
+        interestRateType:
+          type: string
+          description: (Mortgage/Loan) Type of interest rate
+          example: variable
+        loanPaymentType:
+          type: string
+          description: (Mortgage/Loan) Type of loan payment
+          example: principle
+        repaymentPlan:
+          type: string
+          description:
+            (Mortgage/Loan) Type of repayment plan for the student loan
+          example: 'Standard, Graduated, Extended, Pay As You Earn, and more.'
+        paymentsRemaining:
+          type: integer
+          description:
+            (Mortgage/Loan) Number of payments remaining before loan is paid off
+          format: int32
+          example: 45
+        interestMarginBalance:
+          type: number
+          description:
+            (Investment) Net interest earned after deducting interest paid out
+          example: 456
+        shortBalance:
+          type: number
+          description: (Investment) Sum of short balance
+          example: 12456.89
+        availableCashBalance:
+          type: number
+          description: (Investment) Amount available for cash withdrawal
+          example: 3456.78
+        maturityValueAmount:
+          type: number
+          description: (Investment) amount payable to an investor at maturity
+          example: 34067.78
+        vestedBalance:
+          type: number
+          description: (Investment) Vested amount in account
+          example: 45000
+        empMatchAmount:
+          type: number
+          description: (Investment) Employer matched contributions
+          example: 256.99
+        empPretaxContribAmount:
+          type: number
+          description: (Investment) Employer pretax contribution amount
+          example: 450
+        empPretaxContribAmountYtd:
+          type: number
+          description:
+            (Investment) Employer pretax contribution amount year to date
+          example: 700
+        contribTotalYtd:
+          type: number
+          description: (Investment) Total year to date contributions
+          example: 2045
+        cashBalanceAmount:
+          type: number
+          description: (Investment) Cash balance of account
+          example: 2000
+        preTaxAmount:
+          type: number
+          description: (Investment) Pre tax amount of total balance
+          example: 78564.99
+        afterTaxAmount:
+          type: number
+          description: (Investment) Post tax amount of total balance
+          example: 68564.99
+        matchAmount:
+          type: number
+          description: (Investment) Amount matched
+          example: 378
+        profitSharingAmount:
+          type: number
+          description: (Investment) Amount of balance for profit sharing
+          example: 34678.89
+        rolloverAmount:
+          type: number
+          description: >-
+            (Investment) Amount of balance rolled over from original account
+            (401k, etc.)
+          example: 101234.67
+        otherVestAmount:
+          type: number
+          description: (Investment) Other vested amount
+          example: 34000
+        otherNonvestAmount:
+          type: number
+          description: (Investment) Other nonvested amount
+          example: 26000
+        currentLoanBalance:
+          type: number
+          description: (Investment) Current loan balance
+          example: 345789.23
+        loanRate:
+          type: number
+          description: (Investment) Interest rate of loan
+          example: 3.275
+        buyPower:
+          type: number
+          description: (Investment) Money available to buy securities
+          example: 34567.89
+        rolloverLtd:
+          type: number
+          description: (Investment) Life to date of money rolled over
+          example: 23456.78
+        loanAwardId:
+          type: string
+          description: (Student Loan) The federal unique loan identifying number
+        originalInterestRate:
+          type: number
+          description: >-
+            (Student Loan) The original interest rate to which the loan was
+            disbursed, in APY
+        guarantor:
+          type: string
+          description: >-
+            (Student Loan) The financial institution guarantor of the loan (who
+            will pay the loan amount to the owner if the borrower defaults)
+        interestSubsityType:
+          type: string
+          description: >-
+            (Student Loan) The indication of the presence of an interest subsidy
+            (i.e. subsidized)
+        interestBalance:
+          type: number
+          description: (Student Loan) The total outstanding interest balance
+        feesBalance:
+          type: number
+          description: (Student Loan) The total outstanding fees balance
+        loanStatus:
+          type: string
+          description: >-
+            (Student Loan) The repayment status phase (i.e. In School, Grace,
+            Repayment, Deferment, Forbearance)
+        loanStatusStartDate:
+          # Student Loan
+          $ref: '#/components/schemas/UnixDate'
+        loanStatusEndDate:
+          # Student Loan
+          $ref: '#/components/schemas/UnixDate'
+        weightedInterestRate:
+          type: number
+          description: >-
+            (Student Loan) The interest rate of multiple interest rates and
+            balances at the group level, in APY
+        repaymentPlanStartDate:
+          # Student Loan
+          $ref: '#/components/schemas/UnixDate'
+        repaymentPlanEndDate:
+          # Student Loan
+          $ref: '#/components/schemas/UnixDate'
+        outOfSchoolDate:
+          # Student Loan. The date the borrower graduated or dropped below half-time enrollment in school
+          $ref: '#/components/schemas/UnixDate'
+        convertToRepayment:
+          # Student Loan. The date the loan enters into repayment
+          $ref: '#/components/schemas/UnixDate'
+        daysDelinquent:
+          type: integer
+          description: >-
+            (Student Loan) The number of days past a due date that a payment
+            should have been made
+          format: int32
+        totalPrincipalPaid:
+          type: number
+          description:
+            (Student Loan) The total amount paid towards the principal balance
+        totalInterestPaid:
+          type: number
+          description: (Student Loan) The total amount paid towards interest
+        totalAmountPaid:
+          type: number
+          description: (Student Loan) The total amount paid
     GetInstitutionsResponse:
       required:
         - found
@@ -5046,218 +5665,6 @@ components:
           type: number
           description: The available balance for the account
           example: 1000
-    CustomerAccount:
-      required:
-        - id
-        - number
-        - accountNumberDisplay
-        - name
-        - balance
-        - type
-        - status
-        - customerId
-        - institutionId
-        - balanceDate
-        - createdDate
-        - currency
-        - oldestTransactionDate
-        - institutionLoginId
-        - displayPosition
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The generated FInicity ID of the account
-          format: int64
-          example: 1014136057
-        number:
-          type: string
-          description: >-
-            Use the `accountNumberDisplay` field. Starting July 1, 2021 the
-            `number` field will sunset with limited support until April 1, 2022,
-            at which time it will be deprecated (no longer available).
-        accountNumberDisplay:
-          type: string
-          description: >-
-            The account number from a financial institution in truncated format:
-
-            * Last four digits - 1234 
-
-            * Last four digits with suffix - 1234-9 
-
-            * Full value for string accounts - john@gmail.com.
-          example: '8888'
-        realAccountNumberLast4:
-          type: integer
-          description: The last 4 digits of the ACH account number
-          format: int32
-          example: 5678
-        name:
-          type: string
-          description: The account name from the institution
-          example: Super Checking
-        balance:
-          type: number
-          description: The cleared balance of the account as-of balanceDate
-          example: 7456
-        type:
-          $ref: '#/components/schemas/AccountType'
-        aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt. This will not be
-            present until you have run your first aggregation for the account.
-          format: int32
-          example: 0
-        status:
-          type: string
-          description: >-
-            pending during account discovery, always active following successful
-            account activation
-          example: active
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        institutionId:
-          $ref: '#/components/schemas/InstitutionId'
-        balanceDate:
-          type: integer
-          description: >-
-            A timestamp showing when the balance was captured (see Handling
-            Dates and Times)
-          format: int64
-          example: 1588797048
-        aggregationSuccessDate:
-          type: integer
-          description: >-
-            A timestamp showing the last successful aggregation of the account
-            (see Handling Dates and Times). This will not be present until you
-            have run your first aggregation for the account.
-          format: int64
-          example: 1588797048
-        aggregationAttemptDate:
-          type: integer
-          description: >-
-            A timestamp showing the last aggregation attempt, whether successful
-            or not (see Handling Dates and Times). This will not be present
-            until you have run your first aggregation for the account.
-          format: int64
-          example: 1588797048
-        createdDate:
-          type: integer
-          description: >-
-            A timestamp showing when the account was added to the Finicity
-            system (see Handling Dates and Times)
-          format: int64
-          example: 1588305190
-        currency:
-          type: string
-          description: The currency of the account
-          example: USD
-        lastTransactionDate:
-          type: integer
-          description: >-
-            The date of the latest transaction on the account (see Handling
-            Dates and Times). This will not be present until you have run your
-            first aggregation for the account.
-          format: int64
-          example: 1588710645
-        oldestTransactionDate:
-          type: integer
-          description: >-
-            The date of the oldest transaction in the transactions for the
-            account.
-          format: int64
-          example: 1588710645
-        institutionLoginId:
-          $ref: '#/components/schemas/InstitutionLoginId'
-        detail:
-          $ref: '#/components/schemas/CustomerAccountDetail'
-        position:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerAccountPosition'
-          description: Investment holdings
-          example:
-            - id: 122147546
-              symbol: JPM
-              fundName: JPMORGAN CHASE & CO
-              transactionType: Margin
-              marketValue: '914.2'
-              costBasis: 925.5
-              units: 10
-              unitPrice: 91.42
-              status: A
-              invSecurityType: OTHERINFO
-            - id: 122147547
-              symbol: KO
-              fundName: COCA COLA CO
-              transactionType: Margin
-              marketValue: '1002.98'
-              costBasis: 981.88
-              units: 22
-              unitPrice: 45.59
-              status: A
-              invSecurityType: OTHERINFO
-        displayPosition:
-          type: integer
-          description: >-
-            Display position of the account at the financial institution 1 being
-            the top listed account
-          format: int32
-          example: 1
-        parentAccount:
-          type: integer
-          description: >-
-            The Finicity assigned accountId for the account one level higher in
-            the student loan account hierarchy
-          format: int64
-      description: >-
-        A customer account represents a bank account such as a checking or
-        savings that the customer has added via the Connect interface
-      example:
-        id: 1014136057
-        number: ''
-        accountNumberDisplay: '8888'
-        realAccountNumberLast4: 5678
-        name: Super Checking
-        balance: 7456
-        type: checking
-        aggregationStatusCode: 0
-        status: active
-        customerId: '1005061234'
-        institutionId: '102105'
-        balanceDate: 1588797048
-        aggregationSuccessDate: 1588797048
-        aggregationAttemptDate: 1588797048
-        createdDate: 1588305190
-        currency: USD
-        lastTransactionDate: 1588710645
-        oldestTransactionDate: '1588710645'
-        institutionLoginId: '1007302745'
-        detail:
-          availableBalanceAmount: 1234.56
-        position:
-          - id: 122147546
-            symbol: JPM
-            fundName: JPMORGAN CHASE & CO
-            transactionType: Margin
-            marketValue: 914.2
-            costBasis: 925.5
-            units: 10
-            unitPrice: 91.42
-            status: A
-            invSecurityType: OTHERINFO
-          - id: 122147547
-            symbol: KO
-            fundName: COCA COLA CO
-            transactionType: Margin
-            marketValue: 1002.98
-            costBasis: 981.88
-            units: 22
-            unitPrice: 45.59
-            status: A
-            invSecurityType: OTHERINFO
-        displayPosition: 1
     PortfolioReport:
       title: PortfolioReport
       required:
@@ -5285,10 +5692,7 @@ components:
           description: The status of the report
           example: success
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1587578464
+          $ref: '#/components/schemas/UnixDate'
     Transaction:
       required:
         - id
@@ -5314,11 +5718,7 @@ components:
             positive values, withdrawals and debits are negative values.
           example: 3678.9
         accountId:
-          type: integer
-          description:
-            The Finicity ID of the account associated with this transaction
-          format: int64
-          example: 1014136057
+          $ref: '#/components/schemas/AccountId'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         status:
@@ -5449,7 +5849,7 @@ components:
       example:
         id: 102122887150
         amount: 3678.9
-        accountId: 1014136057
+        accountId: '1014136057'
         customerId: '1005061234'
         status: active
         description: MAD SCIENCE RESEARCH PR PAYMENT
@@ -5512,18 +5912,13 @@ components:
         accountIds:
           type: array
           items:
-            type: string
-          description: Specific accountIds to be included in the new report.
+            $ref: '#/components/schemas/AccountId'
+          description: Specific account IDs to be included in the new report.
         fromDate:
-          type: integer
-          description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            "1494449017".  Without this parameter, the report defaults to 6
-            months if available. Example: ?fromDate={fromDate} If included, the
-            epoch timestamp should be 10 digits long and be within two years of
-            the present day. Extending the epoch timestamp beyond 10 digits will
-            default back to six months of data.  This query is optional
-          format: int64
+          # Without this parameter, the report defaults to 6 months if available
+          #  If included, the epoch timestamp should be 10 digits long and be within
+          # two years of the present day
+          $ref: '#/components/schemas/UnixDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
       example:
@@ -5695,114 +6090,6 @@ components:
       example:
         assetId: 6f8fb0a0-e882-4f57-b672-cf53f1397581
         accounts: []
-    CustomerAccountPosition:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The id of the investment position
-          format: int64
-          example: 454678080
-        description:
-          type: string
-          description: The description of the holding
-          example: 'EMB:iShares Emerging Markets USD Bond ETF'
-        cusipNo:
-          type: string
-          description: >-
-            A nine-digit numeric or nine-character alphanumeric code that
-            identifies a North American financial security (will be changed to
-            SecurityIdType in the next API version, v2)
-          example: '464287242'
-        cusipNoType:
-          type: string
-          description: >-
-            Type of the security, attached Finicity's cusipNo field (will be
-            changed to SecurityIdType in the next API version, v2)
-          example: '464287242'
-        symbol:
-          type: string
-          description: The investment position's market/ticker symbol
-          example: JPM
-        units:
-          type: number
-          description: The quantity of investment holdings
-          example: 3.54117
-        currentPrice:
-          type: number
-          description: The current price of the investment holding
-          example: 49.01
-        securityName:
-          type: string
-          description: The security name for the investment holding
-          example: JPMORGAN CHASE & CO
-        transactionType:
-          type: string
-          description:
-            'The transaction type of the holding. Cash, Margin, POSSTOCK, Etc'
-          example: Cash
-        marketValue:
-          type: number
-          description:
-            Market value of an investment position at the time of retrieval
-          example: 914.2
-        costBasis:
-          type: number
-          description: The total cost of acquiring the ssecurity
-          example: 925.5
-        status:
-          type: string
-          description: The status of the holding
-          example: A
-        currentPriceDate:
-          type: integer
-          description:
-            The latest date the price date was updated. In epoch time.
-          format: int64
-          example: 1559196000
-        invSecurityType:
-          type: string
-          description: The investment holding security type
-          example: OTHERINFO
-        mfType:
-          type: string
-          description: 'Type of mutual fund (e.g., open-ended)'
-          example: Open-Ended
-        posType:
-          type: string
-          description: Fund Type assigned by the FI (long or short)
-          example: Long
-        totalGLDollar:
-          type: number
-          description:
-            'Total Gain/Loss of the position, at the time of aggregation ($)'
-          example: 81.83
-        totalGLPercent:
-          type: number
-          description:
-            'Total Gain/Loss of the position, at the time of aggregation (%)'
-          example: 43.07
-      description: Details for investment account holdings
-      example:
-        id: 454678080
-        description: DELTA AIR LINES INC
-        symbol: DAL
-        securityName: DELTA AIR LINES INC
-        quantity: 6.537
-        currentPrice: 41.585
-        marketValue: 271.84
-        costBasis: 190.01
-        currencyType: USD
-        units: 6.537
-        status: A
-        invSecurityType: OTHERINFO
-        securityType: Stock
-        totalGLDollar: 81.83
-        totalGLPercent: 43.07
-        costBasisPerShare: 29.07
-        subAccountType: Cash
-        securityCurrency: USD
-        currentPriceDate: 1626069600
     Categorization:
       required:
         - normalizedPayeeName
@@ -5932,7 +6219,7 @@ components:
           description: A list of transaction records
           example:
             - id: 100000408657
-              accountId: 1000018102
+              accountId: '1000018102'
               amount: 1928.1
               createdDate: 1587576293
               customerId: '1005061234'
@@ -6018,7 +6305,7 @@ components:
           type: number
       example:
         id: 100000408657
-        accountId: 1000018102
+        accountId: '1000018102'
         amount: '1928.10'
         createdDate: 1587576293
         customerId: '1005061234'
@@ -6042,7 +6329,7 @@ components:
           type: integer
           description: The birthday 2-digit day-of-month
           format: int32
-      description: The consumer birth date
+      description: A birth date
       example:
         year: '1989'
         month: 08
@@ -6361,10 +6648,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorMessage'
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         source:
@@ -6433,7 +6717,7 @@ components:
                   averageMonthlyBalance: 501.02
                   transactions:
                     - id: 100000408657
-                      accountId: 1000018102
+                      accountId: '1000018102'
                       amount: 1928.1
                       createdDate: 1587576293
                       customerId: '1005061234'
@@ -6543,7 +6827,7 @@ components:
               averageMonthlyBalance: 501.02
               transactions:
                 - id: 100000408657
-                  accountId: 1000018102
+                  accountId: '1000018102'
                   amount: 1928.1
                   createdDate: 1587576293
                   customerId: '1005061234'
@@ -6654,10 +6938,7 @@ components:
           description: 'inProgress, success, or failure'
           example: success
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588008615
+          $ref: '#/components/schemas/UnixDate'
     ChildInstitution:
       required:
         - rssd
@@ -6804,7 +7085,7 @@ components:
           description: An array of transactions belonging to the account.
           example:
             - id: 100000408657
-              accountId: 1000018102
+              accountId: '1000018102'
               amount: 1928.1
               createdDate: 1587576293
               customerId: '1005061234'
@@ -6923,547 +7204,6 @@ components:
         postalCode: '84020'
         addressLine1: 555 Northwest Way
         addressLine2: ''
-    CustomerAccountDetail:
-      required:
-        - availableBalanceAmount
-      type: object
-      properties:
-        postedDate:
-          type: integer
-          description:
-            (All Account Types) Most recent date of the following information
-          format: int64
-          example: 1588797048
-        availableBalanceAmount:
-          type: number
-          description: >-
-            (Checking/Savings/CD/MoneyMarket) and (Mortgage/Loan)  The available
-            balance (typically the current balance with adjustments for any
-            pending transactions)
-          example: 5678.78
-        openDate:
-          type: integer
-          description:
-            (Checking/Savings/CD/MoneyMarket) Date when account was opened
-          format: int64
-          example: 1588797048
-        periodStartDate:
-          type: integer
-          description: (Checking/Savings/CD/MoneyMarket) Start date of period
-          format: int64
-          example: 1588797048
-        periodEndDate:
-          type: integer
-          description: End date of period
-          format: int64
-          example: 1588797048
-        periodInterestRate:
-          type: number
-          description: >-
-            (Checking/Savings/CD/MoneyMarket) The APY for the current period
-            interest rate
-          example: 13.245
-        periodDepositAmount:
-          type: number
-          description:
-            (Checking/Savings/CD/MoneyMarket) Amount deposited in period
-          example: 2356.56
-        periodInterestAmount:
-          type: number
-          description: >-
-            (Checking/Savings/CD/MoneyMarket) Interest accrued during the
-            current period
-          example: 1234.56
-        interestYtdAmount:
-          type: number
-          description:
-            (Checking/Savings/CD/MoneyMarket) Interest accrued year-to-date
-          example: 1056.67
-        interestPriorYtdAmount:
-          type: number
-          description:
-            (Checking/Savings/CD/MoneyMarket) Interest earned in prior year
-          example: 3056.79
-        maturityDate:
-          type: integer
-          description:
-            (Checking/Savings/CD/MoneyMarket) Maturity date of account type
-          format: int64
-          example: 1588797048
-        interestRate:
-          type: string
-          description: >-
-            (Credit Card/Line Of Credit) and (Mortgage/Loan) The account's
-            current interest rate
-          example: '15.789'
-        creditAvailableAmount:
-          type: number
-          description: >-
-            (Credit Card/Line Of Credit) The available credit (typically the
-            credit limit minus the current balance)
-          example: 3000
-        creditMaxAmount:
-          type: number
-          description: (Credit Card/Line Of Credit) The account's credit limit
-          example: 7000
-        cashAdvanceAvailableAmount:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Currently available cash advance
-          example: 2000
-        cashAdvanceMaxAmount:
-          type: number
-          description: (Credit Card/Line Of Credit) Maximum cash advance amount
-          example: 3000
-        cashAdvanceBalance:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Balance of current cash advance
-          example: 1000
-        cashAdvanceInterestRate:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Interest rate for cash advances
-          example: 21.5
-        currentBalance:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) and (Investment) Current balance
-          example: 5789.34
-        paymentMinAmount:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) and (Mortgage/Loan) Minimum payment due
-          example: 456.78
-        paymentDueDate:
-          type: integer
-          description:
-            (Credit Card/Line Of Credit) Due date for the next payment
-          format: int64
-          example: 1588797048
-        previousBalance:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Prior balance in last statement
-          example: 1234.56
-        statementStartDate:
-          type: integer
-          description:
-            (Credit Card/Line Of Credit) Start date of statement period
-          format: int64
-          example: 1588797048
-        statementEndDate:
-          type: integer
-          description: (Credit Card/Line Of Credit) End date of statement period
-          format: int64
-          example: 1588797048
-        statementPurchaseAmount:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Purchase amount of statement period
-          example: 2345.9
-        statementFinanceAmount:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Finance amount of statement period
-          example: 156.78
-        statementCreditAmount:
-          type: number
-          description: >-
-            (Credit Card/Line Of Credit) Credit amount applied in statement
-            period
-          example: 345
-        rewardEarnedBalance:
-          type: integer
-          description: (Credit Card/Line Of Credit) Earned reward balance
-          format: int32
-          example: 500
-        pastDueAmount:
-          type: number
-          description: (Credit Card/Line Of Credit) Balance past due
-          example: 3688.99
-        lastPaymentAmount:
-          type: number
-          description: >-
-            (Credit Card/Line Of Credit) and (Mortgage/Loan) The amount received
-            in the last payment
-          example: 567.89
-        lastPaymentDate:
-          type: integer
-          description: (Credit Card/Line Of Credit) The date of the last payment
-          format: int64
-          example: 1588797048
-        statementCloseBalance:
-          type: number
-          description:
-            (Credit Card/Line Of Credit) Balance of statement at close
-          example: 2456.69
-        termOfMl:
-          type: string
-          description: (Mortgage/Loan) Length of loan in months
-          example: '36'
-        mlHolderName:
-          type: string
-          description: (Mortgage/Loan) Holder of the mortgage or loan
-          example: John Smith
-        description:
-          type: string
-          description: (Mortgage/Loan) Description of loan
-          example: a description
-        lateFeeAmount:
-          type: number
-          description: (Mortgage/Loan) Late fee charged
-          example: 35
-        payoffAmount:
-          type: number
-          description: (Mortgage/Loan) The amount required to payoff the loan
-          example: 45567.98
-        payoffAmountDate:
-          type: integer
-          description: (Mortgage/Loan) Date of final payment
-          format: int64
-          example: 1588797048
-        originalMaturityDate:
-          type: integer
-          description: (Mortgage/Loan) Original date of loan maturity
-          format: int64
-          example: 1588797048
-        principalBalance:
-          type: number
-          description: (Mortgage/Loan) The principal balance
-          example: 45056.7
-        escrowBalance:
-          type: number
-          description: (Mortgage/Loan) The escrow balance
-          example: 2345.01
-        interestPeriod:
-          type: string
-          description: (Mortgage/Loan) Period of interest
-          example: monthly
-        initialMlAmount:
-          type: number
-          description: (Mortgage/Loan) Original loan amount
-          example: 65000
-        initialMlDate:
-          type: integer
-          description: (Mortgage/Loan) Original date of loan
-          format: int64
-          example: 1588797048
-        nextPaymentPrincipalAmount:
-          type: number
-          description: (Mortgage/Loan) Amount towards principal in next payment
-          example: 1256.67
-        nextPaymentInterestAmount:
-          type: number
-          description: (Mortgage/Loan) Amount of interest in next payment
-          example: 234.56
-        nextPayment:
-          type: number
-          description: (Mortgage/Loan) Minimum payment due
-          example: 1578
-        nextPaymentDate:
-          type: integer
-          description: (Mortgage/Loan) Due date for the next payment
-          format: int64
-          example: 1588797048
-        lastPaymentDueDate:
-          type: integer
-          description: (Mortgage/Loan) Due date of last payment
-          format: int64
-          example: 1588797048
-        lastPaymentReceiveDate:
-          type: integer
-          description: (Mortgage/Loan) The date of the last payment
-          format: int64
-          example: 1588797048
-        lastPaymentPrincipalAmount:
-          type: number
-          description: (Mortgage/Loan) Amount towards principal in last payment
-          example: 1256.67
-        lastPaymentInterestAmount:
-          type: number
-          description: (Mortgage/Loan) Amount of interest in last payment
-          example: 234.56
-        lastPaymentEscrowAmount:
-          type: number
-          description: (Mortgage/Loan) Amount towards escrow in last payment
-          example: 456.78
-        lastPaymentLastFeeAmount:
-          type: number
-          description: (Mortgage/Loan) Amount of last fee in last payment
-          example: 150
-        lastPaymentLateCharge:
-          type: number
-          description: (Mortgage/Loan) Amount of late charge in last payment
-          example: 50
-        ytdPrincipalPaid:
-          type: number
-          description: (Mortgage/Loan) Principal paid year-to-date
-          example: 5432.01
-        ytdInterestPaid:
-          type: number
-          description: (Mortgage/Loan) Interest paid year-to-date
-          example: 3948.56
-        ytdInsurancePaid:
-          type: number
-          description: (Mortgage/Loan) Insurance paid year-to-date
-          example: 1345.89
-        ytdTaxPaid:
-          type: number
-          description: (Mortgage/Loan) Tax paid year-to-date
-          example: 1489
-        autoPayEnrolled:
-          type: boolean
-          description: (Mortgage/Loan) Enrolled in autopay (F/Y)
-          example: true
-        collateral:
-          type: string
-          description: (Mortgage/Loan) Collateral on loan
-          example: nissan sentra
-        currentSchool:
-          type: string
-          description: (Mortgage/Loan) Current school
-          example: utah valley university
-        firstPaymentDate:
-          type: integer
-          description: (Mortgage/Loan) First payment due date
-          format: int64
-          example: 1588797048
-        firstMortgage:
-          type: boolean
-          description: (Mortgage/Loan) First mortgage (F/Y)
-          example: true
-        loanPaymentFreq:
-          type: string
-          description: '(Mortgage/Loan) Frequency of payments (monthly, etc.)'
-          example: monthly
-        originalSchool:
-          type: string
-          description: (Mortgage/Loan) Original school
-          example: brigham young university
-        recurringPaymentAmount:
-          type: number
-          description: (Mortgage/Loan) Recurring payment amount
-          example: 456.23
-        lender:
-          type: string
-          description: (Mortgage/Loan) Owner of loan
-          example: utah community credit union
-        endingBalanceAmount:
-          type: number
-          description: (Mortgage/Loan) Ending balance
-          example: 234789.45
-        loanTermType:
-          type: string
-          description: (Mortgage/Loan) Type of loan term
-          example: fixed
-        paymentsMade:
-          type: integer
-          description: (Mortgage/Loan) Number of payments made
-          format: int32
-          example: 14
-        balloonAmount:
-          type: number
-          description: (Mortgage/Loan) Balloon payment amount
-          example: 1678.56
-        projectedInterest:
-          type: number
-          description: (Mortgage/Loan) Projected interest on the loan
-          example: 10456.78
-        interestPaidLtd:
-          type: number
-          description:
-            (Mortgage/Loan) Interest paid since inception of loan (life to date)
-          example: 56789.34
-        interestRateType:
-          type: string
-          description: (Mortgage/Loan) Type of interest rate
-          example: variable
-        loanPaymentType:
-          type: string
-          description: (Mortgage/Loan) Type of loan payment
-          example: principle
-        repaymentPlan:
-          type: string
-          description:
-            (Mortgage/Loan) Type of repayment plan for the student loan
-          example: 'Standard, Graduated, Extended, Pay As You Earn, and more.'
-        paymentsRemaining:
-          type: integer
-          description:
-            (Mortgage/Loan) Number of payments remaining before loan is paid off
-          format: int32
-          example: 45
-        interestMarginBalance:
-          type: number
-          description:
-            (Investment) Net interest earned after deducting interest paid out
-          example: 456
-        shortBalance:
-          type: number
-          description: (Investment) Sum of short balance
-          example: 12456.89
-        availableCashBalance:
-          type: number
-          description: (Investment) Amount available for cash withdrawal
-          example: 3456.78
-        maturityValueAmount:
-          type: number
-          description: (Investment) amount payable to an investor at maturity
-          example: 34067.78
-        vestedBalance:
-          type: number
-          description: (Investment) Vested amount in account
-          example: 45000
-        empMatchAmount:
-          type: number
-          description: (Investment) Employer matched contributions
-          example: 256.99
-        empPretaxContribAmount:
-          type: number
-          description: (Investment) Employer pretax contribution amount
-          example: 450
-        empPretaxContribAmountYtd:
-          type: number
-          description:
-            (Investment) Employer pretax contribution amount year to date
-          example: 700
-        contribTotalYtd:
-          type: number
-          description: (Investment) Total year to date contributions
-          example: 2045
-        cashBalanceAmount:
-          type: number
-          description: (Investment) Cash balance of account
-          example: 2000
-        preTaxAmount:
-          type: number
-          description: (Investment) Pre tax amount of total balance
-          example: 78564.99
-        afterTaxAmount:
-          type: number
-          description: (Investment) Post tax amount of total balance
-          example: 68564.99
-        matchAmount:
-          type: number
-          description: (Investment) Amount matched
-          example: 378
-        profitSharingAmount:
-          type: number
-          description: (Investment) Amount of balance for profit sharing
-          example: 34678.89
-        rolloverAmount:
-          type: number
-          description: >-
-            (Investment) Amount of balance rolled over from original account
-            (401k, etc.)
-          example: 101234.67
-        otherVestAmount:
-          type: number
-          description: (Investment) Other vested amount
-          example: 34000
-        otherNonvestAmount:
-          type: number
-          description: (Investment) Other nonvested amount
-          example: 26000
-        currentLoanBalance:
-          type: number
-          description: (Investment) Current loan balance
-          example: 345789.23
-        loanRate:
-          type: number
-          description: (Investment) Interest rate of loan
-          example: 3.275
-        buyPower:
-          type: number
-          description: (Investment) Money available to buy securities
-          example: 34567.89
-        rolloverLtd:
-          type: number
-          description: (Investment) Life to date of money rolled over
-          example: 23456.78
-        loanAwardId:
-          type: string
-          description: (Student Loan) The federal unique loan identifying number
-        originalInterestRate:
-          type: number
-          description: >-
-            (Student Loan) The original interest rate to which the loan was
-            disbursed, in APY
-        guarantor:
-          type: string
-          description: >-
-            (Student Loan) The financial institution guarantor of the loan (who
-            will pay the loan amount to the owner if the borrower defaults)
-        interestSubsityType:
-          type: string
-          description: >-
-            (Student Loan) The indication of the presence of an interest subsidy
-            (i.e. subsidized)
-        interestBalance:
-          type: number
-          description: (Student Loan) The total outstanding interest balance
-        feesBalance:
-          type: number
-          description: (Student Loan) The total outstanding fees balance
-        loanStatus:
-          type: string
-          description: >-
-            (Student Loan) The repayment status phase (i.e. In School, Grace,
-            Repayment, Deferment, Forbearance)
-        loanStatusStartDate:
-          type: integer
-          description: (Student Loan) The start date of the current status
-          format: int64
-        loanStatusEndDate:
-          type: integer
-          description: (Student Loan) The end date of the current status
-          format: int64
-        weightedInterestRate:
-          type: number
-          description: >-
-            (Student Loan) The interest rate of multiple interest rates and
-            balances at the group level, in APY
-        repaymentPlanStartDate:
-          type: integer
-          description:
-            (Student Loan) The start date of the current repayment plan
-          format: int64
-        repaymentPlanEndDate:
-          type: integer
-          description: (Student Loan) The end date of the current repayment plan
-          format: int64
-        outOfSchoolDate:
-          type: integer
-          description: >-
-            (Student Loan) The date the borrower graduated or dropped below
-            half-time enrollment in school
-          format: int64
-        convertToRepayment:
-          type: integer
-          description: (Student Loan) The date the loan enters into repayment
-          format: int64
-        daysDelinquent:
-          type: integer
-          description: >-
-            (Student Loan) The number of days past a due date that a payment
-            should have been made
-          format: int32
-        totalPrincipalPaid:
-          type: number
-          description:
-            (Student Loan) The total amount paid towards the principal balance
-        totalInterestPaid:
-          type: number
-          description: (Student Loan) The total amount paid towards interest
-        totalAmountPaid:
-          type: number
-          description: (Student Loan) The total amount paid
-      description: >-
-        Additional customer account details. Not all data points will return for
-        each account type. You can see the account type that each data point
-        will return for below. The data point are also subject to availability
-        by the institution.
     TxPushSubscriptionRequest:
       required:
         - callbackUrl
@@ -7563,25 +7303,6 @@ components:
         - voePayroll
       type: string
       example: voi
-    AccountOwnerv1:
-      required:
-        - ownerName
-        - ownerAddress
-      type: object
-      properties:
-        ownerName:
-          type: string
-          description: >-
-            The name of the account owner. In v1 this can be multiple account
-            owners in one string. This is how the source data is returned from
-            the institution.
-          example: John Smith
-        ownerAddress:
-          type: string
-          description: The address of the account owner
-          example:
-            'APT C 5600 S SPRINGFIELD GARDENS CIR SPRINGFIELD, VA 22162-1058'
-      description: The account owner information for the customer account
     LoanPaymentDetails:
       required:
         - loanNumber
@@ -7632,13 +7353,13 @@ components:
             $ref: '#/components/schemas/SubscriptionRecord'
           example:
             - id: 12345678
-              accountId: 1014136057
+              accountId: '1014136057'
               type: account
               callbackUrl: 'https://www.mydomain.com/txpush/listener'
               signingKey: >-
                 zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zpe4ZL40NX83aJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB4jk4k1e
             - id: 12345679
-              accountId: 1014136057
+              accountId: '1014136057'
               type: transaction
               callbackUrl: 'https://www.mydomain.com/txpush/listener'
               signingKey: >-
@@ -7658,10 +7379,7 @@ components:
           format: int64
           example: 12345678
         accountId:
-          type: integer
-          description: The Finicity account ID for the subscription
-          format: int64
-          example: 1014136057
+          $ref: '#/components/schemas/AccountId'
         type:
           type: string
           description: Event subscription type. account or transaction
@@ -7761,10 +7479,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorMessage'
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         source:
@@ -8183,10 +7898,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorMessage'
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         source:
@@ -8354,10 +8066,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -8455,10 +8164,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -8554,10 +8260,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -8617,7 +8320,7 @@ components:
         accountIds:
           type: string
           description: >-
-            Specific accountIds to be included in the report. If this is not
+            Specific account IDs to be included in the report. If this is not
             passed then the report will default to using all supported accounts
             previously added for this customer.
           example: '1000535275'
@@ -8675,10 +8378,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -8777,10 +8477,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -8884,10 +8581,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorMessage'
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         customerType:
           $ref: '#/components/schemas/CustomerType'
         constraints:
@@ -8977,7 +8671,7 @@ components:
         The response to calls to refresh accounts or get customer accounts is a
         list of account in the `accounts` array. A customer account represents a
         bank account such as a checking or savings that the customer has added
-        via the Connect interface
+        via the Connect interface.
     GetTransactionsResponse:
       required:
         - found
@@ -9004,15 +8698,9 @@ components:
             set
           example: true
         fromDate:
-          type: string
-          description:
-            Value of the fromDate request parameter that generated this response
-          example: 1588365858
+          $ref: '#/components/schemas/UnixDate'
         toDate:
-          type: string
-          description:
-            Value of the toDate request parameter that generated this response
-          example: '1588970681'
+          $ref: '#/components/schemas/UnixDate'
         sort:
           type: string
           description:
@@ -9025,7 +8713,7 @@ components:
           example:
             - id: 102122887150
               amount: 3678.9
-              accountId: 1014136057
+              accountId: '1014136057'
               customerId: '1005061234'
               status: active
               description: MAD SCIENCE RESEARCH PR PAYMENT
@@ -9043,7 +8731,7 @@ components:
                 country: USA
             - id: 102122887178
               amount: -59.56
-              accountId: 1014136057
+              accountId: '1014136057'
               customerId: '1005061234'
               status: active
               description: VERIZON WIRELESS PAYMENTS
@@ -9080,20 +8768,12 @@ components:
           default: active
           example: pending
         postedDate:
-          type: integer
-          description: >-
-            An optional timestamp for the transaction's posted date value for
-            this transaction (see Handling Dates and Times). Timestamp must be
-            no more than 6 months from the current date.
-          format: int64
-          example: 1588888169
+          # An optional timestamp for the transaction's posted date value for
+          # this transaction (see Handling Dates and Times). Timestamp must be
+          # no more than 6 months from the current date.
+          $ref: '#/components/schemas/UnixDate'
         transactionDate:
-          type: integer
-          description: >-
-            An optional timestamp for the transaction's posted date value for
-            this transaction (see Handling Dates and Times)
-          format: int64
-          example: 1588801769
+          $ref: '#/components/schemas/UnixDate'
       description: Create a text transaction for TxPush testing
       example:
         amount: -4.25
@@ -9143,10 +8823,7 @@ components:
           description: Finicity's name for the requester
           example: Decisioning API Tests
         createdDate:
-          type: integer
-          description: The date the report was generated.
-          format: int64
-          example: 1594678007
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity Transactions Report
@@ -9208,28 +8885,17 @@ components:
         accountIds:
           type: array
           items:
-            type: string
-          description: Specific accountIds to be included in the new report.
+            $ref: '#/components/schemas/AccountId'
+          description: Specific account IDs to be included in the new report.
           example:
             - '1000075473'
         fromDate:
-          type: integer
-          description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            "1494449017".  Without this parameter, the report defaults to 6
-            months if available. Example: ?fromDate={fromDate} If included, the
-            epoch timestamp should be 10 digits long and be within two years of
-            the present day. Extending the epoch timestamp beyond 10 digits will
-            default back to six months of data.  This query is optional
-          format: int64
-          example: 1578952809
+          # Without this parameter, the report defaults to 6 months if available
+          #  If included, the epoch timestamp should be 10 digits long and be within
+          # two years of the present day
+          $ref: '#/components/schemas/UnixDate'
         toDate:
-          type: integer
-          description: >-
-            The ending timestamp for the date range. The value must be greater
-            than fromDate. See Handling Dates and Times.
-          format: int64
-          example: 1594677609
+          $ref: '#/components/schemas/UnixDate'
         includePending:
           type: boolean
           description: >-
@@ -9264,10 +8930,11 @@ components:
       type: object
       properties:
         accountIds:
-          type: string
+          $ref: '#/components/schemas/AccountId'
           description: >-
-            Specific accountIds to be included in the new report. If left blank,
-            all accounts associated with the Customer ID will be included.
+            Specific account IDs to be included in the new report. If left
+            blank, all accounts associated with the Customer ID will be
+            included.
           example: 1027339038 1027339039
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
@@ -9484,8 +9151,8 @@ components:
       type: object
       properties:
         accountIds:
-          type: string
-          description: Specific accountIds to be included in the new report.
+          $ref: '#/components/schemas/AccountId'
+          description: Specific account IDs to be included in the new report.
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
       example:
@@ -9514,8 +9181,8 @@ components:
         accountIds:
           type: array
           items:
-            type: string
-          description: Specific accountIds to be included in the report.
+            $ref: '#/components/schemas/AccountId'
+          description: Specific account IDs to be included in the report.
           example:
             - '1000535275'
         voieWithInterviewData:
@@ -9650,16 +9317,9 @@ components:
             Status of decryption keys for financial institution app registration
           example: false
         createdDate:
-          type: integer
-          description: Creation date of app's financial institution registration
-          format: int64
-          example: 1595484000
+          $ref: '#/components/schemas/UnixDate'
         lastModifiedDate:
-          type: integer
-          description:
-            Last modified date of the app's financial institution registration
-          format: int64
-          example: 1595484000
+          $ref: '#/components/schemas/UnixDate'
         status:
           type: boolean
           description: >-
@@ -9695,7 +9355,7 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
       example:
         statementReportData:
-          accountId: 1000076901
+          accountId: '1000076901'
           index: 1
         reportCustomFields:
           - label: loanID
@@ -9707,12 +9367,10 @@ components:
       type: object
       properties:
         accountId:
-          type: integer
+          $ref: '#/components/schemas/AccountId'
           description: >-
             Specify the account to retrieve the statement for and display in the
             report.
-          format: int64
-          example: 1000076901
         index:
           type: integer
           description:
@@ -9761,10 +9419,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Demo
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1596226182
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -10061,10 +9716,7 @@ components:
           items:
             $ref: '#/components/schemas/ErrorMessage'
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
         customerType:
@@ -10402,10 +10054,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Title of the report
@@ -10478,10 +10127,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Title of the report
@@ -10529,10 +10175,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Title of the report
@@ -10590,10 +10233,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1579819592
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Title of the report
@@ -10628,7 +10268,7 @@ components:
         accountIds:
           type: string
           description: >-
-            Specific accountIds to be included in the new report. This is an
+            Specific account IDs to be included in the new report. This is an
             optional field if the client would like to constrain the report to
             specific accounts.
         reportCustomFields:
@@ -10702,10 +10342,7 @@ components:
           description: Name of Finicity partner requesting the report
           example: Decisioning API
         createdDate:
-          type: integer
-          description: The date the report was generated
-          format: int64
-          example: 1588350269
+          $ref: '#/components/schemas/UnixDate'
         title:
           type: string
           description: Finicity's title of the report
@@ -11033,9 +10670,8 @@ components:
       type: object
       properties:
         accountId:
-          type: string
-          description: Finicity's ID of the Student Loan Account
-          example: 0123456789
+          # Finicity's ID of the Student Loan Account
+          $ref: '#/components/schemas/AccountId'
         accountNumber:
           type: string
           description: Institution's ID of the Student Loan Account
@@ -11059,7 +10695,7 @@ components:
           type: string
           description: The date to which the `Future Payoff Amount` applies
           format: date-time
-          example: 2022-01-01T00:00:00.000Z
+          example: '2022-01-01T00:00:00.000Z'
         groupDetail:
           type: array
           items:
@@ -11072,7 +10708,7 @@ components:
           description: ''
       description: ''
       example:
-        accountId: 0123456789
+        accountId: '0123456789'
         accountNumber: '9876543210'
         accountPaymentNumber: 00001234895413
         accountPaymentAddress: 'P.O. Box 123 Sioux Falls, IA 51054'
@@ -11123,9 +10759,8 @@ components:
       type: object
       properties:
         accountId:
-          type: string
-          description: Finicity's ID of the Student Loan Group
-          example: '1234567890'
+          # Finicity's ID of the Student Loan Group
+          $ref: '#/components/schemas/AccountId'
         groupNumber:
           type: string
           description: Institution's ID of the Student Loan Group
@@ -11149,7 +10784,7 @@ components:
           type: string
           description: The date to which the `Future Payoff Amount` applies
           format: date-time
-          example: 2022-01-01T00:00:00.000Z
+          example: '2022-01-01T00:00:00.000Z'
         groupLoanDetail:
           type: array
           items:
@@ -11157,7 +10792,7 @@ components:
           description: ''
       description: ''
       example:
-        - accountId: 1234567890
+        - accountId: '1234567890'
           groupNumber: 3210-Group A
           groupPaymentNumber: 00001234895413-A
           groupPaymentAddress: 'P.O. Box 123 Sioux Falls, IA 51054'
@@ -11200,9 +10835,8 @@ components:
       type: object
       properties:
         accountId:
-          type: string
-          description: Finicity's ID of the Student Loan
-          example: '2345678901'
+          # Finicity's ID of the Student Loan
+          $ref: '#/components/schemas/AccountId'
         loanNumber:
           type: string
           description: Institution's ID of the Student Loan
@@ -11226,7 +10860,7 @@ components:
           type: string
           description: The date to which the `Future Payoff Amount` applies
           format: date-time
-          example: 2022-01-01T00:00:00.000Z
+          example: '2022-01-01T00:00:00.000Z'
       description: ''
     GenerateConsumerAttributesReponse:
       required:

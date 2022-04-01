@@ -3,7 +3,6 @@ package com.mastercard.finicity.client.test;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.api.AccountsApi;
 import com.mastercard.finicity.client.model.CustomerAccount;
-import com.mastercard.finicity.client.model.CustomerAccounts;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,10 +16,10 @@ public class AccountUtils {
      * Return all active accounts for the given customer.
      */
     public static List<CustomerAccount> getCustomerAccounts(AccountsApi api, String customerId) throws ApiException {
-        CustomerAccounts customerAccounts = api.getCustomerAccounts(customerId, "active");
-        List<CustomerAccount> accounts = customerAccounts.getAccounts();
+        var customerAccounts = api.getCustomerAccounts(customerId, "active");
+        var accounts = customerAccounts.getAccounts();
         assertTrue(accounts.size() > 0, "No account found for customerId " + customerId + "!");
-        CustomerAccount firstAccount = accounts.get(0);
+        var firstAccount = accounts.get(0);
         assertEquals(customerId, firstAccount.getCustomerId());
         return accounts;
     }

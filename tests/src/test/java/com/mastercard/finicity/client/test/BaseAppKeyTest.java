@@ -1,15 +1,20 @@
 package com.mastercard.finicity.client.test;
 
 import com.mastercard.finicity.client.auth.ApiKeyAuth;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class BaseAppKeyTest extends BaseTest {
 
-    @BeforeEach
-    void setUp() {
-        super.setUp();
+    @BeforeAll
+    protected static void beforeAll() {
+        BaseTest.beforeAll();
+        addAppKey();
+    }
 
-        // Add 'Finicity-App-Key'
+    /**
+     * Add 'Finicity-App-Key'
+     */
+    private static void addAppKey() {
         var appKey = (ApiKeyAuth) apiClient.getAuthentication("FinicityAppKey");
         appKey.setApiKey(APP_KEY);
     }

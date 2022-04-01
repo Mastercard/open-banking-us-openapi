@@ -8,7 +8,7 @@ import com.mastercard.finicity.client.api.CustomersApi;
 import com.mastercard.finicity.client.model.ErrorMessage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +32,15 @@ public abstract class BaseTest {
     protected final static List<String> createdCustomerIds = new ArrayList<>();
     protected final static CustomersApi customersApi = new CustomersApi(apiClient);
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    protected static void beforeAll() {
         // Prism
         // apiClient.setBasePath("http://localhost:4010");
 
         // Client logging
         apiClient.setDebugging(true);
-        apiClient.setConnectTimeout(120000);
-        apiClient.setReadTimeout(120000);
+        apiClient.setConnectTimeout(240000);
+        apiClient.setReadTimeout(240000);
     }
 
     protected static void logApiException(ApiException e) {
