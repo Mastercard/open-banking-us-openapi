@@ -22,7 +22,7 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 ## About the Tests
 #### Things to Know
 
-* The [test project](./tests) use an API client library generated from the API specification using [OpenAPI Generator](https://openapi-generator.tech/)
+* The [test project](./tests) uses an API client library generated from the API specification using [OpenAPI Generator](https://openapi-generator.tech/)
 * A free [Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**
 * Before running the test, you must:
    * Call `addTestingCustomer` and note the **Customer ID** returned
@@ -51,7 +51,7 @@ mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***
 ## Guidelines
 
 When updating the API specification:
-1. Ensure it can be rendered without errors in https://editor.swagger.io/
+1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using:
 ```sh
