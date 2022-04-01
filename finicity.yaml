@@ -916,15 +916,7 @@ paths:
         Found)
       operationId: GetConsumerForCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000278253
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -979,15 +971,7 @@ paths:
         service will return HTTP 201 (Created).
       operationId: CreateConsumer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000278253
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -1049,15 +1033,7 @@ paths:
         the service will return HTTP 400 (Bad Request).
       operationId: GenerateVOIReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1130,15 +1106,7 @@ paths:
         is found, the service will return HTTP 400 (Bad Request).
       operationId: GenerateVOAReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1249,15 +1217,7 @@ paths:
         is found, the service will return HTTP 400 (Bad Request).
       operationId: GenerateVOAWithIncomeReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity Id of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1364,15 +1324,7 @@ paths:
         found, the service will return HTTP 400 (Bad Request).
       operationId: GeneratePrequalificationReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity's ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1459,15 +1411,7 @@ paths:
         found, the service will return HTTP 400 (Bad Request).
       operationId: GenerateAssetSummaryReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity's ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1549,15 +1493,7 @@ paths:
         exist within Finicity's system.
       operationId: GeneratePayStatementReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1648,15 +1584,7 @@ paths:
         return HTTP 400 (Bad Request).
       operationId: GenerateVOIE-Paystub(withTXVerify)Report
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1745,15 +1673,7 @@ paths:
         Report returns a different status.
       operationId: RefreshVOIE-PayrollReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1843,15 +1763,7 @@ paths:
         return HTTP 400 (Bad Request).
       operationId: GenerateVOIE-PaystubReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -1927,15 +1839,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer whose accounts are to be retrieved
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: Finicity ID for the customer whose accounts are to be retrieved
         - name: institutionLoginId
           in: path
           description: The institution login ID (from the account record)
@@ -2016,14 +1921,8 @@ paths:
               - false
             type: boolean
             example: false
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the accounts
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: '1005061234'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the accounts
         - name: institutionLoginId
           in: path
           description: The institution login ID from the account records
@@ -2061,15 +1960,8 @@ paths:
         clients.)
       operationId: DeleteCustomerAccountsByInstitutionLogin
       parameters:
-        - name: customerId
-          in: path
-          description: The ID of the customer whose accounts are to be deleted
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer whose accounts are to be deleted
         - name: institutionLoginId
           in: path
           description: >-
@@ -2108,15 +2000,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: Finicity’s ID of the account to be retrieved
@@ -2150,15 +2035,8 @@ paths:
 
       operationId: DeleteCustomerAccount
       parameters:
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: Finicity’s ID of the account to be deleted
@@ -2195,15 +2073,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer whose accounts are to be retrieved
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer whose accounts are to be retrieved
         - name: status
           in: query
           description: >-
@@ -2276,14 +2147,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the accounts to be refreshed
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: '1005061234'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the accounts to be refreshed
       responses:
         '200':
           description: default response
@@ -2317,15 +2182,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: institutionId
           in: path
           description: Finicity’s ID of the institution
@@ -2431,15 +2289,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID Of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: The Finicity ID of the account to pull transaction history for
@@ -2496,15 +2347,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity’s ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
           description: Finicity’s ID of the account
@@ -2637,15 +2480,7 @@ paths:
         If the service is successful, HTTP 204 (No Content) will be returned.
       operationId: ModifyCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ‘s ID of the customer to modify
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
       requestBody:
         description: The information to be modified for the customer
         content:
@@ -2690,15 +2525,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
           description: default response
@@ -2734,15 +2561,7 @@ paths:
         Success: HTTP 204 (No Content)
       operationId: DeleteCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer to delete
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
           description: default response
@@ -2889,15 +2708,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
           description: default response
@@ -2974,15 +2785,7 @@ paths:
           schema:
             type: string
             example: 'application/pdf, application/json'
-        - name: customerId
-          in: path
-          description: Finicity ‘s ID for the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
           description: Finicity’s ID of the account
@@ -3063,15 +2866,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -3142,15 +2937,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer whose transactions are to be retrieved
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer whose transactions are to be retrieved
         - name: fromDate
           in: query
           description: >-
@@ -3246,14 +3034,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer whose transactions are to be retrieved
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: '1005061234'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: Finicity ID for the customer whose transactions are to be retrieved
         - name: transactionId
           in: path
           description: The transaction to be retrieved
@@ -3316,15 +3098,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer whose transactions are to be retrieved
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer whose transactions are to be retrieved
         - name: accountId
           in: path
           description: Finicity’s ID of the account whose transactions are to be retrieved
@@ -3468,15 +3243,7 @@ paths:
           schema:
             type: string
             example: 'https://finicity-test/webhook'
-        - name: customerId
-          in: path
-          description: ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: fromDate
           in: query
           description: >-
@@ -3562,15 +3329,7 @@ paths:
           style: simple
           schema:
             type: string
-        - name: customerId
-          in: path
-          description: Finicity's ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 4453
+        - $ref: '#/components/parameters/CustomerIdParameter'
       requestBody:
         description: >-
           The base 64 encoded value of the pay statement and pay statement
@@ -3631,15 +3390,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: accountId
           in: path
           description: The Finicity ID of the account
@@ -3781,15 +3532,7 @@ paths:
         portfolio. HTTP 200 (OK) status means that the call was successful.
       operationId: GetPortfoliobyCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000278253
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: portfolioId
           in: path
           description: >-
@@ -3873,15 +3616,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The Finicity ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The Finicity ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -3924,15 +3660,8 @@ paths:
         transaction events.
       operationId: DisableTxPushNotifications
       parameters:
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -3974,15 +3703,7 @@ paths:
         retrieving a report.
       operationId: GetReportbyCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000278253
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: reportId
           in: path
           description: Finicity’s ID of the report
@@ -4202,15 +3923,8 @@ paths:
         institution login id with an http status code as 200.
       operationId: MigrateInstitutionLoginAccountsV1
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer for the institutionLoginId of accounts
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: Finicity’s ID of the customer for the institutionLoginId of accounts
         - name: institutionLoginId
           in: path
           description: Finicity's institutionLoginId for the set of accounts to be migrated
@@ -4336,14 +4050,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: Finicity’s ID for the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: '1005061234'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: Finicity’s ID for the customer who owns the account
         - name: accountId
           in: path
           description: Finicity’s ID of the account
@@ -4580,15 +4288,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 45856
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -4646,15 +4347,7 @@ paths:
         retrieving a report.
       operationId: GetPrequalificationReportNon-CRAByCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000006504
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: reportId
           in: path
           description: Finicity’s ID of the report
@@ -4783,15 +4476,8 @@ paths:
         events. No more events will be sent for that specific subscription.
       operationId: DeleteTxPushSubscription
       parameters:
-        - name: customerId
-          in: path
-          description: The ID of the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The ID of the customer who owns the account
         - name: subscriptionId
           in: path
           description: >-
@@ -4904,15 +4590,8 @@ paths:
         customer.
       operationId: SetCustomerApplicationID
       parameters:
-        - name: customerId
-          in: path
-          description: The customer's ID for the customer you want to assign the app for.
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The customer's ID for the customer you want to assign the app for.
         - name: applicationId
           in: path
           description: >-
@@ -5050,15 +4729,8 @@ paths:
         specified with an HTTP status code 200.
       operationId: MigrateInstitutionLoginAccountsV2
       parameters:
-        - name: customerId
-          in: path
-          description: The target customer for the account migration
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: The target customer for the account migration
         - name: institutionLoginId
           in: path
           description: >-
@@ -5210,15 +4882,8 @@ paths:
         again.
       operationId: GetReportsbyCustomer
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity’s ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1000278253
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: Finicity’s ID of the customer
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -5470,7 +5135,8 @@ paths:
         to see an error message on the return, include application/json or
         application/xml in your desired format for the Accept header.
       operationId: GetAssetbyCustomerID
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
           description: ''
@@ -5597,15 +5263,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: ID for the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: ID for the customer who owns the account
         - name: accountId
           in: path
           description: ID for the customer’s account
@@ -5658,15 +5317,8 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: customerId
-          in: path
-          description: ID for the customer who owns the account
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1005061234
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # description: ID for the customer who owns the account
         - name: accountId
           in: path
           description: ID for the customer’s account
@@ -5726,15 +5378,7 @@ paths:
         return HTTP 400 (Bad Request).
       operationId: GenerateCashFlowReport-Business
       parameters:
-        - name: customerId
-          in: path
-          description: ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -5834,15 +5478,7 @@ paths:
         return HTTP 400 (Bad Request).
       operationId: GenerateCashFlowReport-Personal
       parameters:
-        - name: customerId
-          in: path
-          description: ID of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -5932,15 +5568,7 @@ paths:
            Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-PayrollReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity ID for the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -6033,15 +5661,7 @@ paths:
             Or it could enter a loop, wait about 20 seconds, and then call the service. Use the Get Report API to check if the report is finished.
       operationId: GenerateVOE-TransactionsReport
       parameters:
-        - name: customerId
-          in: path
-          description: Finicity Id of the customer
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int64
-            example: 1003413624
+        - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
           description: >-
@@ -6106,6 +5726,17 @@ paths:
                 $ref: '#/components/schemas/ExpiredToken'
       deprecated: false
 components:
+  parameters:
+    CustomerIdParameter:
+      name: customerId
+      in: path
+      description: Finicity's ID of the customer
+      required: true
+      style: simple
+      schema:
+        type: integer
+        format: int64
+        example: 1000278253
   schemas:
     GenerateConnectEmailResponseMulti-Borrowers:
       title: GenerateConnectEmailResponseMulti-Borrowers
