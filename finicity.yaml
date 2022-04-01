@@ -11,33 +11,19 @@ servers:
     description: Production
 tags:
   - name: Authentication
-    description: ''
   - name: Connect
-    description: ''
   - name: Institutions
-    description: ''
   - name: Consumer
-    description: ''
   - name: Verify Income
-    description: ''
   - name: Verify Assets
-    description: ''
   - name: Verify Income and Employment
-    description: ''
   - name: Accounts
-    description: ''
   - name: Account Owner
-    description: ''
   - name: Customer
-    description: ''
   - name: Bank Statements
-    description: ''
   - name: Transactions
-    description: ''
   - name: Pay Statements
-    description: ''
   - name: Liabilities
-    description: ''
 paths:
   /aggregation/v2/partners/authentication:
     post:
@@ -5481,7 +5467,6 @@ components:
       type: object
       description: The Finicity-App-Token has expired--Error code (10023)
     GenerateConnectEmailResponseMulti-Borrowers:
-      title: GenerateConnectEmailResponseMulti-Borrowers
       required:
         - links
         - emailConfig
@@ -5533,7 +5518,6 @@ components:
           from: noreply@finicity.com
           to: fin.user@finicity.com
     ReportCustomFields:
-      title: ReportCustomFields
       required:
         - label
         - value
@@ -5555,7 +5539,6 @@ components:
             of the report
           example: true
     ConnectOAuthOptions:
-      title: ConnectOAuthOptions
       required:
         - enabled
       type: object
@@ -5578,7 +5561,6 @@ components:
             shouldn't be displayed to the user
       description: oauthOptions for oauthEnabled institutions
     ConnectEmailOptions:
-      title: ConnectEmailOptions
       required:
         - to
       type: object
@@ -5655,7 +5637,6 @@ components:
           - Senior Loan Officer
           - Direct 123-456-7890
     PortfolioSummary:
-      title: PortfolioSummary
       required:
         - portfolioId
         - consumer
@@ -5697,7 +5678,6 @@ components:
               status: success
               createdDate: 1585931727
     GetInstitutionsResponse:
-      title: GetInstitutionsResponse
       required:
         - found
         - displaying
@@ -5786,7 +5766,6 @@ components:
         A list of Finicity financial institutions from the standard get
         institutions response
     NetMonthly:
-      title: NetMonthly
       required:
         - month
         - net
@@ -5802,7 +5781,6 @@ components:
           description: 'Total income during the given month, across all income streams'
           example: 2004.77
     PortfolioReport:
-      title: PortfolioReport
       required:
         - id
         - portfolioId
@@ -5833,7 +5811,6 @@ components:
           format: int64
           example: 1587578464
     CertifiedInstitution:
-      title: CertifiedInstitution
       required:
         - name
         - id
@@ -5907,7 +5884,6 @@ components:
               name: FinBank National
               institutionId: 31
     AccountDetail:
-      title: AccountDetail
       required:
         - interestMarginBalance
         - availableCashBalance
@@ -5941,7 +5917,6 @@ components:
           description: The available balance for the account
           example: 1000
     CustomerAccount:
-      title: CustomerAccount
       required:
         - id
         - number
@@ -6161,7 +6136,6 @@ components:
             invSecurityType: OTHERINFO
         displayPosition: 1
     Customer:
-      title: Customer
       required:
         - id
         - username
@@ -6196,7 +6170,6 @@ components:
           example: '1588305190'
       description: The finicity customer record
     error:
-      title: error
       type: object
       properties:
         errorCode:
@@ -6204,7 +6177,6 @@ components:
         errorMessage:
           type: string
     GenerateReportResponse:
-      title: GenerateReportResponse
       required:
         - id
         - portfolioId
@@ -6274,7 +6246,6 @@ components:
         source:
           type: string
     GenerateConnectURLResponse:
-      title: GenerateConnectURLResponse
       required:
         - link
       type: object
@@ -6286,7 +6257,6 @@ components:
             https://connect.finicity.com?consumerId=f1ca88bea722ef1f8178f8230756bbcf&customerId=54411976&partnerId=2445582695152&signature=d34c1352c45f54cfd76454e7e8c3e85cc923b60fae5f28b26cd6c7b6f8aaa201×tamp=1584733720994&ttl=1584740920994&type=aggregation
       description: Response from create url call
     Transaction:
-      title: Transaction
       required:
         - id
         - amount
@@ -6462,7 +6432,6 @@ components:
           postalCode: '84123'
           country: USA
     CreateConsumerResponse:
-      title: CreateConsumerResponse
       type: object
       properties:
         id:
@@ -6481,7 +6450,6 @@ components:
         createdDate: 1587586444
         customerId: 1000005540
     GetCertifiedInstitutionsResponse:
-      title: GetCertifiedInstitutionsResponse
       required:
         - found
         - displaying
@@ -6570,7 +6538,6 @@ components:
               availBalance: false
               accountOwner: true
     TxVerifyInterview:
-      title: TxVerifyInterview
       required:
         - assetId
       type: object
@@ -6591,7 +6558,6 @@ components:
         assetId: 6f8fb0a0-e882-4f57-b672-cf53f1397581
         accounts: []
     CustomerAccountPosition:
-      title: CustomerAccountPosition
       type: object
       properties:
         id:
@@ -6695,7 +6661,6 @@ components:
         securityCurrency: USD
         currentPriceDate: 1626069600
     Categorization:
-      title: Categorization
       required:
         - normalizedPayeeName
         - category
@@ -6740,7 +6705,6 @@ components:
         country: USA
         bestRepresentation: YOU BOUGHT DELTA AIR LINES INC DAL CASH
     ReportConstraints:
-      title: ReportConstraints
       type: object
       properties:
         accountIds:
@@ -6792,7 +6756,6 @@ components:
             value: PSC Finance
             shown: false
     InterviewAccounts:
-      title: InterviewAccounts
       required:
         - id
         - amount
@@ -6812,7 +6775,6 @@ components:
             during the Account Interview process. This is an optional field.
           example: 1802.22
     ReportSummaries:
-      title: ReportSummaries
       required:
         - reports
       type: object
@@ -6852,7 +6814,6 @@ components:
               status: success
               createdDate: 1588008615
     InstitutionBranding:
-      title: InstitutionBranding
       required:
         - logo
         - alternateLogo
@@ -6907,7 +6868,6 @@ components:
           https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/tile-small.svg
         buttonTextColor: '#0167AE'
     ReportIncomeStream:
-      title: ReportIncomeStream
       required:
         - id
         - name
@@ -7000,7 +6960,6 @@ components:
               status: active
               transactionDate: 1540641600
     ReportTransaction:
-      title: ReportTransaction
       type: object
       properties:
         id:
@@ -7085,7 +7044,6 @@ components:
         status: active
         transactionDate: 1540641600
     Birthday:
-      title: Birthday
       type: object
       properties:
         year:
@@ -7106,7 +7064,6 @@ components:
         month: 08
         dayOfMonth: '13'
     PayStatementReportData:
-      title: PayStatementReportData
       required:
         - assetIds
       type: object
@@ -7146,7 +7103,6 @@ components:
         extractDeductions: false
         extractDirectDeposit: true
     CadenceDetails:
-      title: CadenceDetails
       type: object
       properties:
         startDate:
@@ -7171,7 +7127,6 @@ components:
         stopDate: 1587986990
         days: 14
     GenerateConnectURLRequest:
-      title: GenerateConnectURLRequest
       required:
         - partnerId
         - customerId
@@ -7307,7 +7262,6 @@ components:
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
     Institution:
-      title: Institution
       required:
         - id
         - transAgg
@@ -7502,7 +7456,6 @@ components:
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
         oauthInstitutionId: 12345
     AuditableReport:
-      title: AuditableReport
       required:
         - id
         - customerId
@@ -7703,7 +7656,6 @@ components:
                           institutionTransactionId: '100000000'
                           category: Paycheck
     ReportInstitution:
-      title: ReportInstitution
       required:
         - id
         - name
@@ -7817,7 +7769,6 @@ components:
                       institutionTransactionId: '100000000'
                       category: Paycheck
     ReportSummary:
-      title: ReportSummary
       required:
         - id
         - consumerId
@@ -7864,7 +7815,6 @@ components:
           format: int64
           example: 1588008615
     ChildInstitution:
-      title: ChildInstitution
       required:
         - rssd
         - parentRSSD
@@ -7898,7 +7848,6 @@ components:
           format: int32
           example: 31
     ReportNotification:
-      title: ReportNotification
       type: object
       properties:
         consumerId:
@@ -7928,7 +7877,6 @@ components:
             Finicity's report type. This field is optional and may not always
             return.
     Consumer:
-      title: Consumer
       required:
         - id
         - firstName
@@ -8020,7 +7968,6 @@ components:
         createdDate: 1588284854
         suffix: Mr
     AssetSummary:
-      title: AssetSummary
       required:
         - type
         - currentBalance
@@ -8050,7 +7997,6 @@ components:
           description: Beginning balance of account per the time period in the report
           example: -17795.6
     ReportAccount:
-      title: ReportAccount
       required:
         - id
         - number
@@ -8183,7 +8129,6 @@ components:
                   institutionTransactionId: '100000000'
                   category: Paycheck
     ReportCustomField:
-      title: ReportCustomField
       type: object
       properties:
         label:
@@ -8206,7 +8151,6 @@ components:
         value: '12345'
         shown: true
     VOIEWithInterviewData:
-      title: VOIEWithInterviewData
       required:
         - txVerifyInterview
       type: object
@@ -8244,7 +8188,6 @@ components:
         extractDeductions: false
         extractDirectDeposit: true
     Callback:
-      title: Callback
       type: object
       properties:
         callbackUrl:
@@ -8257,7 +8200,6 @@ components:
         callbackUrl: 'https://finicity.com/webhook/callback'
         contentType: application/json
     InstitutionAddress:
-      title: InstitutionAddress
       type: object
       properties:
         city:
@@ -8293,7 +8235,6 @@ components:
         addressLine1: 555 Northwest Way
         addressLine2: ''
     GenerateConnectEmailRequestMultipleBorrowers:
-      title: GenerateConnectEmailRequestMultipleBorrowers
       required:
         - partnerId
         - customers
@@ -8390,7 +8331,6 @@ components:
         email:
           to: fin.user@finicity.com
     CustomerAccountDetail:
-      title: CustomerAccountDetail
       required:
         - availableBalanceAmount
       type: object
@@ -8908,7 +8848,6 @@ components:
         will return for below. The data point are also subject to availability
         by the institution.
     TxPushSubscriptionRequest:
-      title: TxPushSubscriptionRequest
       required:
         - callbackUrl
       type: object
@@ -8920,7 +8859,6 @@ components:
             https protocol for any real-world account)
           example: 'https://www.mydomain.com/txpush/listener'
     Error1_Error:
-      title: Error1_Error
       type: object
       properties:
         code:
@@ -8931,14 +8869,12 @@ components:
         assetId:
           type: string
     Status:
-      title: Status
       enum:
         - ACTIVE
         - INACTIVE
       type: string
       example: ACTIVE
     TransactionType:
-      title: TransactionType
       enum:
         - atm
         - cash
@@ -8963,7 +8899,6 @@ components:
         the field of a record:
       example: atm
     ReportTransactionPayStatementMatchTypes:
-      title: ReportTransactionPayStatementMatchTypes
       enum:
         - DATE
         - NET_AMOUNT
@@ -8977,7 +8912,6 @@ components:
       description: Pay Statement matches found at the transaction level
       example: DATE
     Subaccount:
-      title: Subaccount
       type: object
       properties:
         subaccountNumber:
@@ -8993,7 +8927,6 @@ components:
             attribute: false
             wrapped: false
     StorePayStatementRequest:
-      title: StorePayStatementRequest
       required:
         - label
         - statement
@@ -9020,7 +8953,6 @@ components:
             file types are .pdf, .jpg, or .png.
           example: base64
     Type:
-      title: Type
       enum:
         - voi
         - voa
@@ -9041,7 +8973,6 @@ components:
       type: string
       example: voi
     AccountOwnerv1:
-      title: AccountOwnerv1
       required:
         - ownerName
         - ownerAddress
@@ -9060,7 +8991,6 @@ components:
           example: 'APT C 5600 S SPRINGFIELD GARDENS CIR SPRINGFIELD, VA 22162-1058'
       description: The account owner information for the customer account
     Account:
-      title: Account
       required:
         - id
         - number
@@ -9136,7 +9066,6 @@ components:
           format: int32
           example: 1
     TpAccounts:
-      title: TpAccounts
       required:
         - accounts
       type: object
@@ -9193,7 +9122,6 @@ components:
               institutionLoginId: 9764
               displayPosition: 3
     LoanPaymentDetails:
-      title: LoanPaymentDetails
       required:
         - loanNumber
         - loanPaymentNumber
@@ -9216,7 +9144,6 @@ components:
           example: Heartland ECSI       PO Box 718       Wexford PA 15090
       description: The loan payment details for the customer account
     StorePayStatementResponse:
-      title: StorePayStatementResponse
       required:
         - assetId
       type: object
@@ -9226,7 +9153,6 @@ components:
           description: The asset ID of the stored pay statement
           example: 6b599a7e-236f-4a25-b070-425b52b9c1fe
     Categorization1:
-      title: Categorization1
       required:
         - normalizedPayeeName
         - category
@@ -9243,7 +9169,6 @@ components:
           type: string
           example: USA
     SubscriptionRecord:
-      title: SubscriptionRecord
       required:
         - id
         - accountId
@@ -9277,7 +9202,6 @@ components:
             zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zpe4ZL40NX83aJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB4jk4k1e
       description: TxPush subscription details
     TxPushSubscriptions:
-      title: TxPushSubscriptions
       required:
         - subscriptions
       type: object
@@ -9300,7 +9224,6 @@ components:
               signingKey: >-
                 zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zp7aZL40NX8ekJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB6K84k1e
     CreateTxPushTestTransactionResponse:
-      title: CreateTxPushTestTransactionResponse
       required:
         - id
         - createdDate
@@ -9320,7 +9243,6 @@ components:
           example: 1588974631
       description: Response for TxPush test transaction
     GetCustomersResponse:
-      title: GetCustomersResponse
       required:
         - found
         - displaying
@@ -9364,7 +9286,6 @@ components:
               createdDate: 1588305190
       description: Response For Get Customers Endpoint
     ACHDetails:
-      title: ACHDetails
       required:
         - routingNumber
         - realAccountNumber
@@ -9382,7 +9303,6 @@ components:
           example: 002345678901
       description: The routing and account number information to initiate ACH transfers
     BankAccountStatement_V2Response:
-      title: BankAccountStatement_V2Response
       required:
         - id
         - asOfDate
@@ -9396,7 +9316,6 @@ components:
           format: int32
           example: 1588263510
     FinicityConnectType:
-      title: FinicityConnectType
       enum:
         - aggregation
         - ach
@@ -9414,7 +9333,6 @@ components:
       description: ''
       example: aggregation
     AddCustomerResponse:
-      title: AddCustomerResponse
       required:
         - id
         - username
@@ -9440,7 +9358,6 @@ components:
         The Response Structure For The Add Customer Endpoint and Add Testing
         Customer Endpoint
     AddCustomerRequest:
-      title: AddCustomerRequest
       required:
         - username
       type: object
@@ -9477,7 +9394,6 @@ components:
         Request Structure For The Add Customer Endpoint and Add Testing Customer
         Endpoint
     VOAReportRecord:
-      title: VOAReportRecord
       required:
         - id
         - customerId
@@ -9715,7 +9631,6 @@ components:
           sixMonthAverage: -7616.01
           beginningBalance: -17795.6
     VOAReportInstitution:
-      title: VOAReportInstitution
       required:
         - id
         - name
@@ -9775,7 +9690,6 @@ components:
                 currentLoanBalance: 0
                 availableBalanceAmount: 0
     VOAReportAccount:
-      title: VOAReportAccount
       required:
         - id
         - number
@@ -9872,7 +9786,6 @@ components:
         details:
           $ref: '#/components/schemas/AccountDetail'
     VOAReportTransaction:
-      title: VOAReportTransaction
       required:
         - id
         - amount
@@ -9943,7 +9856,6 @@ components:
         commission:
           type: number
     ConnectOAuthOptions-Copy:
-      title: ConnectOAuthOptions-Copy
       required:
         - enabled
       type: object
@@ -9966,7 +9878,6 @@ components:
             shouldn't be displayed to the user
       description: oauthOptions for oauthEnabled institutions
     InstitutionOptionsTest:
-      title: InstitutionOptionsTest
       required:
         - institutionId
       type: object
@@ -9979,7 +9890,6 @@ components:
         '31': voa
         '10126': voi
     PrequalificationReportNon-CRA:
-      title: PrequalificationReportNon-CRA
       required:
         - id
         - customerId
@@ -10195,7 +10105,6 @@ components:
           sixMonthAverage: -7616.01
           beginningBalance: -17795.6
     PrequalificationReportInstitution:
-      title: PrequalificationReportInstitution
       required:
         - id
         - name
@@ -10280,7 +10189,6 @@ components:
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 0
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 0
     PrequalificationReportAccount:
-      title: PrequalificationReportAccount
       required:
         - id
         - number
@@ -10406,7 +10314,6 @@ components:
           totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 0
           totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 0
     PrequalificationReportCRA:
-      title: PrequalificationReportCRA
       required:
         - id
         - customerId
@@ -10558,7 +10465,6 @@ components:
         The fields used for the Prequalification AssetReady Report (CRA
         products).
     VOAwithIncomeReportRecord:
-      title: VOAwithIncomeReportRecord
       required:
         - id
         - customerId
@@ -10815,7 +10721,6 @@ components:
           sixMonthAverage: -7616.01
           beginningBalance: -17795.6
     VOAwithIncomeReportInstitution:
-      title: VOAwithIncomeReportInstitution
       required:
         - id
         - name
@@ -10902,7 +10807,6 @@ components:
                       institutionTransactionId: '100000000'
                       category: Paycheck
     VOAwithIncomeReportAccount:
-      title: VOAwithIncomeReportAccount
       required:
         - id
         - number
@@ -11091,7 +10995,6 @@ components:
                 institutionTransactionId: '100000000'
                 category: Paycheck
     VOAwithIncomeReportTransaction:
-      title: VOAwithIncomeReportTransaction
       required:
         - id
         - amount
@@ -11161,7 +11064,6 @@ components:
         commission:
           type: number
     PayStatementConstraints:
-      title: PayStatementConstraints
       required:
         - paystatementReport
       type: object
@@ -11204,7 +11106,6 @@ components:
             value: PSC Finance
             shown: false
     GenerateVOAReportResponse:
-      title: GenerateVOAReportResponse
       required:
         - id
         - portfolioId
@@ -11315,7 +11216,6 @@ components:
         type: voa
         status: inProgress
     GenerateVOAWithIncomeReportResponse:
-      title: GenerateVOAWithIncomeReportResponse
       required:
         - id
         - portfolioId
@@ -11426,7 +11326,6 @@ components:
         type: voaHistory
         status: inProgress
     GeneratePrequalificationReportNon-CRAResponse:
-      title: GeneratePrequalificationReportNon-CRAResponse
       required:
         - id
         - portfolioId
@@ -11526,7 +11425,6 @@ components:
         type: assetSummary
         status: inProgress
     GeneratePrequalificationReportCRAResponse:
-      title: GeneratePrequalificationReportCRAResponse
       required:
         - id
         - portfolioId
@@ -11638,7 +11536,6 @@ components:
         type: preQualVoa
         status: inProgress
     VOIETXVerifyConstraints:
-      title: VOIETXVerifyConstraints
       required:
         - accountIds
         - voieWithInterviewData
@@ -11679,7 +11576,6 @@ components:
             value: '123456'
             shown: true
     GenerateVOIReportResponse:
-      title: GenerateVOIReportResponse
       required:
         - id
         - portfolioId
@@ -11790,7 +11686,6 @@ components:
         type: voi
         status: inProgress
     VOIReportRecord:
-      title: VOIReportRecord
       required:
         - id
         - customerId
@@ -12056,7 +11951,6 @@ components:
               estimatedGrossAnnual: 2000.12
               projectedGrossAnnual: 2500.23
     VOIReportInstitutionRecord:
-      title: VOIReportInstitutionRecord
       required:
         - id
         - name
@@ -12126,7 +12020,6 @@ components:
                   category: Paycheck
       description: VOI Report Institution Record
     VOIReportAccountRecord:
-      title: VOIReportAccountRecord
       required:
         - id
         - number
@@ -12257,7 +12150,6 @@ components:
               category: Paycheck
       description: VOI Report Account Record
     ReportIncomeStreamRecord:
-      title: ReportIncomeStreamRecord
       required:
         - id
         - name
@@ -12354,7 +12246,6 @@ components:
               category: Paycheck
       description: Report Income Stream Record
     VOIReportTransactionRecord:
-      title: VOIReportTransactionRecord
       required:
         - id
         - amount
@@ -12409,7 +12300,6 @@ components:
           example: Paycheck
       description: VOI Report Transaction Record
     PayStatementReportRecord:
-      title: PayStatementReportRecord
       required:
         - id
         - customerId
@@ -12570,7 +12460,6 @@ components:
                   description: Payroll
       description: ''
     VOIEPayStatement:
-      title: VOIEPayStatement
       required:
         - payPeriod
         - billable
@@ -12686,7 +12575,6 @@ components:
               description: Payroll
       description: ''
     Employer:
-      title: Employer
       type: object
       properties:
         name:
@@ -12697,7 +12585,6 @@ components:
       example:
         name: Rocket Surgery
     Employee:
-      title: Employee
       type: object
       properties:
         name:
@@ -12708,7 +12595,6 @@ components:
       example:
         name: Patrick Purchaser
     PayStat:
-      title: PayStat
       type: object
       properties:
         name:
@@ -12744,7 +12630,6 @@ components:
         amountCurrent: 6000
         amountYTD: 18000
     Deduction:
-      title: Deduction
       type: object
       properties:
         name:
@@ -12782,7 +12667,6 @@ components:
         amountYTD: 1744.61
         type: 401 Deductions
     DirectDeposit:
-      title: DirectDeposit
       type: object
       properties:
         amountCurrent:
@@ -12798,7 +12682,6 @@ components:
         amountCurrent: 1744.61
         accountLastFour: '1234'
     GeneratePayStatementReportResponse:
-      title: GeneratePayStatementReportResponse
       required:
         - id
         - portfolioId
@@ -12912,7 +12795,6 @@ components:
         type: paystatement
         status: inProgress
     VOIETXVerifyReportPayStatementsInstitution:
-      title: VOIETXVerifyReportPayStatementsInstitution
       required:
         - id
         - name
@@ -12939,7 +12821,6 @@ components:
             $ref: '#/components/schemas/VOIETXVerifyReportAccount'
           description: An array of accounts
     VOIETXVerifyReportAccount:
-      title: VOIETXVerifyReportAccount
       required:
         - id
         - number
@@ -13138,7 +13019,6 @@ components:
                   - EMPLOYER_NAME
                   - INCOME_STREAM_PAYCHECK
     VOIETXVerifyReportIncomeStream:
-      title: VOIETXVerifyReportIncomeStream
       required:
         - id
         - name
@@ -13232,7 +13112,6 @@ components:
               institutionTransactionId: '100000000'
               category: Paycheck
     VOIETXVerifyReportTransaction:
-      title: VOIETXVerifyReportTransaction
       required:
         - id
         - amount
@@ -13286,7 +13165,6 @@ components:
           description: The categorization of the transaction.
           example: Paycheck
     VOIE-PaystubwithTXVerifyReportRecord:
-      title: VOIE-PaystubwithTXVerifyReportRecord
       required:
         - id
         - customerId
@@ -13672,7 +13550,6 @@ components:
                 transactions: []
                 availableBalance: 123.45
     GenerateVOIE-PaystubwithTXVerifyReportResponse:
-      title: GenerateVOIE-PaystubwithTXVerifyReportResponse
       required:
         - id
         - portfolioId
@@ -13776,7 +13653,6 @@ components:
           TXVerify)
         portfolioId: 9qud7dtuzbew-2-port
     VOIETXVerifyPayStatement:
-      title: VOIETXVerifyPayStatement
       required:
         - payPeriod
         - billable
@@ -14011,7 +13887,6 @@ components:
                           - EMPLOYER_NAME
                           - INCOME_STREAM_PAYCHECK
     GenerateConnectURLRequestDataandPayments:
-      title: GenerateConnectURLRequestDataandPayments
       required:
         - partnerId
         - customerId
@@ -14092,7 +13967,6 @@ components:
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
     GenerateConnectURLRequestLending:
-      title: GenerateConnectURLRequestLending
       required:
         - partnerId
         - customerId
@@ -14225,7 +14099,6 @@ components:
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
     GenerateConnectURLRequestlite:
-      title: GenerateConnectURLRequestlite
       required:
         - partnerId
         - customerId
@@ -14306,7 +14179,6 @@ components:
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
     GenerateConnectURLRequestfix:
-      title: GenerateConnectURLRequestfix
       required:
         - partnerId
         - customerId
@@ -14388,7 +14260,6 @@ components:
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
     CreateConsumerRequest:
-      title: CreateConsumerRequest
       required:
         - firstName
         - lastName
@@ -14461,7 +14332,6 @@ components:
         email: finicity@test.com
         suffix: Mr
     ModifyCustomerRequest:
-      title: ModifyCustomerRequest
       required:
         - firstName
         - lastName
@@ -14477,7 +14347,6 @@ components:
           example: Smith
       description: The fields to be modified for a customer record
     AccountType:
-      title: AccountType
       enum:
         - checking
         - savings
@@ -14508,7 +14377,6 @@ components:
       description: The enumeration of supported account types
       example: checking
     CustomerAccounts:
-      title: CustomerAccounts
       required:
         - accounts
       type: object
@@ -14524,7 +14392,6 @@ components:
         bank account such as a checking or savings that the customer has added
         via the Connect interface
     PayStatementMatchTypes:
-      title: PayStatementMatchTypes
       enum:
         - NET_PAY_MATCH
         - SPLIT_INTERVIEW_AMOUNT_SUM_TO_NET_PAY_MATCH
@@ -14536,7 +14403,6 @@ components:
       type: string
       example: NET_PAY_MATCH
     GetTransactionsResponse:
-      title: GetTransactionsResponse
       required:
         - found
         - displaying
@@ -14615,7 +14481,6 @@ components:
         **Note**: See the main API page for important details on student loans
         (account type 402).
     CreateTxPushTestTransactionRequest:
-      title: CreateTxPushTestTransactionRequest
       required:
         - amount
         - description
@@ -14659,7 +14524,6 @@ components:
         postedDate: 1588888169
         transactionDate: 1588801769
     Categories:
-      title: Categories
       enum:
         - ATM Fee
         - Advertising
@@ -14786,7 +14650,6 @@ components:
       description: The different categories for a transaction
       example: ATM Fee
     GenerateConnectEmailRequest:
-      title: GenerateConnectEmailRequest
       required:
         - partnerId
         - customerId
@@ -14925,7 +14788,6 @@ components:
             - Senior Loan Officer
             - Direct 123-456-7890
     GenerateConnectEmailResponse:
-      title: GenerateConnectEmailResponse
       required:
         - link
         - emailConfig
@@ -14940,7 +14802,6 @@ components:
           $ref: '#/components/schemas/ConnectEmailOptions'
       description: Response from create url call
     CustomerType:
-      title: CustomerType
       enum:
         - active
         - testing
@@ -14948,25 +14809,21 @@ components:
       description: The type of Finicity Customer
       example: active
     AppPreReg-Username:
-      title: AppPreReg-Username
       type: object
       description: >-
         The username is unavailable when trying to create a customer for
         preregistering your applications with Finicity.
     SetAppID-MapExists:
-      title: SetAppID-MapExists
       type: object
       description: >-
         The customer username and the application ID are already mapped together
         when trying to preregister applications with Finicity.
     AppPreReg-MissingAppID:
-      title: AppPreReg-MissingAppID
       type: object
       description: >-
         The application ID parameter is missing when trying to preregister
         applications with Finicity.
     TransactionsReportRecord:
-      title: TransactionsReportRecord
       required:
         - id
         - title
@@ -15092,7 +14949,6 @@ components:
                       memo: TMOBILE debit
       description: The fields used for the Transaction History Report (CRA products).
     TransactionsReportAccount:
-      title: TransactionsReportAccount
       required:
         - id
         - name
@@ -15153,7 +15009,6 @@ components:
               memo: Finicity amount credit
       description: The fields used for the Transaction History Report (CRA products).
     TransactionsReportInstitution:
-      title: TransactionsReportInstitution
       required:
         - id
         - name
@@ -15207,7 +15062,6 @@ components:
                   memo: TMOBILE debit
       description: The fields used for the Transaction History Report (CRA products).
     TransactionsReportTransaction:
-      title: TransactionsReportTransaction
       required:
         - id
         - amount
@@ -15267,7 +15121,6 @@ components:
           example: Finicity amount credit
       description: The fields used in the Transactions Report Transactions record
     GenerateTransactionsReportResponse:
-      title: GenerateTransactionsReportResponse
       required:
         - id
         - portfolioId
@@ -15380,7 +15233,6 @@ components:
         type: transactions
         status: inProgress
     TransactionReportConstraints:
-      title: TransactionReportConstraints
       type: object
       properties:
         accountIds:
@@ -15449,7 +15301,6 @@ components:
             value: PSC Finance
             shown: false
     GenerateTransactionsReportConstraints:
-      title: GenerateTransactionsReportConstraints
       type: object
       properties:
         accountIds:
@@ -15506,7 +15357,6 @@ components:
             value: PSC Finance
             shown: false
     AppStatusV1:
-      title: AppStatusV1
       required:
         - partnerId
         - preAppId
@@ -15606,7 +15456,6 @@ components:
             lastModifiedDate: 1595526300
             status: true
     AppStatusesV1:
-      title: AppStatusesV1
       required:
         - status
       type: object
@@ -15649,7 +15498,6 @@ components:
         an array of App Status objects to be able to determine their
         registration status
     AppRegistrationRequest:
-      title: AppRegistrationRequest
       required:
         - appDescription
         - appName
@@ -15726,7 +15574,6 @@ components:
           example: '{bytes of image}'
       description: ''
     AppRegistrationResponse:
-      title: AppRegistrationResponse
       required:
         - preAppId
         - status
@@ -15745,7 +15592,6 @@ components:
           example: P
       description: ''
     ModifyAppRegistrationRequest:
-      title: ModifyAppRegistrationRequest
       required:
         - appDescription
         - appName
@@ -15839,7 +15685,6 @@ components:
         ownerState: UT
         image: '{bytes of new logo image}'
     RequestConstraints:
-      title: RequestConstraints
       type: object
       properties:
         accountIds:
@@ -15876,7 +15721,6 @@ components:
             value: PSC Finance
             shown: false
     VOIE-PaystubwithTXVerifyResponseConstraints:
-      title: VOIE-PaystubwithTXVerifyResponseConstraints
       required:
         - voieWithInterviewData
       type: object
@@ -15927,7 +15771,6 @@ components:
             value: '5555'
             shown: true
     PortfolioSummaryByCustomer:
-      title: PortfolioSummaryByCustomer
       required:
         - portfolioId
         - reports
@@ -15966,7 +15809,6 @@ components:
               status: success
               createdDate: 1585931727
     PortfolioConsumer:
-      title: PortfolioConsumer
       required:
         - id
         - firstName
@@ -16017,7 +15859,6 @@ components:
           dayOfMonth: 13
         suffix: Mr
     AppFIStatus:
-      title: AppFIStatus
       required:
         - id
         - decryptionKeyActivated
@@ -16070,7 +15911,6 @@ components:
         lastModifiedDate: 1595526299
         status: false
     EstimateInclusion:
-      title: EstimateInclusion
       enum:
         - HIGH
         - MODERATE
@@ -16080,7 +15920,6 @@ components:
       description: Estimate Inclusion
       example: HIGH
     ReportIncomeEstimate:
-      title: ReportIncomeEstimate
       required:
         - netAnnual
         - projectedNetAnnual
@@ -16102,7 +15941,6 @@ components:
           example: 2500.23
       description: Report Income Estimate
     ReportIncomeStreamSummary:
-      title: ReportIncomeStreamSummary
       required:
         - confidenceType
         - netMonthly
@@ -16130,7 +15968,6 @@ components:
           estimatedGrossAnnual: 2000.12
           projectedGrossAnnual: 2500.23
     GenerateStatementReportConstraints:
-      title: GenerateStatementReportConstraints
       required:
         - statementReportData
       type: object
@@ -16159,7 +15996,6 @@ components:
             value: '123456'
             shown: true
     StatementReportData:
-      title: StatementReportData
       required:
         - accountId
       type: object
@@ -16178,7 +16014,6 @@ components:
           example: 1
       description: ''
     GenerateStatementReportResponse:
-      title: GenerateStatementReportResponse
       required:
         - id
         - portfolioId
@@ -16251,7 +16086,6 @@ components:
           example: inProgress
       description: ''
     ModifyConsumerRequest:
-      title: ModifyConsumerRequest
       required:
         - firstName
         - lastName
@@ -16331,7 +16165,6 @@ components:
         suffix: Mr
         emailAddress: finicity@test.com
     StatementReportRecord:
-      title: StatementReportRecord
       required:
         - id
         - gseEnabled
@@ -16429,7 +16262,6 @@ components:
         createdDate: 1586189339
         assetId: aaaa3be2-6f1a-4aac-a360-4ad240aa652d
     Branding:
-      title: Branding
       required:
         - logo
         - alternateLogo
@@ -16474,7 +16306,6 @@ components:
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/tile.svg
       description: All assets are SVGs so can be slightly resized without any issues.
     InstitutionBrandingResponse:
-      title: InstitutionBrandingResponse
       required:
         - branding
       type: object
@@ -16483,7 +16314,6 @@ components:
           $ref: '#/components/schemas/Branding'
       description: ''
     GenerateV2ConnectURLRequest:
-      title: GenerateV2ConnectURLRequest
       required:
         - partnerId
         - customerId
@@ -16625,7 +16455,6 @@ components:
             shown: false
         singleUseUrl: true
     GenerateConnectURLRequestlite-V2:
-      title: GenerateConnectURLRequestlite-V2
       required:
         - partnerId
         - customerId
@@ -16715,7 +16544,6 @@ components:
         experience: default
         singleUseUrl: true
     GenerateConnectURLRequestfix-V2:
-      title: GenerateConnectURLRequestfix-V2
       required:
         - partnerId
         - customerId
@@ -16805,7 +16633,6 @@ components:
         experience: default
         singleUseUrl: true
     GenerateV2ConnectEmailRequest:
-      title: GenerateV2ConnectEmailRequest
       required:
         - partnerId
         - customerId
@@ -16964,7 +16791,6 @@ components:
             shown: false
         singleUseUrl: true
     GenerateV2ConnectEmailResponse:
-      title: GenerateV2ConnectEmailResponse
       required:
         - link
         - emailConfig
@@ -16979,7 +16805,6 @@ components:
           $ref: '#/components/schemas/ConnectV2EmailOptions'
       description: The response from the send email endpoint.
     ConnectV2EmailOptions:
-      title: ConnectV2EmailOptions
       required:
         - to
       type: object
@@ -17039,7 +16864,6 @@ components:
           - Senior Loan Officer
           - Direct 123-456-7890
     AppStatuses:
-      title: AppStatuses
       required:
         - totalRecords
         - totalPages
@@ -17108,7 +16932,6 @@ components:
         an array of App Status objects to be able to determine their
         registration status. This is version 2 of this response.
     AppStatus:
-      title: AppStatus
       required:
         - partnerId
         - preAppId
@@ -17210,7 +17033,6 @@ components:
             lastModifiedDate: 1595526300
             status: true
     CustomerWithApplicationData:
-      title: CustomerWithApplicationData
       required:
         - id
         - username
@@ -17254,7 +17076,6 @@ components:
           example: Awesome Budget App
       description: The finicity customer record
     PayrollReportRefreshConstraints:
-      title: PayrollReportRefreshConstraints
       required:
         - payrollData
       type: object
@@ -17278,7 +17099,6 @@ components:
               value: '123456'
               shown: true
     PayrollData:
-      title: PayrollData
       required:
         - ssn
         - dob
@@ -17305,7 +17125,6 @@ components:
           description: The `reportId` of the original VOIE Payroll report.
           example: abcdefghijkl-voiepayroll
     RefreshVOIE-PayrollReportResponse:
-      title: RefreshVOIE-PayrollReportResponse
       required:
         - id
         - customerId
@@ -17378,7 +17197,6 @@ components:
           example: 9qud7dtuzbew-2-port
       description: ''
     PayrollReportRefreshResponseConstraints:
-      title: PayrollReportRefreshResponseConstraints
       required:
         - payrollData
       type: object
@@ -17412,7 +17230,6 @@ components:
             value: '12345'
             shown: true
     PayrollReportData:
-      title: PayrollReportData
       required:
         - payrollDataRetrievalId
         - employerNames
@@ -17442,7 +17259,6 @@ components:
           - ACME INC
         reportId: abcdefghijkl-voiepayroll
     PayrollReportResponseConstraints:
-      title: PayrollReportResponseConstraints
       required:
         - payrollProviderData
       type: object
@@ -17489,7 +17305,6 @@ components:
             value: 1613aa23
             shown: true
     PayrollResponseData:
-      title: PayrollResponseData
       required:
         - payrollDataRetrievalId
         - employerNames
@@ -17515,7 +17330,6 @@ components:
         employerNames:
           - ACME INC
     VOIE-PayrollReportRecord:
-      title: VOIE-PayrollReportRecord
       required:
         - id
         - portfolioId
@@ -17709,7 +17523,6 @@ components:
                       accountLastFour: '1234'
                       routingNumber: 0
     DirectPayStatementFields:
-      title: DirectPayStatementFields
       required:
         - payrollPayHistoryId
         - lastPayPeriodIndicator
@@ -17779,7 +17592,6 @@ components:
             accountLastFour: '1234'
             routingNumber: 0
     PayrollEmploymentRecord:
-      title: PayrollEmploymentRecord
       required:
         - employerName
         - latestPayDate
@@ -17912,7 +17724,6 @@ components:
         positionTitle: Shift Supervisor
         positionDuration: P1Y6M0D
     PayrollEmployeeAddress:
-      title: PayrollEmployeeAddress
       type: object
       properties:
         address1:
@@ -17937,7 +17748,6 @@ components:
         state: TX
         zip: '99999'
     OptionalConsumerInfo:
-      title: OptionalConsumerInfo
       required:
         - ssn
       type: object
@@ -17949,7 +17759,6 @@ components:
             consumer's SSN.
           example: '123412134'
     BorrowerType:
-      title: BorrowerType
       enum:
         - ''
         - ''
@@ -17957,7 +17766,6 @@ components:
       description: ''
       example: primary
     Content:
-      title: Content
       required:
         - reseller
         - resellerProvider
@@ -18032,7 +17840,6 @@ components:
           type: string
           example: failure
     ReportCustomField1:
-      title: ReportCustomField1
       required:
         - label
         - value
@@ -18049,7 +17856,6 @@ components:
           type: boolean
           example: false
     InvoiceBillingResponse:
-      title: InvoiceBillingResponse
       required:
         - content
         - pageable
@@ -18144,7 +17950,6 @@ components:
           type: boolean
           example: false
     Sort:
-      title: Sort
       required:
         - sorted
         - unsorted
@@ -18161,7 +17966,6 @@ components:
           type: boolean
           example: true
     PayrollEmployeeRecord:
-      title: PayrollEmployeeRecord
       required:
         - name
         - givenName
@@ -18205,7 +18009,6 @@ components:
             state: TX
             zip: '99999'
     PayrollEarningsRecord:
-      title: PayrollEarningsRecord
       required:
         - type
         - amount
@@ -18247,7 +18050,6 @@ components:
         amount: 1100
         amountYTD: 73925
     PayrollDeductionsRecord:
-      title: PayrollDeductionsRecord
       required:
         - type
         - amount
@@ -18292,7 +18094,6 @@ components:
         type: Federal tax
         amount: 143.45
     PayrollDirectDepositRecord:
-      title: PayrollDirectDepositRecord
       type: object
       properties:
         accountTypeCode:
@@ -18321,7 +18122,6 @@ components:
         accountLastFour: '1234'
         routingNumber: 0
     PayrollMonthlyIncomeRecord:
-      title: PayrollMonthlyIncomeRecord
       type: object
       properties:
         estimatedMonthlyBasePay:
@@ -18353,7 +18153,6 @@ components:
         estimatedMonthlyBasePay: 2000
         estimatedMonthlyOvertimePay: 100
     PayrollMainPaystatementFields:
-      title: PayrollMainPaystatementFields
       required:
         - payDate
         - grossPayAmount
@@ -18426,7 +18225,6 @@ components:
         netPayAmount: 1401.95
         netPayAmountYTD: 73925
     PayrollReportConstraints:
-      title: PayrollReportConstraints
       required:
         - payrollData
       type: object
@@ -18459,7 +18257,6 @@ components:
             value: '12345'
             shown: true
     PaystubMonthlyIncomeRecord:
-      title: PaystubMonthlyIncomeRecord
       type: object
       properties:
         estimatedMonthlyBasePay:
@@ -18493,7 +18290,6 @@ components:
         estimatedMonthlyBonusPay: 20
         estimatedMonthlyCommissionPay: 50
     GenerateV2ConnectURLRequest-JointBorrower:
-      title: GenerateV2ConnectURLRequest-JointBorrower
       required:
         - partnerId
         - borrowers
@@ -18655,7 +18451,6 @@ components:
             shown: false
         singleUseUrl: true
     Borrowers:
-      title: Borrowers
       required:
         - customerId
         - consumerId
@@ -18680,7 +18475,6 @@ components:
           $ref: '#/components/schemas/OptionalConsumerInfo'
       description: ''
     V2ConnectEmailRequest-JointBorrower:
-      title: V2ConnectEmailRequest-JointBorrower
       required:
         - partnerId
         - borrowers
@@ -18844,7 +18638,6 @@ components:
         experience: default
         singleUseUrl: true
     PayrollEmploymentHistory:
-      title: PayrollEmploymentHistory
       required:
         - asOfDate
         - employerName
@@ -18879,7 +18672,6 @@ components:
           $ref: '#/components/schemas/PayrollIncomeRecord'
       description: ''
     PayrollIncomeRecord:
-      title: PayrollIncomeRecord
       required:
         - payFrequency
         - basePayRate
@@ -19021,7 +18813,6 @@ components:
                 accountLastFour: '1234'
                 routingNumber: 0
     PayrollAnnualIncomeRecord:
-      title: PayrollAnnualIncomeRecord
       required:
         - year
         - grossPayAmountYTD
@@ -19067,7 +18858,6 @@ components:
         basePayAmountYTD: 73925.12
         overtimePayAmountYTD: 100.01
     PayrollEmployerAddress:
-      title: PayrollEmployerAddress
       type: object
       properties:
         address1:
@@ -19092,7 +18882,6 @@ components:
         state: TX
         zip: '99999'
     CashFlowRecord-Personal:
-      title: CashFlowRecord-Personal
       required:
         - id
         - gseEnabled
@@ -19326,7 +19115,6 @@ components:
                       institutionTransactionId: 0
                       category: Mobile Phone
     CashFlowInstitution:
-      title: CashFlowInstitution
       required:
         - id
         - name
@@ -19436,7 +19224,6 @@ components:
                 twoMonthAverageTotalCreditsLessTotalDebits: 55555
                 twoMonthAverageTotalCreditsLessTotalDebitsLessTransfers: 55555
     CashFlowAccount:
-      title: CashFlowAccount
       required:
         - id
         - ownerName
@@ -19525,7 +19312,6 @@ components:
         cashFlowCharacteristic:
           $ref: '#/components/schemas/CashFlowcashflowCharacteristic'
     CashFlowTransactions:
-      title: CashFlowTransactions
       required:
         - id
         - amount
@@ -19588,7 +19374,6 @@ components:
           description: One of the values from Transaction Types
           example: debit
     CashFlowcashflowBalance:
-      title: CashFlowcashflowBalance
       required:
         - monthlyCashFlowBalances
         - minDailyBalance
@@ -19663,7 +19448,6 @@ components:
           description: Number of Days positive balance over entire transaction history
           example: '0'
     CashFlowmonthlyCashFlowBalances:
-      title: CashFlowmonthlyCashFlowBalances
       required:
         - month
         - minDailyBalance
@@ -19704,7 +19488,6 @@ components:
           description: Number of Days positive balance for each month
           example: '0'
     CashFlowcashflowBalanceSummary:
-      title: CashFlowcashflowBalanceSummary
       required:
         - monthlyCashFlowBalanceSummaries
         - minDailyBalance
@@ -19785,7 +19568,6 @@ components:
             all accounts
           example: '11'
     CashFlowmonthlyCashFlowBalanceSummaries:
-      title: CashFlowmonthlyCashFlowBalanceSummaries
       required:
         - month
         - minDailyBalance
@@ -19826,7 +19608,6 @@ components:
           description: Number of Days Positive Balance for each month for all accounts
           example: '0'
     CashFlowcashFlowCredit:
-      title: CashFlowcashFlowCredit
       required:
         - monthlyCashFlowCredits
         - twelveMonthCreditTotal
@@ -19879,7 +19660,6 @@ components:
           description: Sum of two month credit transactions without transfers
           example: 100
     CashFlowmonthlyCashFlowCredits:
-      title: CashFlowmonthlyCashFlowCredits
       required:
         - month
         - numberOfCredits
@@ -19930,7 +19710,6 @@ components:
           description: The estimated loan deposit amount
           example: 0
     CashFlowcashFlowCreditSummary:
-      title: CashFlowcashFlowCreditSummary
       required:
         - monthlyCashFlowCreditSummaries
         - twelveMonthCreditTotal
@@ -19987,7 +19766,6 @@ components:
             for all accounts
           example: 100
     CashFlowmonthlyCashFlowCreditSummaries:
-      title: CashFlowmonthlyCashFlowCreditSummaries
       required:
         - month
         - numberOfCredits
@@ -20040,7 +19818,6 @@ components:
           description: The estimated loan deposit amount by month
           example: 0
     CashFlowcashflowDebit:
-      title: CashFlowcashflowDebit
       required:
         - monthlyCashFlowDebits
         - twelveMonthDebitTotal
@@ -20095,7 +19872,6 @@ components:
             account
           example: 100
     CashFlowmonthlycashflowDebits:
-      title: CashFlowmonthlycashflowDebits
       required:
         - month
         - numberOfDebits
@@ -20136,7 +19912,6 @@ components:
           description: The average debit amount
           example: 500
     CashFlowcashflowDebitSummary:
-      title: CashFlowcashflowDebitSummary
       required:
         - monthlyCashFlowDebitSummaries
         - twelveMonthDebitTotal
@@ -20191,7 +19966,6 @@ components:
             account
           example: -100
     CashFlowmonthlyCashFlowDebitSummaries:
-      title: CashFlowmonthlyCashFlowDebitSummaries
       required:
         - month
         - numberOfDebits
@@ -20232,7 +20006,6 @@ components:
           description: The average debit amount
           example: 500
     CashFlowcashflowCharacteristic:
-      title: CashFlowcashflowCharacteristic
       required:
         - monthlyCashFlowCharacteristics
         - averageMonthlyNet
@@ -20294,7 +20067,6 @@ components:
           description: 2 Month Average (Total Credits - Total Debits) - (Without Transfers)
           example: 55555
     CashFlowmonthlyCashFlowCharacteristics:
-      title: CashFlowmonthlyCashFlowCharacteristics
       required:
         - month
         - totalCreditsLessTotalDebits
@@ -20320,7 +20092,6 @@ components:
           description: Average transaction amount by month
           example: 10
     CashFlowcashFlowCharacteristicsSummary:
-      title: CashFlowcashFlowCharacteristicsSummary
       required:
         - monthlyCashFlowCharacteristicSummaries
         - averageMonthlyNet
@@ -20385,7 +20156,6 @@ components:
             across all accounts
           example: 55555
     CashFlowmonthlyCashFlowCharacteristicSummaries:
-      title: CashFlowmonthlyCashFlowCharacteristicSummaries
       required:
         - month
         - totalCreditsLessTotalDebits
@@ -20413,7 +20183,6 @@ components:
           description: Average transaction amount across all accounts
           example: 10
     CashFlowRecord-Business:
-      title: CashFlowRecord-Business
       required:
         - id
         - gseEnabled
@@ -20635,7 +20404,6 @@ components:
                       institutionTransactionId: 0
                       category: Mobile Phone
     CashFlowpossibleLoanDeposits:
-      title: CashFlowpossibleLoanDeposits
       required:
         - id
         - name
@@ -20680,7 +20448,6 @@ components:
                   institutionTransactionId: 0
                   category: Mobile Phone
     CashFlowpossibleLoanDepositsAccount:
-      title: CashFlowpossibleLoanDepositsAccount
       required:
         - id
         - ownerName
@@ -20757,7 +20524,6 @@ components:
               institutionTransactionId: 0
               category: Mobile Phone
     GetAvailableBalance-LiveResponse:
-      title: GetAvailableBalance-LiveResponse
       required:
         - id
         - realAccountNumberLast4
@@ -20813,7 +20579,6 @@ components:
           example: USD
       description: ''
     GetAvailableBalanceResponse:
-      title: GetAvailableBalanceResponse
       required:
         - id
         - realAccountNumberLast4
@@ -20869,7 +20634,6 @@ components:
           example: USD
       description: ''
     GetInstitutions-InstitutionBranding:
-      title: GetInstitutions-InstitutionBranding
       type: object
       properties:
         logo:
@@ -20912,7 +20676,6 @@ components:
         tile: >-
           https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
     VOIETXVerifyReportIncomeStreamforAccountsinInstitutionsinPayStatements:
-      title: VOIETXVerifyReportIncomeStreamforAccountsinInstitutionsinPayStatements
       required:
         - id
         - name
@@ -21002,7 +20765,6 @@ components:
                 - EMPLOYER_NAME
                 - INCOME_STREAM_PAYCHECK
     VOIETXVerifyReportTransactionforPayStatements:
-      title: VOIETXVerifyReportTransactionforPayStatements
       required:
         - id
         - amount
@@ -21068,7 +20830,6 @@ components:
             - EMPLOYER_NAME
             - INCOME_STREAM_PAYCHECK
     VOIETXVerifyReportAccountforInstitutions:
-      title: VOIETXVerifyReportAccountforInstitutions
       required:
         - id
         - ownerName
@@ -21174,7 +20935,6 @@ components:
           description: The available balance for the account
           example: 123.45
     VOIETXVerifyReportInstitution:
-      title: VOIETXVerifyReportInstitution
       required:
         - id
         - name
@@ -21239,7 +20999,6 @@ components:
               transactions: []
               availableBalance: 123.45
     VOIEWithStatementData:
-      title: VOIEWithStatementData
       required:
         - assetIds
       type: object
@@ -21279,7 +21038,6 @@ components:
         extractDeductions: false
         extractDirectDeposit: true
     VOIEWithStatementConstraints:
-      title: VOIEWithStatementConstraints
       required:
         - voieWithStatementData
       type: object
@@ -21320,7 +21078,6 @@ components:
             value: '5555'
             shown: true
     GenerateVOIE-PaystubReportResponse:
-      title: GenerateVOIE-PaystubReportResponse
       required:
         - id
         - portfolioId
@@ -21389,7 +21146,6 @@ components:
           example: inProgress
       description: ''
     VOIE-PaystubReportRecord:
-      title: VOIE-PaystubReportRecord
       required:
         - id
         - portfolioId
@@ -21495,7 +21251,6 @@ components:
           description: ''
       description: ''
     VOIEPaystubWithStatementPayStatement:
-      title: VOIEPaystubWithStatementPayStatement
       required:
         - payPeriod
         - billable
@@ -21649,7 +21404,6 @@ components:
           estimatedMonthlyCommissionPay: 50
         institutions: []
     AssetSummaryforAssetReports:
-      title: AssetSummaryforAssetReports
       required:
         - currentBalance
         - twoMonthAverage
@@ -21674,7 +21428,6 @@ components:
           description: Beginning balance of account per the time period in the report
           example: -17795.6
     VOAIReportIncomeStreamRecord:
-      title: VOAIReportIncomeStreamRecord
       required:
         - id
         - name
@@ -21771,7 +21524,6 @@ components:
               category: Paycheck
       description: Report Income Stream Record
     VOAIReportTransactionsforIncomeStreams:
-      title: VOAIReportTransactionsforIncomeStreams
       required:
         - id
         - amount
@@ -21824,7 +21576,6 @@ components:
           description: The categorization of the transaction.
           example: Paycheck
     GenerateCashFlowReport-BusinessResponse:
-      title: GenerateCashFlowReport-BusinessResponse
       required:
         - id
         - customerType
@@ -21880,7 +21631,6 @@ components:
           example: inProgress
       description: ''
     GenerateCashFlowReport-PersonalResponse:
-      title: GenerateCashFlowReport-PersonalResponse
       required:
         - id
         - customerType
@@ -21946,7 +21696,6 @@ components:
           example: inProgress
       description: ''
     GenerateVOE-PayrollReportResponse:
-      title: GenerateVOE-PayrollReportResponse
       required:
         - id
         - portfolioId
@@ -22019,7 +21768,6 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
       description: ''
     VOE-PayrollReportRecord:
-      title: VOE-PayrollReportRecord
       required:
         - id
         - portfolioId
@@ -22163,7 +21911,6 @@ components:
             income:
               payFrequency: Weekly
     PayrollVOEEmploymentHistory:
-      title: PayrollVOEEmploymentHistory
       required:
         - asOfDate
         - employerName
@@ -22198,7 +21945,6 @@ components:
           $ref: '#/components/schemas/PayrollVOEIncomeRecord'
       description: ''
     PayrollVOEIncomeRecord:
-      title: PayrollVOEIncomeRecord
       required:
         - payFrequency
       type: object
@@ -22215,7 +21961,6 @@ components:
           example: Weekly
       description: ''
     PayrollVOEReportConstraints:
-      title: PayrollVOEReportConstraints
       required:
         - payrollData
       type: object
@@ -22239,7 +21984,6 @@ components:
               value: '123456'
               shown: true
     PayrollVOEData:
-      title: PayrollVOEData
       required:
         - payrollDataRetrievalId
         - employerNames
@@ -22271,7 +22015,6 @@ components:
           - ACME INC
         reportId: abcdefghijkl-voiepayroll
     VOETransactionsRequestConstraints:
-      title: VOETransactionsRequestConstraints
       type: object
       properties:
         reportId:
@@ -22319,7 +22062,6 @@ components:
             value: PSC Finance
             shown: false
     GenerateVOE-TransactionsReportResponse:
-      title: GenerateVOE-TransactionsReportResponse
       required:
         - id
         - portfolioId
@@ -22425,7 +22167,6 @@ components:
         type: voeTransactions
         status: inProgress
     VOE-TransactionsReportRecord:
-      title: VOE-TransactionsReportRecord
       required:
         - id
         - portfolioId
@@ -22614,7 +22355,6 @@ components:
                         institutionTransactionId: '100000000'
                         category: Paycheck
     VOE-TransactionsReportInstitution:
-      title: VOE-TransactionsReportInstitution
       required:
         - id
         - name
@@ -22641,7 +22381,6 @@ components:
             $ref: '#/components/schemas/VOE-TransactionsReportAccount'
           description: An array of accounts
     VOE-TransactionsReportAccount:
-      title: VOE-TransactionsReportAccount
       required:
         - id
         - number
@@ -22699,7 +22438,6 @@ components:
             $ref: '#/components/schemas/VOE-TransactionsReportIncomeStreamRecord'
           description: A list of income stream records
     VOE-TransactionsReportIncomeStreamRecord:
-      title: VOE-TransactionsReportIncomeStreamRecord
       required:
         - id
         - name
@@ -22762,7 +22500,6 @@ components:
           description: A list of transaction records
       description: ''
     VOETReportTransactionsforIncomeStreams:
-      title: VOETReportTransactionsforIncomeStreams
       required:
         - id
         - postedDate
@@ -22808,7 +22545,6 @@ components:
           description: The categorization of the transaction.
           example: Paycheck
     PayStatEarningsCategorization-Type:
-      title: PayStatEarningsCategorization-Type
       enum:
         - bereavement
         - bonus
@@ -22828,7 +22564,6 @@ components:
       description: The categorization based on the earning line's description.
       example: bereavement
     AssetSummaryforPrequalificationReports:
-      title: AssetSummaryforPrequalificationReports
       required:
         - currentBalance
         - availableBalance
@@ -22858,7 +22593,6 @@ components:
           description: Beginning balance of account per the time period in the report
           example: -17795.6
     PrequalificationReportCRAAssetSummary:
-      title: PrequalificationReportCRAAssetSummary
       required:
         - type
         - availableBalance
@@ -22893,7 +22627,6 @@ components:
           description: Beginning balance of account per the time period in the report
           example: -17795.6
     PrequalificationReportAccountNon-CRA:
-      title: PrequalificationReportAccountNon-CRA
       required:
         - id
         - number
@@ -23018,7 +22751,6 @@ components:
           totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 0
           totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 0
     PrequalificationReportInstitutionNon-CRA:
-      title: PrequalificationReportInstitutionNon-CRA
       required:
         - id
         - name
