@@ -22,3 +22,8 @@ When updating the API specification:
 npx prettier --write --single-quote finicity.yaml
 ```
 4. Update/add tests to the [api-client-tests](./api-client-tests) project
+5. Run the tests using:
+```sh
+cd api-client-tests
+mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=***
+```
