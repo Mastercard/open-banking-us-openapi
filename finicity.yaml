@@ -65,7 +65,8 @@ paths:
         new one.
 
         * ⚠️ After five failed attempts to authenticate, your account is locked.
-        Contact support@finicity.com to get help resetting your account.
+        Contact [support@finicity.com](mailto:support@finicity.com) to get help
+        resetting your account.
       operationId: CreateToken
       requestBody:
         $ref: '#/components/requestBodies/CreateTokenRequest'
@@ -118,7 +119,7 @@ paths:
         Connect application completes, and more.
 
 
-        Note: Contact your Sales Account Team to set up the `experience`
+        Note: contact your Sales Account Team to set up the `experience`
         parameter.
 
          
@@ -144,9 +145,9 @@ paths:
         Connect Lite is a variation of Connect Full (`POST
         /connect/v2/generate`), which has a limited set of features.
 
-        * Sign in, user's credentials, and Multi-Factor Authentication (MFA).
+        * Sign in, user's credentials, and Multi-Factor Authentication (MFA)
 
-        * No user account management.
+        * No user account management
 
 
         The Connect Web SDK isn't a requirement when using Connect lite.
@@ -323,45 +324,11 @@ paths:
         parameter in your next request: `…&start=6&limit=5`.
       operationId: GetCustomers
       parameters:
-        - name: search
-          in: query
-          description: >-
-            The text you wish to match. Leave this empty if you wish to return
-            all customers. Must be URL-encoded (see Handling Spaces in Queries).
-          schema:
-            type: string
-            example: searchvalue
-        - name: username
-          in: query
-          description: Username for exact match. (Will return 0 or 1 records.)
-          schema:
-            $ref: '#/components/schemas/CustomerUsername'
-        - name: start
-          in: query
-          description:
-            Starting index for this page of results. The default value is 1.
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          description: >-
-            Maximum number of entries for this page of results. The default
-            value is 25.
-          schema:
-            type: integer
-            format: int64
-            default: 25
-            example: 25
-        - name: type
-          in: query
-          description: >-
-            "testing" or "active" to return only customers of that type, or
-            leave empty to return all customers.
-          schema:
-            $ref: '#/components/schemas/CustomerType'
+        - $ref: '#/components/parameters/CustomerUsernameParameter'
+        - $ref: '#/components/parameters/CustomerTypeParameter'
+        - $ref: '#/components/parameters/CustomerSearchParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomersResponse'
@@ -394,7 +361,7 @@ paths:
       tags:
         - Customers
       summary: Get Customer by ID
-      description: Retrieve a customer
+      description: Retrieve a customer by ID.
       operationId: GetCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -411,7 +378,7 @@ paths:
       tags:
         - Customers
       summary: Modify Customer by ID
-      description: Modify an enrolled customer
+      description: Modify an enrolled customer by ID.
       operationId: ModifyCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -569,7 +536,7 @@ paths:
         is not recommended.
 
 
-        Apps may call Refresh services for a specific customer when there is a
+        Apps may call "Refresh" services for a specific customer when there is a
         specific business case for the need of data that is up to date as of the
         moment. Please discuss with your account manager and systems engineer
         for further clarification.
@@ -624,7 +591,7 @@ paths:
       tags:
         - Accounts
       summary: Get Customer Account by ID
-      description: Get the specified account
+      description: Get a customer account by ID.
       operationId: GetCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -699,7 +666,7 @@ paths:
         is not recommended.
 
 
-        Apps may call Refresh services for a specific customer when there is a
+        Apps may call "Refresh" services for a specific customer when there is a
         specific business case for the need of data that is up to date as of the
         moment. Please discuss with your account manager and systems engineer
         for further clarification.
@@ -784,13 +751,13 @@ paths:
 
 
         * The institution's policy has changed, making more transactions
-        available.
+        available
 
         * Finicity has now added a longer transaction history support for the
-        institution.
+        institution
 
         * The first call encountered an error, and the resulting Aggregation
-        Ticket has now been fixed by the Finicity Support Team.
+        Ticket has now been fixed by the Finicity Support Team
 
 
         In these cases, the POST request can contain the parameter `force=true`
@@ -824,7 +791,7 @@ paths:
         institution.
 
 
-        Note: This is a premium service, billable per every successful API call.
+        Note: this is a premium service, billable per every successful API call.
 
 
         This service retrieves account data from the institution. This usually
@@ -929,7 +896,7 @@ paths:
             Match the text for the query. URL-encoded required. See Handling
             Spaces in Queries.
 
-            Note: To get a list of all FIs, leave the `search` parameter out of
+            Note: to get a list of all FIs, leave the `search` parameter out of
             the body of the API call.
 
             If the `search` parameter is in the body of the call but has no
@@ -1520,7 +1487,7 @@ paths:
         Statment API) to generate the VOIE - Paystub (with TXVerify) report.
 
 
-        Note: If you are using this endpoint to refresh the bank transactions,
+        Note: if you are using this endpoint to refresh the bank transactions,
         use the same assetId from the first report. A new paystub is not
         required unless the paystub is too old for underwriting requirements.
         Using the same assetId that was on the original report and the
@@ -1607,7 +1574,7 @@ paths:
         first report generated, including borrower's employment status as active
         or not.
          
-        Note: Lenders can only refresh this report one time in a 60-day period
+        Note: lenders can only refresh this report one time in a 60-day period
         starting from the date of the first report. Any further report refreshes
         will incur additional charges.
          
@@ -2223,7 +2190,7 @@ paths:
         This returns the loan payment details of the customer for a loan-type
         account.
 
-        Note: This is a premium service, billable per every successful API call.
+        Note: this is a premium service, billable per every successful API call.
       operationId: GetLoanPaymentDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2392,7 +2359,7 @@ paths:
         an ACH payment.
 
 
-        Note: This is a premium service, billable per every successful API call.
+        Note: this is a premium service, billable per every successful API call.
       operationId: GetAccountACHDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2968,7 +2935,7 @@ paths:
         Timestamps are in Unix Epoch time.
 
 
-        Note: This is a premium service, billable per every successful API call.
+        Note: this is a premium service, billable per every successful API call.
       operationId: GetAvailableBalance-Live
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2998,7 +2965,7 @@ paths:
         Timestamps are in Unix Epoch time.
 
 
-        Note: This is a premium service, billable per every successful API call.
+        Note: this is a premium service, billable per every successful API call.
         Enrollment is required.
       operationId: GetAvailableBalance
       parameters:
@@ -3811,6 +3778,29 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+    CustomerSearchParameter:
+      name: search
+      in: query
+      description: >-
+        The text you wish to match. Leave this empty if you wish to return all
+        customers. Must be URL-encoded (see also: "Handling Spaces in Queries").
+      schema:
+        type: string
+        example: searchvalue
+    CustomerUsernameParameter:
+      name: username
+      in: query
+      description: Username for exact match (will return 0 or 1 record)
+      schema:
+        $ref: '#/components/schemas/CustomerUsername'
+    CustomerTypeParameter:
+      name: type
+      in: query
+      description: >-
+        "testing" or "active" to return only customers of that type, or leave
+        empty to return all customers.
+      schema:
+        $ref: '#/components/schemas/CustomerType'
     InteractiveParameter:
       name: interactive
       in: header
@@ -3850,6 +3840,25 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ConsumerId'
+    StartParameter:
+      name: start
+      in: query
+      description: Starting index for this page of results
+      schema:
+        type: integer
+        format: int64
+        default: 1
+        example: 1
+    LimitParameter:
+      name: limit
+      in: query
+      description: >-
+        Maximum number of entries for this page of results
+      schema:
+        type: integer
+        format: int64
+        default: 25
+        example: 25
   schemas:
     ErrorMessage:
       required:
@@ -3890,27 +3899,29 @@ components:
           type: string
     PartnerId:
       type: string
-      description: Partner ID displayed in the Developer Dashboard
+      description:
+        Partner ID displayed in the [Developer
+        Dashboard](https://developer.finicity.com/admin)
       example: '1234583871234'
     ConsumerId:
       type: string
-      description: A Finicity consumer ID. See also, "Create Consumer"
+      description: A Finicity consumer ID. See also, "Create Consumer".
       example: '0bf46322c167b562e6cbed9d40e19a4c'
     CustomerId:
       type: string
-      description: A Finicity customer ID. See also, "Add Customer"
+      description: A Finicity customer ID. See also, "Add Customer".
       example: '1005061234'
     AccountId:
       type: string
       description: A Finicity account ID
       example: '5011648377'
     InstitutionId:
-      description: The ID of a Financial Institution.
+      description: The ID of a Financial Institution
       type: string
       example: '102105'
     InstitutionLoginId:
       type: string
-      description: An Institution Login ID (from the account record).
+      description: An Institution Login ID (from the account record)
       example: '1007302745'
     PartnerCredentials:
       required:
@@ -3922,7 +3933,9 @@ components:
           $ref: '#/components/schemas/PartnerId'
         partnerSecret:
           type: string
-          description: Partner Secret displayed in the Developer Dashboard
+          description:
+            Partner Secret displayed in the [Developer
+            Dashboard](https://developer.finicity.com/admin)
           example: aqJ5Ic4SEVx2IgDQ6oR4
     PartnerCredentialsWithNewSecret:
       required:
@@ -4149,7 +4162,7 @@ components:
         $ref: '#/components/schemas/Borrower'
       description: >-
         (MVS) Array of borrowers to pass the primary and joint borrower's
-        customer and consumer IDs.
+        customer and consumer IDs
     Borrower:
       required:
         - customerId
@@ -4217,7 +4230,7 @@ components:
       type: string
       description: >-
         The content type the webhook events will be sent in. Supported types:
-        `application/json` and `application/xml`
+        `application/json` and `application/xml`.
       default: application/json
       example: application/json
     WebhookData:
@@ -4248,7 +4261,7 @@ components:
         * MVS modules: financial, payroll, paystub
 
 
-        Note: The Finicity sales engineers (SE) help you set up a default
+        Note: the Finicity sales engineers (SE) help you set up a default
         experience for your company when you migrate to Connect 2.0. For each
         additional experience you create thereafter, they'll give you a unique
         ID. See [Generate 2.0 ConnectURL
@@ -4272,7 +4285,7 @@ components:
         completes.
 
 
-        Note: When the `singleUseUrl` and the `experience` parameters are passed
+        Note: when the `singleUseUrl` and the `experience` parameters are passed
         in the same call, the `singleUseUrl` value overrides the `singleUseUrl`
         value configured in the `experience` parameter.
       example: true
@@ -4290,7 +4303,7 @@ components:
         shown:
           type: boolean
           description:
-            When shown is `true`, the custom field will show on the PDF.
+            When shown is `true`, the custom field will show on the PDF
           example: true
     ReportCustomFields:
       type: array
@@ -4365,7 +4378,7 @@ components:
       description: >-
         Advanced options for configuration of which institutions to display in.
         See [Institution
-        Settings](https://docs.finicity.com/connect-institution-settings/)
+        Settings](https://docs.finicity.com/connect-institution-settings/).
     ConnectUrl:
       description: A Connect URL object
       required:
@@ -4389,7 +4402,7 @@ components:
       description: A generated Connect URL
       example: 'https://connect2.finicity.com?customerId=5025024821&institutionId=102105&origin=url&partnerId=2445583925753&signature=b5667164db7a9a0007b59267785c996ca3bc9ce97f2e72c98099cead76edfad9&timestamp=1648050761908&ttl=1648057961908&type=lite&webhookContentType=application%2Fjson'
     EmailOptions:
-      description: Configuration for the Connect email's sent to customers.
+      description: Configuration for the Connect email's sent to customers
       required:
         - to
       type: object
@@ -4397,16 +4410,16 @@ components:
         to:
           type: string
           description:
-            The email address for the customer receiving the Connect email.
+            The email address for the customer receiving the Connect email
           example: alex.salido@finicity.com
         from:
           type: string
           description:
-            The name of a person or business sending the Connect email.
+            The name of a person or business sending the Connect email
           example: test.lender@test.com
         supportPhone:
           type: string
-          description: The support phone number listed in the email.
+          description: The support phone number listed in the email
           example: 800-555-5555
         subject:
           type: string
@@ -4422,18 +4435,18 @@ components:
           example: Bob
         institutionName:
           type: string
-          description: The name of your company.
+          description: The name of your company
           example: Acme Lending
         institutionAddress:
           type: string
           description:
-            The institution address to appear in the footer of the email.
+            The institution address to appear in the footer of the email
           example: '222 Winipeg Drive SLC UT, 84109'
         signature:
           type: array
           items:
             type: string
-          description: A signature for the email.
+          description: A signature for the email
           example:
             - Cindy Mayfield
             - Senior Loan Officer
@@ -4497,7 +4510,7 @@ components:
       example: Awesome Budget App
     UnixDate:
       type: integer
-      description: A date in Unix epoch time (in seconds).
+      description: A date in Unix epoch time (in seconds)
       format: int64
       example: 1607450357
     Currency:
@@ -4753,6 +4766,9 @@ components:
           $ref: '#/components/schemas/UnixDate'
       description: Owner of a customer account
     CustomerAccount:
+      description: >-
+        A customer account represents a bank account such as a checking or
+        savings that the customer has added via the Connect interface.
       required:
         - id
         - number
@@ -4856,7 +4872,7 @@ components:
         displayPosition:
           type: integer
           description: >-
-            Display position of the account at the financial institution, 1
+            Display position of the account at the financial institution, "1"
             being the top listed account
           format: int32
           example: 2
@@ -4872,9 +4888,6 @@ components:
         marketSegment:
           type: string
           example: 'personal'
-      description: >-
-        A customer account represents a bank account such as a checking or
-        savings that the customer has added via the Connect interface.
     CustomerAccountPosition:
       description: Details for investment account holdings
       type: object
@@ -4929,7 +4942,7 @@ components:
           example: 914.2
         costBasis:
           type: number
-          description: The total cost of acquiring the ssecurity
+          description: The total cost of acquiring the security
           example: 925.5
         status:
           type: string
@@ -6520,7 +6533,7 @@ components:
             Instructions given to the customer before they are sent to the
             institution website to login for OAuth institutions.
 
-            Note: This helps the customer to provide the proper permission for
+            Note: this helps the customer to provide the proper permission for
             data needed for the application.
           example:
             - Account details
@@ -8744,7 +8757,7 @@ components:
                 category: Mobile Phone
                 country: USA
       description: >-
-        Note: See the main API page for important details on student loans
+        Note: see the main API page for important details on student loans
         (account type 402).
     CreateTxPushTestTransactionRequest:
       required:
