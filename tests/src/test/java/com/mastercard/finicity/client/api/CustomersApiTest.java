@@ -67,7 +67,7 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":14001,"message":"Customer not found."}
             logApiException(e);
-            assertErrorCodeEquals("14001", e);
+            assertErrorCodeEquals(14001, e);
             assertErrorMessageEquals("Customer not found.", e);
         }
     }
@@ -80,7 +80,7 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":50051,"message":"No registered partner applications found."}
             logApiException(e);
-            assertErrorCodeEquals("50051", e);
+            assertErrorCodeEquals(50051, e);
             assertErrorMessageEquals("No registered partner applications found.", e);
         }
     }
@@ -154,7 +154,7 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":14001,"message":"Customer not found."}
             logApiException(e);
-            assertErrorCodeEquals("14001", e);
+            assertErrorCodeEquals(14001, e);
             assertErrorMessageEquals("Customer not found.", e);
         }
     }
