@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static com.mastercard.finicity.client.test.BaseTest.PARTNER_ID;
-import static com.mastercard.finicity.client.test.BaseTest.PARTNER_SECRET;
 import static com.mastercard.finicity.client.test.BaseTest.logApiException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,23 +21,34 @@ public class AuthInterceptor implements Interceptor {
     String token;
     LocalDateTime tokenExpiryTime;
     protected final static AuthenticationApi authenticationApi = new AuthenticationApi(BaseTest.apiClient);
-    protected final static String FINICITY_APP_TOKEN = "Finicity-App-Token";
+
+    String PARTNER_ID;
+    String PARTNER_SECRET;
+    String APP_KEY;
+
+    public AuthInterceptor(String partnerId, String partnerSecret, String appKey) {
+        PARTNER_ID = partnerId;
+        PARTNER_SECRET = partnerSecret;
+        APP_KEY = appKey;
+    }
 
     @NotNull
     public Response intercept(@NotNull Chain chain) throws IOException {
-        Request request = chain.request();
+        Request.Builder requestBuilder = chain.request()
+                .newBuilder()
+                .addHeader("Finicity-App-Key", this.APP_KEY);
+
         if (chain.request().url().toString().contains("authentication")) {
-            return chain.proceed(request);
+            return chain.proceed(requestBuilder.build());
         }
 
         if (this.tokenExpiryTime == null || this.tokenExpiryTime.isBefore(LocalDateTime.now())) {
             this.refreshToken();
         }
 
-        request = chain.request().newBuilder()
-                .addHeader(FINICITY_APP_TOKEN, this.token)
-                .build();
-        return chain.proceed(request);
+        requestBuilder = requestBuilder
+                .addHeader("Finicity-App-Token", this.token);
+        return chain.proceed(requestBuilder.build());
     }
 
     private void refreshToken() {

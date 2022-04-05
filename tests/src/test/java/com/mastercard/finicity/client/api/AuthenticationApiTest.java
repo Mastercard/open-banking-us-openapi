@@ -3,12 +3,12 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.PartnerCredentials;
 import com.mastercard.finicity.client.model.PartnerCredentialsWithNewSecret;
-import com.mastercard.finicity.client.test.BaseAppKeyTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AuthenticationApiTest extends BaseAppKeyTest {
+class AuthenticationApiTest extends BaseTest {
 
     private final AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
 

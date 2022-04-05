@@ -3,7 +3,7 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerUpdate;
 import com.mastercard.finicity.client.model.NewCustomer;
-import com.mastercard.finicity.client.test.BaseAppKeyTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static com.mastercard.finicity.client.test.ModelFactory.randomStr;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CustomersApiTest extends BaseAppKeyTest {
+class CustomersApiTest extends BaseTest {
 
     private final static CustomersApi api = new CustomersApi(apiClient);
 

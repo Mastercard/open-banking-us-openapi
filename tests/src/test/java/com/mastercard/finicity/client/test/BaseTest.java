@@ -37,7 +37,7 @@ public abstract class BaseTest {
     protected static void beforeAll() {
         // Prism
         // apiClient.setBasePath("http://localhost:4010");
-        authInterceptor = new AuthInterceptor();
+        authInterceptor = new AuthInterceptor(PARTNER_ID, PARTNER_SECRET, APP_KEY);
 
         // Client logging
         apiClient.setDebugging(true);

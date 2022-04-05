@@ -3,13 +3,13 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccounts;
 import com.mastercard.finicity.client.test.AccountUtils;
-import com.mastercard.finicity.client.test.BaseAppKeyTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AccountsApiTest extends BaseAppKeyTest {
+class AccountsApiTest extends BaseTest {
 
     private final static AccountsApi api = new AccountsApi(apiClient);
     private static String existingInstitutionLoginId;
