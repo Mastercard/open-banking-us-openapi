@@ -2,7 +2,7 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.ConsumerUpdate;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.BaseAppKeyTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ConsumersApiTest extends BaseAppKeyAppTokenTest {
+class ConsumersApiTest extends BaseAppKeyTest {
 
     private final static ConsumersApi api = new ConsumersApi(apiClient);
     private static String existingConsumerId;
@@ -19,7 +19,6 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
     protected static void beforeAll() {
         try  {
             // Try to create a consumer for the given customer id
-            BaseAppKeyAppTokenTest.beforeAll();
             var response = api.createConsumer(CUSTOMER_ID, ModelFactory.newConsumer());
             assertEquals(CUSTOMER_ID, response.getCustomerId());
             existingConsumerId = response.getId();

@@ -22,12 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public abstract class BaseTest {
 
-    protected final static String PARTNER_ID = System.getProperty("partnerId");
-    protected final static String PARTNER_SECRET = System.getProperty("partnerSecret");
-    protected final static String APP_KEY = System.getProperty("appKey");
-    protected final static String CUSTOMER_ID = System.getProperty("customerId");
+    protected final static String PARTNER_ID = "2445583938587";
+    protected final static String PARTNER_SECRET = "F9eyczmwpZRTlEuuZgOK";
+
+    protected final static String APP_KEY = "9e94e55377c00c35fa7cc953362ccb1a";
+    protected final static String CUSTOMER_ID = "5026773445";
 
     protected final static ApiClient apiClient = Configuration.getDefaultApiClient();
+    protected static AuthInterceptor authInterceptor;
 
     protected final static List<String> createdCustomerIds = new ArrayList<>();
     protected final static CustomersApi customersApi = new CustomersApi(apiClient);
@@ -36,11 +38,18 @@ public abstract class BaseTest {
     protected static void beforeAll() {
         // Prism
         // apiClient.setBasePath("http://localhost:4010");
+        authInterceptor = new AuthInterceptor();
 
         // Client logging
         apiClient.setDebugging(true);
         apiClient.setConnectTimeout(240000);
         apiClient.setReadTimeout(240000);
+        apiClient.setHttpClient(
+                apiClient.getHttpClient()
+                        .newBuilder()
+                        .addInterceptor(authInterceptor)
+                        .build()
+        );
     }
 
     protected static void logApiException(ApiException e) {
