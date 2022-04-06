@@ -30,10 +30,10 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 [![](./res/dashboard.png)](./res/dashboard.png?raw=true#gh-light-mode-only)
 [![](./res/dashboard-dark.png)](./res/dashboard.png?raw=true#gh-dark-mode-only)
 
-* Before running the tests, you must:
-  1. Call `addTestingCustomer` and note the **Customer ID** returned
-  2. Use [Finicity Connect](https://docs.finicity.com/) and `generateConnectUrlV2`. Open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
-  3. Call `refreshCustomerAccounts`
+* Before running the tests, you must run [setup.sh](./bin/setup.sh). It will call:
+  1. `addTestingCustomer`
+  2. `generateConnectUrlV2` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
+  3. `refreshCustomerAccounts`
 
 [![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)
 [![](./res/connect-for-tests-dark.png)](./res/connect-for-tests.png?raw=true#gh-dark-mode-only)
