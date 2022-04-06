@@ -44,7 +44,7 @@ public abstract class BaseTest {
         apiClient.setConnectTimeout(240000);
         apiClient.setReadTimeout(240000);
         apiClient.setHttpClient(
-                apiClient.getHttpClient()
+                Configuration.getDefaultApiClient().getHttpClient()
                         .newBuilder()
                         .addInterceptor(authInterceptor)
                         .build()
