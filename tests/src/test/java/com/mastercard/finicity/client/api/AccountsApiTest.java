@@ -13,7 +13,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
 
     private final static AccountsApi api = new AccountsApi(apiClient);
     private static String existingInstitutionLoginId;
-    private static String existingInstitutionId;
+    private static Integer existingInstitutionId;
     private static String existingAccountId;
 
     @BeforeAll
@@ -128,7 +128,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void getCustomerAccountsByInstitutionTest_UnknownInstitution() {
         try {
-            api.getCustomerAccountsByInstitution(CUSTOMER_ID, "1234567");
+            api.getCustomerAccountsByInstitution(CUSTOMER_ID, 1234567);
             fail();
         } catch (ApiException e) {
             // HTTP 404

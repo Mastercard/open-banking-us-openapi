@@ -32,6 +32,7 @@ tags:
   - name: Accounts
     description: Fetch or refresh customer accounts
   - name: Institutions
+    description: Search and fetch financial institutions
   - name: Verify Assets
   - name: Verify Income and Employment
   - name: Bank Statements
@@ -319,11 +320,6 @@ paths:
         text is found in the customer's username or any combination of
         `firstName` and `lastName` fields. If no search text is provided, return
         all customers.
-
-
-        If the value of `moreAvailable` in the response is `true`, you can
-        retrieve the next page of results by increasing the value of the start
-        parameter in your next request: `…&start=6&limit=5`.
       operationId: GetCustomers
       parameters:
         - $ref: '#/components/parameters/CustomerUsernameParameter'
@@ -969,246 +965,111 @@ paths:
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Certified Institutions With RSSD"
-      description: Get Certified Institution List w/RSSD
+      summary: Get Certified Institutions With RSSD
+      description: Search for certified financial institutions w/RSSD.
       operationId: GetCertifiedInstitutionsWithRSSD
       parameters:
-        - name: search
-          in: query
-          description: 'Search term, `*` returns all institutions'
-          required: true
-          schema:
-            type: string
-            example: finbank
-        - name: start
-          in: query
-          description: 'Page (Default: 1)'
-          required: false
-          schema:
-            type: integer
-            format: int32
-            example: 1
-            default: 1
-        - name: limit
-          in: query
-          description: 'Limits the number of results returned (max: 1000)'
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 25
-        - name: type
-          in: query
-          description: >-
-            Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
-            accountOwner.
-          required: true
-          schema:
-            type: string
-            example: voa
+        - $ref: '#/components/parameters/InstitutionSearchParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
+        - $ref: '#/components/parameters/ProductTypeParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetCertifiedInstitutionsResponse'
+          $ref: '#/components/responses/GetCertifiedInstitutionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /institution/v2/institutions:
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Institutions"
-      description: >-
-        Search for all the connected financial institutions (FI) that we
-        support. This returns all the FIs that match the search text for the
-        financial institution's `name` field.
-
-        To get a list of all FIs, leave the `search` parameter out of the body
-        of the API call. If the `search` parameter is in the body of the call
-        but has no value, then the call returns an error.
-
-        If the value for `moreAvailable` in the response is true, you can
-        retrieve the next page of results by increasing the value of the `start`
-        parameter in your next request:
-
-
-        1st Request 
-
-        …start=1&limit=25 (first 25 from list 1-25)
-
-
-        2nd Request
-
-        …start=2&limit=25 (next 25 from list 26-51)
+      summary: Get Institutions
+      description: Search for financial institutions.
       operationId: GetInstitutions
       parameters:
-        - name: search
-          in: query
-          required: false
-          description: >-
-            Match the text for the query. URL-encoded required. See Handling
-            Spaces in Queries.
-
-            Note: to get a list of all FIs, leave the `search` parameter out of
-            the body of the API call.
-
-            If the `search` parameter is in the body of the call but has no
-            value, then the call returns an error.
-          schema:
-            type: string
-            example: finbank
-        - name: start
-          in: query
-          required: false
-          description: >-
-            The starting page number of records returned. The default is 1.
-
-            Example: If the limit for each call is 25, then start=1 returns 1-25
-            records. If start=2 then records 26-51 are returned.
-          schema:
-            type: integer
-            format: int32
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          required: false
-          description: >-
-            The maximum number of records per page returned for the search
-            request. The default is 25 records per page.
-          schema:
-            type: integer
-            format: int32
-            default: 25
-            example: 25
+        - $ref: '#/components/parameters/InstitutionSearchParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
+        - $ref: '#/components/parameters/ProductTypeParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetInstitutionsResponse'
+          $ref: '#/components/responses/GetInstitutionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /institution/v2/certifiedInstitutions:
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Certified Institutions"
-      description: Search for institutions by certified product.
+      summary: 'Get Certified Institutions'
+      description: Search for financial institutions by certified product.
       operationId: GetCertifiedInstitutions
       parameters:
-        - name: search
-          in: query
-          description:
-            Text to match or `*` to return all supported institutions.
-          required: true
-          schema:
-            type: string
-            example: finbank
-        - name: start
-          in: query
-          required: false
-          description: >-
-            Starting index for this page of results (ignored if returning all
-            institutions). This will default to 1.
-          schema:
-            type: integer
-            format: int32
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          required: false
-          description: >-
-            Maximum number of entries for this page of results (ignored if
-            returning all institutions). This will default to 25. Limits the
-            number of results returned to 1000.
-          schema:
-            type: integer
-            format: int32
-            default: 25
-            example: 25
-        - name: type
-          in: query
-          description: >-
-            Product types: transAgg, ach, stateAgg, voi, voa, aha, availBalance,
-            accountOwner.
-          schema:
-            type: string
-            example: voa
+        - $ref: '#/components/parameters/InstitutionSearchParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
+        - $ref: '#/components/parameters/ProductTypeParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetCertifiedInstitutionsResponse'
+          $ref: '#/components/responses/GetCertifiedInstitutionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/institution/v2/institutions/{institutionId}':
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Institution"
-      description: Get details for the specified institution
+      summary: Get Institution by ID
+      description: Get financial institution details by ID.
       operationId: GetInstitution
       parameters:
         - $ref: '#/components/parameters/InstitutionIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Institution'
+          $ref: '#/components/responses/GetInstitutionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/institution/v2/institutions/{institutionId}/branding':
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Institution Branding"
-      description: >-
-        This endpoint returns the branding information for an Institution given
-        the `id`
+      summary: Get Institution Branding by ID
+      description: Return the branding information for a financial institution.
       operationId: GetInstitutionBranding
       parameters:
         - $ref: '#/components/parameters/InstitutionIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InstitutionBrandingResponse'
+          $ref: '#/components/responses/GetInstitutionBrandingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          description: The requested entity was not found
-          content:
-            application/json:
-              schema: {}
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /institution/v2/institutions/subscription:
     get:
       tags:
         - Institutions
-      summary: "\U0001F6A7 Get Institution Subscription V2"
+      summary: Get Institution Subscription V2
       description: >-
         Use to subscribe to a webhook service that provides notification details
-        for a specific financial institution (FI) only when there are changes in
-        the product status and product certifications. You can enable or delete
-        the subscription and edit the webhook URL as needed.
+        for a specific financial institution when there are changes in the
+        product status and product certifications. You can enable or delete the
+        subscription and edit the webhook URL as needed.
       operationId: GetInstitutionSubscriptionV2
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetInstitutionsResponse'
+          $ref: '#/components/responses/GetInstitutionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voi':
@@ -1755,7 +1616,7 @@ paths:
         Report to check if the report is finished.
          
         While the report's generating, Get Report returns a minimal report with
-        a status of InProgress.  The loop repeats every 20 seconds until Get
+        a status of InProgress. The loop repeats every 20 seconds until Get
         Report returns a different status.
       operationId: RefreshVOIE-PayrollReport
       parameters:
@@ -2034,31 +1895,21 @@ paths:
         There is no limit for the size of the window between fromDate and
         toDate; however, the maximum number of transactions returned on one page
         is 1000.
-
-
-        If the value of `moreAvailable` in the response is true, you can
-        retrieve the next page of results by increasing the value of the start
-        parameter in your next request:
-
-          …&start=6&limit=5
       operationId: GetCustomerTransactions(All)
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: fromDate
           in: query
           description: >-
-            Starting timestamp for the date range (required) (see Handling Dates
-            and Times)
+            Starting timestamp for the date range
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 1588365858
+            $ref: '#/components/schemas/UnixDate'
         - name: toDate
           in: query
           description: >-
             Ending timestamp for the date range (required, must be greater than
-            fromDate) (see Handling Dates and Times)
+            fromDate)
           required: true
           schema:
             $ref: '#/components/schemas/UnixDate'
@@ -2154,23 +2005,13 @@ paths:
         There is no limit for the size of the window between fromDate and
         toDate; however, the maximum number of transactions returned on one page
         is 1000.
-
-
-        If the value of `moreAvailable` in the response is true, you can
-        retrieve the next page of results by increasing the value of the start
-        parameter in your next request:
-
-
-        …&start=6&limit=5
       operationId: GetCustomerAccountTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
         - name: fromDate
           in: query
-          description: >-
-            Starting timestamp for the date range (required) (see Handling Dates
-            and Times)
+          description: Starting timestamp for the date range
           required: true
           schema:
             $ref: '#/components/schemas/UnixDate'
@@ -2178,7 +2019,7 @@ paths:
           in: query
           description: >-
             Ending timestamp for the date range (required, must be greater than
-            fromDate) (see Handling Dates and Times)
+            fromDate)
           required: true
           schema:
             $ref: '#/components/schemas/UnixDate'
@@ -2279,18 +2120,18 @@ paths:
         - name: fromDate
           in: query
           description: >-
-            The `fromDate` param is an Epoch Timestamp (in seconds).  It must be
-            10 digits long and within two years of the present day.    Example:
-            ?fromDate=1494449017.   If fromDate is not used or it's longer than
+            The `fromDate` param is an Epoch Timestamp (in seconds). It must be
+            10 digits long and within two years of the present day.   Example:
+            ?fromDate=1494449017.  If fromDate is not used or it's longer than
             10 digits, the transaction report history defaults to 24 months of
-            data.    (Optional)
+            data.   (Optional)
           schema:
             $ref: '#/components/schemas/UnixDate'
         - name: toDate
           in: query
           description: >-
             The ending timestamp for the date range. The value must be greater
-            than fromDate. See Handling Dates and Times.
+            than fromDate.
           required: true
           schema:
             $ref: '#/components/schemas/UnixDate'
@@ -2390,7 +2231,7 @@ paths:
         Returns a portfolio of most recently generated report for each report
         type for a specified customer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
-        generated report for the type will be returned.  
+        generated report for the type will be returned. 
          
         HTTP 404 status means that there is no data for the customer or
         portfolio. HTTP 200 (OK) status means that the call was successful.
@@ -2428,7 +2269,7 @@ paths:
         - TxPush
       summary: "\U0001F6A7 Subscribe To TxPush Notifications"
       description: >-
-        Register a client app's TxPUSH Listener to receive TxPUSH notifications
+        Register a client app's TxPush Listener to receive TxPush notifications
         related to the given account.
 
 
@@ -2436,16 +2277,16 @@ paths:
         account and one with class transaction. Account events are sent when
         values change in the account's fields (such as balance or interestRate).
         Transaction events are sent whenever a new transaction is posted for the
-        account. For institutions that do not provide TxPUSH services,
+        account. For institutions that do not provide TxPush services,
         notifications are sent as soon as Finicity finds a new transaction or
         new account data through regular aggregation processes.
 
 
         The listener's URL must be secure (https) for any real-world account. In
-        addition, the client'sTxPUSH Listener will need to be verified. HTTP and
+        addition, the client'sTxPush Listener will need to be verified. HTTP and
         HTTPS connections are only allowed on the standard ports 80 (HTTP) and
         443 (HTTPS). The use of other ports will result with the call failing.
-        For additional details on this process please see, TxPUSH Listener
+        For additional details on this process please see, TxPush Listener
         Service.
       operationId: SubscribeToTxPushNotifications
       parameters:
@@ -2494,7 +2335,7 @@ paths:
         Returns a portfolio of most recently generated report for each report
         type for a specified consumer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
-        generated report for the type will be returned.  
+        generated report for the type will be returned. 
          
         HTTP 404 status means that there is no data for the consumer or
         portfolio. HTTP 200 (OK) status means that the call was successful.
@@ -2654,7 +2495,7 @@ paths:
           in: path
           description: >-
             The ID of the specific subscription to be deleted, returned from
-            Enable TxPUSH Notifications
+            Enable TxPush Notifications
           required: true
           schema:
             type: integer
@@ -3010,7 +2851,7 @@ paths:
           required: false
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
-            10 digits long and within two years of the present day.  If fromDate
+            10 digits long and within two years of the present day. If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
           schema:
@@ -3043,8 +2884,8 @@ paths:
 
 
         This report is provided under FCRA rules, with Finicity acting as the
-        CRA (Consumer Reporting Agency).  If an individual account is included
-        in the report - for example, with an individual acting as an personal
+        CRA (Consumer Reporting Agency). If an individual account is included in
+        the report - for example, with an individual acting as an personal
         guarantor on the loan - then this version of the report should be used.
         In case of an adverse action on the loan where the decision was based on
         this report, then the borrower can be referred to the Finicity Consumer
@@ -3091,7 +2932,7 @@ paths:
           required: false
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
-            10 digits long and within two years of the present day.  If fromDate
+            10 digits long and within two years of the present day. If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
           schema:
@@ -3635,7 +3476,7 @@ components:
           schema:
             $ref: '#/components/schemas/RegisteredApplication'
     SetCustomerAppIDResponse:
-      description: The app was successfully assigned.
+      description: The app was successfully assigned
       content:
         application/json:
           schema: {}
@@ -3657,6 +3498,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CustomerAccounts'
+    GetCertifiedInstitutionsResponse:
+      description: Institutions were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CertifiedInstitutions'
+    GetInstitutionResponse:
+      description: Institution was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstitutionWrapper'
+    GetInstitutionsResponse:
+      description: Institutions were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Institutions'
+    GetInstitutionBrandingResponse:
+      description: Institution branding was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BrandingWrapper'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3917,23 +3782,41 @@ components:
       name: start
       in: query
       required: false
-      description: Starting index for this page of results
+      description: Index of the page of results to return
       schema:
         type: integer
-        format: int64
         default: 1
         example: 1
     LimitParameter:
       name: limit
       in: query
       required: false
-      description: >-
-        Maximum number of entries for this page of results
+      description: Maximum number of results per page
       schema:
         type: integer
-        format: int64
         default: 25
+        maximum: 1000
         example: 25
+    ProductTypeParameter:
+      name: type
+      in: query
+      description:
+        'A product type: "transAgg", "ach", "stateAgg", "voi", "voa", "aha",
+        "availBalance", "accountOwner"'
+      required: false
+      schema:
+        type: string
+        example: voa
+    InstitutionSearchParameter:
+      name: search
+      in: query
+      description:
+        Search term (financial institution `name` field). Leave empty for all
+        FIs.
+      required: false
+      schema:
+        type: string
+        example: finbank
   schemas:
     ErrorMessage:
       required:
@@ -3980,23 +3863,91 @@ components:
       example: '1234583871234'
     ConsumerId:
       type: string
-      description: A Finicity consumer ID. See also, "Create Consumer".
+      description: 'A Finicity consumer ID. See also: "Create Consumer".'
       example: '0bf46322c167b562e6cbed9d40e19a4c'
     CustomerId:
       type: string
-      description: A Finicity customer ID. See also, "Add Customer".
+      description: 'A Finicity customer ID. See also: "Add Customer".'
       example: '1005061234'
     AccountId:
       type: string
       description: A Finicity account ID
       example: '5011648377'
     InstitutionId:
-      description: The ID of a Financial Institution
+      description: The ID of a financial institution
+      type: integer
+      example: 4222
+    InstitutionName:
       type: string
-      example: '102105'
+      description: The name of the institution
+      example: 'FinBank'
+    InstitutionTransAgg:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the Transaction Aggregation
+        product
+
+        `false`: The institution is decertified for the Transaction Aggregation
+        product
+      example: true
+    InstitutionAch:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the ACH product
+
+        `false`: The institution is decertified for the ACH product
+      example: true
+    InstitutionStateAgg:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the Statement Aggregation
+        product
+
+        `false`: The institution is decertified for the Statement Aggregation
+        product
+      example: false
+    InstitutionVoi:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the VOI product
+
+        `false`: The institution is decertified for the VOI product
+      example: true
+    InstitutionVoa:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the VOA product
+
+        `false`: The institution is decertified for the VOA product
+      example: true
+    InstitutionAha:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the Account History Aggregation
+        product
+
+        `false`: The institution is decertified for the Account History
+        Aggregation product
+      example: false
+    InstitutionAvailableBalance:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the Account Balance Check (ABC)
+        product
+
+        `false`: The institution is decertified for the Account Balance Check
+        product
+      example: false
+    InstitutionAccountOwner:
+      type: boolean
+      description: >-
+        `true`: The institution is certified for the Account Owner product
+
+        `false`: The institution is decertified for the Account Owner product
+      example: true
     InstitutionLoginId:
       type: string
-      description: An Institution Login ID (from the account record)
+      description: An institution login ID (from the account record)
       example: '1007302745'
     PartnerCredentials:
       required:
@@ -4111,7 +4062,8 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         institutionLoginId:
-          # Used in type "fix" in order to pull up a fix flow for a specific set of accounts under one Institution Login ID
+          # Used in type "fix" in order to pull up a fix flow for a specific set of
+          # accounts under one institution login ID
           $ref: '#/components/schemas/InstitutionLoginId'
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
@@ -4299,7 +4251,8 @@ components:
       description: >-
         The publicly available URL you want to be notified with events as the
         user progresses through the application. See [Connect Webhook
-        Event](https://docs.finicity.com/connect-webhooks/) for event details.
+        Event](https://docs.finicity.com/connect-and-mvs-webhooks/) for event
+        details.
       example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
     WebhookContentType:
       type: string
@@ -4312,14 +4265,14 @@ components:
       type: object
       description: >-
         Allows additional identifiable information to be inserted into the
-        payload of connect webhook events. See this article for
-        [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+        payload of connect webhook events. See also: [Custom
+        Webhooks](https://docs.finicity.com/custom-webhooks/).
     WebhookHeaders:
       type: object
       description: >-
         Allows additional identifiable information to be included as headers of
-        connect webhook event. See this article for
-        [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+        connect webhook event. See also: [Custom
+        Webhooks](https://docs.finicity.com/custom-webhooks/).
     Experience:
       type: string
       description: >-
@@ -4339,8 +4292,8 @@ components:
         Note: the Finicity sales engineers (SE) help you set up a default
         experience for your company when you migrate to Connect 2.0. For each
         additional experience you create thereafter, they'll give you a unique
-        ID. See [Generate 2.0 ConnectURL
-        APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
+        ID. See [Generate 2.0 Connect URL
+        APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1).
                     
 
         Experience values options: 
@@ -4548,6 +4501,14 @@ components:
       type: string
       description: A street address
       example: 434 W Ascension Way
+    AddressLine1:
+      type: string
+      description: An address line 1
+      example: 434 W Ascension Way
+    AddressLine2:
+      type: string
+      description: An address line 2
+      example: 'Suite #200'
     City:
       type: string
       description: A city
@@ -4556,6 +4517,10 @@ components:
       type: string
       description: A state
       example: UT
+    Country:
+      type: string
+      description: A country code
+      example: USA
     ZipCode:
       type: string
       description: A ZIP code
@@ -4563,7 +4528,7 @@ components:
     PhoneNumber:
       type: string
       description: A phone number
-      example: '6786786786'
+      example: '1-800-986-3343'
     Suffix:
       type: string
       description: A person suffix
@@ -4585,8 +4550,7 @@ components:
       example: '2581'
     ApplicationName:
       type: string
-      description:
-        The application name of the application assigned to the customer
+      description: The name of the application assigned to the customer
       example: Awesome Budget App
     UnixDate:
       type: integer
@@ -4595,6 +4559,18 @@ components:
         and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    MoreResultsAvailable:
+      type: boolean
+      description: If `true`, you can retrieve the next page of results
+      example: true
+    DisplayingResults:
+      type: integer
+      description: Number of results returned
+      example: 2
+    FoundResults:
+      type: integer
+      description: Total number of results matching search criteria
+      example: 200
     Currency:
       type: string
       description: A currency code
@@ -4693,20 +4669,11 @@ components:
       type: object
       properties:
         found:
-          type: integer
-          description: Total number of records matching search criteria
-          format: int32
-          example: 7
+          $ref: '#/components/schemas/FoundResults'
         displaying:
-          type: integer
-          description: Number of records returned
-          format: int32
-          example: 2
+          $ref: '#/components/schemas/DisplayingResults'
         moreAvailable:
-          type: boolean
-          description:
-            If this response does not contain the last record in the result set
-          example: true
+          $ref: '#/components/schemas/MoreResultsAvailable'
         customers:
           type: array
           items:
@@ -5243,10 +5210,8 @@ components:
           description: (Mortgage/Loan) The amount required to payoff the loan
           example: 45567.98
         payoffAmountDate:
-          type: integer
-          description: (Mortgage/Loan) Date of final payment
-          format: int64
-          example: 1588797048
+          # (Mortgage/Loan) Date of final payment
+          $ref: '#/components/schemas/UnixDate'
         originalMaturityDate:
           # Mortgage/Loan
           $ref: '#/components/schemas/UnixDate'
@@ -5592,19 +5557,9 @@ components:
             interface.
           example: 'https://www.finicity.com/'
         ownerAddressLine1:
-          type: string
-          description: >-
-            Address Line 1 for the business entity that owns the app.
-            Information for registration purposes only and not given to the end
-            user.
-          example: 434 W Ascension Way
+          $ref: '#/components/schemas/AddressLine1'
         ownerAddressLine2:
-          type: string
-          description: >-
-            Address Line 2 for the business entity that owns the app.
-            Information for registration purposes only and not given to the end
-            user.
-          example: 'Suite #200'
+          $ref: '#/components/schemas/AddressLine2'
         ownerCity:
           type: string
           description: >-
@@ -5773,7 +5728,72 @@ components:
           type: boolean
           description: '`false` indicates registration is still pending'
           example: true
-    GetInstitutionsResponse:
+    Branding:
+      type: object
+      properties:
+        logo:
+          type: string
+          description: >-
+            File path of the institution's logo. For white backgrounds designed
+            at 375 x 72, has built in spacing around it to normalize brand
+            sizing.
+          example: >-
+            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/logo.svg
+        alternateLogo:
+          type: string
+          description: >-
+            File path of the institution's alternate logo. For colored
+            backgrounds designed at 375 x 72 has built in spacing around it to
+            normalize brand sizing.
+          example: >-
+            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/alternateLogo.svg
+        icon:
+          type: string
+          description: >-
+            File path of the institution's icon. For search results designed at
+            40 x 40.
+          example: >-
+            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/icon.svg
+        primaryColor:
+          type: string
+          description: Hex code for the institution's primary color
+          example: '#0167AE'
+        tile:
+          type: string
+          description: >-
+            File path of institution name logo. For popular banks designed at
+            160 x 72.
+          example: >-
+            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/tile.svg
+      description:
+        All assets are SVGs so can be slightly resized without any issues.
+    BrandingWrapper:
+      required:
+        - branding
+      type: object
+      properties:
+        branding:
+          $ref: '#/components/schemas/Branding'
+    InstitutionAddress:
+      type: object
+      description: The address of a financial institution
+      properties:
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        country:
+          $ref: '#/components/schemas/Country'
+        postalCode:
+          $ref: '#/components/schemas/ZipCode'
+        addressLine1:
+          $ref: '#/components/schemas/AddressLine1'
+        addressLine2:
+          $ref: '#/components/schemas/AddressLine2'
+    Institutions:
+      description:
+        A list of Finicity financial institutions from the standard "Get
+        Institutions" API.
       required:
         - found
         - displaying
@@ -5783,100 +5803,163 @@ components:
       type: object
       properties:
         found:
-          type: integer
-          description: Total number of results found
-          format: int32
-          example: 4041
+          $ref: '#/components/schemas/FoundResults'
         displaying:
-          type: integer
-          description: Display the results count
-          format: int32
-          example: 1
+          $ref: '#/components/schemas/DisplayingResults'
         moreAvailable:
-          type: boolean
-          description: >-
-            True: There are more institutions, matching the search parameters,
-            that you can display.
-          example: true
+          $ref: '#/components/schemas/MoreResultsAvailable'
         createdDate:
-          type: integer
-          description: Date the request was created
-          format: int64
-          example: 1586288664
+          $ref: '#/components/schemas/UnixDate'
         institutions:
+          description: A list of institutions
           maxItems: 1000
           minItems: 0
           type: array
           items:
             $ref: '#/components/schemas/Institution'
-          description: An array of institutions
-          example:
-            - name: FinBank
-              id: '101732'
-              transAgg: true
-              ach: true
-              stateAgg: false
-              voi: true
-              voa: true
-              aha: false
-              availBalance: false
-              accountOwner: true
-              accountTypeDescription: TestFI
-              phone: ''
-              urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
-              urlLogonApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
-              oauthEnabled: false
-              urlForgotPassword: 'https://developer.finicity.com/admin/account/password/new'
-              urlOnlineRegistration: 'https://www.finicity.com/signup/'
-              class: testfi
-              specialText: >-
-                Please enter your FinBank Username and Password required for
-                login.
-              specialInstructions:
-                - Account details
-                - Balances and transactions
-                - Personal and account ownership info
-              address:
-                city: Murray
-                state: Utah
-                country: USA
-                postalCode: '84020'
-                addressLine1: 5555 Northwest Way
-                addressLine2: ''
-              currency: USD
-              email: finbank.ds5@finicity.com
-              status: online
-              newInstitutionId: '102105'
-              branding:
-                logo: >-
-                  https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
-                alternateLogo: >-
-                  https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/alternateLogo.svg
-                icon: >-
-                  https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
-                primaryColor: '#1B3E4A'
-                tile: >-
-                  https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-              oauthInstitutionId: '102105'
-      description: >-
-        A list of Finicity financial institutions from the standard get
-        institutions response
-    NetMonthly:
+    InstitutionWrapper:
+      type: object
       required:
-        - month
-        - net
+        - institution
+      properties:
+        institution:
+          $ref: '#/components/schemas/Institution'
+    Institution:
+      description: A financial institution
+      required:
+        - id
+        - transAgg
+        - ach
+        - stateAgg
+        - voi
+        - voa
+        - aha
+        - availBalance
+        - accountOwner
+        - oauthEnabled
+        - currency
+        - status
       type: object
       properties:
-        month:
-          type: integer
-          description: Timestamp for the first day of this month
-          format: int64
-          example: 1522562400
-        net:
-          type: number
+        id:
+          $ref: '#/components/schemas/InstitutionId'
+        name:
+          $ref: '#/components/schemas/InstitutionName'
+        transAgg:
+          $ref: '#/components/schemas/InstitutionTransAgg'
+        ach:
+          $ref: '#/components/schemas/InstitutionAch'
+        stateAgg:
+          $ref: '#/components/schemas/InstitutionStateAgg'
+        voi:
+          $ref: '#/components/schemas/InstitutionVoi'
+        voa:
+          $ref: '#/components/schemas/InstitutionVoa'
+        aha:
+          $ref: '#/components/schemas/InstitutionAha'
+        availBalance:
+          $ref: '#/components/schemas/InstitutionAvailableBalance'
+        accountOwner:
+          $ref: '#/components/schemas/InstitutionAccountOwner'
+        accountTypeDescription:
+          type: string
+          description: >-
+            Values: Banking, Investments, Credit Cards/Accounts, Workplace
+            Retirement, Mortgages and Loans, Insurance
+          example: 'Workplace Retirement'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        urlHomeApp:
+          type: string
+          description: The URL of the institution's primary home page
+          example: 'https://www.example.com/home'
+        urlLogonApp:
+          type: string
+          description: The URL of the institution's login page
+          example: 'https://www.example.com/login'
+        oauthEnabled:
+          type: boolean
+          description: '`true`: The institution is an OAuth connection'
+          example: true
+        urlForgotPassword:
+          type: string
+          description: Institution's forgot password page
+          example: 'https://www.example.com/forgotPassword.do'
+        urlOnlineRegistration:
+          type: string
+          description: Institution's signup page
+          example: 'https://www.example.com/signup'
+        class:
+          type: string
+          description: Institution's class
+          example: 'retirement'
+        specialText:
+          type: string
+          description: Special instructions given to customers for login
+          example:
+            'Please enter your Principal Financial - Retirement (Personal)
+            Username and Password.'
+        specialInstructions:
+          type: array
+          items:
+            type: string
+          description: >-
+            Instructions given to the customer before they are sent to the
+            institution website to login for OAuth institutions.
+
+            Note: this helps the customer to provide the proper permission for
+            data needed for the application.
+          example:
+            - Account details
+            - Balances and transactions
+            - Personal and account ownership info
+        address:
+          $ref: '#/components/schemas/InstitutionAddress'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        status:
+          type: string
           description:
-            'Total income during the given month, across all income streams'
-          example: 2004.77
+            "Institution's status: online, offline, maintenance, testing"
+          example: online
+        newInstitutionId:
+          $ref: '#/components/schemas/InstitutionId'
+          # The new id for the financial institution's ID you are replacing. This is the same as the `oauthInstitutionId`
+          # field, which will eventually be replaced by this field.
+        branding:
+          $ref: '#/components/schemas/Branding'
+        oauthInstitutionId:
+          # The new ID for the OAuth institution's ID you are replacing.
+          $ref: '#/components/schemas/InstitutionId'
+    CertifiedInstitutions:
+      description:
+        A list of Finicity financial institutions from the standard "Get
+        Certified Institutions" API.
+      required:
+        - found
+        - displaying
+        - moreAvailable
+        - requestedDate
+        - institutions
+      type: object
+      properties:
+        found:
+          $ref: '#/components/schemas/FoundResults'
+        displaying:
+          $ref: '#/components/schemas/DisplayingResults'
+        moreAvailable:
+          $ref: '#/components/schemas/MoreResultsAvailable'
+        requestedDate:
+          $ref: '#/components/schemas/UnixDate'
+        institutions:
+          description: A list of institutions
+          maxItems: 1000
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/CertifiedInstitution'
     CertifiedInstitution:
       required:
         - name
@@ -5891,62 +5974,59 @@ components:
         - accountOwner
       type: object
       properties:
-        name:
-          type: string
-          description: Institution's name
-          example: FinBank
         id:
           $ref: '#/components/schemas/InstitutionId'
+        name:
+          $ref: '#/components/schemas/InstitutionName'
         transAgg:
-          type: boolean
-          description: Trans Agg Certification
-          example: true
+          $ref: '#/components/schemas/InstitutionTransAgg'
         ach:
-          type: boolean
-          description: ACH Certification
-          example: true
+          $ref: '#/components/schemas/InstitutionAch'
         stateAgg:
-          type: boolean
-          description: State Agg Certification
-          example: false
+          $ref: '#/components/schemas/InstitutionStateAgg'
         voi:
-          type: boolean
-          description: VOI Certification
-          example: true
+          $ref: '#/components/schemas/InstitutionVoi'
         voa:
-          type: boolean
-          description: VOA Certification
-          example: true
+          $ref: '#/components/schemas/InstitutionVoa'
         aha:
-          type: boolean
-          description: AHA Certification
-          example: false
+          $ref: '#/components/schemas/InstitutionAha'
         availBalance:
-          type: boolean
-          description: Account Balance Check (ABC) Certification
-          example: false
+          $ref: '#/components/schemas/InstitutionAvailableBalance'
         accountOwner:
-          type: boolean
-          description: Account Owner Certification
-          example: true
+          $ref: '#/components/schemas/InstitutionAccountOwner'
         childInstitutions:
           minItems: 0
           type: array
           items:
             $ref: '#/components/schemas/ChildInstitution'
-          example:
-            - rssd: 167565
-              parentRSSD: 451965
-              name: 'FinBank, LTD.'
-              institutionId: '102104'
-            - rssd: 2362458
-              parentRSSD: 451965
-              name: 'FinBank, National Association'
-              institutionId: '102105'
-            - rssd: 1225761
-              parentRSSD: 451965
-              name: FinBank National
-              institutionId: '102106'
+    ChildInstitution:
+      required:
+        - rssd
+        - parentRSSD
+        - name
+        - institutionId
+      type: object
+      properties:
+        rssd:
+          type: integer
+          description: >-
+            The RSSD ID is a unique identifier assigned to financial
+            institutions by the Federal Reserve. While the length of the RSSD ID
+            varies by institution, it cannot exceed 10 numerical digits.
+          format: int64
+          example: 490535
+        parentRSSD:
+          type: integer
+          description: >-
+            The RSSD ID is a unique identifier assigned to financial
+            institutions by the Federal Reserve. While the length of the RSSD ID
+            varies by institution, it cannot exceed 10 numerical digits.
+          format: int64
+          example: 953393
+        name:
+          $ref: '#/components/schemas/InstitutionName'
+        institutionId:
+          $ref: '#/components/schemas/InstitutionId'
     AccountDetail:
       required:
         - interestMarginBalance
@@ -5982,6 +6062,20 @@ components:
           type: number
           description: The available balance for the account
           example: 1000
+    NetMonthly:
+      required:
+        - month
+        - net
+      type: object
+      properties:
+        month:
+          # Timestamp for the first day of this month
+          $ref: '#/components/schemas/UnixDate'
+        net:
+          type: number
+          description:
+            Total income during the given month, across all income streams
+          example: 2004.77
     PortfolioReport:
       title: PortfolioReport
       required:
@@ -6064,14 +6158,14 @@ components:
           type: string
           description: >-
             A timestamp showing when the transaction was posted or cleared by
-            the institution (see Handling Dates and Times). Nullable & not
-            required for student loan transaction data.
+            the institution. Nullable & not required for student loan
+            transaction data.
           example: '1588888169'
         transactionDate:
           type: string
           description: >-
             An optional timestamp showing when the transaction occurred, as
-            provided by the institution (see Handling Dates and Times).
+            provided by the institution.
           example: '1588801769'
         effectiveDate:
           type: string
@@ -6087,8 +6181,7 @@ components:
           type: string
           description: >-
             A timestamp showing when the transaction was added to the Finicity
-            system. (See Handling Dates and Times.) This value usually is not
-            interesting outside of Finicity.
+            system. This value usually is not interesting outside of Finicity.
           example: '1588974631'
         type:
           $ref: '#/components/schemas/TransactionType'
@@ -6298,94 +6391,6 @@ components:
               type: voa
               status: success
               createdDate: 1588008615
-    GetCertifiedInstitutionsResponse:
-      required:
-        - found
-        - displaying
-        - moreAvailable
-        - createdDate
-        - institutions
-      type: object
-      properties:
-        found:
-          type: integer
-          description: Total number of results found
-          format: int32
-          example: 4041
-        displaying:
-          type: integer
-          description: Displaying count
-          format: int32
-          example: 5
-        moreAvailable:
-          type: boolean
-          description: >-
-            Indicates if there are more institutions to display that match the
-            parameters
-          example: true
-        createdDate:
-          type: integer
-          description: Date the request was created
-          format: int32
-          example: 1586288664
-        institutions:
-          maxItems: 1000
-          minItems: 0
-          type: array
-          items:
-            $ref: '#/components/schemas/CertifiedInstitution'
-          description: Results
-          example:
-            - name: FinBank
-              id: '101732'
-              transAgg: true
-              ach: true
-              stateAgg: false
-              voi: true
-              voa: true
-              aha: false
-              availBalance: false
-              accountOwner: true
-            - name: FinBank M
-              id: 170830
-              transAgg: true
-              ach: true
-              stateAgg: true
-              voi: true
-              voa: true
-              aha: true
-              availBalance: false
-              accountOwner: true
-            - name: FinBank P
-              id: 170681
-              transAgg: true
-              ach: false
-              stateAgg: true
-              voi: true
-              voa: true
-              aha: false
-              availBalance: false
-              accountOwner: true
-            - name: FinBank Billable
-              id: 170776
-              transAgg: true
-              ach: true
-              stateAgg: true
-              voi: true
-              voa: true
-              aha: true
-              availBalance: false
-              accountOwner: true
-            - name: FinBank O
-              id: 102219
-              transAgg: true
-              ach: false
-              stateAgg: false
-              voi: false
-              voa: false
-              aha: false
-              availBalance: false
-              accountOwner: true
     TxVerifyInterview:
       required:
         - assetId
@@ -6560,12 +6565,8 @@ components:
             positive values, withdrawals and debits are negative values.
           example: 22.21
         postedDate:
-          type: integer
-          description: >-
-            A timestamp showing when the transaction was posted or cleared by
-            the institution (see Handling Dates and Times)
-          format: int64
-          example: 1582286400
+          # When the transaction was posted or cleared by the institution.
+          $ref: '#/components/schemas/UnixDate'
         description:
           type: string
           description: >-
@@ -6694,226 +6695,16 @@ components:
       type: object
       properties:
         startDate:
-          type: integer
-          description: postedDate of the first deposit transaction
-          format: int64
-          example: 1577986990
+          # Date of the first deposit transaction
+          $ref: '#/components/schemas/UnixDate'
         stopDate:
-          type: integer
-          description: >-
-            postedDate of the final deposit transaction (omitted if status is
-            active)
-          format: int64
-          example: 1587986990
+          # Date of the final deposit transaction (omitted if status is active)
+          $ref: '#/components/schemas/UnixDate'
         days:
           type: integer
           description: Number of days between the recurring deposits
           format: int32
           example: 14
-      example:
-        startDate: 1577986990
-        stopDate: 1587986990
-        days: 14
-    Institution:
-      required:
-        - id
-        - transAgg
-        - ach
-        - stateAgg
-        - voi
-        - voa
-        - aha
-        - availBalance
-        - accountOwner
-        - oauthEnabled
-        - currency
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/InstitutionId'
-        name:
-          type: string
-          description: The name of the institution
-        transAgg:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the Transaction Aggregation
-            product.
-
-            `false`: The institution is decertified for the Transaction
-            Aggregation product
-          example: true
-        ach:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the ACH product.
-
-            `false`: The institution is decertified for the ACH product.
-          example: true
-        stateAgg:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the Statement Aggregation
-            product. 
-
-            `false`: The institution is decertified for the Statement
-            Aggregation product
-          example: false
-        voi:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the VOI product.
-
-            `false`: The institution is decertified for the VOI product.
-          example: true
-        voa:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the VOA product.
-
-            `false`: The institution is decertified for the VOA product.
-          example: true
-        aha:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the Account History
-            Aggregation product. 
-
-            `false`: The institution is decertified for the Account History
-            Aggregation product
-          example: false
-        availBalance:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the Account Balance Check
-            (ABC) product.
-
-            `false`: The institution is decertified for the Account Balance
-            Check product.
-          example: false
-        accountOwner:
-          type: boolean
-          description: >-
-            `true`: The institution is certified for the Account Owner product.
-
-            `false`: The institution is decertified for the Account Owner
-            product.
-          example: true
-        accountTypeDescription:
-          type: string
-          description: >-
-            Values: Banking, Investments, Credit Cards/Accounts, Workplace
-            Retirement, Mortgages and Loans, Insurance
-        phone:
-          type: string
-          description: The institution's primary phone number
-        urlHomeApp:
-          type: string
-          description: The URL of the institution's primary home page
-        urlLogonApp:
-          type: string
-          description: The URL of the institution's login page
-        oauthEnabled:
-          type: boolean
-          description: '`true`: The institution is an OAuth connection.'
-        urlForgotPassword:
-          type: string
-          description: Institution's forgot password page
-        urlOnlineRegistration:
-          type: string
-          description: Institution's signup page
-        class:
-          type: string
-          description: Institution's class
-        specialText:
-          type: string
-          description: Special instructions given to customer for login
-        specialInstructions:
-          type: array
-          items:
-            type: string
-          description: >-
-            Instructions given to the customer before they are sent to the
-            institution website to login for OAuth institutions.
-
-            Note: this helps the customer to provide the proper permission for
-            data needed for the application.
-          example:
-            - Account details
-            - Balances and transactions
-            - Personal and account ownership info
-        address:
-          $ref: '#/components/schemas/InstitutionAddress'
-        currency:
-          type: string
-          description: Institution's currency
-        email:
-          type: string
-          description: The institution's primary contact email
-          example: finbank.ds5@finicity.com
-        status:
-          type: string
-          description:
-            "Institution's status: online, offline, maintenance, testing"
-          example: online
-        newInstitutionId:
-          $ref: '#/components/schemas/InstitutionId'
-          # The new id for the financial institution's ID you are replacing. This is the same as the `oauthInstitutionId`
-          # field, which will eventually be replaced by this field.
-        branding:
-          $ref: '#/components/schemas/GetInstitutions-InstitutionBranding'
-        oauthInstitutionId:
-          # The new ID for the OAuth institution's ID you are replacing.
-          $ref: '#/components/schemas/InstitutionId'
-      description: A financial institution's Finicity registered details
-      example:
-        name: FinBank
-        id: '101732'
-        transAgg: true
-        ach: true
-        stateAgg: false
-        voi: true
-        voa: true
-        aha: false
-        availBalance: false
-        accountOwner: true
-        accountTypeDescription: TestFI
-        phone: ''
-        urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
-        urlLogonApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
-        oauthEnabled: true
-        urlForgotPassword: 'https://developer.finicity.com/admin/account/password/new'
-        urlOnlineRegistration: 'https://www.finicity.com/signup/'
-        class: testfi
-        specialText:
-          Please enter your FinBank Username and Password required for login.
-        specialInstructions:
-          - Account details
-          - Balances and transactions
-          - Personal and account ownership info
-        address:
-          city: Murray
-          state: Utah
-          country: USA
-          postalCode: '83020'
-          addressLine1: 5555 Northwest Way
-          addressLine2: ''
-        currency: USD
-        email: finbank.ds5@finicity.com
-        status: online
-        newInstitutionId: '102105'
-        branding:
-          logo: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
-          alternateLogo: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/alternateLogo.svg
-          icon: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
-          primaryColor: '#1B3E4A'
-          tile: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-        oauthInstitutionId: '102105'
     AuditableReport:
       required:
         - id
@@ -6977,17 +6768,11 @@ components:
           description: Title of the report
           example: Finicity Verification of Assets
         startDate:
-          type: integer
-          description:
-            The postedDate of the earliest transaction analyzed for this report
-          format: int64
-          example: 1572625469
+          # Date of the earliest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         endDate:
-          type: integer
-          description:
-            The postedDate of the latest transaction analyzed for this report
-          format: int64
-          example: 1588350269
+          # Date of the latest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         days:
           type: integer
           description: Number of days covered by the report
@@ -7256,36 +7041,6 @@ components:
           example: success
         createdDate:
           $ref: '#/components/schemas/UnixDate'
-    ChildInstitution:
-      required:
-        - rssd
-        - parentRSSD
-        - name
-        - institutionId
-      type: object
-      properties:
-        rssd:
-          type: integer
-          description: >-
-            The RSSD ID is a unique identifier assigned to financial
-            institutions by the Federal Reserve. While the length of the RSSD ID
-            varies by institution, it cannot exceed 10 numerical digits
-          format: int32
-          example: 167565
-        parentRSSD:
-          type: integer
-          description: >-
-            The RSSD ID is a unique identifier assigned to financial
-            institutions by the Federal Reserve. While the length of the RSSD ID
-            varies by institution, it cannot exceed 10 numerical digits
-          format: int32
-          example: 451965
-        name:
-          type: string
-          description: The name of the institution
-          example: 'WELLS FARGO BANK, LTD.'
-        institutionId:
-          $ref: '#/components/schemas/InstitutionId'
     AssetSummary:
       required:
         - type
@@ -7385,12 +7140,8 @@ components:
           description: The cleared balance of the account as-of balanceDate
           example: 501.24
         balanceDate:
-          type: integer
-          description: >-
-            A timestamp showing when the balance was captured (see Handling
-            Dates and Times)
-          format: int64
-          example: 1588350276
+          # Date for when the balance was captured
+          $ref: '#/components/schemas/UnixDate'
         averageMonthlyBalance:
           type: number
           description: The average monthly balance of this account
@@ -7485,42 +7236,6 @@ components:
         extractEarnings: true
         extractDeductions: false
         extractDirectDeposit: true
-    InstitutionAddress:
-      type: object
-      properties:
-        city:
-          type: string
-          description: The city of the institution's headquarters
-          example: Murray
-        state:
-          type: string
-          description:
-            Two-letter code for the state of the institution's headquarters
-          example: UT
-        country:
-          type: string
-          description: The country of the institution's headquarters
-          example: USA
-        postalCode:
-          type: string
-          description: The postal code of the institution's headquarters
-          example: '84123'
-        addressLine1:
-          type: string
-          description: Address information for the institution's headquarters
-          example: 434 W Ascension Way
-        addressLine2:
-          type: string
-          description: Address information for the institution's headquarters
-          example: '#200'
-      description: The address for the financial institution
-      example:
-        city: Murray
-        state: Utah
-        country: USA
-        postalCode: '84020'
-        addressLine1: 555 Northwest Way
-        addressLine2: ''
     TxPushSubscriptionRequest:
       required:
         - callbackUrl
@@ -7529,7 +7244,7 @@ components:
         callbackUrl:
           type: string
           description: >-
-            The TxPUSH Listener URL to receive TxPUSH notifications (must use
+            The TxPush Listener URL to receive TxPush notifications (must use
             https protocol for any real-world account)
           example: 'https://www.mydomain.com/txpush/listener'
     Status:
@@ -7723,12 +7438,7 @@ components:
           format: int64
           example: 102122887150
         createdDate:
-          type: integer
-          description: >-
-            A timestamp of when the transaction was added (see Handling Dates
-            and Times)
-          format: int64
-          example: 1588974631
+          $ref: '#/components/schemas/UnixDate'
       description: Response for TxPush test transaction
     ACHDetails:
       required:
@@ -7808,17 +7518,11 @@ components:
           description: Title of the report
           example: Finicity Asset Ready Report (non-CRA)
         startDate:
-          type: integer
-          description:
-            The postedDate of the earliest transaction analyzed for this report
-          format: int64
-          example: 1572625469
+          # Date of the earliest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         endDate:
-          type: integer
-          description:
-            The postedDate of the latest transaction analyzed for this report
-          format: int64
-          example: 1588350269
+          # Date of the latest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         days:
           type: integer
           description: Number of days covered by the report
@@ -8106,12 +7810,8 @@ components:
           description: The cleared balance of the account as-of balanceDate
           example: 501.24
         balanceDate:
-          type: integer
-          description: >-
-            A timestamp showing when the balance was captured (see Handling
-            Dates and Times)
-          format: int64
-          example: 1588350276
+          # Date for when the balance was captured
+          $ref: '#/components/schemas/UnixDate'
         averageMonthlyBalance:
           type: number
           description: The average monthly balance of this account
@@ -8227,17 +7927,11 @@ components:
           description: Title of the report
           example: Finicity Asset Ready Report (CRA)
         startDate:
-          type: integer
-          description:
-            The postedDate of the earliest transaction analyzed for this report
-          format: int64
-          example: 1572625469
+          # Date of the earliest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         endDate:
-          type: integer
-          description:
-            The postedDate of the latest transaction analyzed for this report
-          format: int64
-          example: 1588350269
+          # Date of the latest transaction analyzed for this report
+          $ref: '#/components/schemas/UnixDate'
         days:
           type: integer
           description: Number of days covered by the report
@@ -8986,19 +8680,11 @@ components:
       type: object
       properties:
         found:
-          type: string
-          description: Total number of records matching search criteria
-          example: '250'
+          $ref: '#/components/schemas/FoundResults'
         displaying:
-          type: string
-          description: Number of records in this response
-          example: '3'
+          $ref: '#/components/schemas/DisplayingResults'
         moreAvailable:
-          type: boolean
-          description: >-
-            true if this response does not contain the last record in the result
-            set
-          example: true
+          $ref: '#/components/schemas/MoreResultsAvailable'
         fromDate:
           $ref: '#/components/schemas/UnixDate'
         toDate:
@@ -9071,7 +8757,7 @@ components:
           example: pending
         postedDate:
           # An optional timestamp for the transaction's posted date value for
-          # this transaction (see Handling Dates and Times). Timestamp must be
+          # this transaction. Timestamp must be
           # no more than 6 months from the current date.
           $ref: '#/components/schemas/UnixDate'
         transactionDate:
@@ -9501,58 +9187,6 @@ components:
           type: string
           description: 'inProgress, success, or failure'
           example: inProgress
-    Branding:
-      required:
-        - logo
-        - alternateLogo
-        - icon
-        - primaryColor
-        - tile
-      type: object
-      properties:
-        logo:
-          type: string
-          description: >-
-            File path of the institution's logo.  For white backgrounds designed
-            at 375 x 72, has built in spacing around it to normalize brand
-            sizing.
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/logo.svg
-        alternateLogo:
-          type: string
-          description: >-
-            File path of the instiitution's alternate logo.  For colored
-            backgrounds designed at 375 x 72 has built in spacing around it to
-            normalize brand sizing
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/alternateLogo.svg
-        icon:
-          type: string
-          description: >-
-            File path of the Institution's icon.  For search results designed at
-            40 x 40
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/icon.svg
-        primaryColor:
-          type: string
-          description: Hex code for the Institution's primary color.
-          example: '#0167AE'
-        tile:
-          type: string
-          description: >-
-            File path of institution name logo.  For popular banks designed at
-            160 x 72
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/5/tile.svg
-      description:
-        All assets are SVGs so can be slightly resized without any issues.
-    InstitutionBrandingResponse:
-      required:
-        - branding
-      type: object
-      properties:
-        branding:
-          $ref: '#/components/schemas/Branding'
     PayrollData:
       required:
         - ssn
@@ -9739,9 +9373,8 @@ components:
           format: int32
           example: 0
         currency:
-          type: string
-          description: The currency code of the balance values provided
-          example: USD
+          # The currency code of the balance values provided
+          $ref: '#/components/schemas/Currency'
     GetAvailableBalanceResponse:
       required:
         - id
@@ -9787,51 +9420,8 @@ components:
           format: int32
           example: 0
         currency:
-          type: string
-          description: The currency of the account
-          example: USD
-    GetInstitutions-InstitutionBranding:
-      type: object
-      properties:
-        logo:
-          type: string
-          description:
-            The logo of the institution that's used for white backgrounds
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
-        alternateLogo:
-          type: string
-          description: >-
-            The alternate logo of the institution that's used for branded or
-            colored backgrounds.
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/alternateLogo.svg
-        icon:
-          type: string
-          description: The branding icon of the institution
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
-        primaryColor:
-          type: string
-          description: The branding's primary color for the institution
-          example: '#1B3E4A'
-        tile:
-          type: string
-          description: >-
-            The branding tile that displays on the Connect Search for a bank
-            page.
-          example: >-
-            https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-      example:
-        logo: >-
-          https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
-        alternateLogo: >-
-          https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/alternateLogo.svg
-        icon: >-
-          https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
-        primaryColor: '#1B3E4A'
-        tile: >-
-          https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
+          # The currency of the account
+          $ref: '#/components/schemas/UnixDate'
     VOIEWithStatementData:
       required:
         - assetIds
@@ -10405,12 +9995,8 @@ components:
           description: The cleared balance of the account as-of balanceDate
           example: 501.24
         balanceDate:
-          type: integer
-          description: >-
-            A timestamp showing when the balance was captured (see Handling
-            Dates and Times)
-          format: int64
-          example: 1588350276
+          # Date for when the balance was captured
+          $ref: '#/components/schemas/UnixDate'
         averageMonthlyBalance:
           type: number
           description: The average monthly balance of this account
