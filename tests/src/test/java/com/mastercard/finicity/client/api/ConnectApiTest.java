@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
-    private final AccountsApi accountApi = new AccountsApi();
+    private final AccountsApi accountApi = new AccountsApi(apiClient);
 
-    private final static String FINBANK_A = "102105";
+    private final static int FINBANK_A = 102105;
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
 
     @BeforeAll

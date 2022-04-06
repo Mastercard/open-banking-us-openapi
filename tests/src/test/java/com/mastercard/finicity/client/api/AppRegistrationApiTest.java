@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AppRegistrationApiTest extends BaseTest {
 
-    private final AppRegistrationApi api = new AppRegistrationApi();
+    private final AppRegistrationApi api = new AppRegistrationApi(apiClient);
     private final static AccountsApi accountApi = new AccountsApi(apiClient);
 
     @Test
