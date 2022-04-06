@@ -1,12 +1,12 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
+public class InstitutionsApiTest extends BaseTest {
 
     private final InstitutionsApi api = new InstitutionsApi(apiClient);
 
