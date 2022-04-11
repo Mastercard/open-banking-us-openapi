@@ -23,11 +23,13 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 #### Things to Know
 
 * The [integration test project](./tests) generates an API client library from [finicity.yaml](./finicity.yaml) ([OpenAPI Generator](https://openapi-generator.tech/) is used for that)
-* A [free Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**
+* A [free Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**:
+![](./res/dashboard.png)
 * Before running the tests, you must:
-   * Call `addTestingCustomer` and note the **Customer ID** returned
-   * Use `generateConnectUrlV2` to add to this customer all accounts from the test [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3)
-   * Call `refreshCustomerAccounts`
+   1. Call `addTestingCustomer` and note the **Customer ID** returned
+   2. Use `generateConnectUrlV2` to add to this customer all accounts from the test [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3) using [Finicity Connect](https://docs.finicity.com/):
+   ![](./res/connect-for-tests.png)
+   3. Call `refreshCustomerAccounts`
 
 #### Run Tests Locally
 
