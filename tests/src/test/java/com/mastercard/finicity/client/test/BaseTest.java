@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public abstract class BaseTest {
 
-    protected final static String PARTNER_ID = "2445583940045";
-    protected final static String PARTNER_SECRET = "hSrfy3LGVfY6BM3qJgbm";
-    protected final static String APP_KEY = "84f6316aa0940aa8197542abbc75042a";
-    protected final static String CUSTOMER_ID = "5027032304";
+    protected final static String PARTNER_ID = System.getProperty("partnerId");
+    protected final static String PARTNER_SECRET = System.getProperty("partnerSecret");
+    protected final static String APP_KEY = System.getProperty("appKey");
+    protected final static String CUSTOMER_ID = System.getProperty("customerId");
 
     protected final static ApiClient apiClient = Configuration.getDefaultApiClient();
     protected static AuthInterceptor authInterceptor;
