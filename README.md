@@ -4,7 +4,7 @@
 
 ## Overview
 
-The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/), along with a suite of integration tests using the [Finicity Test Drive](https://signup.finicity.com/).
+The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/), along with a suite of integration tests using the [Finicity Test Drive](https://signup.finicity.com/) and a generated API client.
 
 ## Workflows
 
@@ -24,16 +24,16 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 ## Tests
 #### Things to Know
 
-* The [integration test project](./tests) generates an API client library from [finicity.yaml](./finicity.yaml) ([OpenAPI Generator](https://openapi-generator.tech/) is used for that)
+* The [integration test project](./tests) generates an API client library from the API specification: [finicity.yaml](./finicity.yaml) (OpenAPI Generator is used for that)
 * A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
 
 [![](./res/dashboard.png)](./res/dashboard.png?raw=true#gh-light-mode-only)
 [![](./res/dashboard-dark.png)](./res/dashboard.png?raw=true#gh-dark-mode-only)
 
-* Before running the tests, you must run [setup.sh](./bin/setup.sh). It will call:
-  1. `addTestingCustomer`
-  2. `generateConnectUrlV2` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
-  3. `refreshCustomerAccounts`
+* Before running the tests, you need a **Customer ID**. For that, run [setup.sh](./bin/setup.sh) and use the output of the script in the next sections. This script will call:
+  * `addTestingCustomer`
+  * `generateConnectUrlV2` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
+  * `refreshCustomerAccounts`
 
 [![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)
 [![](./res/connect-for-tests-dark.png)](./res/connect-for-tests.png?raw=true#gh-dark-mode-only)
@@ -44,7 +44,7 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 2. Run `cd tests && mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***`
 2. Expected result: :heavy_check_mark:
 
-#### Run Tests In GitHub
+#### Run Tests in GitHub
 
 1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
 2. Go to **Settings** > **Secrets** > **Actions**
@@ -62,4 +62,4 @@ When updating the Finicity API specification:
 
 ## Support
 
-:love_letter: Contact us here: https://www.finicity.com/contact/
+:love_letter: Contact us [here](https://www.finicity.com/contact/)
