@@ -43,9 +43,12 @@ tags:
     description: Generate income and employment reports asynchronously
   - name: Bank Statements
     description: Fetch account statements and generate reports asynchronously
+  - name: Transactions
+    description:
+      Fetch customer and account transactions and generate reports
+      asynchronously
   - name: Reports
     description: Fetch generated reports when ready
-  - name: Transactions
   - name: Payments
   - name: Liabilities
   - name: Portfolios
@@ -1558,9 +1561,8 @@ paths:
         successful generation of the Statement Report. 
 
 
-        A Report Consumer must be created for the given Customer (using Create
-        Report Consumer) before calling this service. If no Report Consumer has
-        been created, the service will return HTTP 400 Bad Request.
+        A report consumer must be created for the given customer before calling
+        this API (see "Consumers").
       operationId: GenerateStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1578,7 +1580,7 @@ paths:
     get:
       tags:
         - Transactions
-      summary: "\U0001F6A7 Get Customer Transactions (All)"
+      summary: Get All Customer Transactions
       description: >-
         Get all transactions available for this customer within the given date
         range, across all accounts. This service supports paging and sorting by
@@ -1592,10 +1594,10 @@ paths:
         Transactions for Account.
 
 
-        There is no limit for the size of the window between fromDate and
-        toDate; however, the maximum number of transactions returned on one page
-        is 1000.
-      operationId: GetCustomerTransactions(All)
+        There is no limit for the size of the window between `fromDate` and
+        `toDate`, however, the maximum number of transactions returned on one
+        page is 1000.
+      operationId: GetAllCustomerTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: fromDate
@@ -1642,21 +1644,10 @@ paths:
             type: string
             default: desc
             example: desc
-        - name: includePending
-          in: query
-          required: false
-          description: true to include pending transactions if available.
-          schema:
-            type: boolean
-            default: false
-            example: false
+        - $ref: '#/components/parameters/IncludePendingParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetTransactionsResponse'
+          $ref: '#/components/responses/GetCustomerTransactionsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1665,25 +1656,15 @@ paths:
     get:
       tags:
         - Transactions
-      summary: "\U0001F6A7 Get Customer Transaction"
+      summary: Get Customer Transaction by ID
       description: Get details for the specified transaction.
       operationId: GetCustomerTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: transactionId
-          in: path
-          description: The transaction to be retrieved
-          required: true
-          schema:
-            type: string
-            example: '102122887150'
+        - $ref: '#/components/parameters/TransactionIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Transaction'
+          $ref: '#/components/responses/GetCustomerTransactionResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1692,7 +1673,7 @@ paths:
     get:
       tags:
         - Transactions
-      summary: "\U0001F6A7 Get Customer Account Transactions"
+      summary: Get Customer Account Transactions
       description: >-
         Get all transactions available for this customer account within the
         given date range. This service supports paging and sorting by
@@ -1706,9 +1687,9 @@ paths:
         Verification service Load Historic Transactions for Account.
 
 
-        There is no limit for the size of the window between fromDate and
-        toDate; however, the maximum number of transactions returned on one page
-        is 1000.
+        There is no limit for the size of the window between `fromDate` and
+        `toDate`, however, the maximum number of transactions returned on one
+        page is 1000.
       operationId: GetCustomerAccountTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1756,21 +1737,10 @@ paths:
             type: string
             default: desc
             example: desc
-        - name: includePending
-          in: query
-          required: false
-          description: true to include pending transactions if available.
-          schema:
-            type: boolean
-            default: false
-            example: false
+        - $ref: '#/components/parameters/IncludePendingParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetTransactionsResponse'
+          $ref: '#/components/responses/GetCustomerTransactionsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1779,7 +1749,7 @@ paths:
     post:
       tags:
         - Transactions
-      summary: "\U0001F6A7 Generate Transactions Report"
+      summary: Generate Transactions Report
       description: >-
         Generate a Transaction Report for specified accounts under the given
         customer. This service retrieves up to 24 months of transaction history
@@ -1791,12 +1761,11 @@ paths:
         successful generation of the Transactions Report. 
 
 
-        A Report Consumer must be created for the given Customer (using Create
-        Report Consumer) before calling this service. If no Report Consumer has
-        been created, the service will return HTTP 400 Bad Request.
+        A report consumer must be created for the given customer before calling
+        this API (see "Consumers").
 
 
-        There cannot be more than 24 months between fromDate and toDate.
+        There cannot be more than 24 months between `fromDate` and `toDate`.
       operationId: GenerateTransactionsReport
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
@@ -1815,28 +1784,16 @@ paths:
           in: query
           description: >-
             The ending timestamp for the date range. The value must be greater
-            than fromDate.
+            than `fromDate`.
           required: true
           schema:
             $ref: '#/components/schemas/UnixDate'
-        - name: includePending
-          in: query
-          required: false
-          description: >-
-            True: Include pending transactions in the report. False: Set by
-            default.
-          schema:
-            type: boolean
-            example: true
+        - $ref: '#/components/parameters/IncludePendingParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
         '202':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateTransactionsReportResponse'
+          $ref: '#/components/responses/GenerateTransactionsReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2374,9 +2331,8 @@ paths:
         is inaccurate.
 
 
-        A Report Consumer must be created for the given Customer before calling
-        this service. If no Report Consumer has been created, the service will
-        return HTTP 400 Bad Request.
+        A report consumer must be created for the given customer before calling
+        this API (see "Consumers").
 
 
         If no account of type checking or savings is found, the service will
@@ -2463,7 +2419,8 @@ paths:
 
 
         Depending on the `created_date`, select an analytic_id to retrieve the
-        Consumer Attributes report using the Get Consumer Attributes by ID API.
+        Consumer Attributes report using the "Get Consumer Attributes by ID"
+        API.
 
 
         See [Get Consumer Attributes by ID – Beta API]
@@ -2918,6 +2875,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PayrollReportData'
+    GenerateTransactionsReportResponse:
+      description:
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransactionsReportData'
     GetPrequalificationReportByCustomerResponse:
       description: The report was successfully retrieved
       content:
@@ -3022,6 +2991,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/StatementReportData'
+    GetCustomerTransactionsResponse:
+      description: The transactions were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transactions'
+    GetCustomerTransactionResponse:
+      description: The transaction was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3038,7 +3019,7 @@ components:
     UnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check
-        Finicity-App-Key or Finicity-App-Token.
+        "Finicity-App-Key" or "Finicity-App-Token".
       content:
         application/json:
           schema:
@@ -3194,6 +3175,20 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+    TransactionIdParameter:
+      description: A Finicity transaction ID
+      name: transactionId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/TransactionId'
+    IncludePendingParameter:
+      description: If pending transactions must be included
+      name: includePending
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/IncludePending'
     ApplicationIdPathParameter:
       name: applicationId
       in: path
@@ -3460,6 +3455,16 @@ components:
       type: string
       description: A Finicity account ID
       example: '5011648377'
+    TransactionId:
+      type: integer
+      description: A Finicity transaction ID
+      format: int64
+      example: 102122887150
+    IncludePending:
+      type: boolean
+      description: If pending transactions must be included
+      example: true
+      default: false
     AssetId:
       type: string
       description:
@@ -4266,7 +4271,7 @@ components:
             applicationName:
               $ref: '#/components/schemas/ApplicationName'
     Customers:
-      description: Finicity customers
+      description: A list of Finicity customers
       required:
         - found
         - displaying
@@ -5398,8 +5403,8 @@ components:
           $ref: '#/components/schemas/AddressLine2'
     Institutions:
       description:
-        A list of Finicity financial institutions from the standard "Get
-        Institutions" API.
+        A list of Finicity financial institutions from the "Get Institutions"
+        API
       required:
         - found
         - displaying
@@ -5562,8 +5567,8 @@ components:
           example: '2022-03-28T21:48:31.000Z'
     CertifiedInstitutions:
       description:
-        A list of Finicity financial institutions from the standard "Get
-        Certified Institutions" API.
+        A list of Finicity financial institutions from the "Get Certified
+        Institutions" API
       required:
         - found
         - displaying
@@ -5787,10 +5792,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The Finicity ID of the transaction
-          format: int64
-          example: 102122887150
+          $ref: '#/components/schemas/TransactionId'
         amount:
           type: number
           description: >-
@@ -5824,34 +5826,15 @@ components:
             It is recommended to concatenate the two fields into a single value
           example: PPD ID 098749
         postedDate:
-          type: string
-          description: >-
-            A timestamp showing when the transaction was posted or cleared by
-            the institution. Nullable & not required for student loan
-            transaction data.
-          example: '1588888169'
+          $ref: '#/components/schemas/UnixDate'
         transactionDate:
-          type: string
-          description: >-
-            An optional timestamp showing when the transaction occurred, as
-            provided by the institution.
-          example: '1588801769'
+          $ref: '#/components/schemas/UnixDate'
         effectiveDate:
-          type: string
-          description: >-
-            A timestamp showing when the transaction was made effective on an
-            account by an institution. Typically aligns with billing due dates.
+          $ref: '#/components/schemas/UnixDate'
         firstEffectiveDate:
-          type: string
-          description: >-
-            The first timestamp recorded in effectiveDate by Finicity for a
-            transaction.
+          $ref: '#/components/schemas/UnixDate'
         createdDate:
-          type: string
-          description: >-
-            A timestamp showing when the transaction was added to the Finicity
-            system. This value usually is not interesting outside of Finicity.
-          example: '1588974631'
+          $ref: '#/components/schemas/UnixDate'
         type:
           $ref: '#/components/schemas/TransactionType'
         checkNum:
@@ -6082,10 +6065,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The Finicity ID of the transaction
-          format: int64
-          example: 100000527471
+          $ref: '#/components/schemas/TransactionId'
         amount:
           type: number
           description: >-
@@ -6652,10 +6632,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The ID of the new transaction record
-          format: int64
-          example: 102122887150
+          $ref: '#/components/schemas/TransactionId'
         createdDate:
           $ref: '#/components/schemas/UnixDate'
       description: Response for TxPush test transaction
@@ -6795,7 +6772,8 @@ components:
       type: string
       description: The enumeration of supported account types
       example: checking
-    GetTransactionsResponse:
+    Transactions:
+      description: A list of transactions
       required:
         - found
         - displaying
@@ -6825,9 +6803,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Transaction'
-      description: >-
-        Note: see the main API page for important details on student loans
-        (account type 402).
     CreateTxPushTestTransactionRequest:
       required:
         - amount
@@ -6857,7 +6832,7 @@ components:
         transactionDate:
           $ref: '#/components/schemas/UnixDate'
       description: Create a text transaction for TxPush testing
-    GenerateTransactionsReportResponse:
+    TransactionsReportData:
       required:
         - id
         - portfolioId
@@ -6919,11 +6894,7 @@ components:
         toDate:
           $ref: '#/components/schemas/UnixDate'
         includePending:
-          type: boolean
-          description: >-
-            True: Include pending transactions in the report. False: Set by
-            default.
-          example: true
+          $ref: '#/components/schemas/IncludePending'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
     PortfolioSummaryByCustomer:

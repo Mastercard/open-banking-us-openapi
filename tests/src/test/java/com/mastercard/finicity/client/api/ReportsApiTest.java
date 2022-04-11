@@ -3,12 +3,15 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
 import com.mastercard.finicity.client.test.BaseTest;
-import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.utils.PayStatementUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ReportsApiTest extends BaseTest {
@@ -17,6 +20,7 @@ class ReportsApiTest extends BaseTest {
 
     private final VerifyAssetsApi verifyAssetsApi = new VerifyAssetsApi(apiClient);
     private final VerifyIncomeAndEmploymentApi verifyIncomeAndEmploymentApi = new VerifyIncomeAndEmploymentApi(apiClient);
+    private final TransactionsApi transactionsApi = new TransactionsApi(apiClient);
 
     private static String existingAssetId;
 
@@ -46,7 +50,6 @@ class ReportsApiTest extends BaseTest {
             fetchPrequalificationReportReport(reportData.getId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -57,7 +60,6 @@ class ReportsApiTest extends BaseTest {
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -68,7 +70,6 @@ class ReportsApiTest extends BaseTest {
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -79,7 +80,6 @@ class ReportsApiTest extends BaseTest {
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -114,7 +114,6 @@ class ReportsApiTest extends BaseTest {
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -126,7 +125,6 @@ class ReportsApiTest extends BaseTest {
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
@@ -172,7 +170,18 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
-    void getTransactionsReportByConsumerTest() throws Exception {
+    void getTransactionReportByConsumerTest() throws Exception {
+        try {
+            var toDate = LocalDateTime.now().toEpochSecond(UTC);
+            var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, null, true);
+            fetchReport(reportData.getId(), reportData.getConsumerId());
+        } catch (ApiException e) {
+            logApiException(e);
+        }
+    }
+
+    @Test
+    void getVOETransactionsReportByConsumerTest() throws Exception {
         try {
             var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
