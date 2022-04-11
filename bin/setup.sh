@@ -62,7 +62,7 @@ echo "Ctrl+click on the URL below, search for 'FinBank', then sign in with 'prof
 echo ""
 echo $link
 echo ""
-read -p "Press [Enter] to continue..."
+read -p "After you see 'Thank you, your submission was successful', press [Enter] to continue ..."
 
 echo "Refreshing accounts ..."
 accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v1/customers/'$customer_id'/accounts' \
