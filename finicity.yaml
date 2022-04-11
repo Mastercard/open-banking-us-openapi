@@ -31,6 +31,8 @@ tags:
       report services
   - name: Accounts
     description: Fetch or refresh customer accounts
+  - name: Payments
+    description: Fetch ACH details and account balances
   - name: Institutions
     description: Search and fetch financial institutions
   - name: Pay Statements
@@ -51,7 +53,6 @@ tags:
     description: Generate cash flow reports asynchronously
   - name: Reports
     description: Fetch generated reports when ready
-  - name: Payments
   - name: Liabilities
   - name: Portfolios
   - name: TxPush
@@ -1988,10 +1989,10 @@ paths:
     get:
       tags:
         - Payments
-      summary: "\U0001F6A7 Get Account ACH Details"
+      summary: Get Account ACH Details
       description: >-
-        This will return the real account number and routing number details for
-        an ACH payment.
+        Return the real account number and routing number details for an ACH
+        payment.
 
 
         Note: this is a premium service, billable per every successful API call.
@@ -2001,11 +2002,7 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ACHDetails'
+          $ref: '#/components/responses/GetAccountACHDetailsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2208,23 +2205,19 @@ paths:
     get:
       tags:
         - Payments
-      summary: "\U0001F6A7 Get Available Balance - Live"
+      summary: Get Available Balance - Live
       description: >-
         Retrieve the available and cleared account balances for a single account
         in real-time directly from a financial institution. 
 
         Note: this is a premium service, billable per every successful API call.
-      operationId: GetAvailableBalance-Live
+      operationId: GetAvailableBalanceLive
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetAvailableBalance-LiveResponse'
+          $ref: '#/components/responses/GetAvailableBalanceLiveResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2233,7 +2226,7 @@ paths:
     get:
       tags:
         - Payments
-      summary: "\U0001F6A7 Get Available Balance"
+      summary: Get Available Balance
       description: >-
         Retrieve the latest cached available and cleared account balances for a
         customer. Since we update and store balances throughout the day, this is
@@ -2250,11 +2243,7 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetAvailableBalanceResponse'
+          $ref: '#/components/responses/GetAvailableBalanceResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2988,6 +2977,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Transaction'
+    GetAccountACHDetailsResponse:
+      description: Account ACH details were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ACHDetails'
+    GetAvailableBalanceResponse:
+      description: The balance was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AvailableBalance'
+    GetAvailableBalanceLiveResponse:
+      description: The live balance was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AvailableBalance'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3406,8 +3413,17 @@ components:
       example: '0bf46322c167b562e6cbed9d40e19a4c'
     CustomerId:
       type: string
-      description: 'A Finicity customer ID. See also: "Add Customer".'
+      description:
+        'A Finicity customer ID represented as a string. See also: "Add
+        Customer".'
       example: '1005061234'
+    CustomerIdNumeric:
+      type: number
+      format: int64
+      description:
+        'A Finicity customer ID represented as a number. See also: "Add
+        Customer".'
+      example: 1005061234
     ReportId:
       type: string
       description: A Finicity report ID
@@ -4479,12 +4495,7 @@ components:
         type:
           $ref: '#/components/schemas/AccountType'
         aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt. This will not be
-            present until you have run your first aggregation for the account.
-          format: int32
-          example: 0
+          $ref: '#/components/schemas/AggregationStatusCode'
         status:
           type: string
           description: >-
@@ -6364,12 +6375,7 @@ components:
           description: The available balance for the account
           example: 501.24
         aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt (see Handling
-            Aggregation Status Codes)
-          format: int32
-          example: 0
+          $ref: '#/components/schemas/AggregationStatusCode'
         balance:
           type: number
           description: The cleared balance of the account as-of balanceDate
@@ -6564,7 +6570,7 @@ components:
           description: The payment address to send manual payments to
           example: Heartland ECSI       PO Box 718       Wexford PA 15090
         accountDetail:
-          $ref: '#/components/schemas/LoanPaymentDetails-AccountDetail'
+          $ref: '#/components/schemas/LoanPaymentDetailsAccountDetail'
       description: The loan payment details for the customer account
     Asset:
       description: A Finicity asset
@@ -6639,7 +6645,7 @@ components:
           type: string
           description:
             The account number for initiating ACH transfers for this account
-          example: 002345678901
+          example: '002345678901'
       description:
         The routing and account number information to initiate ACH transfers
     PrequalificationReport:
@@ -6729,6 +6735,13 @@ components:
           properties:
             constraints:
               $ref: '#/components/schemas/VOIEWithTXVerifyReportConstraints'
+    AggregationStatusCode:
+      type: integer
+      description:
+        The status of the most recent aggregation attempt (see [Aggregation
+        Status Codes](https://docs.finicity.com/aggregation-status-codes/)).
+        Won't be present until you have run your first aggregation for the
+        account.
     AccountType:
       enum:
         - checking
@@ -7047,7 +7060,7 @@ components:
           $ref: '#/components/schemas/PayrollData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    GetAvailableBalance-LiveResponse:
+    AvailableBalance:
       required:
         - id
         - realAccountNumberLast4
@@ -7060,10 +7073,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: ID for the customer who owns the account
-          format: int64
-          example: 5000015149
+          $ref: '#/components/schemas/CustomerIdNumeric'
         realAccountNumberLast4:
           type: integer
           description: The last 4 digits of the ACH account number
@@ -7084,63 +7094,10 @@ components:
         clearedBalanceDate:
           $ref: '#/components/schemas/UnixDate'
         aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt (see Handling
-            Aggregation Status Codes). This will not be present until you have
-            run your first aggregation for the account.
-          format: int32
-          example: 0
-        currency:
-          # The currency code of the balance values provided
-          $ref: '#/components/schemas/Currency'
-    GetAvailableBalanceResponse:
-      required:
-        - id
-        - realAccountNumberLast4
-        - availableBalance
-        - availableBalanceDate
-        - clearedBalance
-        - clearedBalanceDate
-        - aggregationStatusCode
-        - currency
-      type: object
-      properties:
-        id:
-          type: integer
-          description: ID for the customer who owns the account
-          format: int64
-          example: 5000015149
-        realAccountNumberLast4:
-          type: integer
-          description: The last 4 digits of the ACH account number
-          format: int32
-          example: 1234
-        availableBalance:
-          type: number
-          description: The available balance of the account
-          example: 173.47
-        availableBalanceDate:
-          $ref: '#/components/schemas/UnixDate'
-        clearedBalance:
-          type: number
-          description: >-
-            The cleared balance of the account. Also referred as posted balance,
-            current balance, ledger balance
-          example: 222.25
-        clearedBalanceDate:
-          $ref: '#/components/schemas/UnixDate'
-        aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt (see Handling
-            Aggregation Status Codes). This will not be present until you have
-            run your first aggregation for the account.
-          format: int32
-          example: 0
+          $ref: '#/components/schemas/AggregationStatusCode'
         currency:
           # The currency of the account
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/Currency'
     VOIEWithStatementData:
       required:
         - assetIds
@@ -7265,7 +7222,7 @@ components:
           description:
             Beginning balance of account per the time period in the report
           example: -17795.6
-    LoanPaymentDetails-AccountDetail:
+    LoanPaymentDetailsAccountDetail:
       required:
         - accountId
         - accountNumber
@@ -7303,12 +7260,12 @@ components:
         groupDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetails-GroupDetail'
+            $ref: '#/components/schemas/LoanPaymentDetailsGroupDetail'
         loanDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetails-LoanDetail'
-    LoanPaymentDetails-GroupDetail:
+            $ref: '#/components/schemas/LoanPaymentDetailsLoanDetail'
+    LoanPaymentDetailsGroupDetail:
       required:
         - accountId
         - groupNumber
@@ -7349,8 +7306,8 @@ components:
         groupLoanDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetails-LoanDetail'
-    LoanPaymentDetails-LoanDetail:
+            $ref: '#/components/schemas/LoanPaymentDetailsLoanDetail'
+    LoanPaymentDetailsLoanDetail:
       required:
         - accountId
         - loanNumber
@@ -7422,7 +7379,7 @@ components:
               created_date: 2022-02-02T12:37:12.962Z
             - analytic_id: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
               created_date: 2022-02-02T18:14:13.000Z
-    ConsumerAttributesData-DateRange:
+    ConsumerAttributesDataDateRange:
       required:
         - From
         - To
@@ -7451,20 +7408,20 @@ components:
       type: object
       properties:
         dateRange:
-          $ref: '#/components/schemas/ConsumerAttributesData-DateRange'
+          $ref: '#/components/schemas/ConsumerAttributesDataDateRange'
         income:
-          $ref: '#/components/schemas/ConsumerAttributesData-Income'
+          $ref: '#/components/schemas/ConsumerAttributesDataIncome'
         expenses:
-          $ref: '#/components/schemas/ConsumerAttributesData-Expenses'
+          $ref: '#/components/schemas/ConsumerAttributesDataExpenses'
         netAmount:
-          $ref: '#/components/schemas/ConsumerAttributesData-NetAmount'
+          $ref: '#/components/schemas/ConsumerAttributesDataNetAmount'
         nsf:
-          $ref: '#/components/schemas/ConsumerAttributesData-NSF'
+          $ref: '#/components/schemas/ConsumerAttributesDataNSF'
         assets:
-          $ref: '#/components/schemas/ConsumerAttributesData-Assets'
+          $ref: '#/components/schemas/ConsumerAttributesDataAssets'
         liabilities:
-          $ref: '#/components/schemas/ConsumerAttributesData-Liabilities'
-    ConsumerAttributesData-Income:
+          $ref: '#/components/schemas/ConsumerAttributesDataLiabilities'
+    ConsumerAttributesDataIncome:
       required:
         - netAnnualIncome
         - netAnnualIncomeByAccount
@@ -7521,7 +7478,7 @@ components:
               'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1560.06
               'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3897.18
               'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2824.58
-    ConsumerAttributesData-Expenses:
+    ConsumerAttributesDataExpenses:
       required:
         - dwellingExpenseTotal
         - dwellingExpensesByAccount
@@ -7616,7 +7573,7 @@ components:
           'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
           'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
           'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
-    ConsumerAttributesData-NSF:
+    ConsumerAttributesDataNSF:
       required:
         - monthlyNSFOccurrences
         - monthlyLateFeeOccurrences
@@ -7640,7 +7597,7 @@ components:
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
             'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
           monthlyLateFeeOccurrences: 35
-    ConsumerAttributesData-Liabilities:
+    ConsumerAttributesDataLiabilities:
       required:
         - monthlyLoanDeposits
         - monthlyLoanWitdrawls
@@ -7682,7 +7639,7 @@ components:
           monthlyLoanWithdrawls: {}
           monthlyNumberOfLoanDeposits: {}
           monthlyNumberOfLoanWithdrawls: {}
-    ConsumerAttributesAssets-Customer:
+    ConsumerAttributesAssetsCustomer:
       required:
         - monthlyMinimumBalance
         - monthlyMaximumBalance
@@ -7899,7 +7856,7 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
             'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
-    ConsumerAttributesAssets-Account:
+    ConsumerAttributesAssetsAccount:
       required:
         - monthlyClosingBalance
         - monthlyMinimumBalance
@@ -8127,16 +8084,16 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
             'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
-    ConsumerAttributesData-Assets:
+    ConsumerAttributesDataAssets:
       required:
         - customer
         - account
       type: object
       properties:
         customer:
-          $ref: '#/components/schemas/ConsumerAttributesAssets-Customer'
+          $ref: '#/components/schemas/ConsumerAttributesAssetsCustomer'
         account:
-          $ref: '#/components/schemas/ConsumerAttributesAssets-Account'
+          $ref: '#/components/schemas/ConsumerAttributesAssetsAccount'
     GetConsumerAttributesByIDResponse:
       required:
         - analytics_id
@@ -8149,7 +8106,7 @@ components:
           example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
         ca360_data:
           $ref: '#/components/schemas/ConsumerAttributesDataResponse'
-    ConsumerAttributesData-NetAmount:
+    ConsumerAttributesDataNetAmount:
       required:
         - monthlyNetAmount
       type: object
