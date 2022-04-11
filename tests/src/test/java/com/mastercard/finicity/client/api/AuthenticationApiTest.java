@@ -45,7 +45,7 @@ class AuthenticationApiTest extends BaseAppKeyTest {
         } catch (ApiException e) {
             // {"code":10001,"message":"Invalid credentials"}
             logApiException(e);
-            assertErrorCodeEquals(10001, e);
+            assertErrorCodeEquals("10001", e);
             assertErrorMessageEquals("Invalid credentials", e);
         }
 

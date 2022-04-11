@@ -10,6 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Prerequisites:
+ * 1. Accounts from "profile_09" were added using Finicity Connect (see: https://docs.finicity.com/test-the-apis/#test-the-apis-3)
+ * 2. "refreshCustomerAccounts" has been called
+ */
 public abstract class BaseTest {
 
     protected final static String PARTNER_ID = System.getProperty("partnerId");
@@ -26,8 +31,8 @@ public abstract class BaseTest {
 
         // Client logging
         apiClient.setDebugging(true);
-        apiClient.setConnectTimeout(60000);
-        apiClient.setReadTimeout(60000);
+        apiClient.setConnectTimeout(120000);
+        apiClient.setReadTimeout(120000);
     }
 
     protected static void logApiException(ApiException e) {
@@ -40,7 +45,7 @@ public abstract class BaseTest {
         return new Gson().fromJson(e.getResponseBody(), ErrorMessage.class);
     }
 
-    protected static void assertErrorCodeEquals(int code, ApiException e) {
+    protected static void assertErrorCodeEquals(String code, ApiException e) {
         assertEquals(code, parseError(e).getCode());
     }
 
