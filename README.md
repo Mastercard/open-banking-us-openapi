@@ -5,7 +5,12 @@
 [![](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/openapi-generator.yml)
 [![](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/jaaufauvre/finicity-openapi/actions/workflows/prettier.yml)
 
-The YAML content is formatted using:
+## Overview
+[finicity.yaml](./finicity.yaml) is the OpenAPI specification for Finicity’s APIs.
+
+## Guidelines
+
+When updated, the YAML content must be prettified using:
 ```sh
 npx prettier --write --single-quote finicity.yaml
 ```
