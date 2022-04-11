@@ -3719,15 +3719,7 @@ paths:
           explode: true
           schema:
             type: string
-        - name: purpose
-          in: query
-          description: >-
-            2-digit code from Permissible Purpose Codes, specifying the reason
-            for retrieving this report.
-          style: form
-          explode: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/PurposeParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -4157,15 +4149,7 @@ paths:
           explode: true
           schema:
             type: string
-        - name: purpose
-          in: query
-          description: >-
-            2-digit code from Permissible Purpose Codes, specifying the reason
-            for retrieving this report.
-          style: form
-          explode: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/PurposeParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -4328,7 +4312,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
       deprecated: false
-  '/decisioning/v3/customers/{customerId}/reports/{reportId}?purpose=31':
+  '/decisioning/v3/customers/{customerId}/reports/{reportId}':
     get:
       tags:
         - Get Reports by Customer
@@ -4379,16 +4363,7 @@ paths:
           schema:
             type: string
             example: application/json
-        - name: purpose
-          in: query
-          description: >-
-            2-digit code from Permissible Purpose Codes, specifying the reason
-            for retrieving this report.
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/PurposeParameter'
       responses:
         '200':
           description: OK
@@ -4868,7 +4843,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
       deprecated: false
-  '/decisioning/v1/customers/{customerId}/reports?purpose=31':
+  '/decisioning/v1/customers/{customerId}/reports':
     get:
       tags:
         - Get Reports by Customer
@@ -4884,6 +4859,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
           # description: Finicity’s ID of the customer
+        - $ref: '#/components/parameters/PurposeParameter'
         - name: Accept
           in: header
           description: Replace 'json' with 'xml' if preferred
@@ -4921,7 +4897,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
       deprecated: false
-  '/decisioning/v1/consumers/{consumerId}/reports?purpose=31':
+  '/decisioning/v1/consumers/{consumerId}/reports':
     get:
       tags:
         - Get Reports by Consumer
@@ -4935,6 +4911,7 @@ paths:
         again.
       operationId: GetReportsbyConsumer
       parameters:
+        - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
           description: Finicity’s ID of the consumer (UUID with max length 32 characters)
@@ -4980,7 +4957,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
       deprecated: false
-  '/decisioning/v3/consumers/{consumerId}/reports/{reportId}?purpose=31':
+  '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
         - Get Reports by Consumer
@@ -4999,6 +4976,7 @@ paths:
         retrieving a report.
       operationId: GetReportbyConsumer1
       parameters:
+        - $ref: '#/components/parameters/PurposeParameter'
         - name: consumerId
           in: path
           description: Finicity’s ID of the consumer (UUID with max length 32 characters)
@@ -5737,6 +5715,16 @@ components:
         type: integer
         format: int64
         example: 1000278253
+    PurposeParameter:
+      name: purpose
+      in: query
+      description: >-
+        2-digit code from Permissible Purpose Codes, specifying the reason
+        for retrieving this report.
+      style: form
+      explode: true
+      schema:
+        type: string
   schemas:
     GenerateConnectEmailResponseMulti-Borrowers:
       title: GenerateConnectEmailResponseMulti-Borrowers
