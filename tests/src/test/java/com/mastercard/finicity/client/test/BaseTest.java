@@ -8,7 +8,6 @@ import com.mastercard.finicity.client.api.CustomersApi;
 import com.mastercard.finicity.client.model.ErrorMessage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,25 +27,20 @@ public abstract class BaseTest {
     protected final static String CUSTOMER_ID = System.getProperty("customerId");
 
     protected final static ApiClient apiClient = Configuration.getDefaultApiClient();
-    protected static AuthInterceptor authInterceptor;
 
     protected final static List<String> createdCustomerIds = new ArrayList<>();
     protected final static CustomersApi customersApi = new CustomersApi(apiClient);
 
-    @BeforeAll
-    protected static void beforeAll() {
-        // Prism
-        // apiClient.setBasePath("http://localhost:4010");
-        authInterceptor = new AuthInterceptor(PARTNER_ID, PARTNER_SECRET, APP_KEY);
+    private final static FinicityAuthInterceptor authInterceptor = new FinicityAuthInterceptor(PARTNER_ID, PARTNER_SECRET, APP_KEY);
 
-        // Client logging
-        apiClient.setDebugging(true);
+    static {
+        apiClient.setDebugging(true);  // Client logging
         apiClient.setConnectTimeout(240000);
         apiClient.setReadTimeout(240000);
         apiClient.setHttpClient(
-                new ApiClient().getHttpClient()
+                apiClient.getHttpClient()
                         .newBuilder()
-                        .addInterceptor(authInterceptor)
+                        .addInterceptor(authInterceptor)  // Handle Finicity authentication
                         .build()
         );
     }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InstitutionsApiTest extends BaseTest {
+class InstitutionsApiTest extends BaseTest {
 
     private final InstitutionsApi api = new InstitutionsApi(apiClient);
 

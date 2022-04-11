@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PayStatementsApiTest extends BaseTest {
+class PayStatementsApiTest extends BaseTest {
 
     private final PayStatementsApi api = new PayStatementsApi(apiClient);
 

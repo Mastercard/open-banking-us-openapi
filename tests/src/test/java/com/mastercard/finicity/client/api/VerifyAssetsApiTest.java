@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class VerifyAssetsApiTest extends BaseTest {
+class VerifyAssetsApiTest extends BaseTest {
 
     private final VerifyAssetsApi api = new VerifyAssetsApi(apiClient);
     private static String accountIds; // "5053253032 5053253033 ... 5053253038 5053253039"

@@ -3,9 +3,8 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
 import com.mastercard.finicity.client.test.BaseTest;
-import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
-import org.junit.jupiter.api.BeforeAll;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
 import org.junit.jupiter.api.Test;
 
 import static com.mastercard.finicity.client.model.BorrowerType.JOINTBORROWER;
@@ -19,12 +18,6 @@ class ConnectApiTest extends BaseTest {
 
     private final static int FINBANK_A = 102105;
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
-
-    @BeforeAll
-    protected static void beforeAll() {
-        // Resetting token
-        BaseTest.beforeAll();
-    }
 
     @Test
     void generateConnectUrlTest() {

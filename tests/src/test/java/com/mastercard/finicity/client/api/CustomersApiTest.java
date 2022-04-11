@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CustomersApiTest extends BaseTest {
 
-    private final static CustomersApi api = new CustomersApi(apiClient);
+    private final CustomersApi api = new CustomersApi(apiClient);
 
     @Test
     void addTestingCustomerTest() {

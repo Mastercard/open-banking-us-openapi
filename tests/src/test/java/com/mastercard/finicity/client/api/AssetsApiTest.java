@@ -10,7 +10,7 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AssetsApiTest extends BaseTest {
+class AssetsApiTest extends BaseTest {
 
     private final AssetsApi api = new AssetsApi(apiClient);
 

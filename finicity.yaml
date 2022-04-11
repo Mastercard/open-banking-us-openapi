@@ -41,9 +41,10 @@ tags:
     description: Generate asset reports asynchronously
   - name: Verify Income and Employment
     description: Generate income and employment reports asynchronously
+  - name: Bank Statements
+    description: Fetch account statements and generate reports asynchronously
   - name: Reports
     description: Fetch generated reports when ready
-  - name: Bank Statements
   - name: Transactions
   - name: Payments
   - name: Liabilities
@@ -1100,15 +1101,6 @@ paths:
         this API (see "Consumers").
 
 
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-
-
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAReport
@@ -1153,15 +1145,6 @@ paths:
         this API (see "Consumers").
 
 
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-
-
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAWithIncomeReport
@@ -1201,15 +1184,6 @@ paths:
         this API (see "Consumers").
 
 
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-
-
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
       operationId: GeneratePrequalificationReport
@@ -1244,15 +1218,6 @@ paths:
         Asset Summary report. 
 
 
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-
-
         If no account type of checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
       operationId: GenerateAssetSummaryReport
@@ -1283,15 +1248,6 @@ paths:
         This is a premium service. The billing rate is the variable rate for
         Verification of Income under the current subscription plan. The billable
         event is the successful generation of a VOI report.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
 
 
         If no account of type checking, savings, or money market is found, the
@@ -1330,15 +1286,6 @@ paths:
         To generate this report, pass the values from the customer `SSN`, `DOB`,
         and the `reportId` from the first VOIE-Payroll report generated after
         the Connect session.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: GenerateVOEPayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1365,7 +1312,7 @@ paths:
 
 
         Used as a complimentary report to the VOA with Income and VOIE - Paystub
-        (with TXVerify) reports. It's used to fulfill the pre-close VOE
+        (with TXVerify) reports and used to fulfill the pre-close VOE
         requirements. 
 
 
@@ -1375,15 +1322,6 @@ paths:
         the expected cadence. The report displays transaction descriptions
         without any dollar amounts so that income re-verification isn't
         necessary.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: GenerateVOETransactionsReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1430,15 +1368,6 @@ paths:
         Statement Extraction Report under the current subscription plan. The
         billable event is the successful generation of a Pay Statement
         Extraction Report.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: GeneratePayStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1477,15 +1406,6 @@ paths:
         This is a premium service. The billing rate is the variable rate for
         VOIE TXVerify under the current subscription plan. The billable event is
         the successful generation of a VOIE TXVerify Report.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: GenerateVOIEPaystubWithTXVerifyReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1514,15 +1434,6 @@ paths:
         This is a premium service. The billing rate is the variable rate for
         VOIE - Paystub under the current subscription plan. The billable event
         is the successful generation of a VOIE - Paystub Report.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: GenerateVOIEPaystubReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1557,15 +1468,6 @@ paths:
         Note: lenders can only refresh this report one time in a 60-day period
         starting from the date of the first report. Any further report refreshes
         will incur additional charges.
-
-         
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
       operationId: RefreshVOIEPayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1583,7 +1485,7 @@ paths:
     get:
       tags:
         - Bank Statements
-      summary: "\U0001F6A7 Get Customer Account Statement"
+      summary: Get Customer Account Statement
       description: >-
         Retrieve the customer's bank statements in PDF format. Up to 24 months
         of history is available depending on the financial institution. Since
@@ -1615,29 +1517,16 @@ paths:
 
 
         Set request timeout: we recommend setting the timeout to 180 seconds to
-        allow plenty of time for a response. 
-
-
-        HTTP 200: Success. The response is a binary string that you can save as
-        a PDF file.
+        allow plenty of time for a response.
       operationId: GetCustomerAccountStatement
       parameters:
-        - name: Accept
-          in: header
-          description: >-
-            application/pdf, application/json (the document will be in PDF
-            format, but errors will be JSON)
-          required: true
-          schema:
-            type: string
-            example: 'application/pdf, application/json'
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
         - name: index
           in: query
           required: false
-          description: >-
-            Request statements from 1- 24. By default, 1 is the most recent
+          description:
+            Request statements from 1-24. By default, 1 is the most recent
             statement. Increase the index value to count back (by month) and
             retrieve its most recent statement.
           schema:
@@ -1645,15 +1534,10 @@ paths:
             format: int32
             default: 1
             example: 1
+            maximum: 24
       responses:
         '200':
-          description: ''
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                description: ''
-                format: binary
+          $ref: '#/components/responses/GetCustomerAccountStatementResponse'
         '203':
           $ref: '#/components/responses/MFAChallengeNeededResponse'
         '400':
@@ -1664,23 +1548,14 @@ paths:
     post:
       tags:
         - Bank Statements
-      summary: "\U0001F6A7 Generate Statement Report"
+      summary: Generate Statement Report
       description: >-
         Generate a Statement Report report for specified accounts under the
-        given customer. This report requires a consumer. 
+        given customer.
 
 
         This is a premium service. A billable event will be created upon the
         successful generation of the Statement Report. 
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
 
 
         A Report Consumer must be created for the given Customer (using Create
@@ -1691,18 +1566,10 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateStatementReportConstraints'
-        required: true
+        $ref: '#/components/requestBodies/GenerateStatementReportRequest'
       responses:
         '202':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateStatementReportResponse'
+          $ref: '#/components/responses/GenerateStatementReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1922,15 +1789,6 @@ paths:
 
         This is a premium service. A billable event will be created upon the
         successful generation of the Transactions Report. 
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
 
 
         A Report Consumer must be created for the given Customer (using Create
@@ -2311,6 +2169,8 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/reports':
     get:
       tags:
@@ -2337,6 +2197,8 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
@@ -2456,15 +2318,6 @@ paths:
         available in the Finicity Consumer Portal for the borrower to view.
 
 
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-
-
         If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
       operationId: GenerateCashFlowReport-Business
@@ -2519,15 +2372,6 @@ paths:
         Portal (https://consumer.finicityreports.com) where they can view this
         report and submit a dispute if they feel any information in this report
         is inaccurate.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
 
 
         A Report Consumer must be created for the given Customer before calling
@@ -2862,6 +2706,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/VOETransactionsReportConstraints'
+    GenerateStatementReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatementReportConstraints'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3046,18 +2896,24 @@ components:
             $ref: '#/components/schemas/BrandingWrapper'
     GenerateReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportData'
     GeneratePayrollReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
@@ -3093,6 +2949,13 @@ components:
           schema:
             type: string
             format: binary
+    GetCustomerAccountStatementResponse:
+      description: The statement was successfully downloaded as a PDF file
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
     StoreCustomerPayStatementResponse:
       description: The pay statement was successfully uploaded
       content:
@@ -3101,40 +2964,64 @@ components:
             $ref: '#/components/schemas/Asset'
     GenerateVOETransactionsReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/VOETransactionsReportData'
     GeneratePayStatementReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/PayStatementReportData'
     GenerateVOIEPaystubWithTXVerifyReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/VOIEPaystubWithTXVerifyReportData'
     GenerateVOIEPaystubWithStatementReportResponse:
       description:
-        The report is being generated. When finished, a notification will be
-        sent to the specified callback URL and the report can be fetched using
-        "Get Report" endpoints.
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/VOIEPaystubWithStatementReportData'
+    GenerateStatementReportResponse:
+      description:
+        "The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using 'Get Report' endpoints. If you don't use a
+        callback URL, 'Get Report' will return a minimal report with the
+        following status: `inProgress`. Repeat the call every 20 seconds until
+        'Get Report' returns a different status."
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatementReportData'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -7085,16 +6972,16 @@ components:
       type: string
       description: Estimate Inclusion
       example: HIGH
-    GenerateStatementReportConstraints:
+    StatementReportConstraints:
       required:
         - statementReportData
       type: object
       properties:
         statementReportData:
-          $ref: '#/components/schemas/StatementReportData'
+          $ref: '#/components/schemas/StatementData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    StatementReportData:
+    StatementData:
       required:
         - accountId
       type: object
@@ -7104,11 +6991,12 @@ components:
           $ref: '#/components/schemas/AccountId'
         index:
           type: integer
-          description:
-            'Index of statement to retrieve (default is 1, maximum is 6)'
-          format: int64
+          description: Index of the statement to retrieve
+          format: int32
           example: 1
-    GenerateStatementReportResponse:
+          default: 1
+          maximum: 6
+    StatementReportData:
       required:
         - id
         - portfolioId
@@ -7120,37 +7008,14 @@ components:
         - title
         - consumerId
         - consumerSsn
-        - constraints
         - type
         - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/GenerateStatementReportConstraints'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/StatementReportConstraints'
     PayrollData:
       required:
         - ssn
@@ -7463,7 +7328,7 @@ components:
           description: >-
             Designate a minimum confidence level threshold to include income
             streams with a specified confidence level or higher. For example,
-            designate a incomeStreamConfidenceMinimum of 50 to see all income
+            designate a `incomeStreamConfidenceMinimum` of 50 to see all income
             streams with a confidence level of 50 or higher.
           format: int32
           example: 50
@@ -7552,20 +7417,17 @@ components:
           example: 10000
         accountFuturePayoffDate:
           type: string
-          description: The date to which the `Future Payoff Amount` applies
+          description: The date to which the "Future Payoff Amount" applies
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
         groupDetail:
           type: array
           items:
             $ref: '#/components/schemas/LoanPaymentDetails-GroupDetail'
-          description: ''
         loanDetail:
           type: array
           items:
             $ref: '#/components/schemas/LoanPaymentDetails-LoanDetail'
-          description: ''
-      description: ''
     LoanPaymentDetails-GroupDetail:
       required:
         - accountId
@@ -7608,8 +7470,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LoanPaymentDetails-LoanDetail'
-          description: ''
-      description: ''
     LoanPaymentDetails-LoanDetail:
       required:
         - accountId
@@ -7647,7 +7507,6 @@ components:
           description: The date to which the `Future Payoff Amount` applies
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
-      description: ''
     GenerateConsumerAttributesReponse:
       required:
         - analytic_id
@@ -7663,7 +7522,6 @@ components:
           description:
             The date and time (Epoch) that the data analytics report generated.
           example: '2/2/2022 18:14:13'
-      description: ''
     ListConsumerAttributesResponse:
       required:
         - analytic_ids
@@ -7684,7 +7542,6 @@ components:
               created_date: 2022-02-02T12:37:12.962Z
             - analytic_id: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
               created_date: 2022-02-02T18:14:13.000Z
-      description: ''
     ConsumerAttributesData-DateRange:
       required:
         - From
@@ -7702,7 +7559,6 @@ components:
           type: string
           description: The `To` date of the date range for the report.
           example: 2022-02-08T00:00:00.000Z
-      description: ''
     ConsumerAttributesDataResponse:
       required:
         - dateRange
@@ -7728,7 +7584,6 @@ components:
           $ref: '#/components/schemas/ConsumerAttributesData-Assets'
         liabilities:
           $ref: '#/components/schemas/ConsumerAttributesData-Liabilities'
-      description: ''
     ConsumerAttributesData-Income:
       required:
         - netAnnualIncome
@@ -7786,7 +7641,6 @@ components:
               'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1560.06
               'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3897.18
               'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2824.58
-      description: ''
     ConsumerAttributesData-Expenses:
       required:
         - dwellingExpenseTotal
@@ -7825,7 +7679,6 @@ components:
           description: >-
             Total monthly debit amounts, excluding transfers and credit card
             payments.
-      description: ''
       example:
         dwellingExpenseTotal: -5856.07
         dwellingExpensesByAccount:
@@ -7901,7 +7754,6 @@ components:
           type: object
           description: The number of late fee occurrences.
           example: {}
-      description: ''
       example:
         nsf:
           monthlyNSFOccurrences:
@@ -7944,7 +7796,6 @@ components:
             3-2021: 1
             4-2021: 1
             5-2021: 1
-      description: ''
       example:
         liabilities:
           monthlyLoanDeposits: {}
@@ -8168,7 +8019,6 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
             'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
-      description: ''
     ConsumerAttributesAssets-Account:
       required:
         - monthlyClosingBalance
@@ -8397,7 +8247,6 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
             'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
             'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
-      description: ''
     ConsumerAttributesData-Assets:
       required:
         - customer
@@ -8408,7 +8257,6 @@ components:
           $ref: '#/components/schemas/ConsumerAttributesAssets-Customer'
         account:
           $ref: '#/components/schemas/ConsumerAttributesAssets-Account'
-      description: ''
     GetConsumerAttributesByIDResponse:
       required:
         - analytics_id
@@ -8421,7 +8269,6 @@ components:
           example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
         ca360_data:
           $ref: '#/components/schemas/ConsumerAttributesDataResponse'
-      description: ''
     ConsumerAttributesData-NetAmount:
       required:
         - monthlyNetAmount
@@ -8429,7 +8276,6 @@ components:
       properties:
         monthlyNetAmount:
           $ref: '#/components/schemas/MonthlyNetAmount'
-      description: ''
     MonthlyNetAmount:
       required:
         - NetAmount
@@ -8450,4 +8296,3 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -35750.48
             'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -21232.13
             'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -6723.7
-      description: ''
