@@ -9,7 +9,88 @@ info:
 servers:
   - url: 'https://api.finicity.com'
     description: Production
+tags:
+  - name: Authentication
+    description: ''
+  - name: Connect
+    description: ''
+  - name: Institutions
+    description: ''
+  - name: Consumer
+    description: ''
+  - name: Verify Income
+    description: ''
+  - name: Verify Assets
+    description: ''
+  - name: Verify Income and Employment
+    description: ''
+  - name: Accounts
+    description: ''
+  - name: Account Owner
+    description: ''
+  - name: Customer
+    description: ''
+  - name: Bank Statements
+    description: ''
+  - name: Transactions
+    description: ''
+  - name: Pay Statements
+    description: ''
+  - name: Liabilities
+    description: ''
 paths:
+  /aggregation/v2/partners/authentication:
+    post:
+      tags:
+        - Authentication
+      summary: Create Access Token
+      description: |-
+        Send Partner ID and Partner Secret to the Partner Authentication
+        service to obtain a token for accessing Finicity APIs.
+
+        * The token is valid for two hours and is required on all calls to the
+        Finicity APIs
+        * As a best practice, use a single token for all calls. Assign a
+        timestamp for each token, and then check the current timestamp before
+        making any calls. If the token is greater than 90 minutes, generate a
+        new one.
+        * ⚠️ After five failed attempts to authenticate, your account is locked.
+        Contact support@finicity.com to get help resetting your account.
+      operationId: CreateToken
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTokenRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateTokenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+      security:
+        - FinicityAppKey: []
+    put:
+      tags:
+        - Authentication
+      summary: Modify Partner Secret
+      description: >-
+        Change the partner secret that is used to authenticate this partner. The
+        secret does not expire, but can be changed by calling this endpoint.  A
+        valid partner secret may contain upper and lowercase characters,
+        numbers, and the characters !, @, #, $, %, &, *, _, -, +. It must
+        include at least one number and at least one letter, and its length
+        should be between 12 and 255 characters.
+      operationId: ModifyPartnerSecret
+      requestBody:
+        $ref: '#/components/requestBodies/ModifyPartnerSecretRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/ModifyPartnerSecretResponse'
+        '400':
+          $ref: '#/components/responses/ModifyPartnerSecretBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+      security:
+        - FinicityAppKey: []
   /connect/v2/generate:
     post:
       tags:
@@ -1733,7 +1814,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity ID for the customer whose accounts are to be retrieved
         - name: institutionLoginId
           in: path
           description: The institution login ID (from the account record)
@@ -1809,7 +1889,6 @@ paths:
             type: boolean
             example: false
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the accounts
         - name: institutionLoginId
           in: path
           description: The institution login ID from the account records
@@ -1845,7 +1924,6 @@ paths:
       operationId: DeleteCustomerAccountsByInstitutionLogin
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer whose accounts are to be deleted
         - name: institutionLoginId
           in: path
           description: >-
@@ -1881,7 +1959,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: Finicity's ID of the account to be retrieved
@@ -1913,7 +1990,6 @@ paths:
       operationId: DeleteCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: Finicity's ID of the account to be deleted
@@ -1947,7 +2023,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer whose accounts are to be retrieved
         - name: status
           in: query
           description: >-
@@ -2016,7 +2091,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the accounts to be refreshed
       responses:
         '200':
           description: default response
@@ -2048,7 +2122,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: institutionId
           in: path
           description: Finicity's ID of the institution
@@ -2150,7 +2223,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: The Finicity ID of the account to pull transaction history for
@@ -2756,7 +2828,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer whose transactions are to be retrieved
         - name: fromDate
           in: query
           description: >-
@@ -2844,7 +2915,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity ID for the customer whose transactions are to be retrieved
         - name: transactionId
           in: path
           description: The transaction to be retrieved
@@ -2904,7 +2974,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer whose transactions are to be retrieved
         - name: accountId
           in: path
           description: Finicity's ID of the account whose transactions are to be retrieved
@@ -3196,103 +3265,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
-  /aggregation/v2/partners/authentication:
-    put:
-      tags:
-        - Authentication
-      summary: ModifyPartnerSecret
-      description: >-
-        Change the partner secret that is used to authenticate this partner. The
-        secret does not expire, but can be changed by calling Modify Partner
-        Secret. A valid partner secret may contain upper- and lowercase
-        characters, numbers, and the characters !, @, #, $, %, &, *, _, -, +. It
-        must include at least one number and at least one letter, and its length
-        should be between 12 and 255 characters.
-      operationId: ModifyPartnerSecret
-      parameters: []
-      requestBody:
-        description: >-
-          Partner ID and Partner Secret From Developer Portal Along With A Value
-          For The New Partner Secret
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ModifyPartnerCredentials'
-            example:
-              partnerId: PARTNER_ID
-              partnerSecret: PARTNER_SECRET
-              newPartnerSecret: NEW_PARTNER_SECRET
-        required: true
-      responses:
-        '200':
-          description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
-      security: []
-    post:
-      tags:
-        - Authentication
-      summary: Partner Authentication
-      description: >-
-        Partner ID and Partner Secret: Sends to the Partner Authentication
-        service to obtain a token for accessing the APIs.
-
-
-        •The token is valid for two hours and is required on all calls to the
-        Finicity APIs
-
-
-        •As a best practice, use a single token for all calls. Assign a
-        timestamp for each token, and then check the current timestamp before
-        making any calls. If the token is greater than 90 minutes, generate a
-        new one.
-
-
-        Finicity-App-Key: Required on all calls to the Finicity APIs to identify
-        your application.
-
-
-        After five failed attempts to authenticate, your account is locked.
-        Contact support@finicity.com to get help resetting your account.
-      operationId: PartnerAuthentication
-      parameters:
-        - name: Accept
-          in: header
-          description: application/json
-          required: true
-          schema:
-            type: string
-            example: application/json
-      requestBody:
-        description: Partner ID and Partner Secret From Developer Portal
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PartnerCredentials'
-            example:
-              partnerId: PARTNER_ID
-              partnerSecret: PARTNER_SECRET
-        required: true
-      responses:
-        '200':
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationResponse'
-              example:
-                token: ACCESS_TOKEN
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
-      security: []
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
     get:
       tags:
@@ -3387,7 +3359,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The Finicity ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -3428,7 +3399,6 @@ paths:
       operationId: DisableTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -3592,11 +3562,11 @@ paths:
         what type of Finicity Connect you need.
 
 
-        Once you have generated the link it will only last until the
-        authentication token under which it was generated expires.  After that
-        you will need to regenerate the Connect link under a new authentication
-        token. We recommend generating a new authentication token when you
-        generate a Connect link, to guarantee a full two hour life-span.
+        Once you have generated the link it will only last until the access
+        token under which it was generated expires.  After that you will need to
+        regenerate the Connect link under a new authentication token. We
+        recommend generating a new access token when you generate a Connect
+        link, to guarantee a full two hour life-span.
 
 
         Several Finicity products utilize Finicity Connect, and most products
@@ -3671,7 +3641,6 @@ paths:
       operationId: MigrateInstitutionLoginAccountsV1
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity's ID of the customer for the institutionLoginId of accounts
         - name: institutionLoginId
           in: path
           description: Finicity's institutionLoginId for the set of accounts to be migrated
@@ -3787,7 +3756,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity's ID for the customer who owns the account
         - name: accountId
           in: path
           description: Finicity's ID of the account
@@ -4003,7 +3971,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: accountId
           in: path
           description: >-
@@ -4170,7 +4137,6 @@ paths:
       operationId: DeleteTxPushSubscription
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The ID of the customer who owns the account
         - name: subscriptionId
           in: path
           description: >-
@@ -4278,7 +4244,6 @@ paths:
       operationId: SetCustomerApplicationID
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The customer's ID for the customer you want to assign the app for.
         - name: applicationId
           in: path
           description: >-
@@ -4407,7 +4372,6 @@ paths:
       operationId: MigrateInstitutionLoginAccountsV2
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: The target customer for the account migration
         - name: institutionLoginId
           in: path
           description: >-
@@ -4546,7 +4510,6 @@ paths:
       operationId: GetReportsbyCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: Finicity's ID of the customer
         - $ref: '#/components/parameters/PurposeParameter'
         - name: Accept
           in: header
@@ -4903,7 +4866,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: ID for the customer who owns the account
         - name: accountId
           in: path
           description: ID for the customer's account
@@ -4953,7 +4915,6 @@ paths:
             type: string
             example: application/json
         - $ref: '#/components/parameters/CustomerIdParameter'
-          # description: ID for the customer who owns the account
         - name: accountId
           in: path
           description: ID for the customer's account
@@ -5339,6 +5300,95 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExpiredToken'
 components:
+  securitySchemes:
+    FinicityAppKey:
+      name: Finicity-App-Key
+      type: apiKey
+      in: header
+      description: The "Finicity-App-Key" from the developer dashboard
+    FinicityAppToken:
+      name: Finicity-App-Token
+      type: apiKey
+      in: header
+      description: A token returned by the /authentication endpoint
+  requestBodies:
+    CreateTokenRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PartnerCredentials'
+    ModifyPartnerSecretRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PartnerCredentialsWithNewSecret'
+  responses:
+    CreateTokenResponse:
+      description: The access token was successfully created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessToken'
+    ModifyPartnerSecretResponse:
+      description: The Partner Secret was successfully updated
+    TokenExpiredResponse:
+      description: The access token expired
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpiredToken'
+    ModifyPartnerSecretBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InvalidNewPartnerSecretExample:
+              $ref: '#/components/examples/InvalidNewPartnerSecretExample'
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestExample'
+    UnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check Partner ID,
+        Partner Secret or Finicity-App-Key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/MissingFinicityAppKeyExample'
+            InvalidCredentialsExample:
+              $ref: '#/components/examples/InvalidCredentialsExample'
+    BadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequestExample'
+  examples:
+    MissingFinicityAppKeyExample:
+      value:
+        code: 10026
+        message: Missing parameter (Finicity-App-Key)
+    InvalidCredentialsExample:
+      value:
+        code: 10001
+        message: Invalid credentials
+    BadRequestExample:
+      value:
+        code: 14020
+        message: Bad request.
+    InvalidNewPartnerSecretExample:
+      value:
+        code: 24437
+        message: New password is not as per policy
   parameters:
     AssetIdParameter:
       name: assetId
@@ -5359,12 +5409,77 @@ components:
       name: purpose
       in: query
       description: >-
-        2-digit code from Permissible Purpose Codes, specifying the reason
-        for retrieving this report.
+        2-digit code from Permissible Purpose Codes, specifying the reason for
+        retrieving this report.
       explode: true
       schema:
         type: string
   schemas:
+    ErrorMessage:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          format: int32
+          example: 10001
+        message:
+          type: string
+          description: Error message
+          example: Invalid credentials
+        assetId:
+          type: string
+          description: Finicity's asset ID
+          example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
+        accountId:
+          type: integer
+          description: The generated Finicity ID of the account that had the error
+          format: int64
+          example: '5003507225'
+    PartnerCredentials:
+      required:
+        - partnerId
+        - partnerSecret
+      type: object
+      properties:
+        partnerId:
+          type: string
+          description: Partner ID displayed in the Developer Dashboard
+          example: '1234583871234'
+        partnerSecret:
+          type: string
+          description: Partner Secret displayed in the Developer Dashboard
+          example: aqJ5Ic4SEVx2IgDQ6oR4
+    PartnerCredentialsWithNewSecret:
+      required:
+        - partnerId
+        - partnerSecret
+        - newPartnerSecret
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PartnerCredentials'
+        - type: object
+          properties:
+            newPartnerSecret:
+              type: string
+              description: A new value for the Partner Secret
+              example: OrU7tjiA3tIspCgb85xV
+    AccessToken:
+      required:
+        - token
+      type: object
+      description: >-
+        A temporary access token to be passed in the `Finicity-App-Token` HTTP
+        Header of all subsequent API requests
+      properties:
+        token:
+          type: string
+          example: YBh22Sb9Es6e66Q7lWdt
+    ExpiredToken:
+      type: object
+      description: The Finicity-App-Token has expired--Error code (10023)
     GenerateConnectEmailResponseMulti-Borrowers:
       title: GenerateConnectEmailResponseMulti-Borrowers
       required:
@@ -5791,31 +5906,6 @@ components:
               parentRSSD: 451965
               name: FinBank National
               institutionId: 31
-    ErrorMessage:
-      title: ErrorMessage
-      required:
-        - code
-      type: object
-      properties:
-        code:
-          type: integer
-          description: Error code
-          format: int32
-        message:
-          type: string
-          description: Error message
-        assetId:
-          type: string
-          description: Finicity's asset ID
-        accountId:
-          type: integer
-          description: The generated Finicity ID of the account that had the error
-          format: int64
-      example:
-        code: 130
-        message: message
-        assetId: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
-        accountId: 5003507225
     AccountDetail:
       title: AccountDetail
       required:
@@ -8829,22 +8919,6 @@ components:
             The TxPUSH Listener URL to receive TxPUSH notifications (must use
             https protocol for any real-world account)
           example: 'https://www.mydomain.com/txpush/listener'
-    PartnerCredentials:
-      title: PartnerCredentials
-      required:
-        - partnerId
-        - partnerSecret
-      type: object
-      properties:
-        partnerId:
-          type: string
-          description: Partner ID From Developer Portal
-        partnerSecret:
-          type: string
-          description: Partner Secret From Developer Portal
-      example:
-        partnerId: PARTNER_ID
-        partnerSecret: PARTNER_SECRET
     Error1_Error:
       title: Error1_Error
       type: object
@@ -8966,20 +9040,6 @@ components:
         - voePayroll
       type: string
       example: voi
-    AuthenticationResponse:
-      title: AuthenticationResponse
-      required:
-        - token
-      type: object
-      properties:
-        token:
-          type: string
-          description: >-
-            A Temporary Access Token Which Must Be Passed In The HTTP Header
-            "Finicity-App-Token" On All Subsequent API Requests.
-      description: ''
-      example:
-        token: ACCESS_TOKEN
     AccountOwnerv1:
       title: AccountOwnerv1
       required:
@@ -9321,27 +9381,6 @@ components:
           description: The account number for initiating ACH transfers for this account
           example: 002345678901
       description: The routing and account number information to initiate ACH transfers
-    ModifyPartnerCredentials:
-      title: ModifyPartnerCredentials
-      required:
-        - partnerId
-        - partnerSecret
-        - newPartnerSecret
-      type: object
-      properties:
-        partnerId:
-          type: string
-          description: Partner ID from Developer Portal
-        partnerSecret:
-          type: string
-          description: Partner Secret from Developer Portal
-        newPartnerSecret:
-          type: string
-          description: The Value For The New Partner Secret To Be Change To
-      example:
-        partnerId: '2445581559892'
-        partnerSecret: SAcX6zYWrassR9s1BA9g
-        newPartnerSecret: SAcX6zYWrassR9s1BA9g
     BankAccountStatement_V2Response:
       title: BankAccountStatement_V2Response
       required:
@@ -14920,10 +14959,6 @@ components:
       description: >-
         The customer username and the application ID are already mapped together
         when trying to preregister applications with Finicity.
-    ExpiredToken:
-      title: ExpiredToken
-      type: object
-      description: The Finicity-App-Token has expired--Error code (10023)
     AppPreReg-MissingAppID:
       title: AppPreReg-MissingAppID
       type: object
@@ -23066,40 +23101,3 @@ components:
                 availableBalanceAmount: 1000
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 0
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 0
-  securitySchemes:
-    Finicity-App-Token:
-      type: apiKey
-      description: Token returned from Partner Authentication
-      name: Finicity-App-Token
-      in: header
-security:
-  - Finicity-App-Token: []
-tags:
-  - name: Connect
-    description: ''
-  - name: Institutions
-    description: ''
-  - name: Consumer
-    description: ''
-  - name: Verify Income
-    description: ''
-  - name: Verify Assets
-    description: ''
-  - name: Verify Income and Employment
-    description: ''
-  - name: Accounts
-    description: ''
-  - name: Account Owner
-    description: ''
-  - name: Customer
-    description: ''
-  - name: Bank Statements
-    description: ''
-  - name: Transactions
-    description: ''
-  - name: Pay Statements
-    description: ''
-  - name: Liabilities
-    description: ''
-  - name: Authentication
-    description: ''
