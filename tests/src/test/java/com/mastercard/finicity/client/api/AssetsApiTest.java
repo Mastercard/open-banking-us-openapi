@@ -1,8 +1,8 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.PayStatement;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class AssetsApiTest extends BaseAppKeyAppTokenTest {
     private final AssetsApi api = new AssetsApi(apiClient);
 
     @Test
-    public void getAssetByCustomerIDTest_UnknownID() {
+    void getAssetByCustomerIDTest_UnknownID() {
         try {
             api.getAssetByCustomerID(CUSTOMER_ID, "1234");
             fail();
@@ -28,14 +28,10 @@ public class AssetsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getAssetByCustomerIDTest() throws IOException {
+    void getAssetByCustomerIDTest() throws IOException {
         try {
             var payStatementsApi = new PayStatementsApi(apiClient);
-            var asset = payStatementsApi.storeCustomerPayStatement(CUSTOMER_ID,
-                    new PayStatement()
-                            .label("lastPayPeriodMinusOne")
-                            .statement("VGhpcyBtdXN0IGJlIGFuIGltYWdl")
-            );
+            var asset = payStatementsApi.storeCustomerPayStatement(CUSTOMER_ID, ModelFactory.newPayStatement());
             var file = api.getAssetByCustomerID(CUSTOMER_ID, asset.getAssetId());
             assertEquals("This must be an image", Files.readString(file.toPath()));
         } catch (ApiException e) {

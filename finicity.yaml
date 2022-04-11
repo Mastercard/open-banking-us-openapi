@@ -1065,14 +1065,16 @@ paths:
         - Institutions
       summary: Get Institution Subscription
       description: >-
-        Use to subscribe to a webhook service that provides notification details
-        for a specific financial institution when there are changes in the
-        product status and product certifications. You can enable or delete the
-        subscription and edit the webhook URL as needed.
+        Retrieve details of a subscription the partner has created to be alerted
+        of changes to production status of financial institutions, products, and
+        certification and decertification of products.
+
+
+        Note: The webhook URL partners use to subscribe must be HTTPS.
       operationId: GetInstitutionSubscription
       responses:
         '200':
-          $ref: '#/components/responses/GetInstitutionsResponse'
+          $ref: '#/components/responses/GetSubscriptionResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1107,8 +1109,8 @@ paths:
         Report" returns a different status.
 
 
-        If no account of type of checking, savings, money market, or investment
-        is found, the service will return HTTP 400 Bad Request.
+        If no account of type checking, savings, money market, or investment is
+        found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1160,8 +1162,8 @@ paths:
         Report" returns a different status.
 
 
-        If no account of type of checking, savings, money market, or investment
-        is found, the service will return HTTP 400 Bad Request.
+        If no account of type checking, savings, money market, or investment is
+        found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAWithIncomeReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1208,7 +1210,7 @@ paths:
         Report" returns a different status.
 
 
-        If no account type of checking, savings, money market, or investment is
+        If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
       operationId: GeneratePrequalificationReport
       parameters:
@@ -1270,7 +1272,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: "\U0001F6A7 Generate VOI Report"
+      summary: Generate VOI Report
       description: >-
         Generate a Verification of Income (VOI) report for all checking,
         savings, and money market accounts for the given customer. This service
@@ -1283,38 +1285,141 @@ paths:
         event is the successful generation of a VOI report.
 
 
-        If no account of type of checking, savings, or money market is found,
-        the service will return HTTP 400 Bad Request.
+        After making this call, the client app may wait for a notification to be
+        sent to callback URL (a Report Listener Service), or it may enter a
+        loop, which should wait 20 seconds and then call the service "Get
+        Report" to see if the report is finished. While the report is being
+        generated, "Get Report" will return a minimal report with the following
+        status: `inProgress`. The loop should repeat every 20 seconds until "Get
+        Report" returns a different status.
+
+
+        If no account of type checking, savings, or money market is found, the
+        service will return HTTP 400 Bad Request.
       operationId: GenerateVOIReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReportConstraints'
-        required: false
+        $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
         '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateVOIReportResponse'
+          $ref: '#/components/responses/GenerateReportResponse'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/decisioning/v2/customers/{customerId}/voePayroll':
+    post:
+      tags:
+        - Verify Income and Employment
+      summary: Generate VOE - Payroll Report
+      description: >-
+        Premium Service: A billable event when the API response is successful. 
+
+
+        MVS Implementation Options: Direct API Integration.
+
+
+        Used as a complementary report to the VOIE-Payroll report. This report
+        is used to fulfill the pre-close VOE requirements. It retrieves the
+        customer's employment details and employment status through the payroll
+        source without any income information. 
+
+
+        To generate this report, pass the values from the customer `SSN`, `DOB`,
+        and the `reportId` from the first VOIE-Payroll report generated after
+        the Connect session.
+
+
+        After making this call, the client app may wait for a notification to be
+        sent to callback URL (a Report Listener Service), or it may enter a
+        loop, which should wait 20 seconds and then call the service "Get
+        Report" to see if the report is finished. While the report is being
+        generated, "Get Report" will return a minimal report with the following
+        status: `inProgress`. The loop should repeat every 20 seconds until "Get
+        Report" returns a different status.
+      operationId: GenerateVOEPayrollReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GeneratePayrollReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GeneratePayrollReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/decisioning/v2/customers/{customerId}/voeTransactions':
+    post:
+      tags:
+        - Verify Income and Employment
+      summary: Generate VOE - Transactions Report
+      description: >-
+        Premium Service: A billable event when the API response is successful.
+
+
+        MVS-Direct integration developers only.
+
+
+        Used as a complimentary report to the VOA with Income and VOIE - Paystub
+        (with TXVerify) reports. It's used to fulfill the pre-close VOE
+        requirements. 
+
+
+        Retrieve the latest credit transaction information from the borrower's
+        connected bank accounts and groups them into income streams so that you
+        can view their payment history to ensure a direct deport was made within
+        the expected cadence. The report displays transaction descriptions
+        without any dollar amounts so that income re-verification isn't
+        necessary.
+
+
+        After making this call, the client app may wait for a notification to be
+        sent to callback URL (a Report Listener Service), or it may enter a
+        loop, which should wait 20 seconds and then call the service "Get
+        Report" to see if the report is finished. While the report is being
+        generated, "Get Report" will return a minimal report with the following
+        status: `inProgress`. The loop should repeat every 20 seconds until "Get
+        Report" returns a different status.
+      operationId: GenerateVOETransactionsReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+        - name: fromDate
+          in: query
+          required: false
+          description: >-
+            The fromDate parameter is an Epoch Timestamp (in seconds), such as
+            ?1494449017. Without this parameter, the report defaults to 120 days
+            if available. This field will limit the amount of credit
+            transactions included in the report up to the date specified, up to
+            120 days.
+
+            Example: ?fromDate={fromDate}
+
+            If included, the epoch timestamp should be 10 digits long and be
+            within 120 days of the present day. Extending the epoch timestamp
+            beyond 10 digits or beyond 120 days from the present date will
+            default back to 120 days of data. This query is optional.
+          schema:
+            $ref: '#/components/schemas/UnixDate'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateVOETransactionsReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GenerateVOETransactionsReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/payStatement':
     post:
       tags:
         - Verify Income and Employment
-      summary: "\U0001F6A7 GeneratePayStatementReport"
+      summary: Generate Pay Statement Report
       description: >-
         Generate Pay Statement Extraction Report for the given customer. This
         service accepts asset IDs of the stored pay statements to generate a Pay
@@ -1334,40 +1439,24 @@ paths:
         generated, "Get Report" will return a minimal report with the following
         status: `inProgress`. The loop should repeat every 20 seconds until "Get
         Report" returns a different status.
-
-
-        If an asset ID can't be found, the service will return HTTP 400 Bad
-        Request.
       operationId: GeneratePayStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PayStatementConstraints'
-        required: true
+        $ref: '#/components/requestBodies/GeneratePayStatementReportRequest'
       responses:
         '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeneratePayStatementReportResponse'
+          $ref: '#/components/responses/GeneratePayStatementReportResponse'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withInterview':
     post:
       tags:
         - Verify Income and Employment
-      summary: "\U0001F6A7 Generate VOIE - Paystub (with TXVerify) Report"
+      summary: Generate VOIE - Paystub (with TXVerify) Report
       description: >-
         Generate a VOIE - Paystub (with TXVerify) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -1397,100 +1486,29 @@ paths:
         generated, "Get Report" will return a minimal report with the following
         status: `inProgress`. The loop should repeat every 20 seconds until "Get
         Report" returns a different status.
-
-
-        When the call cannot be processed due to invalid input, the service will
-        return HTTP 400 Bad Request.
-      operationId: GenerateVOIE-Paystub(withTXVerify)Report
+      operationId: GenerateVOIEPaystubWithTXVerifyReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VOIETXVerifyConstraints'
-        required: true
+        $ref: '#/components/requestBodies/GenerateVOIEPaystubWithTXVerifyReportRequest'
       responses:
         '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateVOIE-PaystubwithTXVerifyReportResponse'
+          $ref: '#/components/responses/GenerateVOIEPaystubWithTXVerifyReportResponse'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v2/customers/{customerId}/voiePayroll':
-    post:
-      tags:
-        - Verify Income and Employment
-      summary: "\U0001F6A7 Refresh VOIE - Payroll Report"
-      description: >-
-        The VOIE – Payroll report generates when the customer completes Connect.
-        Lenders, who commonly use this report for pre-close verification
-        employment check, can refresh this report by passing the consumer's SSN,
-        DOB, and the `reportId` from the first VOIE – Payroll report they
-        received.
-
-         
-        We'll refresh this report and update any new pay histories since the
-        first report generated, including borrower's employment status as active
-        or not.
-
-         
-        Note: lenders can only refresh this report one time in a 60-day period
-        starting from the date of the first report. Any further report refreshes
-        will incur additional charges.
-
-         
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-      operationId: RefreshVOIE-PayrollReport
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PayrollReportConstraints'
-        required: true
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RefreshVOIE-PayrollReportResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withStatement':
     post:
       tags:
         - Verify Income and Employment
-      summary: "\U0001F6A7 Generate VOIE - Paystub Report"
+      summary: Generate VOIE - Paystub Report
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as asset IDs
         (generated using the "Store Customer Pay Statement" API) to generate the
-        VOIE - Paystub (with TXVerify) report with digitized paystub details.
+        VOIE - Paystub report with digitized paystub details.
 
 
         This is a premium service. The billing rate is the variable rate for
@@ -1505,33 +1523,60 @@ paths:
         generated, "Get Report" will return a minimal report with the following
         status: `inProgress`. The loop should repeat every 20 seconds until "Get
         Report" returns a different status.
-
-
-        When the call cannot be processed due to invalid input, the service will
-        return HTTP 400 Bad Request.
-      operationId: GenerateVOIE-PaystubReport
+      operationId: GenerateVOIEPaystubReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VOIEWithStatementConstraints'
-        required: true
+        $ref: '#/components/requestBodies/GenerateVOIEPaystubWithStatementReportRequest'
       responses:
         '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateVOIE-PaystubReportResponse'
+          $ref: '#/components/responses/GenerateVOIEPaystubWithStatementReportResponse'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/decisioning/v2/customers/{customerId}/voiePayroll':
+    post:
+      tags:
+        - Verify Income and Employment
+      summary: Refresh VOIE - Payroll Report
+      description: >-
+        The VOIE – Payroll report generates when the customer completes Connect.
+        Lenders, who commonly use this report for pre-close verification
+        employment check, can refresh this report by passing the consumer's SSN,
+        DOB, and the `reportId` from the first VOIE – Payroll report they
+        received.
+
+
+        We'll refresh this report and update any new pay histories since the
+        first report generated, including borrower's employment status as active
+        or not.
+
+
+        Note: lenders can only refresh this report one time in a 60-day period
+        starting from the date of the first report. Any further report refreshes
+        will incur additional charges.
+
+         
+        After making this call, the client app may wait for a notification to be
+        sent to callback URL (a Report Listener Service), or it may enter a
+        loop, which should wait 20 seconds and then call the service "Get
+        Report" to see if the report is finished. While the report is being
+        generated, "Get Report" will return a minimal report with the following
+        status: `inProgress`. The loop should repeat every 20 seconds until "Get
+        Report" returns a different status.
+      operationId: RefreshVOIEPayrollReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GeneratePayrollReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GeneratePayrollReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
@@ -1611,6 +1656,8 @@ paths:
                 format: binary
         '203':
           $ref: '#/components/responses/MFAChallengeNeededResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/statement':
@@ -1656,6 +1703,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateStatementReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v3/customers/{customerId}/transactions':
@@ -1741,6 +1790,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTransactionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v2/customers/{customerId}/transactions/{transactionId}':
@@ -1766,6 +1817,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Transaction'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/transactions':
@@ -1851,6 +1904,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTransactionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/transactions':
@@ -1924,6 +1979,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateTransactionsReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/payStatements':
@@ -1966,6 +2023,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoanPaymentDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
@@ -2002,11 +2061,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PortfolioSummaryByCustomer'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/txpush':
@@ -2052,6 +2107,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TxPushSubscriptions'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
     delete:
@@ -2070,6 +2127,8 @@ paths:
       responses:
         '200':
           description: ''
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
@@ -2106,11 +2165,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PortfolioSummary'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details':
@@ -2135,6 +2190,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ACHDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
@@ -2167,6 +2224,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateTxPushTestTransactionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
@@ -2194,6 +2253,8 @@ paths:
       responses:
         '200':
           description: ''
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
@@ -2344,6 +2405,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAvailableBalance-LiveResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance':
@@ -2372,6 +2435,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAvailableBalanceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowBusiness':
@@ -2400,7 +2465,7 @@ paths:
         Report" returns a different status.
 
 
-        If no account of type of checking or savings is found, the service will
+        If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
       operationId: GenerateCashFlowReport-Business
       parameters:
@@ -2429,6 +2494,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateCashFlowReport-BusinessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowPersonal':
@@ -2468,7 +2535,7 @@ paths:
         return HTTP 400 Bad Request.
 
 
-        If no account of type of checking or savings is found, the service will
+        If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
       operationId: GenerateCashFlowReport-Personal
       parameters:
@@ -2497,136 +2564,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateCashFlowReport-PersonalResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v2/customers/{customerId}/voePayroll':
-    post:
-      tags:
-        - Verify Income and Employment
-      summary: "\U0001F6A7 Generate VOE - Payroll Report"
-      description: >-
-        Premium Service: A billable event when the API response is successful. 
-
-
-        MVS Implementation Options: Direct API Integration
-
-
-        Used as a complementary report to the VOIE-Payroll report. This report
-        is used to fulfill the pre-close VOE requirements. It retrieves the
-        customer's employment details and employment status through the payroll
-        source without any income information. 
-
-
-        To generate this report, pass the values from the customer `SSN`, `DOB`,
-        and the `reportId` from the first VOIE-Payroll report generated after
-        the Connect session.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-      operationId: GenerateVOE-PayrollReport
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PayrollReportConstraints'
-        required: true
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateVOE-PayrollReportResponse'
         '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/decisioning/v2/customers/{customerId}/voeTransactions':
-    post:
-      tags:
-        - Verify Income and Employment
-      summary: "\U0001F6A7 Generate VOE - Transactions Report"
-      description: >-
-        Premium Service: A billable event when the API response is successful.
-
-
-        MVS-Direct integration developers only.
-
-
-        Used as a complimentary report to the VOA with Income and VOIE - Paystub
-        (with TXVerify) reports. It's used to fulfill the pre-close VOE
-        requirements. 
-
-
-        It retrieves the latest credit transaction information from the
-        borrower's connected bank accounts and groups them into income streams
-        so that you can view their payment history to ensure a direct deport was
-        made within the expected cadence. The report displays transaction
-        descriptions without any dollar amounts so that income re-verification
-        isn't necessary.
-
-
-        After making this call, the client app may wait for a notification to be
-        sent to callback URL (a Report Listener Service), or it may enter a
-        loop, which should wait 20 seconds and then call the service "Get
-        Report" to see if the report is finished. While the report is being
-        generated, "Get Report" will return a minimal report with the following
-        status: `inProgress`. The loop should repeat every 20 seconds until "Get
-        Report" returns a different status.
-      operationId: GenerateVOE-TransactionsReport
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - name: fromDate
-          in: query
-          required: false
-          description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            ?1494449017. Without this parameter, the report defaults to 120 days
-            if available. This field will limit the amount of credit
-            transactions included in the report up to the date specified, up to
-            120 days.
-
-            Example: ?fromDate={fromDate}
-
-            If included, the epoch timestamp should be 10 digits long and be
-            within 120 days of the present day. Extending the epoch timestamp
-            beyond 10 digits or beyond 120 days from the present date will
-            default back to 120 days of data. This query is optional.
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VOETransactionsReportConstraints'
-        required: false
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateVOE-TransactionsReportResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/analytics/ca360/v1/customers/{customerId}/analytics':
@@ -2652,7 +2591,7 @@ paths:
 
         See [List Consumer Attributes - Beta
         API](https://api-reference.finicity.com/#/rest/api-endpoints/analytics/list-consumer-attributes-beta)
-      operationId: GenerateConsumerAttributes-Beta
+      operationId: GenerateConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
@@ -2662,6 +2601,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateConsumerAttributesReponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
     get:
@@ -2683,7 +2624,7 @@ paths:
 
         See [Get Consumer Attributes by ID – Beta API]
         (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/get-consumer-attributes-by-id-beta)
-      operationId: ListConsumerAttributes-Beta
+      operationId: ListConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
@@ -2693,6 +2634,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListConsumerAttributesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/analytics/ca360/v1/customers/{customerId}/analytics/{analytics_id}':
@@ -2738,7 +2681,7 @@ paths:
 
         * `liabilities`
 
-      operationId: GetConsumerAttributesByID-Beta
+      operationId: GetConsumerAttributesByID
       parameters:
         - name: analytics_id
           in: path
@@ -2755,6 +2698,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetConsumerAttributesByIDResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
 components:
@@ -2865,6 +2810,7 @@ components:
           schema:
             $ref: '#/components/schemas/Application'
     MigrateInstitutionLoginAccountsRequest:
+      required: true
       description: No payload expected
       content:
         application/json:
@@ -2875,15 +2821,47 @@ components:
         application/json:
           schema: {}
     GenerateReportRequest:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportConstraints'
+    GeneratePayrollReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayrollReportConstraints'
+    GeneratePayStatementReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayStatementReportConstraints'
+    GenerateVOIEPaystubWithTXVerifyReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOIEWithTXVerifyReportConstraints'
+    GenerateVOIEPaystubWithStatementReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOIEWithStatementReportConstraints'
     StoreCustomerPayStatementRequest:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/PayStatement'
+    GenerateVOETransactionsReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOETransactionsReportConstraints'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3054,6 +3032,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Institutions'
+    GetSubscriptionResponse:
+      description: The institution subscription details were retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Subscription'
     GetInstitutionBrandingResponse:
       description: Institution branding was successfully retrieved
       content:
@@ -3069,43 +3053,88 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportData'
+    GeneratePayrollReportResponse:
+      description:
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL and the report can be fetched using
+        "Get Report" endpoints.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayrollReportData'
     GetPrequalificationReportByCustomerResponse:
-      description: The report was successfully retrieved.
+      description: The report was successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/PrequalificationReport'
     GetReportsByCustomerResponse:
-      description: The reports summaries were successfully retrieved.
+      description: The reports summaries were successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportSummaries'
     GetReportsByConsumerResponse:
-      description: The reports summaries were successfully retrieved.
+      description: The reports summaries were successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportSummaries'
     GetReportByConsumerResponse:
-      description: The report was successfully retrieved.
+      description: The report was successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/AuditableReport'
     GetAssetbyCustomerIDResponse:
-      description: The asset was successfully downloaded.
+      description: The asset was successfully downloaded
       content:
         application/octet-stream:
           schema:
             type: string
             format: binary
     StoreCustomerPayStatementResponse:
-      description: The pay statement was successfully uploaded.
+      description: The pay statement was successfully uploaded
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Asset'
+    GenerateVOETransactionsReportResponse:
+      description:
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL and the report can be fetched using
+        "Get Report" endpoints.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOETransactionsReportData'
+    GeneratePayStatementReportResponse:
+      description:
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL and the report can be fetched using
+        "Get Report" endpoints.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayStatementReportData'
+    GenerateVOIEPaystubWithTXVerifyReportResponse:
+      description:
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL and the report can be fetched using
+        "Get Report" endpoints.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOIEPaystubWithTXVerifyReportData'
+    GenerateVOIEPaystubWithStatementReportResponse:
+      description:
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL and the report can be fetched using
+        "Get Report" endpoints.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VOIEPaystubWithStatementReportData'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3521,6 +3550,10 @@ components:
       description: Number of days covered by the report
       format: int32
       example: 230
+    Seasoned:
+      type: boolean
+      description: If a report covers more than 180 days
+      example: true
     ReportTitle:
       type: string
       description: Title of the report
@@ -3542,7 +3575,9 @@ components:
       example: '5011648377'
     AssetId:
       type: string
-      description: A Finicity asset ID
+      description:
+        A Finicity asset ID. Generated by Connect or by using the "Store
+        Customer Pay Statement" API.
       example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     ReportAccountIdList:
       type: string
@@ -4028,8 +4063,7 @@ components:
           example: '123456'
         shown:
           type: boolean
-          description:
-            When shown is `true`, the custom field will show on the PDF
+          description: If the custom field will show on the PDF or not
           example: true
     ReportCustomFields:
       type: array
@@ -5618,6 +5652,27 @@ components:
         oauthInstitutionId:
           # The new ID for the OAuth institution's ID you are replacing.
           $ref: '#/components/schemas/InstitutionId'
+    Subscription:
+      type: object
+      description:
+        A subscription the partner has created to be alerted of changes to
+        production status of financial institutions, products, and certification
+        and decertification of products.
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        webhookUrl:
+          type: string
+          description: Partner webhook HTTPS URL where events will be sent
+          example: https://acmewebhooks.com
+        createdAt:
+          type: string
+          description: Date the subscription was created.
+          example: '2022-03-28T21:48:31.000Z'
+        updatedAt:
+          type: string
+          description: Date the subscription was last updated
+          example: '2022-03-28T21:48:31.000Z'
     CertifiedInstitutions:
       description:
         A list of Finicity financial institutions from the standard "Get
@@ -5747,21 +5802,8 @@ components:
           type: number
           description: The available balance for the account
           example: 1000
-    ReportData:
+    BaseReportData:
       type: object
-      required:
-        - id
-        - portfolioId
-        - customerType
-        - customerId
-        - requestId
-        - requesterName
-        - createdDate
-        - title
-        - consumerId
-        - consumerSsn
-        - type
-        - status
       properties:
         id:
           $ref: '#/components/schemas/ReportId'
@@ -5783,8 +5825,6 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/ReportConstraintsOut'
         type:
           $ref: '#/components/schemas/ReportType'
         status:
@@ -5793,8 +5833,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
-        source:
-          type: string
+    ReportData:
+      required:
+        - id
+        - portfolioId
+        - customerType
+        - customerId
+        - requestId
+        - requesterName
+        - createdDate
+        - title
+        - consumerId
+        - consumerSsn
+        - type
+        - status
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/ReportConstraintsOut'
     NetMonthly:
       required:
         - month
@@ -6012,17 +6070,12 @@ components:
       type: object
       properties:
         assetId:
-          # Asset ID assigned to the pay statement.
-          # Generated by Connect or by the client
-          # by using the "Store Customer Pay Statement" API.
           $ref: '#/components/schemas/AssetId'
         accounts:
           type: array
           items:
-            type: integer
-            format: int64
-          description:
-            The accounts added by the consumer in Connect, if applicable
+            $ref: '#/components/schemas/AccountId'
+          description: A list of customer accounts, if applicable
     Categorization:
       required:
         - normalizedPayeeName
@@ -6228,37 +6281,42 @@ components:
           format: int32
           example: 13
       description: A birth date
-    PayStatementReportData:
+    ExtractEarnings:
+      type: boolean
+      description:
+        Field to indicate whether to extract the earnings on all pay statements
+      default: true
+      example: true
+    ExtractDeductions:
+      type: boolean
+      description:
+        Field to indicate whether to extract the deductions on all pay
+        statements
+      default: false
+      example: true
+    ExtractDirectDeposit:
+      type: boolean
+      description:
+        Field to indicate whether to extract the direct deposits on all pay
+        statements
+      default: true
+      example: true
+    PayStatementData:
       required:
         - assetIds
       type: object
       properties:
         assetIds:
-          description: The list of pay statement asset IDs
+          description: A list of pay statement asset IDs
           type: array
           items:
             $ref: '#/components/schemas/AssetId'
         extractEarnings:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the earnings on all pay
-            statements.
-          default: true
-          example: true
+          $ref: '#/components/schemas/ExtractEarnings'
         extractDeductions:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the deductions on all pay
-            statements.
-          default: false
-          example: true
+          $ref: '#/components/schemas/ExtractDeductions'
         extractDirectDeposit:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the direct deposits on all pay
-            statements.
-          default: true
-          example: true
+          $ref: '#/components/schemas/ExtractDirectDeposit'
     CadenceDetails:
       type: object
       properties:
@@ -6311,16 +6369,10 @@ components:
           $ref: '#/components/schemas/ReportType'
         status:
           $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
         createdDate:
           $ref: '#/components/schemas/UnixDate'
         constraints:
           $ref: '#/components/schemas/ReportConstraintsOut'
-        source:
-          type: string
         customerType:
           $ref: '#/components/schemas/CustomerType'
         title:
@@ -6334,10 +6386,7 @@ components:
         days:
           $ref: '#/components/schemas/ReportCoveredDays'
         seasoned:
-          type: boolean
-          description:
-            This will display true if the report covers more than 180 days
-          example: true
+          $ref: '#/components/schemas/Seasoned'
         portfolioId:
           $ref: '#/components/schemas/PortfolioId'
         consolidatedAvailableBalance:
@@ -6353,6 +6402,10 @@ components:
           description: >-
             A list of institution records, including information about the
             individual accounts used in this report
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorMessage'
     ReportInstitution:
       required:
         - id
@@ -6413,7 +6466,6 @@ components:
         - ownerAddress
         - name
         - type
-        - availableBalance
         - aggregationStatusCode
         - balance
         - balanceDate
@@ -6421,15 +6473,10 @@ components:
         - transactions
         - asset
         - details
-        - incomeStream
-        - incomeStreams
       type: object
       properties:
         id:
-          type: integer
-          description: The generated FInicity ID of the account
-          format: int64
-          example: 1000023996
+          $ref: '#/components/schemas/AccountId'
         number:
           type: string
           description: >-
@@ -6458,6 +6505,8 @@ components:
           type: string
           description: One of the values from Account Types
           example: checking
+        currency:
+          $ref: '#/components/schemas/Currency'
         availableBalance:
           type: number
           description: The available balance for the account
@@ -6496,37 +6545,36 @@ components:
           items:
             $ref: '#/components/schemas/ReportIncomeStream'
           description: A list of income stream records
+        totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount:
+          type: integer
+          description: >-
+            (Prequalification Report) The total number of days since the most
+            recent insufficient funds fee for the account
+          format: int32
+          example: 0
+        totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount:
+          type: integer
+          description: >-
+            (Prequalification Report) The total number of  insufficient funds
+            fees for the account over six months
+          format: int32
+          example: 0
     VOIEWithInterviewData:
       required:
         - txVerifyInterview
       type: object
       properties:
         txVerifyInterview:
+          description: An array of 'TxVerifyInterview' objects
           type: array
           items:
             $ref: '#/components/schemas/TxVerifyInterview'
-          description: An array of txVerifyInterview objects.
         extractEarnings:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the earnings on all pay
-            statements. This is an optional field.
-          default: true
-          example: true
+          $ref: '#/components/schemas/ExtractEarnings'
         extractDeductions:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the deductions on all pay
-            statements. This is an optional field.
-          default: false
-          example: true
+          $ref: '#/components/schemas/ExtractDeductions'
         extractDirectDeposit:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the direct deposits on all pay
-            statements. This is an optional field.
-          default: true
-          example: true
+          $ref: '#/components/schemas/ExtractDirectDeposit'
     TxPushSubscriptionRequest:
       required:
         - callbackUrl
@@ -6591,11 +6639,11 @@ components:
         label:
           type: string
           description: >-
-            The label to be associated with the pay statement: 
+            The label to be associated with the pay statement. This label will
+            allow the paystub to go through data extraction.
 
-            * `lastPayPeriod`: this label will allow the paystub to go through
-            data extraction. This is the default label that should be used for
-            our VOIE - Paystub products
+            * `lastPayPeriod`: default label that should be used for the VOIE -
+            Paystub products
 
             * `lastPayPeriodMinusOne`: the second most recent pay statement
 
@@ -6700,7 +6748,7 @@ components:
         type:
           type: string
           description: Event subscription type. account or transaction
-          example: account
+          example: 'account'
         callbackUrl:
           type: string
           description: The URL for the events
@@ -6708,8 +6756,7 @@ components:
         signingKey:
           type: string
           description: Signing key for events
-          example: >-
-            zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zpe4ZL40NX83aJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB4jk4k1e
+          example: 'zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zpe4ZL40NX83aJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB4jk4k1e'
       description: TxPush subscription details
     CreateTxPushTestTransactionResponse:
       required:
@@ -6744,121 +6791,6 @@ components:
           example: 002345678901
       description:
         The routing and account number information to initiate ACH transfers
-    PrequalificationReportInstitution:
-      required:
-        - id
-        - name
-        - urlHomeApp
-        - accounts
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/InstitutionId'
-        name:
-          $ref: '#/components/schemas/InstitutionName'
-        urlHomeApp:
-          type: string
-          description: The URL of the institution's primary home page
-          example: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
-        accounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrequalificationReportAccount'
-          description: An array of accounts
-    PrequalificationReportAccount:
-      required:
-        - id
-        - number
-        - ownerName
-        - ownerAddress
-        - name
-        - type
-        - aggregationStatusCode
-        - balance
-        - balanceDate
-        - averageMonthlyBalance
-        - transactions
-        - asset
-        - details
-        - totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount
-        - totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The generated FInicity ID of the account
-          format: int64
-          example: 1000023996
-        number:
-          type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
-        ownerName:
-          type: string
-          description: >-
-            The name(s) of the account owner(s). This field is optional. If no
-            owner information is available, this field will not appear in the
-            report.
-          example: JOHN DOE
-        ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner(s). This field is optional.
-            If no owner information is available, this field will not appear in
-            the report.
-          example: '123 GAINSVILLE STREET BUFORD, GA 84937'
-        name:
-          type: string
-          description: The account name from the institution
-          example: Checking
-        type:
-          type: string
-          description: One of the values from Account Types
-          example: checking
-        aggregationStatusCode:
-          type: integer
-          description: >-
-            The status of the most recent aggregation attempt (see Handling
-            Aggregation Status Codes)
-          format: int32
-          example: 0
-        balance:
-          type: number
-          description: The cleared balance of the account as-of balanceDate
-          example: 501.24
-        balanceDate:
-          # Date for when the balance was captured
-          $ref: '#/components/schemas/UnixDate'
-        averageMonthlyBalance:
-          type: number
-          description: The average monthly balance of this account
-          example: 501.02
-        transactions:
-          type: array
-          items:
-            type: number
-          description: A list of transaction records
-          example: []
-        asset:
-          $ref: '#/components/schemas/PrequalificationReportAssetSummary'
-        details:
-          $ref: '#/components/schemas/AccountDetail'
-        totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount:
-          type: integer
-          description: >-
-            The total number of days since the most recent insufficient funds
-            fee for the account
-          format: int32
-          example: 0
-        totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount:
-          type: integer
-          description: >-
-            The total number of  insufficient funds fees for the account over
-            six months
-          format: int32
-          example: 0
     PrequalificationReport:
       description: A Prequalification report
       required:
@@ -6885,17 +6817,37 @@ components:
         - type: object
           properties:
             assets:
-              $ref: '#/components/schemas/AssetSummaryforPrequalificationReports'
-    PayStatementConstraints:
+              $ref: '#/components/schemas/PrequalificationReportAssetSummary'
+    PayStatementReportConstraints:
       required:
         - paystatementReport
       type: object
       properties:
         paystatementReport:
-          $ref: '#/components/schemas/PayStatementReportData'
+          $ref: '#/components/schemas/PayStatementData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    VOIETXVerifyConstraints:
+    PayStatementReportData:
+      required:
+        - id
+        - portfolioId
+        - customerType
+        - customerId
+        - requestId
+        - requesterName
+        - createdDate
+        - title
+        - consumerId
+        - consumerSsn
+        - type
+        - status
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/PayStatementReportConstraints'
+    VOIEWithTXVerifyReportConstraints:
       required:
         - voieWithInterviewData
       type: object
@@ -6906,7 +6858,7 @@ components:
           $ref: '#/components/schemas/VOIEWithInterviewData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    GenerateVOIReportResponse:
+    VOIEPaystubWithTXVerifyReportData:
       required:
         - id
         - portfolioId
@@ -6920,136 +6872,12 @@ components:
         - consumerSsn
         - type
         - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/ReportConstraintsOut'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
-        source:
-          type: string
-    GeneratePayStatementReportResponse:
-      required:
-        - id
-        - portfolioId
-        - customerType
-        - customerId
-        - requestId
-        - requesterName
-        - createdDate
-        - title
-        - consumerId
-        - consumerSsn
-        - constraints
-        - type
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/PayStatementConstraints'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
-        source:
-          type: string
-    GenerateVOIE-PaystubwithTXVerifyReportResponse:
-      required:
-        - id
-        - portfolioId
-        - customerId
-        - consumerId
-        - consumerSsn
-        - requesterName
-        - requestId
-        - createdDate
-        - customerType
-        - constraints
-        - title
-        - type
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        constraints:
-          $ref: '#/components/schemas/VOIE-PaystubwithTXVerifyResponseConstraints'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/VOIEWithTXVerifyReportConstraints'
     AccountType:
       enum:
         - checking
@@ -7211,17 +7039,6 @@ components:
           example: true
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    VOIE-PaystubwithTXVerifyResponseConstraints:
-      required:
-        - voieWithInterviewData
-      type: object
-      properties:
-        accountIds:
-          $ref: '#/components/schemas/ReportAccountIdList'
-        voieWithInterviewData:
-          $ref: '#/components/schemas/VOIEWithInterviewData'
-        reportCustomFields:
-          $ref: '#/components/schemas/ReportCustomFields'
     PortfolioSummaryByCustomer:
       required:
         - portfolioId
@@ -7338,7 +7155,6 @@ components:
       required:
         - ssn
         - dob
-        - reportId
       type: object
       properties:
         ssn:
@@ -7348,67 +7164,39 @@ components:
         reportId:
           # The Report Id of the original VOIE Payroll report
           $ref: '#/components/schemas/ReportId'
-    RefreshVOIE-PayrollReportResponse:
+    PayrollReportData:
       required:
         - id
+        - portfolioId
+        - customerType
         - customerId
+        - requestId
+        - requesterName
+        - createdDate
+        - title
         - consumerId
         - consumerSsn
-        - requesterName
-        - requestId
         - type
         - status
-        - createdDate
-        - constraints
-        - customerType
-        - title
-        - portfolioId
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        constraints:
-          $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-    PayrollReportRefreshResponseConstraints:
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/PayrollReportConstraintsOut'
+    PayrollReportConstraintsOut:
       required:
         - payrollData
       type: object
       properties:
         payrollData:
-          $ref: '#/components/schemas/PayrollReportData'
+          $ref: '#/components/schemas/PayrollDataOut'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    PayrollReportData:
+    PayrollDataOut:
       required:
         - payrollDataRetrievalId
         - employerNames
-        - reportId
       type: object
       properties:
         payrollDataRetrievalId:
@@ -7536,32 +7324,17 @@ components:
       type: object
       properties:
         assetIds:
-          description: The list of pay statement asset IDs
+          description: A list of pay statement asset IDs
           type: array
           items:
             $ref: '#/components/schemas/AssetId'
         extractEarnings:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the earnings on all pay
-            statements. This is an optional field.
-          default: true
-          example: true
+          $ref: '#/components/schemas/ExtractEarnings'
         extractDeductions:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the deductions on all pay
-            statements. This is an optional field.
-          default: false
-          example: false
+          $ref: '#/components/schemas/ExtractDeductions'
         extractDirectDeposit:
-          type: boolean
-          description: >-
-            Field to indicate whether to extract the direct deposits on all pay
-            statements. This is an optional field.
-          default: true
-          example: true
-    VOIEWithStatementConstraints:
+          $ref: '#/components/schemas/ExtractDirectDeposit'
+    VOIEWithStatementReportConstraints:
       required:
         - voieWithStatementData
       type: object
@@ -7573,7 +7346,7 @@ components:
       description: >-
         The request details from the report generation that were used to
         generate the report
-    GenerateVOIE-PaystubReportResponse:
+    VOIEPaystubWithStatementReportData:
       required:
         - id
         - portfolioId
@@ -7585,37 +7358,15 @@ components:
         - title
         - consumerId
         - consumerSsn
-        - constraints
         - type
         - status
       type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/VOIEWithStatementConstraints'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/VOIEWithStatementReportConstraints'
     GenerateCashFlowReport-BusinessResponse:
       required:
         - id
@@ -7694,53 +7445,6 @@ components:
           example: cfrp
         status:
           $ref: '#/components/schemas/ReportStatus'
-    GenerateVOE-PayrollReportResponse:
-      required:
-        - id
-        - portfolioId
-        - customerType
-        - customerId
-        - requestId
-        - requesterName
-        - createdDate
-        - title
-        - consumerId
-        - consumerSsn
-        - constraints
-        - type
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
     VOETransactionsReportConstraints:
       type: object
       properties:
@@ -7763,7 +7467,7 @@ components:
             streams with a confidence level of 50 or higher.
           format: int32
           example: 50
-    GenerateVOE-TransactionsReportResponse:
+    VOETransactionsReportData:
       required:
         - id
         - portfolioId
@@ -7777,70 +7481,14 @@ components:
         - consumerSsn
         - type
         - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/VOETransactionsReportConstraints'
-        type:
-          $ref: '#/components/schemas/ReportType'
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorMessage'
-    AssetSummaryforPrequalificationReports:
-      required:
-        - currentBalance
-        - twoMonthAverage
-        - sixMonthAverage
-        - beginningBalance
-      type: object
-      properties:
-        currentBalance:
-          type: number
-          description: Current balance of the account
-          example: 1000
-        availableBalance:
-          type: number
-          description: The available balance for the account
-          example: 1000
-        twoMonthAverage:
-          type: number
-          description: Two month average daily balance of the account
-          example: -1865.96
-        sixMonthAverage:
-          type: number
-          description: Six month average daily balance of the account
-          example: -7616.01
-        beginningBalance:
-          type: number
-          description:
-            Beginning balance of account per the time period in the report
-          example: -17795.6
+      allOf:
+        - $ref: '#/components/schemas/BaseReportData'
+        - type: object
+          properties:
+            constraints:
+              $ref: '#/components/schemas/VOETransactionsReportConstraints'
     PrequalificationReportAssetSummary:
       required:
-        - type
         - currentBalance
         - twoMonthAverage
         - sixMonthAverage

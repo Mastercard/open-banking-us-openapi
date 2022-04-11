@@ -4,9 +4,9 @@ import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccount;
 import com.mastercard.finicity.client.model.ReportConstraints;
 import com.mastercard.finicity.client.model.ReportType;
-import com.mastercard.finicity.client.test.AccountUtils;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
-import com.mastercard.finicity.client.test.ConsumerUtils;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,9 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            // A consumer is required to generate some of the reports
+            BaseAppKeyAppTokenTest.beforeAll();
+
+            // A consumer is required to generate reports
             ConsumersApi consumersApi = new ConsumersApi(apiClient);
             ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);
 
@@ -40,13 +42,13 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void generateAssetSummaryReportTest() {
+    void generateAssetSummaryReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(accountIds);
-            var response = api.generateAssetSummaryReport(CUSTOMER_ID, null, reportConstraints);
-            assertNotNull(response);
-            assertEquals("inProgress", response.getStatus());
-            assertEquals(ReportType.ASSETSUMMARY, response.getType());
+            var reportData = api.generateAssetSummaryReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportData);
+            assertEquals("inProgress", reportData.getStatus());
+            assertEquals(ReportType.ASSETSUMMARY, reportData.getType());
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -54,13 +56,13 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void generatePrequalificationReportTest() {
+    void generatePrequalificationReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(accountIds);
-            var response = api.generatePrequalificationReport(CUSTOMER_ID, null, reportConstraints);
-            assertNotNull(response);
-            assertEquals("inProgress", response.getStatus());
-            assertEquals(ReportType.PREQUALVOA, response.getType());
+            var reportData = api.generatePrequalificationReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportData);
+            assertEquals("inProgress", reportData.getStatus());
+            assertEquals(ReportType.PREQUALVOA, reportData.getType());
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -68,13 +70,13 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void generateVOAReportTest() {
+    void generateVOAReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(accountIds);
-            var response = api.generateVOAReport(CUSTOMER_ID, null, null, reportConstraints);
-            assertNotNull(response);
-            assertEquals("inProgress", response.getStatus());
-            assertEquals(ReportType.VOA, response.getType());
+            var reportData = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null, null);
+            assertNotNull(reportData);
+            assertEquals("inProgress", reportData.getStatus());
+            assertEquals(ReportType.VOA, reportData.getType());
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -82,13 +84,13 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void generateVOAWithIncomeReportTest() {
+    void generateVOAWithIncomeReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(accountIds);
-            var response = api.generateVOAWithIncomeReport(CUSTOMER_ID, null, null, reportConstraints);
-            assertNotNull(response);
-            assertEquals("inProgress", response.getStatus());
-            assertEquals(ReportType.VOAHISTORY, response.getType());
+            var reportData = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null, null);
+            assertNotNull(reportData);
+            assertEquals("inProgress", reportData.getStatus());
+            assertEquals(ReportType.VOAHISTORY, reportData.getType());
         } catch (ApiException e) {
             logApiException(e);
             fail();

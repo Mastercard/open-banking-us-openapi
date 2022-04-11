@@ -14,7 +14,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     private static final int existingInstitutionId = 4222;
 
     @Test
-    public void getCertifiedInstitutionsTest() {
+    void getCertifiedInstitutionsTest() {
         try {
             var institutions = api.getCertifiedInstitutions(null, null, null, null);
             assertTrue(institutions.getFound() > 0);
@@ -29,7 +29,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getCertifiedInstitutionsTest_WithStartAndLimit() {
+    void getCertifiedInstitutionsTest_WithStartAndLimit() {
         try {
             var institutions = api.getCertifiedInstitutions(null, 2, 3, null);
             assertTrue(institutions.getFound() > 0);
@@ -55,7 +55,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getCertifiedInstitutionsWithRSSDTest() {
+    void getCertifiedInstitutionsWithRSSDTest() {
         try {
             var institutions = api.getCertifiedInstitutionsWithRSSD(null, null, 25, null);
             assertTrue(institutions.getFound() > 0);
@@ -70,7 +70,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getCertifiedInstitutionsWithRSSDTest_WithStartAndLimit() {
+    void getCertifiedInstitutionsWithRSSDTest_WithStartAndLimit() {
         try {
             var institutions = api.getCertifiedInstitutionsWithRSSD(null, 2, 3, null);
             assertTrue(institutions.getFound() > 0);
@@ -96,7 +96,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getInstitutionsTest() {
+    void getInstitutionsTest() {
         try {
             var institutions = api.getInstitutions(null, null, null, null);
             assertTrue(institutions.getFound() > 0);
@@ -137,7 +137,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getInstitutionTest() {
+    void getInstitutionTest() {
         try {
             var institutionWrapper = api.getInstitution(existingInstitutionId);
             assertEquals(existingInstitutionName, institutionWrapper.getInstitution().getName());
@@ -148,7 +148,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getInstitutionBrandingTest() {
+    void getInstitutionBrandingTest() {
         try {
             var brandingWrapper = api.getInstitutionBranding(existingInstitutionId);
             assertNotNull(brandingWrapper);
@@ -160,7 +160,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void getInstitutionSubscriptionV2Test() {
+    void getInstitutionSubscriptionTest() {
         try {
             api.getInstitutionSubscription();
             fail();

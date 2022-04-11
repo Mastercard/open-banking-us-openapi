@@ -24,18 +24,19 @@ public final class ModelFactory {
                 .username(username);
     }
 
+    // See: https://docs.finicity.com/test-the-apis/#test-the-apis-5
     public static NewConsumer newConsumer() {
         return new NewConsumer()
-                .firstName("John_" + randomStr())
-                .lastName("Smith_" + randomStr())
+                .firstName("Homer")
+                .lastName("Loanseeke")
                 .address("434 W Ascension Way")
                 .city("Murray")
                 .state("UT")
                 .zip("84123")
                 .phone("6786786786")
-                .ssn("111222333")
+                .ssn("999601111")
                 .email("finicity@test.com")
-                .birthday(new Birthday().year(1989).month(8).dayOfMonth(13));
+                .birthday(new Birthday().year(1970).month(7).dayOfMonth(4));
     }
 
     public static Application newApplication() {
@@ -51,6 +52,18 @@ public final class ModelFactory {
                 .image("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgICAKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB2ZXJzaW9uPSIxLjEiCiAgIHZpZXdCb3g9IjAgMCAwIDAiCiAgIGhlaWdodD0iMCIKICAgd2lkdGg9IjAiPgogICAgPGcvPgo8L3N2Zz4K")
                 .ownerCity("Murray")
                 .ownerCountry("USA");
+    }
+
+    public static PayrollData newPayrollData() {
+        return new PayrollData()
+                .dob(15983999L) // 1970-07-04
+                .ssn("999601111");
+    }
+
+    public static PayStatement newPayStatement() {
+        return new PayStatement()
+                .label("lastPayPeriod")
+                .statement("VGhpcyBtdXN0IGJlIGFuIGltYWdl");
     }
 
     public static String randomStr() {

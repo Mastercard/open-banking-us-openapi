@@ -2,7 +2,7 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
-import com.mastercard.finicity.client.test.AccountUtils;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
 
     @Test
-    void generateConnectUrlV2Test() {
+    void generateConnectUrlTest() {
         try {
             var request = new ConnectUrlRequest()
                     .customerId(CUSTOMER_ID)
@@ -70,7 +70,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void generateLiteConnectUrlV2Test() {
+    void generateLiteConnectUrlTest() {
         try {
             var request = new LiteConnectUrlRequest()
                     .institutionId(FINBANK_A)
@@ -106,7 +106,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void generateFixConnectUrlV2Test() {
+    void generateFixConnectUrlTest() {
         try {
             var accountApi = new AccountsApi(apiClient);
             var institutionLoginId = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0).getInstitutionLoginId();
@@ -127,7 +127,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void sendConnectEmailV2Test() {
+    void sendConnectEmailTest() {
         try {
             var request = new ConnectEmailRequest()
                     .customerId(CUSTOMER_ID)
@@ -149,7 +149,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void generateJointBorrowerConnectUrlV2Test() {
+    void generateJointBorrowerConnectUrlTest() {
         try {
             var request = new ConnectJointBorrowerUrlRequest()
                     .partnerId(PARTNER_ID)
@@ -167,7 +167,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void sendJointBorrowerConnectEmailV2Test() {
+    void sendJointBorrowerConnectEmailTest() {
         try {
             var request = new ConnectJointBorrowerEmailRequest()
                     .partnerId(PARTNER_ID)

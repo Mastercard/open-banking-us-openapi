@@ -1,4 +1,4 @@
-package com.mastercard.finicity.client.test;
+package com.mastercard.finicity.client.test.utils;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.api.AccountsApi;

@@ -2,7 +2,7 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccounts;
-import com.mastercard.finicity.client.test.AccountUtils;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,9 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            // Load existing IDs to be used in the subsequent tests
             BaseAppKeyAppTokenTest.beforeAll();
+
+            // Load existing IDs to be used in the subsequent tests
             var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
             existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
             existingAccountId = existingAccount.getId();

@@ -3,7 +3,7 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.ConsumerUpdate;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
-import com.mastercard.finicity.client.test.ConsumerUtils;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

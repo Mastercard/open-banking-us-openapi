@@ -1,7 +1,7 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.test.AccountUtils;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void getAppRegistrationStatusV2Test() {
+    void getAppRegistrationStatusTest() {
         try {
             var statuses = api.getAppRegistrationStatus(null, null, null, null, null, null, null, null);
             assertNotNull(statuses.getNumberOfRecordsPerPage());
@@ -55,7 +55,7 @@ class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void migrateInstitutionLoginAccountsV2Test() {
+    void migrateInstitutionLoginAccountsTest() {
         try {
             var accountApi = new AccountsApi(apiClient);
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
