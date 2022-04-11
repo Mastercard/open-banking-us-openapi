@@ -1,0 +1,24 @@
+name: Redoc
+'on':
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: 0 1 * * *
+  workflow_dispatch: null
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Generate Redoc static HTML
+        run: |
+          npx redoc-cli bundle finicity.yaml --output finicity.html
+      - uses: actions/upload-artifact@v3
+        with:
+          name: finicity.html
+          path: ./finicity.html
