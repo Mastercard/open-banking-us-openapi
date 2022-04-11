@@ -5699,7 +5699,7 @@ components:
             created for the same customer.
           example: zb8bfcsqz4cp-2-port
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: The status of the report
@@ -6651,7 +6651,7 @@ components:
           description: Unique requestId for this specific call request
           example: sfb7xp439w
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -6945,7 +6945,7 @@ components:
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -7296,7 +7296,7 @@ components:
             The base 64 encoded value for the pay statement. Finicity supported
             file types are .pdf, .jpg, or .png.
           example: base64
-    Type:
+    ReportType:
       enum:
         - voi
         - voa
@@ -7482,7 +7482,7 @@ components:
           description: Unique requestId for this specific call request
           example: sfb7xp4iui
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -7901,7 +7901,7 @@ components:
           description: Unique requestId for this specific call request
           example: sfb7xacr9w
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8091,7 +8091,7 @@ components:
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8189,7 +8189,7 @@ components:
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8281,7 +8281,7 @@ components:
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8403,7 +8403,7 @@ components:
         constraints:
           $ref: '#/components/schemas/ReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8502,7 +8502,7 @@ components:
         constraints:
           $ref: '#/components/schemas/PayStatementConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8606,7 +8606,7 @@ components:
             Finicity Verification of Income and Employment - Paystub (with
             TXVerify)
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -8848,7 +8848,7 @@ components:
         constraints:
           $ref: '#/components/schemas/TransactionReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success'
@@ -9444,7 +9444,7 @@ components:
         constraints:
           $ref: '#/components/schemas/GenerateStatementReportConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -9719,7 +9719,7 @@ components:
           description: Unique requestId for this specific call request
           example: 7a7qyps2iy
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -10079,7 +10079,7 @@ components:
         constraints:
           $ref: '#/components/schemas/VOIEWithStatementConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -10258,7 +10258,7 @@ components:
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
@@ -10367,7 +10367,7 @@ components:
         constraints:
           $ref: '#/components/schemas/VOETransactionsRequestConstraints'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/ReportType'
         status:
           type: string
           description: 'inProgress, success, or failure'
