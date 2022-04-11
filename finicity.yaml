@@ -39,6 +39,8 @@ tags:
     description: Generate income and employment reports asynchronously
   - name: Reports
     description: Fetch reports when available
+  - name: Assets
+    description: Download asset files
   - name: Bank Statements
   - name: Transactions
   - name: Pay Statements
@@ -47,7 +49,6 @@ tags:
   - name: Portfolios
   - name: TxPush
   - name: Payments
-  - name: Assets
   - name: Cash Flow
 security:
   - FinicityAppKey: []
@@ -114,7 +115,7 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Generate Connect URL V2
+      summary: Generate Connect URL
       description: >-
         Generate a Connect 2.0 URL link to add within your own applications.
 
@@ -132,9 +133,9 @@ paths:
         MVS Developers: You can pre-populate the consumer's SSN on the "Find
         employment records" page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
-      operationId: GenerateConnectUrlV2
+      operationId: GenerateConnectUrl
       requestBody:
-        $ref: '#/components/requestBodies/GenerateConnectUrlRequestV2'
+        $ref: '#/components/requestBodies/GenerateConnectUrlRequest'
       responses:
         '200':
           $ref: '#/components/responses/GenerateConnectUrlResponse'
@@ -146,7 +147,7 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Generate Lite Connect URL V2
+      summary: Generate Lite Connect URL
       description: >-
         Connect Lite is a variation of Connect Full (`POST
         /connect/v2/generate`), which has a limited set of features.
@@ -159,9 +160,9 @@ paths:
         The Connect Web SDK isn't a requirement when using Connect lite.
         However, if you want to use the SDK events, routes, and user events,
         then you must integrate with the Connect Web SDK.
-      operationId: GenerateLiteConnectUrlV2
+      operationId: GenerateLiteConnectUrl
       requestBody:
-        $ref: '#/components/requestBodies/GenerateLiteConnectUrlRequestV2'
+        $ref: '#/components/requestBodies/GenerateLiteConnectUrlRequest'
       responses:
         '200':
           $ref: '#/components/responses/GenerateConnectUrlResponse'
@@ -173,7 +174,7 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Generate Fix Connect URL V2
+      summary: Generate Fix Connect URL
       description: >-
         Use the Connect Fix endpoint when the following conditions occur:
 
@@ -182,9 +183,9 @@ paths:
         * The user's credentials were updated (for any number of reasons)
 
         * The user's MFA challenge has expired
-      operationId: GenerateFixConnectUrlV2
+      operationId: GenerateFixConnectUrl
       requestBody:
-        $ref: '#/components/requestBodies/GenerateFixConnectUrlRequestV2'
+        $ref: '#/components/requestBodies/GenerateFixConnectUrlRequest'
       responses:
         '200':
           $ref: '#/components/responses/GenerateConnectUrlResponse'
@@ -198,13 +199,13 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Send Connect Email V2
+      summary: Send Connect Email
       description: >-
         Same as Connect Full (`POST /connect/v2/generate`) but send a Connect
         email to a consumer.
-      operationId: SendConnectEmailV2
+      operationId: SendConnectEmail
       requestBody:
-        $ref: '#/components/requestBodies/SendConnectEmailRequestV2'
+        $ref: '#/components/requestBodies/SendConnectEmailRequest'
       responses:
         '200':
           $ref: '#/components/responses/SendConnectEmailResponse'
@@ -216,7 +217,7 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Generate Connect URL V2 - Joint Borrower
+      summary: Generate Connect URL - Joint Borrower
       description: >-
         Same as Connect Full (`POST /connect/v2/generate`) but for joint
         borrowers.
@@ -224,9 +225,9 @@ paths:
 
         MVS prompts both the primary and joint borrower to enter each of their
         financial, payroll, and paystub information in the same Connect session.
-      operationId: GenerateJointBorrowerConnectUrlV2
+      operationId: GenerateJointBorrowerConnectUrl
       requestBody:
-        $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequestV2'
+        $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequest'
       responses:
         '200':
           $ref: '#/components/responses/GenerateJointBorrowerConnectUrlResponse'
@@ -238,7 +239,7 @@ paths:
     post:
       tags:
         - Connect 🔗
-      summary: Send Connect Email V2 - Joint Borrower
+      summary: Send Connect Email - Joint Borrower
       description: >-
         Same as Connect Joint Borrower (`POST
         /connect/v2/generate/jointBorrower`) but send a Connect email  to at
@@ -248,9 +249,9 @@ paths:
         When the consumer opens the email, MVS prompts both the primary and
         joint borrower to enter each of their financial, payroll, and paystub
         information in the same Connect session.
-      operationId: SendJointBorrowerConnectEmailV2
+      operationId: SendJointBorrowerConnectEmail
       requestBody:
-        $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequestV2'
+        $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequest'
       responses:
         '200':
           $ref: '#/components/responses/SendConnectEmailResponse'
@@ -850,9 +851,9 @@ paths:
     get:
       tags:
         - App Registration
-      summary: Get App Registration Status V2
+      summary: Get App Registration Status
       description: Get the status of your application registration(s).
-      operationId: GetAppRegistrationStatusV2
+      operationId: GetAppRegistrationStatus
       parameters:
         - $ref: '#/components/parameters/PreAppIdQueryParameter'
         - $ref: '#/components/parameters/ApplicationIdQueryParameter'
@@ -904,7 +905,7 @@ paths:
             example: 20
       responses:
         '200':
-          $ref: '#/components/responses/GetAppRegistrationStatusResponseV2'
+          $ref: '#/components/responses/GetAppRegistrationStatusResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -940,7 +941,7 @@ paths:
     put:
       tags:
         - App Registration
-      summary: 'Migrate Institution Login Accounts V2'
+      summary: Migrate Institution Login Accounts
       description: >-
         The `institutionLoginId` parameter uses Finicity's internal FI mapping
         to move accounts from the current FI legacy connection to the new OAuth
@@ -949,15 +950,15 @@ paths:
 
         This API returns a list of accounts for the institution login ID
         specified.
-      operationId: MigrateInstitutionLoginAccountsV2
+      operationId: MigrateInstitutionLoginAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
       requestBody:
-        $ref: '#/components/requestBodies/MigrateInstitutionLoginAccountsRequestV2'
+        $ref: '#/components/requestBodies/MigrateInstitutionLoginAccountsRequest'
       responses:
         '200':
-          $ref: '#/components/responses/MigrateInstitutionLoginAccountsResponseV2'
+          $ref: '#/components/responses/MigrateInstitutionLoginAccountsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1061,13 +1062,13 @@ paths:
     get:
       tags:
         - Institutions
-      summary: Get Institution Subscription V2
+      summary: Get Institution Subscription
       description: >-
         Use to subscribe to a webhook service that provides notification details
         for a specific financial institution when there are changes in the
         product status and product certifications. You can enable or delete the
         subscription and edit the webhook URL as needed.
-      operationId: GetInstitutionSubscriptionV2
+      operationId: GetInstitutionSubscription
       responses:
         '200':
           $ref: '#/components/responses/GetInstitutionsResponse'
@@ -1106,7 +1107,7 @@ paths:
 
 
         If no account of type of checking, savings, money market, or investment
-        is found, the service will return HTTP 400 (Bad Request).
+        is found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1136,9 +1137,9 @@ paths:
         The report includes 1 - 6 months of all debit and credit transactions
         for asset verification. By default, the history is set to 61 days,
         however, you can change the transaction history in this section by
-        setting the fromDate parameter. The report also includes up to 24 months
-        of income credit transactions (ordered by account and confidence level)
-        regardless of fromDate for income verification.
+        setting the `fromDate` parameter. The report also includes up to 24
+        months of income credit transactions (ordered by account and confidence
+        level) regardless of `fromDate` for income verification.
 
 
         This is a premium service. The billable event is the successful
@@ -1159,7 +1160,7 @@ paths:
 
 
         If no account of type of checking, savings, money market, or investment
-        is found, the service will return HTTP 400 (Bad Request).
+        is found, the service will return HTTP 400 Bad Request.
       operationId: GenerateVOAWithIncomeReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1207,7 +1208,7 @@ paths:
 
 
         If no account type of checking, savings, money market, or investment is
-        found, the service will return HTTP 400 (Bad Request).
+        found, the service will return HTTP 400 Bad Request.
       operationId: GeneratePrequalificationReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1250,7 +1251,7 @@ paths:
 
 
         If no account type of checking, savings, money market, or investment is
-        found, the service will return HTTP 400 (Bad Request).
+        found, the service will return HTTP 400 Bad Request.
       operationId: GenerateAssetSummaryReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1282,7 +1283,7 @@ paths:
 
 
         If no account of type of checking, savings, or money market is found,
-        the service will return HTTP 400 (Bad Request).
+        the service will return HTTP 400 Bad Request.
       operationId: GenerateVOIReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1334,8 +1335,8 @@ paths:
         Report" returns a different status.
 
 
-        The service will return HTTP 400 (Bad Request) if the asset ID does not
-        exist within Finicity's system.
+        If an asset ID can't be found, the service will return HTTP 400 Bad
+        Request.
       operationId: GeneratePayStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1371,14 +1372,14 @@ paths:
         savings under the given customer. This service retrieves up to two years
         of transaction history for the given accounts. It then uses this
         information as well as the provided paystub(s), which are passed into
-        the request body as assetIds (generated using the Store Customer Pay
-        Statment API) to generate the VOIE - Paystub (with TXVerify) report.
+        the request body as asset IDs (generated using the Store Customer Pay
+        Statement API) to generate the VOIE - Paystub (with TXVerify) report.
 
 
         Note: if you are using this endpoint to refresh the bank transactions,
-        use the same assetId from the first report. A new paystub is not
+        use the same asset ID from the first report. A new paystub is not
         required unless the paystub is too old for underwriting requirements.
-        Using the same assetId that was on the original report and the
+        Using the same asset ID that was on the original report and the
         previously extracted details will be used to speed up report generation
         response time.
 
@@ -1398,7 +1399,7 @@ paths:
 
 
         When the call cannot be processed due to invalid input, the service will
-        return HTTP 400 (Bad Request).
+        return HTTP 400 Bad Request.
       operationId: GenerateVOIE-Paystub(withTXVerify)Report
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1487,7 +1488,7 @@ paths:
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as assetIds
-        (generated using the Store Customer Pay Statment API) to generate the
+        (generated using the Store Customer Pay Statement API) to generate the
         VOIE - Paystub (with TXVerify) report with digitized paystub details.
 
 
@@ -1506,7 +1507,7 @@ paths:
 
 
         When the call cannot be processed due to invalid input, the service will
-        return HTTP 400 (Bad Request).
+        return HTTP 400 Bad Request.
       operationId: GenerateVOIE-PaystubReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1636,7 +1637,7 @@ paths:
 
         A Report Consumer must be created for the given Customer (using Create
         Report Consumer) before calling this service. If no Report Consumer has
-        been created, the service will return HTTP 400 (Bad Request).
+        been created, the service will return HTTP 400 Bad Request.
       operationId: GenerateStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1878,7 +1879,7 @@ paths:
 
         A Report Consumer must be created for the given Customer (using Create
         Report Consumer) before calling this service. If no Report Consumer has
-        been created, the service will return HTTP 400 (Bad Request).
+        been created, the service will return HTTP 400 Bad Request.
 
 
         There cannot be more than 24 months between fromDate and toDate.
@@ -2318,23 +2319,21 @@ paths:
     get:
       tags:
         - Assets
-      summary: "\U0001F6A7 Get Asset by Customer ID"
-      description: >-
-        Retrieve a binary file with the given assetId. The returned content type
-        is always application/octet-stream. If the service successfully
-        retrieves the asset, HTTP 200 (OK) will be returned. If the asset
-        doesn't exist, HTTP 404 (Not Found) will be returned. If you would like
-        to see an error message on the return, include application/json or
-        application/xml in your desired format for the Accept header.
-      operationId: GetAssetbyCustomerID
+      summary: Get Asset by Customer and ID
+      description: Retrieve a binary file for the given asset ID.
+      operationId: GetAssetByCustomerID
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
-          description: ''
+          $ref: '#/components/responses/GetAssetbyCustomerIDResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance/live':
     get:
       tags:
@@ -2413,7 +2412,7 @@ paths:
 
 
         If no account of type of checking or savings is found, the service will
-        return HTTP 400 (Bad Request).
+        return HTTP 400 Bad Request.
       operationId: GenerateCashFlowReport-Business
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2477,11 +2476,11 @@ paths:
 
         A Report Consumer must be created for the given Customer before calling
         this service. If no Report Consumer has been created, the service will
-        return HTTP 400 (Bad Request).
+        return HTTP 400 Bad Request.
 
 
         If no account of type of checking or savings is found, the service will
-        return HTTP 400 (Bad Request).
+        return HTTP 400 Bad Request.
       operationId: GenerateCashFlowReport-Personal
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2794,37 +2793,37 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PartnerCredentialsWithNewSecret'
-    GenerateConnectUrlRequestV2:
+    GenerateConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectUrlRequest'
-    GenerateLiteConnectUrlRequestV2:
+    GenerateLiteConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/LiteConnectUrlRequest'
-    GenerateFixConnectUrlRequestV2:
+    GenerateFixConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/FixConnectUrlRequest'
-    SendConnectEmailRequestV2:
+    SendConnectEmailRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectEmailRequest'
-    GenerateJointBorrowerConnectUrlRequestV2:
+    GenerateJointBorrowerConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectJointBorrowerUrlRequest'
-    SendJointBorrowerConnectEmailRequestV2:
+    SendJointBorrowerConnectEmailRequest:
       required: true
       content:
         application/json:
@@ -2876,7 +2875,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Application'
-    MigrateInstitutionLoginAccountsRequestV2:
+    MigrateInstitutionLoginAccountsRequest:
       description: No payload expected
       content:
         application/json:
@@ -3032,13 +3031,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RegisteredApplication'
-    GetAppRegistrationStatusResponseV2:
+    GetAppRegistrationStatusResponse:
       description: The app registration statuses were returned
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/AppStatuses'
-    MigrateInstitutionLoginAccountsResponseV2:
+    MigrateInstitutionLoginAccountsResponse:
       description: The migration succeeded
       content:
         application/json:
@@ -3101,6 +3100,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AuditableReport'
+    GetAssetbyCustomerIDResponse:
+      description: The asset was successfully downloaded.
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3265,7 +3271,7 @@ components:
       in: path
       required: true
       schema:
-        type: string
+        $ref: '#/components/schemas/AssetId'
     CustomerIdParameter:
       description: A Finicity customer ID
       name: customerId
@@ -3484,9 +3490,7 @@ components:
           description: Some more details about the error
           example: The session has expired or is invalid
         assetId:
-          type: string
-          description: Finicity asset ID
-          example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
+          $ref: '#/components/schemas/AssetId'
         accountId:
           $ref: '#/components/schemas/AccountId'
         tags:
@@ -3537,6 +3541,10 @@ components:
       type: string
       description: A Finicity account ID
       example: '5011648377'
+    AssetId:
+      type: string
+      description: A Finicity asset ID
+      example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     ReportAccountIdList:
       type: string
       description:
@@ -6005,11 +6013,9 @@ components:
       type: object
       properties:
         assetId:
-          type: string
-          description: >-
-            The assetId assigned to the pay statement. Generated by Connect or
-            by the Client by using the Store Customer Pay Statement API.
-          example: 6f8fb0a0-e882-4f57-b672-cf53f1397581
+          # Asset ID assigned to the pay statement.
+          # Generated by Connect or by the Client by using the Store Customer Pay Statement API.
+          $ref: '#/components/schemas/AssetId'
         accounts:
           type: array
           items:
@@ -6228,12 +6234,10 @@ components:
       type: object
       properties:
         assetIds:
+          description: The list of pay statement asset IDs
           type: array
           items:
-            type: string
-          description: The list of pay statement asset IDs.
-          example:
-            - 6f8fb0a0-e882-4f57-b672-cf53f1397581
+            $ref: '#/components/schemas/AssetId'
         extractEarnings:
           type: boolean
           description: >-
@@ -6657,9 +6661,7 @@ components:
       type: object
       properties:
         assetId:
-          type: string
-          description: The asset ID of the stored pay statement
-          example: 6b599a7e-236f-4a25-b070-425b52b9c1fe
+          $ref: '#/components/schemas/AssetId'
     TxPushSubscriptions:
       required:
         - subscriptions
@@ -7524,12 +7526,10 @@ components:
       type: object
       properties:
         assetIds:
+          description: The list of pay statement asset IDs
           type: array
           items:
-            type: string
-          description: The list of pay statement asset IDs.
-          example:
-            - d50ed92f-543b-431c-8286-c8b8f6556679
+            $ref: '#/components/schemas/AssetId'
         extractEarnings:
           type: boolean
           description: >-

@@ -25,7 +25,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
             var request = new ConnectUrlRequest()
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
-            var connectUrl = api.generateConnectUrlV2(request);
+            var connectUrl = api.generateConnectUrl(request);
             var link = connectUrl.getLink();
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
@@ -42,7 +42,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .institutionId(FINBANK_A)
                     .customerId("1234")
                     .partnerId(PARTNER_ID);
-            api.generateLiteConnectUrlV2(request);
+            api.generateLiteConnectUrl(request);
             fail();
         } catch (ApiException e) {
             // {"code":"10010","status":"400","message":"Customer ID does not exist or does not belong to this partner","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
@@ -59,7 +59,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .institutionId(FINBANK_A)
                     .customerId(CUSTOMER_ID)
                     .partnerId("1234");
-            api.generateLiteConnectUrlV2(request);
+            api.generateLiteConnectUrl(request);
             fail();
         } catch (ApiException e) {
             // {"code":"10010","status":"400","message":"Invalid \"partnerId\" in request body","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
@@ -76,7 +76,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .institutionId(FINBANK_A)
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
-            var connectUrl = api.generateLiteConnectUrlV2(request);
+            var connectUrl = api.generateLiteConnectUrl(request);
             var link = connectUrl.getLink();
             assertTrue(link.contains("type=lite"));
             assertTrue(link.contains("institutionId=" + FINBANK_A));
@@ -95,7 +95,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .institutionLoginId("1234")
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
-            api.generateFixConnectUrlV2(request);
+            api.generateFixConnectUrl(request);
             fail();
         } catch (ApiException e) {
             // {"code":"38007","status":"404","title":"Connecting accounts error","user_message":"Customer does not have any accounts associated with institutionLoginId.","tags":"","level":"error","message":"Customer does not have any accounts associated with institutionLoginId."}
@@ -114,7 +114,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .institutionLoginId(institutionLoginId)
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
-            var connectUrl = api.generateFixConnectUrlV2(request);
+            var connectUrl = api.generateFixConnectUrl(request);
             var link = connectUrl.getLink();
             assertTrue(link.contains("type=fix"));
             assertTrue(link.contains("institutionLoginId=" + institutionLoginId));
@@ -134,7 +134,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .partnerId(PARTNER_ID)
                     .consumerId(CONSUMER_ID)
                     .email(new EmailOptions().to("someone@company.com"));
-            var connectEmailUrl = api.sendConnectEmailV2(request);
+            var connectEmailUrl = api.sendConnectEmail(request);
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
             assertTrue(link.contains("origin=email"));
@@ -155,7 +155,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .partnerId(PARTNER_ID)
                     .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
                     .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID));
-            var connectUrl = api.generateJointBorrowerConnectUrlV2(request);
+            var connectUrl = api.generateJointBorrowerConnectUrl(request);
             var link = connectUrl.getLink();
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
             assertTrue(link.contains("consumerId=" + CONSUMER_ID));
@@ -174,7 +174,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
                     .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID))
                     .email(new EmailOptions().to("someone@company.com"));
-            var connectEmailUrl = api.sendJointBorrowerConnectEmailV2(request);
+            var connectEmailUrl = api.sendJointBorrowerConnectEmail(request);
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
             assertTrue(link.contains("origin=email"));

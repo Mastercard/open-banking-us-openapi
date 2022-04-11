@@ -28,7 +28,7 @@ class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void getAppRegistrationStatusV2Test() {
         try {
-            var statuses = api.getAppRegistrationStatusV2(null, null, null, null, null, null, null, null);
+            var statuses = api.getAppRegistrationStatus(null, null, null, null, null, null, null, null);
             assertNotNull(statuses.getNumberOfRecordsPerPage());
             assertNotNull(statuses.getPageNumber());
             assertNotNull(statuses.getTotalPages());
@@ -60,7 +60,7 @@ class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
             var accountApi = new AccountsApi(apiClient);
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
             var existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
-            var accounts = api.migrateInstitutionLoginAccountsV2(CUSTOMER_ID, existingInstitutionLoginId, new Object());
+            var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, existingInstitutionLoginId, new Object());
             assertTrue(accounts.getAccounts().size() > 0);
             fail();
         } catch (ApiException e) {

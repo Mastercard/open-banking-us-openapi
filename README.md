@@ -62,4 +62,4 @@ When updating the Finicity API specification:
 
 ## Support
 
-:love_letter: Contact us [here](https://www.finicity.com/contact/)
+:love_letter: Contact us [here](https://www.finicity.com/contact/).

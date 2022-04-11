@@ -162,7 +162,7 @@ public class InstitutionsApiTest extends BaseAppKeyAppTokenTest {
     @Test
     public void getInstitutionSubscriptionV2Test() {
         try {
-            api.getInstitutionSubscriptionV2();
+            api.getInstitutionSubscription();
             fail();
         } catch (ApiException e) {
             // {"source":"3f7ebe00d3a67d70fd217a231a783469","code":2001,"status":404,"title":"SUBSCRIPTION NOT FOUND","message":"The requested entity was not found","user_message":"The requested entity was not found","tags":""}
