@@ -1,11 +1,11 @@
 openapi: 3.0.3
 info:
-  title: Finicity API
+  title: Finicity APIs
   description: >-
-    OpenAPI specification for Finicity API
+    OpenAPI specification for Finicity APIs
 
 
-    ![](https://prod-finweb-frontend.s3-us-west-2.amazonaws.com/wp-content/uploads/20210512010711/Finicity_mc-logo-400x162.png)
+    ![](https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/res/logo.png)
   contact:
     name: Finicity
     email: business.development@finicity.com
