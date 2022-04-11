@@ -146,7 +146,7 @@ public class ReportsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void getVOIEPaystubReportByConsumerTest() throws Exception {
+    void getVOIEPaystubReportByConsumerTest() {
         try {
             var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
             var constraints = new VOIEWithStatementReportConstraints().voieWithStatementData(voieWithStatementData);

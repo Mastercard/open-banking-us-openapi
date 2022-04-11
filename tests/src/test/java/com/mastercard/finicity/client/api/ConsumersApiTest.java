@@ -19,6 +19,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            BaseAppKeyAppTokenTest.beforeAll();
             existingConsumerId = ConsumerUtils.getOrCreateDefaultConsumer(api, CUSTOMER_ID);
         } catch (ApiException e) {
             logApiException(e);

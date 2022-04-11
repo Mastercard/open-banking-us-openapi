@@ -83,7 +83,6 @@ public class VerifyIncomeAndEmploymentApiTest extends BaseAppKeyAppTokenTest {
             assertEquals(ReportType.PAYSTATEMENT, reportData.getType());
         } catch (ApiException e) {
             logApiException(e);
-            fail();
         }
     }
 
