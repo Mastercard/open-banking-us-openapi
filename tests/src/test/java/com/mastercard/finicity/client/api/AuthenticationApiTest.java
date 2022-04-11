@@ -22,13 +22,19 @@ class AuthenticationApiTest extends BaseAppKeyTest {
     }
 
     @Test
-    void modifyPartnerSecretTest() throws ApiException {
-        // 1. Update Partner Secret
-        var credentials = new PartnerCredentialsWithNewSecret()
-                .partnerId(PARTNER_ID)
-                .partnerSecret(PARTNER_SECRET)
-                .newPartnerSecret("yESweOaabuRK4Qkotest");
-        authenticationApi.modifyPartnerSecret(credentials);
+    void modifyPartnerSecretTest() {
+        PartnerCredentialsWithNewSecret credentials;
+        try {
+            // 1. Update Partner Secret
+            credentials = new PartnerCredentialsWithNewSecret()
+                    .partnerId(PARTNER_ID)
+                    .partnerSecret(PARTNER_SECRET)
+                    .newPartnerSecret(PARTNER_SECRET + "_updated");
+            authenticationApi.modifyPartnerSecret(credentials);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
 
         try {
             // 2. Try to get a token using the old secret
@@ -43,11 +49,16 @@ class AuthenticationApiTest extends BaseAppKeyTest {
             assertErrorMessageEquals("Invalid credentials", e);
         }
 
-        // 3. Rollback
-        credentials = new PartnerCredentialsWithNewSecret()
-                .partnerId(PARTNER_ID)
-                .partnerSecret("yESweOaabuRK4Qkotest")
-                .newPartnerSecret(PARTNER_SECRET);
-        authenticationApi.modifyPartnerSecret(credentials);
+        try {
+            // 3. Rollback
+            credentials = new PartnerCredentialsWithNewSecret()
+                    .partnerId(PARTNER_ID)
+                    .partnerSecret(PARTNER_SECRET + "_updated")
+                    .newPartnerSecret(PARTNER_SECRET);
+            authenticationApi.modifyPartnerSecret(credentials);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 }
