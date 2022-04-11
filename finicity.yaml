@@ -29,6 +29,9 @@ tags:
   - name: Pay Statements
   - name: Liabilities
   - name: Analytics and Attributes
+security:
+  - FinicityAppKey: []
+  - FinicityAppToken: []
 paths:
   /aggregation/v2/partners/authentication:
     post:
@@ -110,41 +113,29 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-      security:
-        - FinicityAppKey: []
-        - FinicityAppToken: []
   /connect/v2/generate/lite:
     post:
       tags:
         - Connect
-      summary: "\U0001F6A7 Generate V2 Lite Connect URL"
-      description: >-
+      summary: Generate Lite Connect URL V2
+      description: |-
         Connect Lite is a variation of Connect Full, which has a limited set of
         features.
 
         * Sign in, user's credentials, and Multi-Factor Authentication (MFA).
-
         * No user account management.
-
 
         The Connect Web SDK isn't a requirement when using Connect lite.
         However, if you want to use the SDK events, routes, and user events,
         then you need to integrate with the Connect Web SDK.
-      operationId: GenerateV2LiteConnectURL
+      operationId: GenerateLiteConnectUrlV2
       requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateConnectURLRequestlite-V2'
-        required: true
+        $ref: '#/components/requestBodies/GenerateLiteConnectUrlRequestV2'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectUrl'
+          $ref: '#/components/responses/GenerateConnectUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/generate/fix:
@@ -210,7 +201,7 @@ paths:
             example:
               partnerId: '1234583871234'
               customerId: '1005061234'
-              consumerId: 86238nvnw7269e224a4e3de12352d87d
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               type: voa
               webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
               webhookContentType: application/json
@@ -284,13 +275,13 @@ paths:
               partnerId: '1234583871234'
               borrowers:
                 - customerId: '1005061234'
-                  consumerId: 1973f901305e2ab3ba8840f411f6b057
+                  consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
                   type: primary
                   optionalConsumerInfo:
                     ssn: '123412134'
                     dob: 315576000
-                - customerId: '1005063558'
-                  consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+                - customerId: '1005061235'
+                  consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
                   type: jointBorrower
                   optionalConsumerInfo:
                     ssn: '351225513'
@@ -353,13 +344,13 @@ paths:
               partnerId: '1234583871234'
               borrowers:
                 - customerId: '1005061234'
-                  consumerId: 1973f901305e2ab3ba8840f411f6b057
+                  consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
                   type: primary
                   optionalConsumerInfo:
                     ssn: '123412134'
                     dob: '315576000'
-                - customerId: '1005063558'
-                  consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+                - customerId: '1005061235'
+                  consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
                   type: jointBorrower
                   optionalConsumerInfo:
                     ssn: '351225513'
@@ -583,9 +574,7 @@ paths:
           description: Finicity's ID of the institution to retrieve
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 101732
+            $ref: '#/components/schemas/InstitutionId'
       responses:
         '200':
           description: ''
@@ -610,9 +599,7 @@ paths:
           description: ID of the institution
           required: true
           schema:
-            type: integer
-            format: int32
-            example: 5
+            $ref: '#/components/schemas/InstitutionId'
       responses:
         '200':
           description: ''
@@ -638,17 +625,6 @@ paths:
         the product status and product certifications. You can enable or delete
         the subscription and edit the webhook URL as needed.
       operationId: GetInstitutionSubscriptionV2
-      parameters:
-        - name: Finicity-App-Key
-          in: header
-          description: Finicity-App-Key from the Developer Portal
-          schema:
-            type: string
-        - name: Finicity-App-Token
-          in: header
-          description: Token returned from Partner Authentication
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -2593,18 +2569,6 @@ paths:
         with a label.
       operationId: StoreCustomerPayStatement
       parameters:
-        - name: Finicity-App-Key
-          in: header
-          description: Finicity-App-Key from Developer Portal
-          required: true
-          schema:
-            type: string
-        - name: Finicity-App-Token
-          in: header
-          description: Token returned from Partner Authentication
-          required: true
-          schema:
-            type: string
         - $ref: '#/components/parameters/CustomerIdParameter'
       requestBody:
         description: >-
@@ -3354,10 +3318,10 @@ paths:
                 portfolioId: fkmz2dhbcneq-1-port
                 gseEnabled: true
                 customerType: testing
-                customerId: 1000005494
+                customerId: '1005061234'
                 requestId: vg7bsqbxwg
                 title: Finicity Verification of Assets
-                consumerId: 6558691f5211e3a63ae39e0848de540a
+                consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
                 consumerSsn: '6789'
                 requesterName: Decisioning API Tests
                 type: voa
@@ -3982,6 +3946,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectUrlRequest'
+    GenerateLiteConnectUrlRequestV2:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LiteConnectUrlRequest'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -4099,12 +4069,9 @@ components:
     CustomerIdParameter:
       name: customerId
       in: path
-      description: Finicity's ID of the customer
       required: true
       schema:
-        type: integer
-        format: int64
-        example: 1000278253
+        $ref: '#/components/schemas/CustomerId'
     PurposeParameter:
       name: purpose
       in: query
@@ -4152,6 +4119,18 @@ components:
       type: string
       description: Partner ID displayed in the Developer Dashboard
       example: '1234583871234'
+    ConsumerId:
+      type: string
+      description: A Finicity consumer ID. See also, "Create Consumer"
+      example: '0bf46322c167b562e6cbed9d40e19a4c'
+    CustomerId:
+      type: string
+      description: A Finicity customer ID. See also, "Add Customer"
+      example: '1005061234'
+    InstitutionId:
+      description: The ID of a Financial Institution.
+      type: string
+      example: '102105'
     PartnerCredentials:
       required:
         - partnerId
@@ -4198,144 +4177,197 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: |-
-            Finicity's consumer ID. Obtained from the Create Consumer call.
-            *Required for any connect type that generate a report*
-          example: 86238nvnw7269e224a4e3de12352d87d
+          # Required for any connect type that generates a report
+          $ref: '#/components/schemas/ConsumerId'
         redirectUri:
-          type: string
-          description: |-
-            The URL that customers will be redirected to after completing
-            Finicity Connect. *Required unless Connect is embedded inside our
-            application (iframe)*
-          example: 'https://www.finicity.com/connect/'
+          $ref: '#/components/schemas/RedirectUri'
         webhook:
-          type: string
-          description: |-
-            The publicly available URL you want to be notified with events as
-            the user progresses through the application. See [Connect Webhook
-            Event](https://docs.finicity.com/connect-webhooks/) for event
-            details.
-          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
+          $ref: '#/components/schemas/Webhook'
         webhookContentType:
-          type: string
-          description: |-
-            The content type the webhook events will be sent in. Supported
-            types: `application/json` and `application/xml`
-          default: application/json
-          example: application/json
+          $ref: '#/components/schemas/WebhookContentType'
         webhookData:
-          type: object
-          description: |-
-            Allows additional identifiable information to be inserted into the
-            payload of connect webhook events. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+          $ref: '#/components/schemas/WebhookData'
         webhookHeaders:
-          type: object
-          description: |-
-            Allows additional identifiable information to be included as headers
-            of connect webhook event. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
-        institutionSettings:
-          type: object
-          description: |-
-            Advanced options for configuration of which institutions to display
-            in. See [Institution
-            Settings](https://docs.finicity.com/connect-institution-settings/)
-        experience:
-          type: string
-          description: |-
-            The `experience` field allows you to customize: 
-
-            * **Brand**: color and logo
-            * **Icon**: displayed on the Share your data page
-            * **Popular institutions**: displayed on the Bank Search page
-            * **Report**: the credit decisioning report to send when Connect completes.
-            * **MVS modules**: financial, payroll, paystub
-
-            **Note**: The Finicity sales engineers (SE) help you set up a
-            default experience for your company when you migrate to Connect 2.0.
-            For each additional experience you create thereafter, they'll give
-            you a unique ID. See [Generate 2.0 ConnectURL
-            APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
-                        
-            **Experience values options**:
-
-            * **default**: your default experience
-            * **unique ID**: the code for a different experience
-            * **not defined**: If you don't pass the experience parameter, then
-            Connect's out of the box default experience (add accounts but no
-            branding) is used, and the MVS modules will not run.
-          example: default
-        fromDate:
-          type: integer
-          description: |-
-            The `fromDate` parameter is used when experiences are associated
-            with a credit decisioning report and any other reports with
-            transaction data. The value is in epoch time and must be 10 digits.
-            **Example**: 1494449017. If it's greater than 10 digits, then the
-            `fromDate` is set to the credit decisioning report's default
-            `fromDate`.
-
-            For an experience that generates multiple reports, the `fromDate`
-            gets passed to the reports that support it.
-
-            However, Connect doesn't pass this parameter to the following
-            reports:
-
-            * Pay Statement ExtractionReport
-            * VOIE - Paystub (with TXVerify) Report
-            * Statement Report
-            * Verification of Income Report
-            * VOIE -Payroll Report 
-
-            **Note**: this field isn't used if you're only collecting transaction
-            data without a report.
-          format: int64
-          example: 1607450357
-        reportCustomFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportCustomField'
-          description: >-
-            The `reportCustomFields` parameter is used when experiences are
-            associated with a credit decisioning report.
-
-
-            Designate up to 5 custom fields that you'd like associated with the
-
-            report when it's generated. Every custom field consists of three
-            variables: `label`, `value`, and `shown`. The `shown` variable is
-            true or false.
-
-
-            * **True**: (default) display the custom field in the PDF report. 
-
-            * **False**: don't display the custom field in the DF report. 
-
-
-            For an experience that generates multiple reports, the
-            `reportCustomFields` parameter gets passed to all reports.
-
-
-            All custom fields display in the Reseller Billing endpoint.
+          $ref: '#/components/schemas/WebhookHeaders'
         optionalConsumerInfo:
           $ref: '#/components/schemas/OptionalConsumerInfo'
         singleUseUrl:
-          type: boolean
-          description: |-
-            **True**: The URL link expires after a Connect session successfully
-            completes. 
+          $ref: '#/components/schemas/SingleUseUrl'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        institutionSettings:
+          $ref: '#/components/schemas/InstitutionSettings'
+        fromDate:
+          $ref: '#/components/schemas/FromDate'
+        reportCustomFields:
+          $ref: '#/components/schemas/ReportCustomFields'
+    LiteConnectUrlRequest:
+      required:
+        - partnerId
+        - customerId
+        - institutionId
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        institutionId:
+          $ref: '#/components/schemas/InstitutionId'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        singleUseUrl:
+          $ref: '#/components/schemas/SingleUseUrl'
+    RedirectUri:
+      type: string
+      description: |-
+        The URL that customers will be redirected to after completing
+        Finicity Connect. *Required unless Connect is embedded inside our
+        application (iframe)*
+      example: 'https://www.finicity.com/connect/'
+    Webhook:
+      type: string
+      description: |-
+        The publicly available URL you want to be notified with events as
+        the user progresses through the application. See [Connect Webhook
+        Event](https://docs.finicity.com/connect-webhooks/) for event
+        details.
+      example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
+    WebhookContentType:
+      type: string
+      description: |-
+        The content type the webhook events will be sent in. Supported
+        types: `application/json` and `application/xml`
+      default: application/json
+      example: application/json
+    WebhookData:
+      type: object
+      description: |-
+        Allows additional identifiable information to be inserted into the
+        payload of connect webhook events. See this article for
+        [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+    WebhookHeaders:
+      type: object
+      description: |-
+        Allows additional identifiable information to be included as headers
+        of connect webhook event. See this article for
+        [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+    Experience:
+      type: string
+      description: |-
+        The `experience` field allows you to customize: 
 
-            **Note**: When the `singleUseUrl` and the `experience` parameters
-            are passed in the same call, the `singleUseUrl` value overrides the
-            `singleUseUrl` value configured in the `experience` parameter.
+        * **Brand**: color and logo
+        * **Icon**: displayed on the Share your data page
+        * **Popular institutions**: displayed on the Bank Search page
+        * **Report**: the credit decisioning report to send when Connect completes.
+        * **MVS modules**: financial, payroll, paystub
+
+        **Note**: The Finicity sales engineers (SE) help you set up a
+        default experience for your company when you migrate to Connect 2.0.
+        For each additional experience you create thereafter, they'll give
+        you a unique ID. See [Generate 2.0 ConnectURL
+        APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
+                    
+        **Experience values options**:
+
+        * **default**: your default experience
+        * **unique ID**: the code for a different experience
+        * **not defined**: If you don't pass the experience parameter, then
+        Connect's out of the box default experience (add accounts but no
+        branding) is used, and the MVS modules will not run.
+      example: 'default'
+    SingleUseUrl:
+      type: boolean
+      description: |-
+        **true**: The URL link expires after a Connect session successfully
+        completes. 
+
+        **Note**: When the `singleUseUrl` and the `experience` parameters
+        are passed in the same call, the `singleUseUrl` value overrides the
+        `singleUseUrl` value configured in the `experience` parameter.
+      example: true
+    ReportCustomField:
+      type: object
+      properties:
+        label:
+          type: string
+          description: The name of the custom field
+          example: 'loanID'
+        value:
+          type: string
+          description: The value of the custom field
+          example: '123456'
+        shown:
+          type: boolean
+          description: >-
+            The shown variable designates whether the custom field will display
+            on the PDF report. When shown is `true`, the custom field will show on
+            the PDF.
           example: true
+    ReportCustomFields:
+      type: array
+      items:
+        $ref: '#/components/schemas/ReportCustomField'
+      description: |-
+        The `reportCustomFields` parameter is used when experiences are
+        associated with a credit decisioning report.
+
+        Designate up to 5 custom fields that you'd like associated with the
+        report when it's generated. Every custom field consists of three
+        variables: `label`, `value`, and `shown`. The `shown` variable is
+        true or false.
+
+        * **True**: (default) display the custom field in the PDF report. 
+        * **False**: don't display the custom field in the DF report. 
+
+        For an experience that generates multiple reports, the
+        `reportCustomFields` parameter gets passed to all reports.
+
+        All custom fields display in the Reseller Billing endpoint.
+    FromDate:
+      type: integer
+      description: |-
+        The `fromDate` parameter is used when experiences are associated
+        with a credit decisioning report and any other reports with
+        transaction data. The value is in epoch time and must be 10 digits.
+        **Example**: 1494449017. If it's greater than 10 digits, then the
+        `fromDate` is set to the credit decisioning report's default
+        `fromDate`.
+
+        For an experience that generates multiple reports, the `fromDate`
+        gets passed to the reports that support it.
+
+        However, Connect doesn't pass this parameter to the following
+        reports:
+        * Pay Statement ExtractionReport
+        * VOIE - Paystub (with TXVerify) Report
+        * Statement Report
+        * Verification of Income Report
+        * VOIE -Payroll Report 
+
+        **Note**: this field isn't used if you're only collecting transaction
+        data without a report.
+      format: int64
+      example: 1607450357
+    InstitutionSettings:
+      type: object
+      description: |-
+        Advanced options for configuration of which institutions to display
+        in. See [Institution
+        Settings](https://docs.finicity.com/connect-institution-settings/)
     ConnectUrl:
       description: A Connect URL object
       required:
@@ -4343,10 +4375,11 @@ components:
       type: object
       properties:
         link:
-          type: string
-          description: The generated Connect URL
-          example: >-
-            https://connect2.finicity.com?consumerId=f1ca88bea722ef1f8178f8230756bbcf&customerId=54411976&partnerId=2445582695152&signature=d34c1352c45f54cfd76454e7e8c3e85cc923b60fae5f28b26cd6c7b6f8aaa201×tamp=1584733720994&ttl=1584740920994&type=aggregation
+          $ref: '#/components/schemas/ConnectLink'
+    ConnectLink:
+      type: string
+      description: A generated Connect URL
+      example: 'https://connect2.finicity.com?customerId=5025024821&institutionId=102105&origin=url&partnerId=2445583925753&signature=b5667164db7a9a0007b59267785c996ca3bc9ce97f2e72c98099cead76edfad9&timestamp=1648050761908&ttl=1648057961908&type=lite&webhookContentType=application%2Fjson'
     GetInstitutionsResponse:
       required:
         - found
@@ -4386,7 +4419,7 @@ components:
           description: An array of institutions
           example:
             - name: FinBank
-              id: 101732
+              id: '101732'
               transAgg: true
               ach: true
               stateAgg: false
@@ -4420,7 +4453,7 @@ components:
               currency: USD
               email: finbank.ds5@finicity.com
               status: online
-              newInstitutionId: null
+              newInstitutionId: '102105'
               branding:
                 logo: >-
                   https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
@@ -4431,7 +4464,7 @@ components:
                 primaryColor: '#1B3E4A'
                 tile: >-
                   https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-              oauthInstitutionId: null
+              oauthInstitutionId: '102105'
       description: >-
         A list of Finicity financial institutions from the standard get
         institutions response
@@ -4567,10 +4600,7 @@ components:
           description: Institution's name
           example: FinBank
         id:
-          type: integer
-          description: Institution's Id
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         transAgg:
           type: boolean
           description: Trans Agg Certification
@@ -4612,15 +4642,15 @@ components:
             - rssd: 167565
               parentRSSD: 451965
               name: 'FinBank, LTD.'
-              institutionId: 31
+              institutionId: '102104'
             - rssd: 2362458
               parentRSSD: 451965
               name: 'FinBank, National Association'
-              institutionId: 31
+              institutionId: '102105'
             - rssd: 1225761
               parentRSSD: 451965
               name: FinBank National
-              institutionId: 31
+              institutionId: '102106'
     AccountDetail:
       required:
         - interestMarginBalance
@@ -4721,15 +4751,9 @@ components:
             account activation
           example: active
         customerId:
-          type: integer
-          description: The Finicity ID of the customer associated with this account
-          format: int64
-          example: 1005061234
+          $ref: '#/components/schemas/CustomerId'
         institutionId:
-          type: integer
-          description: The Finicity ID of the institution for this account
-          format: int64
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
         balanceDate:
           type: integer
           description: >-
@@ -4825,7 +4849,6 @@ components:
             The Finicity assigned accountId for the account one level higher in
             the student loan account hierarchy
           format: int64
-          nullable: true
       description: >-
         A customer account represents a bank account such as a checking or
         savings that the customer has added via the Connect interface
@@ -4839,8 +4862,8 @@ components:
         type: checking
         aggregationStatusCode: 0
         status: active
-        customerId: 1005061234
-        institutionId: 102224
+        customerId: '1005061234'
+        institutionId: '102105'
         balanceDate: 1588797048
         aggregationSuccessDate: 1588797048
         aggregationAttemptDate: 1588797048
@@ -4965,10 +4988,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000279435
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -4989,8 +5009,7 @@ components:
           description: Finicity's title of the report
           example: Finicity's report title
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -5037,10 +5056,7 @@ components:
           format: int64
           example: 1014136057
         customerId:
-          type: integer
-          description: The Finicity ID of the customer associated with this transaction
-          format: int64
-          example: 1005061234
+          $ref: '#/components/schemas/CustomerId'
         status:
           type: string
           description: >-
@@ -5069,27 +5085,23 @@ components:
             A timestamp showing when the transaction was posted or cleared by
             the institution (see Handling Dates and Times). **Nullable & not
             required for student loan transaction data.**
-          nullable: true
           example: '1588888169'
         transactionDate:
           type: string
           description: >-
             An optional timestamp showing when the transaction occurred, as
             provided by the institution (see Handling Dates and Times).
-          nullable: true
           example: '1588801769'
         effectiveDate:
           type: string
           description: >-
             A timestamp showing when the transaction was made effective on an
             account by an institution. Typically aligns with billing due dates.
-          nullable: true
         firstEffectiveDate:
           type: string
           description: >-
             The first timestamp recorded in effectiveDate by Finicity for a
             transaction.
-          nullable: true
         createdDate:
           type: string
           description: >-
@@ -5167,7 +5179,7 @@ components:
         id: 102122887150
         amount: 3678.9
         accountId: 1014136057
-        customerId: 1005061234
+        customerId: '1005061234'
         status: active
         description: MAD SCIENCE RESEARCH PR PAYMENT
         memo: PPD ID 098749
@@ -5193,13 +5205,11 @@ components:
           description: Consumer created date
           format: int64
         customerId:
-          type: integer
-          description: Finicity?s ID of the customer
-          format: int64
+          $ref: '#/components/schemas/CustomerId'
       example:
         id: 1973f901305e2ab3ba8840f411f6b057
         createdDate: 1587586444
-        customerId: 1000005540
+        customerId: '1005061234'
     GenerateConnectEmailResponseMulti-Borrowers:
       required:
         - links
@@ -5374,7 +5384,7 @@ components:
           description: Data pertaining to each report
           example:
             - id: 41h4nzppn37u
-              consumerId: b06cf32dd2222b32e31083221063f561
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               consumerSsn: '5123'
               requesterName: Finicity Test API
               requestId: cjqm4wtdcn
@@ -5440,7 +5450,7 @@ components:
           description: Results
           example:
             - name: FinBank
-              id: 101732
+              id: '101732'
               transAgg: true
               ach: true
               stateAgg: false
@@ -5675,7 +5685,6 @@ components:
           type: string
         alternateLogo:
           type: string
-          nullable: true
         icon:
           type: string
         alternateIcon:
@@ -5684,7 +5693,6 @@ components:
           type: string
         secondaryColor:
           type: string
-          nullable: true
         gradientColorTop:
           type: string
         gradientColorBottom:
@@ -5693,7 +5701,6 @@ components:
           type: string
         tileSmall:
           type: string
-          nullable: true
         buttonTextColor:
           type: string
       example:
@@ -5796,7 +5803,7 @@ components:
               accountId: 1000018102
               amount: 1928.1
               createdDate: 1587576293
-              customerId: '1000005494'
+              customerId: '1005061234'
               description: ACH Deposit Finicity
               institutionTransactionId: 0
               postedDate: 1540641600
@@ -5880,7 +5887,7 @@ components:
         accountId: 1000018102
         amount: '1928.10'
         createdDate: 1587576293
-        customerId: '1000005494'
+        customerId: '1005061234'
         description: ACH Deposit Finicity
         institutionTransactionId: 0
         postedDate: 1540641600
@@ -5979,24 +5986,14 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: >-
-            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
-            *Required for any connect type that generate a report*
-          example: 86238nvnw7269e224a4e3de12352d87d
+          # Required for any connect type that generates a report
+          $ref: '#/components/schemas/ConsumerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         institutionId:
-          type: integer
-          description: >-
-            ID of the specific Institution login flow to present to the
-            Customer/Consumer <br> *Only supported for connect type`lite`*
-          format: int32
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
         institutionLoginId:
           type: string
           description: >-
@@ -6119,9 +6116,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution's ID
-          format: int64
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -6234,25 +6229,18 @@ components:
           description: "Institution's status: online, offline, maintenance, testing"
           example: online
         newInstitutionId:
-          type: integer
-          description: >-
-            The new id for the financial institution's ID you are replacing.
-            <br> <br> **Note**: This is the same as the `oauthInstitutionId`
-            field, which will eventually be replaced by this field.
-          format: int32
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
+          # The new id for the financial institution's ID you are replacing. This is the same as the `oauthInstitutionId`
+          # field, which will eventually be replaced by this field.
         branding:
           $ref: '#/components/schemas/GetInstitutions-InstitutionBranding'
         oauthInstitutionId:
-          type: integer
-          description: The new ID for the OAuth institution's ID you are replacing.
-          format: int32
-          nullable: true
-          example: 102224
+          # The new ID for the OAuth institution's ID you are replacing.
+          $ref: '#/components/schemas/InstitutionId'
       description: A financial institution's Finicity registered details
       example:
         name: FinBank
-        id: 101732
+        id: '101732'
         transAgg: true
         ach: true
         stateAgg: false
@@ -6284,7 +6272,7 @@ components:
         currency: USD
         email: finbank.ds5@finicity.com
         status: online
-        newInstitutionId: 12345
+        newInstitutionId: '102105'
         branding:
           logo: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/logo.svg
@@ -6295,7 +6283,7 @@ components:
           primaryColor: '#1B3E4A'
           tile: >-
             https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/tile.svg
-        oauthInstitutionId: 12345
+        oauthInstitutionId: '102105'
     AuditableReport:
       required:
         - id
@@ -6323,14 +6311,9 @@ components:
           description: Report id
           example: u4hstnnak45g
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -6406,7 +6389,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -6426,7 +6409,7 @@ components:
                       accountId: 1000018102
                       amount: 1928.1
                       createdDate: 1587576293
-                      customerId: '1000005494'
+                      customerId: '1005061234'
                       description: ACH Deposit Finicity
                       institutionTransactionId: 0
                       postedDate: 1540641600
@@ -6505,10 +6488,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -6539,7 +6519,7 @@ components:
                   accountId: 1000018102
                   amount: 1928.1
                   createdDate: 1587576293
-                  customerId: '1000005494'
+                  customerId: '1005061234'
                   description: ACH Deposit Finicity
                   institutionTransactionId: 0
                   postedDate: 1540641600
@@ -6627,9 +6607,7 @@ components:
           description: The Finicity report ID
           example: 41h4nzppn37u
         consumerId:
-          type: string
-          description: Finicity ID for the consumer
-          example: b06cf32dd2222b32e31083221063f561
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -6684,18 +6662,12 @@ components:
           description: The name of the institution
           example: 'WELLS FARGO BANK, LTD.'
         institutionId:
-          type: integer
-          description: Finicity's institution ID
-          format: int32
-          example: 31
+          $ref: '#/components/schemas/InstitutionId'
     ReportNotification:
       type: object
       properties:
         consumerId:
-          type: string
-          description: >-
-            Finicity's consumer ID. This field is optional and may not always
-            return.
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: >-
@@ -6747,10 +6719,7 @@ components:
           description: The consumer last name(s) / surname(s)
           example: Smith
         customerId:
-          type: integer
-          description: Finicity's ID of the customer
-          format: int64
-          example: 1000005540
+          $ref: '#/components/schemas/CustomerId'
         address:
           type: string
           description: The consumer's street address
@@ -6794,7 +6763,7 @@ components:
         id: 1973f901305e2ab3ba8840f411f6b057
         firstName: John
         lastName: Smith
-        customerId: 1000005540
+        customerId: '1005061234'
         address: 434 W Ascension Way
         city: Murray
         state: UT
@@ -6926,7 +6895,7 @@ components:
               accountId: 1000018102
               amount: 1928.1
               createdDate: 1587576293
-              customerId: '1000005494'
+              customerId: '1005061234'
               description: ACH Deposit Finicity
               institutionTransactionId: 0
               postedDate: 1540641600
@@ -6969,28 +6938,6 @@ components:
                   memo: Finicity amount credit
                   institutionTransactionId: '100000000'
                   category: Paycheck
-    ReportCustomField:
-      type: object
-      properties:
-        label:
-          type: string
-          description: The name of the custom field
-          example: loanID
-        value:
-          type: string
-          description: The value of the custom field
-          example: '123456'
-        shown:
-          type: boolean
-          description: >-
-            The shown variable designates whether the custom field will display
-            on the PDF report. When shown is true, the custom field will show on
-            the PDF.
-          example: true
-      example:
-        label: loanID
-        value: '12345'
-        shown: true
     VOIEWithInterviewData:
       required:
         - txVerifyInterview
@@ -7128,9 +7075,8 @@ components:
           example:
             Authorization: 'Bearer {{token}}'
         institutionId:
-          type: integer
-          description: Institution id (required for type=lite)
-          format: int32
+          # Institution id (required for type=lite)
+          $ref: '#/components/schemas/InstitutionId'
         oauthOptions:
           $ref: '#/components/schemas/ConnectOAuthOptions'
         reportCustomFields:
@@ -7159,11 +7105,11 @@ components:
       example:
         partnerId: '1234583871234'
         customers:
-          - customerId: '{{CUSTOMER_ID}}'
-            consumerId: '{{CONSUMER_ID}}'
+          - customerId: '1005061234'
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
             firstName: Bob
-          - customerId: '{{CUSTOMER_ID}}'
-            consumerId: '{{CONSUMER_ID}}'
+          - customerId: '1005061235'
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
             firstName: John
         redirectUri: 'https://example.com/redirectHandler'
         type: voa
@@ -7859,11 +7805,9 @@ components:
           type: string
           example: active
         customerId:
-          type: string
-          example: '41442'
+          $ref: '#/components/schemas/CustomerId'
         institutionId:
-          type: string
-          example: '101732'
+          $ref: '#/components/schemas/InstitutionId'
         balanceDate:
           type: integer
           format: int32
@@ -7912,8 +7856,8 @@ components:
               type: checking
               aggregationStatusCode: 0
               status: active
-              customerId: '41442'
-              institutionId: '101732'
+              customerId: '1005061234'
+              institutionId: '102105'
               balanceDate: 1422421087
               aggregationSuccessDate: 1422399293
               aggregationAttemptDate: 1422395888
@@ -7929,8 +7873,8 @@ components:
               type: creditCard
               aggregationStatusCode: 0
               status: active
-              customerId: '41442'
-              institutionId: '101732'
+              customerId: '1005061234'
+              institutionId: '102105'
               balanceDate: 1422342000
               aggregationSuccessDate: 1422358530
               aggregationAttemptDate: 1422358530
@@ -7945,8 +7889,8 @@ components:
               balance: -3454.21
               type: creditCard
               status: pending
-              customerId: '41442'
-              institutionId: '101732'
+              customerId: '1005061234'
+              institutionId: '102105'
               createdDate: 1420653087
               currency: USD
               institutionLoginId: 9764
@@ -8258,14 +8202,9 @@ components:
           description: Finicity's report ID
           example: u4hstnnak45g
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -8345,7 +8284,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -8386,8 +8325,8 @@ components:
       description: VOA Report Record
       example:
         id: u4hstnnak45g
-        customerId: 1000006677
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        customerId: '1005061234'
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         requestId: sfb7xp439w
@@ -8425,7 +8364,7 @@ components:
         consolidatedAvailableBalance: 2345
         portfolioId: dyr6qvqd2yhb-1-port
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -8475,10 +8414,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -8751,10 +8687,7 @@ components:
           description: Finicity's report ID
           example: rceiqx616awa-assetsummary
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -8831,7 +8764,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -8867,7 +8800,7 @@ components:
         products).
       example:
         id: rceiqx616awa-assetsummary
-        customerId: 1000006677
+        customerId: '1005061234'
         requesterName: Decisioning API
         requestId: sfb7xp4iui
         type: assetSummary
@@ -8904,7 +8837,7 @@ components:
         consolidatedAvailableBalance: 1929.57
         portfolioId: 0whcism47ttt-5-port
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -8948,10 +8881,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -8992,7 +8922,7 @@ components:
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 1000024444
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 1000024445
       example:
-        - id: 101732
+        - id: '101732'
           name: FinBank
           urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
           accounts:
@@ -9175,10 +9105,7 @@ components:
           description: Finicity's report ID
           example: 88w4fbssrbja-prequalvoa
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requesterName:
           type: string
           description: Name of Finicity partner requesting the report
@@ -9248,9 +9175,7 @@ components:
           description: Finicity's portfolio ID associated with the consumer on the report.
           example: 0whcism47a34-5-port
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -9263,7 +9188,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -9326,14 +9251,9 @@ components:
           description: Finicity's report ID
           example: u4hstnyak45g
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -9414,7 +9334,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -9455,8 +9375,8 @@ components:
       description: VOA with Income Report Record
       example:
         id: u4hstnyak45g
-        customerId: 1000006677
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        customerId: '1005061234'
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         requestId: sfb7x1we9w
@@ -9485,7 +9405,7 @@ components:
         consolidatedAvailableBalance: 2345
         portfolioId: dyr6weqd2yhb-1-port
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -9562,10 +9482,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -9969,10 +9886,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -9993,9 +9907,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Verification of Assets
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -10018,12 +9930,12 @@ components:
         id: u4hstnnak45g
         portfolioId: dyr6qvqd2yhb-1-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7xp439w
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Verification of Assets
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           accountIds:
@@ -10079,10 +9991,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -10103,9 +10012,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Verification of Asset and Income - Transactions
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -10128,12 +10035,12 @@ components:
         id: u4hstnyak45g
         portfolioId: dyr6weqd2yhb-1-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7x1we9w
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Verification of Asset and Income - Transactions
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           accountIds:
@@ -10187,10 +10094,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -10228,7 +10132,7 @@ components:
         id: rceiqx616awa-assetsummary
         portfolioId: 0whcism47ttt-5-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7xp4iui
         requesterName: Decisioning API
         createdDate: 1588350269
@@ -10287,10 +10191,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -10311,9 +10212,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Asset Ready Report (CRA)
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: cb619e10185177cd92271c4da2df3fa3
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -10337,12 +10236,12 @@ components:
         id: 88w4fbssrbja-prequalvoa
         portfolioId: 0whcism47a34-5-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7xacr9w
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Asset Ready Report (CRA)
-        consumerId: cb619e10185177cd92271c4da2df3fa3
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           accountIds:
@@ -10438,10 +10337,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -10462,9 +10358,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Verification of Income
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -10487,12 +10381,12 @@ components:
         id: u4hstnnaewetr-voi
         portfolioId: dyr6qvqd2erw-1-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7xp4wer
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Verification of Income
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           accountIds:
@@ -10545,14 +10439,9 @@ components:
           description: Report id
           example: u4hstnnaewetr-voi
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -10626,7 +10515,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -10687,8 +10576,8 @@ components:
                 projectedGrossAnnual: 2500.23
       example:
         id: u4hstnnaewetr-voi
-        customerId: 1000006677
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        customerId: '1005061234'
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         requestId: sfb7xp4wer
@@ -10725,7 +10614,7 @@ components:
         gseEnabled: true
         portfolioId: dyr6qvqd2erw-1-port
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -10789,10 +10678,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -11158,14 +11044,9 @@ components:
           description: Report id
           example: y0ejausptjg1-paystatement
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1003413624
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 4089f408963dd6b90b28a935e9903c0e
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -11535,10 +11416,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1003413624
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -11559,9 +11437,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Pay Statement Extraction Report
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: 4089f408963dd6b90b28a935e9903c0e
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -11584,12 +11460,12 @@ components:
         id: y0ejausptjg1-paystatement
         portfolioId: spd8aehuw63i-10-port
         customerType: active
-        customerId: 1003413624
+        customerId: '1005061234'
         requestId: 8wy5htqg8u
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Pay Statement Extraction Report
-        consumerId: 4089f408963dd6b90b28a935e9903c0e
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           paystatementReport:
@@ -11625,10 +11501,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -12014,18 +11887,13 @@ components:
           description: Finicity's report ID
           example: 2f3z55zuwewm-voietxverify
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         gseEnabled:
           type: boolean
           description: Finicity Internal Use Only
           example: true
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -12135,7 +12003,7 @@ components:
                   accountLastFour: XX34
                   description: Payroll
               institutions:
-                - id: 101732
+                - id: '101732'
                   name: FinBank
                   urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
                   accounts:
@@ -12182,9 +12050,9 @@ components:
           description: Details of the financial institution accounts included in the report
       example:
         id: 2f3z55zuwewm-voietxverify
-        customerId: 1275320
+        customerId: '1005061234'
         gseEnabled: true
-        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         requestId: 7a7qyps2iy
@@ -12246,7 +12114,7 @@ components:
               estimatedMonthlyBonusPay: 20
               estimatedMonthlyCommissionPay: 50
             institutions:
-              - id: 101732
+              - id: '101732'
                 name: FinBank
                 urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
                 accounts:
@@ -12329,7 +12197,7 @@ components:
             errorCode: 'null'
             errorMessage: 'null'
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -12396,14 +12264,9 @@ components:
           description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -12445,8 +12308,8 @@ components:
           example: inProgress
       example:
         id: 2f3z55zuwewm-voietxverify
-        customerId: 1275320
-        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        customerId: '1005061234'
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         requestId: 7a7qyps2iy
@@ -12625,7 +12488,7 @@ components:
           estimatedMonthlyBonusPay: 20
           estimatedMonthlyCommissionPay: 50
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -12715,20 +12578,15 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         institutionId:
-          type: integer
-          description: >-
-            ID of the specific Institution login flow to present to the
-            Customer/Consumer. For type "aggregation" this will present this
-            institution by default as the first institution to add and then the
-            customer can move on to other institutions to add after.
-          format: int32
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
+          # ID of the specific Institution login flow to present to the
+          # Customer/Consumer. For type "aggregation" this will present this
+          # institution by default as the first institution to add and then the
+          # customer can move on to other institutions to add after.
         redirectUri:
           type: string
           description: >-
@@ -12794,26 +12652,18 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: >-
-            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
-            *Required for any connect type that generate a report*
-          example: 86238nvnw7269e224a4e3de12352d87d
+          # Required for any connect type that generates a report
+          $ref: '#/components/schemas/ConsumerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         institutionId:
-          type: integer
-          description: >-
-            ID of the specific Institution login flow to present to the
-            Customer/Consumer. For any lending and report type flow this will
-            present this institution first to the customer to add and then they
-            may add additional institutions after this first default one.
-          format: int32
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
+          # ID of the specific Institution login flow to present to the
+          # Customer/Consumer. For any lending and report type flow this will
+          # present this institution first to the customer to add and then they
+          # may add additional institutions after this first default one.
         skipReport:
           type: boolean
           description: >-
@@ -12908,7 +12758,7 @@ components:
       example:
         partnerId: '1234583871234'
         customerId: '1005061234'
-        consumerId: 86238nvnw7269e224a4e3de12352d87d
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         type: voa
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
         webhookContentType: application/json
@@ -12924,18 +12774,11 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         institutionId:
-          type: integer
-          description: >-
-            ID of the specific Institution login flow to present to the
-            Customer/Consumer <br> *Only supported for connect type`lite`*
-          format: int32
-          example: 102224
+          $ref: '#/components/schemas/InstitutionId'
         redirectUri:
           type: string
           description: >-
@@ -12987,7 +12830,7 @@ components:
         partnerId: '1234583871234'
         customerId: '1005061234'
         type: lite
-        institutionId: 102224
+        institutionId: '102105'
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
         webhookContentType: application/json
         analytics: 'google:UA-123456789-1'
@@ -13001,9 +12844,7 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         institutionLoginId:
@@ -13258,7 +13099,7 @@ components:
             - id: 102122887150
               amount: 3678.9
               accountId: 1014136057
-              customerId: 1005061234
+              customerId: '1005061234'
               status: active
               description: MAD SCIENCE RESEARCH PR PAYMENT
               memo: PPD ID 098749
@@ -13276,7 +13117,7 @@ components:
             - id: 102122887178
               amount: -59.56
               accountId: 1014136057
-              customerId: 1005061234
+              customerId: '1005061234'
               status: active
               description: VERIZON WIRELESS PAYMENTS
               memo: VERIZON WIRELESS PAYMENTS
@@ -13470,15 +13311,10 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: >-
-            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
-            *Required for any connect type that generate a report*
-          example: 86238nvnw7269e224a4e3de12352d87d
+          # Required for any connect type that generates a report
+          $ref: '#/components/schemas/ConsumerId'
         type:
           $ref: '#/components/schemas/FinicityConnectType'
         skipReport:
@@ -13577,7 +13413,7 @@ components:
       example:
         partnerId: '1234583871234'
         customerId: '1005061234'
-        consumerId: 86238nvnw7269e224a4e3de12352d87d
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         type: voa
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
         webhookContentType: application/json
@@ -13665,14 +13501,9 @@ components:
           description: active or testing
           example: testing
         customerId:
-          type: integer
-          description: Finicity customer ID
-          format: int64
-          example: 1000018865
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters).
-          example: a925b07c9e028c680ad9c1d18d2e7199
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number.
@@ -13825,10 +13656,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The Finicity institution ID.
-          format: int64
-          example: 102105
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The Finicity institution name.
@@ -13962,10 +13790,7 @@ components:
           description: active or testing
           example: testing
         customerId:
-          type: integer
-          description: The customer ID.
-          format: int64
-          example: 1000018865
+          $ref: '#/components/schemas/CustomerId'
         requestID:
           type: string
           description: Finicity's request ID
@@ -13984,11 +13809,7 @@ components:
           description: Finicity Transactions Report
           example: Finicity Transactions Report
         consumerId:
-          type: string
-          description: >-
-            Finicity report consumer ID, from Create Report Consumer. (UUID with
-            max length 32 characters)
-          example: a925b07c9e028c680ad9c1d18d2e7199
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: The last four of the consumer's social security
@@ -14009,12 +13830,12 @@ components:
         id: dnuru2ua2trs-transactions
         portfolioId: hupvwpdzr9dq-16-port
         customerType: testing
-        customerId: 1000018865
+        customerId: '1005061234'
         requestId: ky2nhsufhv
         requesterName: Decisioning API Tests
         createdDate: 1594678007
         title: Finicity Transactions Report
-        consumerId: a925b07c9e028c680ad9c1d18d2e7199
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           accountIds:
@@ -14637,10 +14458,7 @@ components:
           description: The consumer last name(s) / surname(s)
           example: Smith
         customerId:
-          type: integer
-          description: Finicity's ID of the customer
-          format: int64
-          example: 1000005540
+          $ref: '#/components/schemas/CustomerId'
         ssn:
           type: string
           description: >-
@@ -14657,7 +14475,7 @@ components:
         id: 1973f901305e2ab3ba8840f411f6b057
         firstName: John
         lastName: Smith
-        customerId: 1000005540
+        customerId: '1005061234'
         ssn: XXX-XX-2333
         birthday:
           year: 1989
@@ -14848,10 +14666,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1010560999
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -14872,9 +14687,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Statement Report
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: 555595ec74c8ec57adf44dadddb6a35
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -14997,10 +14810,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000262464
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -15010,9 +14820,7 @@ components:
           description: Title of the report
           example: Finicity Statement Report
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: d15ff15ed0c8627eae61c452928d7fc3
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -15044,10 +14852,10 @@ components:
         id: 38dknche83oh-statement
         gseEnabled: true
         customerType: active
-        customerId: 1000262464
+        customerId: '1005061234'
         requestId: nd4b55a4bg
         title: Finicity Statement Report
-        consumerId: d15ff15ed0c8627eae61c452928d7fc3
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '1111'
         requesterName: Demo
         constraints:
@@ -15113,93 +14921,6 @@ components:
       properties:
         branding:
           $ref: '#/components/schemas/Branding'
-    GenerateConnectURLRequestlite-V2:
-      required:
-        - partnerId
-        - customerId
-        - institutionId
-      type: object
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
-        institutionId:
-          type: integer
-          description: >-
-            ID of the specific Institution login flow to present to the
-            Customer/Consumer <br> *Only supported for connect type`lite`*
-          format: int32
-          example: 102224
-        redirectUri:
-          type: string
-          description: >-
-            The URL that customers will be redirected to after completing
-            Finicity Connect. <br> *Required unless Connect is embedded inside
-            your application. (iframe)*
-          example: 'https://www.finicity.com/connect/'
-        webhook:
-          type: string
-          description: >-
-            The publicly available URL you wish to be notified with events as
-            the user progresses through the application. See [Connect Webhook
-            Event](https://docs.finicity.com/connect-webhooks/) for event
-            details.
-          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType:
-          type: string
-          description: >-
-            The Content Type The Webhooks Events Will Be Sent In. Supported
-            Types `application/json` and `application/xml`
-          default: application/json
-          example: application/json
-        webhookData:
-          type: object
-          description: >-
-            Allows additional identifiable information to be inserted into the
-            payload of connect webhook events. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
-        webhookHeaders:
-          type: object
-          description: >-
-            Allows additional identifiable information to be included as headers
-            of connect webhook event. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
-        experience:
-          type: string
-          description: >-
-            The `experience` field allows you to customize: <br> * **Brand**:
-            color and logo <br> * **Icon**: displayed on the Share your data
-            page <br>      <br>**Note**: The Finicity sales engineers (SE) help
-            you set up a default experience for your company when you migrate to
-            Connect 2. For each additional experience you create thereafter,
-            they'll give you a unique ID. See [Generate 2.0 Connect URL APIs](
-            https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
-            <br>  <br>**Experience values options**: <br> * **default**: your
-            default experience <br> * **unique ID**: the code for a different
-            experience <br> * **not defined**: If you don't pass the experience
-            parameter, then Connect's out of the box default experience (add
-            accounts but no branding) is used. <br>
-          example: default
-        singleUseUrl:
-          type: boolean
-          description: >-
-            **True**: The URL link expires after a Connect session successfully
-            completes. <br> <br> **Note**: When the `singleUseUrl` and the
-            `experience` parameters are passed in the same call, the
-            `singleUseUrl` value overrides the `singleUseUrl` value configured
-            in the `experience` parameter.
-          example: true
-      example:
-        partnerId: '1234583871234'
-        customerId: '1005061234'
-        institutionId: 101723
-        webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType: application/json
-        experience: default
-        singleUseUrl: true
     GenerateConnectURLRequestfix-V2:
       required:
         - partnerId
@@ -15210,9 +14931,7 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         institutionLoginId:
           type: integer
           description: >-
@@ -15299,15 +15018,9 @@ components:
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
-          type: string
-          description: The customerID from the Add Customer call.
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: >-
-            The consumerID from the Create Customer call. <br> Note: Required
-            for any connect type that generates a report.
-          example: 86238nvnw7269e224a4e3de12352d87d
+          $ref: '#/components/schemas/ConsumerId'
         redirectUri:
           type: string
           description: >-
@@ -15415,7 +15128,7 @@ components:
       example:
         partnerId: '1234583871234'
         customerId: '1005061234'
-        consumerId: 86238nvnw7269e224a4e3de12352d87d
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         type: voa
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
         webhookContentType: application/json
@@ -15797,14 +15510,9 @@ components:
           description: Finicity's report ID
           example: 123456789012-voiepayroll
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1011140000
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 656cf7083c5c06e0c125a698579f0000
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -16015,18 +15723,13 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
           example: 7a7qyps2iy
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -16068,9 +15771,9 @@ components:
         portfolioId: 9qud7dtuzbew-13-port
         gseEnabled: true
         customerType: active
-        customerId: 1275320
+        customerId: '1005061234'
         requestId: 7a7qyps2iy
-        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         type: voiePayroll
@@ -16432,8 +16135,8 @@ components:
             - reseller: resellerName
               resellerProvider: resellerProvider
               platformProvider: platformProvider
-              customerId: 889079
-              consumerId: 3569a3ec3315e458e61f3c37ef9a3df4
+              customerId: '1005061234'
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               consumerSsn: '1111'
               firstName: BarkFirst
               lastName: BarkLast
@@ -16456,8 +16159,8 @@ components:
             - reseller: null
               resellerProvider: null
               platformProvider: null
-              customerId: 889079
-              consumerId: 3569a3ec3315e458e61f3c37ef9a3df4
+              customerId: '1005061234'
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               consumerSsn: '1111'
               firstName: BarkFirst
               lastName: BarkLast
@@ -16521,23 +16224,17 @@ components:
       properties:
         reseller:
           type: string
-          nullable: true
           example: resellerName
         resellerProvider:
           type: string
-          nullable: true
           example: resellerProvider
         platformProvider:
           type: string
-          nullable: true
           example: platformProvider
         customerId:
-          type: integer
-          format: int32
-          example: 889079
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          example: 3569a3ec3315e458e61f3c37ef9a3df4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           example: '1111'
@@ -16944,13 +16641,13 @@ components:
             customer and consumer IDs.
           example:
             - customerId: '1005061234'
-              consumerId: 1973f901305e2ab3ba8840f411f6b057
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               type: primary
               optionalConsumerInfo:
                 ssn: '123412134'
                 dob: '315576000'
-            - customerId: '1005063558'
-              consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+            - customerId: '1005061235'
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
               type: jointBorrower
               optionalConsumerInfo:
                 ssn: '351225513'
@@ -17063,13 +16760,13 @@ components:
         partnerId: '1234583871234'
         borrowers:
           - customerId: '1005061234'
-            consumerId: 1973f901305e2ab3ba8840f411f6b057
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
             type: primary
             optionalConsumerInfo:
               ssn: '123412134'
               dob: '315576000'
-          - customerId: '1005063558'
-            consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+          - customerId: '1005061235'
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
             type: jointBorrower
             optionalConsumerInfo:
               ssn: '351225513'
@@ -17094,17 +16791,9 @@ components:
       type: object
       properties:
         customerId:
-          type: string
-          description: >-
-            Customer ID from the [Add Customer API](
-            https://api-reference.finicity.com/#/rest/api-endpoints/customer/add-customer)
-          example: '1005061234'
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: >-
-            Consumer ID from the [Create Consumer API](
-            https://api-reference.finicity.com/#/rest/api-endpoints/consumer/create-consumer)
-          example: 1973f901305e2ab3ba8840f411f6b057
+          $ref: '#/components/schemas/ConsumerId'
         type:
           $ref: '#/components/schemas/BorrowerType'
         optionalConsumerInfo:
@@ -17128,13 +16817,13 @@ components:
             customer and consumer IDs.
           example:
             - customerId: '1005061234'
-              consumerId: 1973f901305e2ab3ba8840f411f6b057
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
               type: primary
               optionalConsumerInfo:
                 ssn: '123412134'
                 dob: '315576000'
-            - customerId: '1005063558'
-              consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+            - customerId: '1005061235'
+              consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
               type: jointBorrower
               optionalConsumerInfo:
                 ssn: '351225513'
@@ -17243,13 +16932,13 @@ components:
         partnerId: '1234583871234'
         borrowers:
           - customerId: '1005061234'
-            consumerId: 1973f901305e2ab3ba8840f411f6b057
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
             type: primary
             optionalConsumerInfo:
               ssn: '123412134'
               dob: '315576000'
-          - customerId: '1005063558'
-            consumerId: 1973f901305e2ab3ba8840f41112asdf9f
+          - customerId: '1005061235'
+            consumerId: '0bf46322c167b562e6cbed9d40e19a4d'
             type: jointBorrower
             optionalConsumerInfo:
               ssn: '351225513'
@@ -17553,9 +17242,7 @@ components:
           description: '`active` or `testing`'
           example: testing
         customerId:
-          type: string
-          description: Finicity customer ID
-          example: '5555'
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Finicity's request Id
@@ -17565,10 +17252,7 @@ components:
           description: 'Finicity Cash Flow Report  - Personal'
           example: Finicity Cash Flow Report - Personal
         consumerId:
-          maxLength: 32
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 555595ec74c8ec57adf44dadddb6a35
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -17750,9 +17434,7 @@ components:
       type: object
       properties:
         id:
-          type: string
-          description: Finicity institution ID
-          example: '102105'
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: Finicity institution name
@@ -18851,9 +18533,7 @@ components:
           description: '`active` or `testing`'
           example: testing
         customerId:
-          type: string
-          description: Finicity customer ID
-          example: '5555'
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Finicity's request Id
@@ -19039,9 +18719,7 @@ components:
       type: object
       properties:
         id:
-          type: string
-          description: Finicity institution ID
-          example: '102105'
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: Finicity institution name
@@ -19567,10 +19245,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -19731,10 +19406,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -19753,9 +19425,7 @@ components:
           description: Title of the report
           example: Verification of Income and Employment - Paystub
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -19807,14 +19477,9 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20218,10 +19883,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -20274,10 +19936,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -20296,9 +19955,7 @@ components:
           description: Title of the report
           example: Finicity Cash Flow Report - Personal
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20343,10 +20000,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1011140000
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -20365,9 +20019,7 @@ components:
           description: Title of the report
           example: Finicity Verification of Employment - Payroll
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 656cf7083c5c06e0c125a698579f0000
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20433,14 +20085,9 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1275320
+          $ref: '#/components/schemas/CustomerId'
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20476,8 +20123,8 @@ components:
         requesterName: Decisioning API
         requestId: 7a7qyps2iy
         customerType: active
-        customerId: 1275320
-        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        customerId: '1005061234'
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         type: voePayroll
         title: Verification of Employment - Payroll
@@ -20716,10 +20363,7 @@ components:
           description: Type of the customer
           example: active
         customerId:
-          type: integer
-          description: Finicity's customer ID
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: >-
@@ -20740,9 +20384,7 @@ components:
           description: Finicity's title of the report
           example: Finicity Verification of Employment - Transactions
         consumerId:
-          type: string
-          description: Finicity ID of the consumer
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20763,12 +20405,12 @@ components:
         id: u4hstny1k25g-voetransactions
         portfolioId: dyr6weqd2yhb-2-port
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7x1we9w
         requesterName: Decisioning API
         createdDate: 1588350269
         title: Finicity Verification Employment - Transactions
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         constraints:
           reportId: j7k8qbgwsa7d-voietxverify
@@ -20829,10 +20471,7 @@ components:
           description: Customer type
           example: active
         customerId:
-          type: integer
-          description: Finicity ID for the customer
-          format: int64
-          example: 1000006677
+          $ref: '#/components/schemas/CustomerId'
         requestId:
           type: string
           description: Unique requestId for this specific call request
@@ -20842,9 +20481,7 @@ components:
           description: Title of the report
           example: Finicity Verification of Employment - Transactions
         consumerId:
-          type: string
-          description: Finicity report consumer ID (max length 32 characters)
-          example: ac39e237c7619a4ecf014b8d399c0696
+          $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           type: string
           description: Last 4 digits of the report consumer's Social Security number
@@ -20893,7 +20530,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
           example:
-            - id: 101732
+            - id: '101732'
               name: FinBank
               urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
               accounts:
@@ -20923,10 +20560,10 @@ components:
         portfolioId: dyr6weqd2yhb-2-port
         gseEnabled: true
         customerType: active
-        customerId: 1000006677
+        customerId: '1005061234'
         requestId: sfb7x1we9w
         title: Finicity Verification of Employment - Transactions
-        consumerId: ac39e237c7619a4ecf014b8d399c0696
+        consumerId: '0bf46322c167b562e6cbed9d40e19a4c'
         consumerSsn: '6789'
         requesterName: Decisioning API
         constraints:
@@ -20947,7 +20584,7 @@ components:
         days: 120
         seasoned: true
         institutions:
-          - id: 101732
+          - id: '101732'
             name: FinBank
             urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
             accounts:
@@ -20987,10 +20624,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -21383,10 +21017,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: The institution ID
-          format: int64
-          example: 101732
+          $ref: '#/components/schemas/InstitutionId'
         name:
           type: string
           description: The name of the institution
@@ -21427,7 +21058,7 @@ components:
               totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount: 1000024444
               totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount: 1000024445
       example:
-        - id: 101732
+        - id: '101732'
           name: FinBank
           urlHomeApp: 'https://finbank.prod.fini.city/CCBankImageMFA/login.jsp'
           accounts:
@@ -23173,7 +22804,7 @@ components:
       example:
         analytics_id: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
         ca360_data:
-          customerId: '5000536031'
+          customerId: '1005061234'
           accountIds:
             - 5001861689
             - 5001861690
