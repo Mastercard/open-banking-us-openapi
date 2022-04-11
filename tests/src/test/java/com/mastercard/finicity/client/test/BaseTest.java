@@ -53,8 +53,13 @@ public abstract class BaseTest {
         return new Gson().fromJson(e.getResponseBody(), ErrorMessage.class);
     }
 
-    protected static void assertErrorCodeEquals(String code, ApiException e) {
-        assertEquals(code, parseError(e).getCode());
+    protected static void assertErrorCodeEquals(String expectedCode, ApiException e) {
+        assertEquals(expectedCode, parseError(e).getCode().toString());
+    }
+
+    protected static void assertErrorCodeEquals(Integer expectedCode, ApiException e) {
+        Integer actualCode = ((Double)parseError(e).getCode()).intValue();
+        assertEquals(expectedCode, actualCode);
     }
 
     protected static void assertErrorMessageEquals(String message, ApiException e) {

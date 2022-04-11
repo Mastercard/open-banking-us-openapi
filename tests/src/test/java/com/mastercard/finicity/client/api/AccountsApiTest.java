@@ -134,7 +134,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
             // HTTP 404
             // {"code":38006,"message":"Customer does not have any accounts associated with institutionId = (1234567)"}
             logApiException(e);
-            assertErrorCodeEquals("38006", e);
+            assertErrorCodeEquals(38006, e);
             assertErrorMessageEquals("Customer does not have any accounts associated with institutionId = (1234567)", e);
         }
     }
@@ -147,7 +147,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
             logApiException(e);
-            assertErrorCodeEquals("38007", e);
+            assertErrorCodeEquals(38007, e);
             assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId = (1234)", e);
         }
     }
@@ -160,7 +160,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
             logApiException(e);
-            assertErrorCodeEquals("38007", e);
+            assertErrorCodeEquals(38007, e);
             assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId = (1234)", e);
         }
     }
@@ -173,7 +173,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":38003,"message":"customer does not have given account (customerId = 1234, accountId = [1234])"}
             logApiException(e);
-            assertErrorCodeEquals("38003", e);
+            assertErrorCodeEquals(38003, e);
             assertErrorMessageEquals("customer does not have given account (customerId = 1234, accountId = [1234])", e);
         }
     }
@@ -186,7 +186,7 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":38003,"message":"customer does not have given account (customerId = 5026247981, accountId = [1234])"}
             logApiException(e);
-            assertErrorCodeEquals("38003", e);
+            assertErrorCodeEquals(38003, e);
             assertErrorMessageEquals("customer does not have given account (customerId = " + CUSTOMER_ID + ", accountId = [1234])", e);
         }
     }

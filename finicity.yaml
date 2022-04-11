@@ -3866,7 +3866,7 @@ components:
       type: object
       properties:
         code:
-          type: string
+          type: object
           description: Error code (can be a number or a string)
           example: '10001'
         status:

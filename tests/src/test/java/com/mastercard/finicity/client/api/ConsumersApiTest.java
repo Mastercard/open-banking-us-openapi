@@ -26,7 +26,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":11000,"message":"A consumer already exists for customer 5025024821"}
             logApiException(e);
-            assertErrorCodeEquals("11000", e);
+            assertErrorCodeEquals(11000, e);
             assertErrorMessageEquals("A consumer already exists for customer " + CUSTOMER_ID, e);
             try {
                 existingConsumerId = api.getConsumerForCustomer(CUSTOMER_ID).getId();
@@ -60,7 +60,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":11000,"message":"A consumer already exists for customer 5025024821"}
             logApiException(e);
-            assertErrorCodeEquals("11000", e);
+            assertErrorCodeEquals(11000, e);
             assertErrorMessageEquals("A consumer already exists for customer " + CUSTOMER_ID, e);
         }
     }
@@ -84,7 +84,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":10100,"message":"Cannot find consumer with id 1234."}
             logApiException(e);
-            assertErrorCodeEquals("10100", e);
+            assertErrorCodeEquals(10100, e);
             assertErrorMessageEquals("Cannot find consumer with id 1234.", e);
         }
     }
@@ -108,7 +108,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":14001,"message":"Resource not found."}
             logApiException(e);
-            assertErrorCodeEquals("14001", e);
+            assertErrorCodeEquals(14001, e);
             assertErrorMessageEquals("Resource not found.", e);
         }
     }
@@ -133,7 +133,7 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
         } catch (ApiException e) {
             // {"code":10100,"message":"Cannot find consumer with id 1234."}
             logApiException(e);
-            assertErrorCodeEquals("10100", e);
+            assertErrorCodeEquals(10100, e);
             assertErrorMessageEquals("Cannot find consumer with id 1234.", e);
         }
     }
