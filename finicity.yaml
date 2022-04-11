@@ -17,21 +17,30 @@ servers:
 tags:
   - name: Authentication
     description: Generate authentication tokens and manage credentials
-  - name: Connect
-    description: Allow your customers to grant Finicity authorization and access their financial data
-  - name: Customer
-  - name: Consumer
+  - name: Customers
+    description: Enroll and manage customers
+  - name: Connect 🔗
+    description: Allow customers to log into their financial institutions and grant Finicity authorization
+  - name: Consumers
+    description: Create and manage consumers associated with customers in order to use report services
+  - name: Accounts
   - name: Institutions
   - name: Verify Income
   - name: Verify Assets
   - name: Verify Income and Employment
-  - name: Accounts
-  - name: Account Owner
   - name: Bank Statements
   - name: Transactions
   - name: Pay Statements
   - name: Liabilities
   - name: Analytics and Attributes
+  - name: Reports
+  - name: Portfolios
+  - name: TxPush
+  - name: Payments
+  - name: App Registration and OAuth Migration
+  - name: Assets
+  - name: Cash Flow
+  - name: Verify Employment
 security:
   - FinicityAppKey: []
   - FinicityAppToken: []
@@ -42,7 +51,7 @@ paths:
         - Authentication
       summary: Create Access Token
       description: |-
-        Sends Partner ID and Partner Secret to the Partner Authentication
+        Send Partner ID and Partner Secret to the Partner Authentication
         service to obtain a token for accessing Finicity APIs.
         * The token is valid for two hours and is required on all calls to the
         Finicity APIs
@@ -69,7 +78,7 @@ paths:
         - Authentication
       summary: Modify Partner Secret
       description: |-
-        Changes the Partner Secret that is used to authenticate this partner.
+        Change the Partner Secret that is used to authenticate this partner.
         The secret does not expire, but can be changed by calling this
         endpoint. A valid Partner Secret may contain upper and lowercase
         characters, numbers, and the characters !, @, #, $, %, &, *, _, -, +. It
@@ -90,10 +99,10 @@ paths:
   /connect/v2/generate:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Generate Connect URL V2
       description: |-
-        Generates a Connect 2.0 URL link to add within your own applications.
+        Generate a Connect 2.0 URL link to add within your own applications.
 
         Use the `experience` parameter to call Connect (per session) in the body
         of the request. Configure the `experience` parameter to change the brand
@@ -119,7 +128,7 @@ paths:
   /connect/v2/generate/lite:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Generate Lite Connect URL V2
       description: |-
         Connect Lite is a variation of Connect Full (`POST /connect/v2/generate`), which has a limited set of
@@ -143,7 +152,7 @@ paths:
   /connect/v2/generate/fix:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Generate Fix Connect URL V2
       description: |-
         Use the Connect Fix endpoint when the following conditions occur:
@@ -165,10 +174,10 @@ paths:
   /connect/v2/send/email:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Send Connect Email V2
       description: |-
-        Same as Connect Full (`POST /connect/v2/generate`) but sends a Connect email to a consumer.
+        Same as Connect Full (`POST /connect/v2/generate`) but send a Connect email to a consumer.
       operationId: SendConnectEmailV2
       requestBody:
         $ref: '#/components/requestBodies/SendConnectEmailRequestV2'
@@ -182,7 +191,7 @@ paths:
   /connect/v2/generate/jointBorrower:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Generate Connect URL V2 - Joint Borrower
       description: |-
         Same as Connect Full (`POST /connect/v2/generate`) but for joint borrowers.
@@ -203,10 +212,10 @@ paths:
   /connect/v2/send/email/jointBorrower:
     post:
       tags:
-        - Connect
+        - Connect 🔗
       summary: Send Connect Email V2 - Joint Borrower
       description: |-
-        Same as Connect Joint Borrower (`POST /connect/v2/generate/jointBorrower`) but sends a Connect email 
+        Same as Connect Joint Borrower (`POST /connect/v2/generate/jointBorrower`) but send a Connect email 
         to at least one of the joint borrower's email addresses. 
 
         When the consumer opens the email, MVS prompts both the
@@ -222,6 +231,200 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /aggregation/v2/customers/testing:
+    post:
+      tags:
+        - Customers
+      summary: Add Testing Customer
+      description: >-
+        Enroll a testing customer (Test Drive accounts).
+
+
+        For using Testing customers, register a test application with your systems
+        engineer or account manager. Then use that testing `applicationId` when
+        creating testing customers. Testing customers can only be assigned to
+        testing OAuth applications and can only add accounts to Finbank OAuth for
+        testing OAuth implementation as well as other Finbank testing
+        institutions.
+
+
+        Note: this is a v2 service that replaces v1. The new version supports
+        passing an `applicationId` for assigning `applicationId`'s to customers if
+        a partner has more than one registered app.
+      operationId: AddTestingCustomer
+      requestBody:
+        $ref: '#/components/requestBodies/AddCustomerRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/AddCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /aggregation/v2/customers/active:
+    post:
+      tags:
+        - Customers
+      summary: 'Add Customer'
+      description: >-
+        Enroll an active customer, which is the actual owner of one or more
+        real-world accounts. This is a billable customer.
+
+
+        Note: this is a v2 service that replaces v1. The new version supports
+        passing an `applicationId` for assigning `applicationId`'s to customers if
+        a partner has more than one registered app.
+      operationId: AddCustomer
+      requestBody:
+        $ref: '#/components/requestBodies/AddCustomerRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/AddCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '429':
+          $ref: '#/components/responses/ToManyRequestsErrorResponse'
+  /aggregation/v1/customers:
+    get:
+      tags:
+        - Customers
+      summary: 'Get Customers'
+      description: >-
+        Find all customers enrolled by the current partner, where the search
+        text is found in the customer's username or any combination of `firstName`
+        and `lastName` fields. If no search text is provided, return all
+        customers.
+
+
+        If the value of `moreAvailable` in the response is `true`, you can retrieve
+        the next page of results by increasing the value of the start parameter
+        in your next request: `…&start=6&limit=5`.
+      operationId: GetCustomers
+      parameters:
+        - name: search
+          in: query
+          description: >-
+            The text you wish to match. Leave this empty if you wish to return
+            all customers. Must be URL-encoded (see Handling Spaces in Queries).
+          schema:
+            type: string
+            example: searchvalue
+        - name: username
+          in: query
+          description: Username for exact match. (Will return 0 or 1 records.)
+          schema:
+            $ref: '#/components/schemas/CustomerUsername'
+        - name: start
+          in: query
+          description: Starting index for this page of results. The default value is 1.
+          schema:
+            type: integer
+            format: int64
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          description: >-
+            Maximum number of entries for this page of results. The default
+            value is 25.
+          schema:
+            type: integer
+            format: int64
+            default: 25
+            example: 25
+        - name: type
+          in: query
+          description: >-
+            "testing" or "active" to return only customers of that
+            type, or leave empty to return all customers.
+          schema:
+            $ref: '#/components/schemas/CustomerType'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/aggregation/v1/customers/{customerId}/application':
+    get:
+      tags:
+        - Customers
+      summary: Get Customer With App Data
+      description: >-
+        Retrieve a customer by ID along with additional details about the OAuth application.
+      operationId: GetCustomerWithAppData
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerWithAppDataResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}':
+    get:
+      tags:
+        - Customers
+      summary: Get Customer
+      description: Retrieve a customer by ID
+      operationId: GetCustomer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+    put:
+      tags:
+        - Customers
+      summary: 'Modify Customer'
+      description: Modify an enrolled customer
+      operationId: ModifyCustomer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/ModifyCustomerRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/ModifyCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+    delete:
+      tags:
+        - Customers
+      summary: 'Delete Customer'
+      description: >-
+        Completely remove a customer from the system. This will remove the
+        customer and all associated accounts and transactions.
+
+
+        ⚠️ Use this service carefully! It will not pause for confirmation before
+        performing the operation!
+      operationId: DeleteCustomer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/DeleteCustomerResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
   /institution/v2/certifiedInstitutions/rssd:
     get:
       tags:
@@ -473,7 +676,7 @@ paths:
   '/decisioning/v1/consumers/{consumerId}':
     put:
       tags:
-        - Consumer
+        - Consumers
       summary: "\U0001F6A7 ModifyConsumer"
       description: >-
         Modify the details for an existing consumer. All fields are required for
@@ -512,7 +715,7 @@ paths:
                 $ref: '#/components/schemas/ErrorMessage'
     get:
       tags:
-        - Consumer
+        - Consumers
       summary: "\U0001F6A7 GetConsumer"
       description: >-
         Get the details of a consumer record. If the service successfully
@@ -545,7 +748,7 @@ paths:
   '/decisioning/v1/customers/{customerId}/consumer':
     get:
       tags:
-        - Consumer
+        - Consumers
       summary: "\U0001F6A7 GetConsumerForCustomer"
       description: >-
         Get the details of a consumer record.
@@ -574,7 +777,7 @@ paths:
                 $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
-        - Consumer
+        - Consumers
       summary: "\U0001F6A7 Create Consumer"
       description: >-
         Create a consumer record associated with the given customer. A consumer
@@ -1627,7 +1830,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
-        - Account Owner
+        - Accounts
       summary: "\U0001F6A7 Get Account Owner"
       description: >-
         Retrieve the names and addresses of the account owner from a financial
@@ -1668,263 +1871,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountOwnerv1'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v1/customers:
-    get:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Get Customers"
-      description: >-
-        Find all customers enrolled by the current partner, where the search
-        text is found in the customer's username or any combination of firstName
-        and lastName fields. If no search text is provided, return all
-        customers.
-
-
-        Valid values for type are testing, active.
-
-
-        If the value of moreAvailable in the response is true, you can retrieve
-        the next page of results by increasing the value of the start parameter
-        in your next request:
-
-          …&start=6&limit=5
-      operationId: GetCustomers
-      parameters:
-        - name: search
-          in: query
-          description: >-
-            The text you wish to match. Leave this empty if you wish to return
-            all customers. Must be URL-encoded (see Handling Spaces in Queries)
-          schema:
-            type: string
-            example: searchvalue
-        - name: username
-          in: query
-          description: Username for exact match. (Will return 0 or 1 records.)
-          schema:
-            type: string
-            example: customerusername1
-        - name: start
-          in: query
-          description: Starting index for this page of results. The default value is 1.
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          description: >-
-            Maximum number of entries for this page of results. The default
-            value is 25.
-          schema:
-            type: integer
-            format: int64
-            default: 25
-            example: 25
-        - name: type
-          in: query
-          description: >-
-            One of the values testing or active to return only customers of that
-            type, or leave empty to return all customers.
-          schema:
-            type: string
-            example: active
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetCustomersResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}':
-    put:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Modify Customer"
-      description: >-
-        Modify the details for an enrolled customer. You must specify either the
-        first name, the last name, or both in the request.
-
-
-        If the service is successful, HTTP 204 (No Content) will be returned.
-      operationId: ModifyCustomer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        description: The information to be modified for the customer
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ModifyCustomerRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    get:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Get Customer"
-      description: >-
-        Get the details for the specified customer. The service will return HTTP
-        200 upon a successful call. If the customer does not exist, the service
-        will return HTTP 404.
-      operationId: GetCustomer
-      parameters:
-        - name: Content-Length
-          in: header
-          description: Must be 0 (this request has no body)
-          required: true
-          schema:
-            type: string
-            example: '0'
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customer'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-    delete:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Delete Customer"
-      description: >-
-        Completely remove a customer from the system. This will remove the
-        customer and all associated accounts and transactions.
-
-
-        (Note that the request and response is the same for JSON or XML
-        clients.)
-
-
-        Use this service carefully! It will not pause for confirmation before
-        performing the operation!
-
-
-        Success: HTTP 204 (No Content)
-      operationId: DeleteCustomer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v2/customers/active:
-    post:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Add Customer"
-      description: >-
-        This is a version 2 service that replaces version 1. The new version
-        supports passing an applicationId for assigning applicationId's to
-        customers if a partner has more than one registered app.
-
-
-        Enroll an active customer, which is the actual owner of one or more
-        real-world accounts. This is a billable customer.
-
-
-        This service is not available from the Test Drive. Calls to this service
-        before enrolling in a paid plan will return HTTP 429 (Too Many
-        Requests).
-      operationId: AddCustomer
-      requestBody:
-        description: The Fields For The New Customer
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddCustomerRequest'
-            example:
-              username: USERNAME
-              applicationId: '12345'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddCustomerResponse'
-              example:
-                id: '41442'
-                createdDate: '1412792539'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v2/customers/testing:
-    post:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Add Testing Customer"
-      description: >-
-        This is a version 2 service that replaces version 1. The new version
-        supports passing an applicationId for assigning applicationId's to
-        customers if a partner has more than one registered app.
-
-
-        Enroll a testing customer that is available for Test Drive accounts.
-
-
-        For using testing customers when testing Finbank OAuth register a test
-        application with your systems engineer or account manager. You would
-        then use that testing applicationId for the creating of any testing
-        customers. Testing customers can only be assigned to testing OAuth
-        applications and Testing customers can only add accounts to Finbank
-        OAuth for testing OAuth implementation as well as other Finbank testing
-        institutions.
-      operationId: AddTestingCustomer
-      requestBody:
-        description: The Fields For The New Customer
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddCustomerRequest'
-            example:
-              username: USERNAME
-              applicationId: '12345'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddCustomerResponse'
-              example:
-                id: '41442'
-                createdDate: '1412792539'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/application':
-    get:
-      tags:
-        - Customer
-      summary: "\U0001F6A7 Get Customer With Application Data"
-      description: >-
-        Get the details for the specified customer with additional details that
-        includes the OAuth application info. The service will return HTTP 200
-        upon a successful call. If the customer does not exist, the service will
-        return HTTP 404.
-      operationId: GetCustomerWithApplicationData
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerWithApplicationData'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
@@ -2445,7 +2391,7 @@ paths:
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
     get:
       tags:
-        - Get Portfolios
+        - Portfolios
       summary: "\U0001F6A7 Get Portfolio by Customer"
       description: >
         Returns a portfolio of most recently generated report for each report
@@ -2565,7 +2511,7 @@ paths:
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
     get:
       tags:
-        - Get Portfolios
+        - Portfolios
       summary: "\U0001F6A7 Get Portfolio by Consumer"
       description: >-
         Returns a portfolio of most recently generated report for each report
@@ -2688,7 +2634,7 @@ paths:
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
     get:
       tags:
-        - Get Reports by Customer
+        - Reports
       summary: "\U0001F6A7 Get Prequalification Report Non-CRA By Customer"
       description: >-
         Get a report that has been generated by calling one of the Generate
@@ -2777,13 +2723,11 @@ paths:
           in: path
           description: >-
             Application ID you want to assign the customer to. This is the
-            "applicationId" value returned from the Get App Registration Status
+            `applicationId` value returned from the "Get App Registration Status"
             endpoint
           required: true
           schema:
-            type: integer
-            format: int64
-            example: 12345
+            $ref: '#/components/schemas/ApplicationId'
       responses:
         '200':
           description: ''
@@ -2902,10 +2846,9 @@ paths:
             example: 7456
         - name: applicationId
           in: query
-          description: Look up the status of an app by the applicationId
+          description: Look up the status of an app by its application ID
           schema:
-            type: string
-            example: '123456789'
+            $ref: '#/components/schemas/ApplicationId'
         - name: status
           in: query
           description: >-
@@ -2967,7 +2910,7 @@ paths:
   '/decisioning/v1/customers/{customerId}/reports':
     get:
       tags:
-        - Get Reports by Customer
+        - Reports
       summary: "\U0001F6A7 Get Reports by Customer"
       description: >-
         Get a list of reports that have been generated for the given customer.
@@ -2998,7 +2941,7 @@ paths:
   '/decisioning/v3/customers/{customerId}/reports/{reportId}/cra':
     get:
       tags:
-        - Get Reports by Customer
+        - Reports
       summary: Get Prequalification Report CRA By Customer
       description: >-
         Get a report that has been generated by calling one of the Generate
@@ -3044,7 +2987,7 @@ paths:
   '/decisioning/v1/consumers/{consumerId}/reports':
     get:
       tags:
-        - Get Reports by Consumer
+        - Reports
       summary: "\U0001F6A7 Get Reports by Consumer"
       description: >-
         Get a list of reports that have been generated for the given consumer.
@@ -3081,7 +3024,7 @@ paths:
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
-        - Get Reports by Consumer
+        - Reports
       summary: "\U0001F6A7 Get Report by Consumer"
       description: >-
         Get a report that has been generated by calling one of the Generate
@@ -3198,7 +3141,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
-        - Asset
+        - Assets
       summary: "\U0001F6A7 Get Asset by Customer ID"
       description: >-
         Retrieve a binary file with the given assetId. The returned content type
@@ -3765,6 +3708,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectJointBorrowerEmailRequest'
+    AddCustomerRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewCustomer'
+    ModifyCustomerRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerUpdate'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3803,6 +3758,34 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
+    AddCustomerResponse:
+      description: The customer was successfully added
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedCustomer'
+    GetCustomersResponse:
+      description: Customers were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customers'
+    GetCustomerResponse:
+      description: The customer was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+    GetCustomerWithAppDataResponse:
+      description: The customer was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerWithAppData'
+    ModifyCustomerResponse:
+      description: The customer was successfully updated
+    DeleteCustomerResponse:
+      description: The customer was successfully deleted
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3845,7 +3828,7 @@ components:
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
     ConnectNotFoundErrorResponse:
-      description: The request was rejected
+      description: No account found
       content:
         application/json:
           schema:
@@ -3853,6 +3836,21 @@ components:
           examples:
             NoAccountForInstitutionLoginIdExample:
               $ref: '#/components/examples/NoAccountForInstitutionLoginIdExample'
+    CustomerNotFoundErrorResponse:
+      description: The customer doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+    ToManyRequestsErrorResponse:
+      description: The service can't accept more requests or is not available from the Test Drive.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Empty'
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -3911,6 +3909,10 @@ components:
         tags: ''
         level: 'error'
         message: 'Customer does not have any accounts associated with institutionLoginId.'
+    CustomerNotFoundExample:
+      value:
+        code: 14001
+        message: 'Customer not found.'
   parameters:
     AssetIdParameter:
       name: assetId
@@ -4451,6 +4453,7 @@ components:
       description: A generated Connect URL
       example: 'https://connect2.finicity.com?customerId=5025024821&institutionId=102105&origin=url&partnerId=2445583925753&signature=b5667164db7a9a0007b59267785c996ca3bc9ce97f2e72c98099cead76edfad9&timestamp=1648050761908&ttl=1648057961908&type=lite&webhookContentType=application%2Fjson'
     EmailOptions:
+      description: Configuration for the Connect email's sent to customers.
       required:
         - to
       type: object
@@ -4465,50 +4468,182 @@ components:
           example: test.lender@test.com
         supportPhone:
           type: string
-          description: (Optional) The support phone number listed in the email.
+          description: The support phone number listed in the email.
           example: 800-555-5555
         subject:
           type: string
-          description: >-
-            (Optional) The subject line of the email. The default is Verify your
-            Financial Information.
+          description: The subject line of the email. The default is "Verify your Financial Information".
           example: Verify your income
         firstName:
           type: string
-          description: >-
-            (Optional) The first name of the customer or both names of the
-            customers for joint borrowers. Example: Marvin and Jenny.
+          description: 'The first name of the customer or both names of the customers for joint borrowers. Example: "Marvin and Jenny".'
           example: Bob
         institutionName:
           type: string
-          description: (Optional) The name of your company.
+          description: The name of your company.
           example: Acme Lending
         institutionAddress:
           type: string
-          description: >-
-            (Optional) The institution address appears in the footer of the
-            email.
+          description: The institution address to appear in the footer of the email.
           example: '222 Winipeg Drive SLC UT, 84109'
         signature:
           type: array
           items:
             type: string
-          description: (Optional) Add a signature to the email.
+          description: A signature for the email.
+          example:
+            - Cindy Mayfield
+            - Senior Loan Officer
+            - Direct 123-456-7890
+    CustomerUsername:
+      type: string
       description: >-
-        The parameter definitions used to configure the Connect email's sent to
-        customers.
-      example:
-        to: fin.user@finicity.com
-        from: test.lender@test.com
-        supportPhone: 800-555-5555
-        subject: Verify your income
-        firstName: Bob
-        institutionName: Acme Lending
-        institutionAddress: '222 Winipeg Drive SLC UT, 84109'
-        signature:
-          - Cindy Mayfield
-          - Senior Loan Officer
-          - Direct 123-456-7890
+        The customer's username, assigned by the partner (a unique identifier),
+        following these rules: minimum 6 characters maximum 255 characters any mix
+        of uppercase, lowercase, numeric, and non-alphabet special characters ! @ .
+        # $ % & * _ – + the use of email in this field is discouraged it is
+        recommended to use a unique non-email identifier Use of special characters
+        may result in an error (e.g. í, ü, etc.)
+      example: customerusername1
+    CustomerFirstName:
+      type: string
+      description: The customer's first name(s) / given name(s)
+      example: John
+    CustomerLastName:
+      type: string
+      description: The customer's last name(s) / surname(s)
+      example: Smith
+    ApplicationId:
+      type: string
+      description: >-
+        An application ID for the app the partner would like to assign the customer
+        to. This cannot be changed once set. Only applicable in cases of partners
+        with multiple registered applications. If the partner only has one app this
+        can be omitted.  This is the `applicationId` from the "Get App Registration
+        Status" endpoint and is populated after the app is in a status for approved.
+      example: '123456789'
+    ApplicationName:
+      type: string
+      description: The application name of the application assigned to the customer
+      example: Awesome Budget App
+    UnixDate:
+      type: integer
+      description: A date in Unix epoch time (in seconds).
+      format: int64
+      example: 1607450357
+    CustomerType:
+      type: string
+      description: The type of Finicity Customer ("active" or "testing" or "" for all types)
+      example: active
+    NewCustomer:
+      description: A new customer to be enrolled
+      required:
+        - username
+      type: object
+      properties:
+        username:
+          $ref: '#/components/schemas/CustomerUsername'
+        firstName:
+          $ref: '#/components/schemas/CustomerFirstName'
+        lastName:
+          $ref: '#/components/schemas/CustomerLastName'
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+    CustomerUpdate:
+      description: Represent an update to customer fields
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          $ref: '#/components/schemas/CustomerFirstName'
+        lastName:
+          $ref: '#/components/schemas/CustomerLastName'
+    CreatedCustomer:
+      description: A new customer that was just enrolled
+      required:
+        - id
+        - username
+        - createdDate
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/CustomerId'
+        username:
+          $ref: '#/components/schemas/CustomerUsername'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+    Customer:
+      description: A finicity customer record
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+        - type
+        - createdDate
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/CustomerId'
+        username:
+          $ref: '#/components/schemas/CustomerUsername'
+        firstName:
+          $ref: '#/components/schemas/CustomerFirstName'
+        lastName:
+          $ref: '#/components/schemas/CustomerLastName'
+        type:
+          $ref: '#/components/schemas/CustomerType'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+    CustomerWithAppData:
+      description: A finicity customer record with application info
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+        - type
+        - createdDate
+        - applicationId
+        - applicationName
+      allOf:
+        - $ref: '#/components/schemas/Customer'
+        - type: object
+          properties:
+            applicationId:
+              $ref: '#/components/schemas/ApplicationId'
+            applicationName:
+              $ref: '#/components/schemas/ApplicationName'
+    Customers:
+      description: Finicity customers
+      required:
+        - found
+        - displaying
+        - moreAvailable
+        - customers
+      type: object
+      properties:
+        found:
+          type: integer
+          description: Total number of records matching search criteria
+          format: int32
+          example: 7
+        displaying:
+          type: integer
+          description: Number of records returned
+          format: int32
+          example: 2
+        moreAvailable:
+          type: boolean
+          description: If this response does not contain the last record in the result set
+          example: true
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          description: A list of customer records
     GetInstitutionsResponse:
       required:
         - found
@@ -4924,40 +5059,6 @@ components:
             status: A
             invSecurityType: OTHERINFO
         displayPosition: 1
-    Customer:
-      required:
-        - id
-        - username
-        - firstName
-        - lastName
-        - type
-        - createdDate
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Finicity's ID for the customer
-          format: int64
-          example: 1005061234
-        username:
-          type: string
-          description: The username associated with the customer
-          example: customerusername1
-        firstName:
-          type: string
-          description: The first name associated with the customer
-          example: John
-        lastName:
-          type: string
-          description: The last name associated with the customer
-          example: Smith
-        type:
-          $ref: '#/components/schemas/CustomerType'
-        createdDate:
-          type: string
-          description: The date the customer was created
-          example: '1588305190'
-      description: The finicity customer record
     PortfolioReport:
       title: PortfolioReport
       required:
@@ -6060,9 +6161,7 @@ components:
         source:
           type: string
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         title:
           type: string
           description: Title of the report
@@ -7408,7 +7507,7 @@ components:
           example: 12345678
         accountId:
           type: integer
-          description: The Finicity account Id for the subscription
+          description: The Finicity account ID for the subscription
           format: int64
           example: 1014136057
         type:
@@ -7444,49 +7543,6 @@ components:
           format: int64
           example: 1588974631
       description: Response for TxPush test transaction
-    GetCustomersResponse:
-      required:
-        - found
-        - displaying
-        - moreAvailable
-        - customers
-      type: object
-      properties:
-        found:
-          type: integer
-          description: Total number of records matching search criteria
-          format: int32
-          example: 7
-        displaying:
-          type: integer
-          description: Number of records in this response
-          format: int32
-          example: 2
-        moreAvailable:
-          type: boolean
-          description: >-
-            true if this response does not contain the last record in the result
-            set
-          example: true
-        customers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Customer'
-          description: List of customer records
-          example:
-            - id: 1005061234
-              username: customerusername1
-              firstName: John
-              lastName: Smith
-              type: active
-              createdDate: 1588305190
-            - id: 1005061235
-              username: customerusername2
-              firstName: Sarah
-              lastName: Smith
-              type: active
-              createdDate: 1588305190
-      description: Response For Get Customers Endpoint
     ACHDetails:
       required:
         - routingNumber
@@ -7504,67 +7560,6 @@ components:
           description: The account number for initiating ACH transfers for this account
           example: 002345678901
       description: The routing and account number information to initiate ACH transfers
-    AddCustomerResponse:
-      required:
-        - id
-        - username
-        - createdDate
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID Of The New Customer Record
-          format: int64
-          example: 1005061234
-        username:
-          type: string
-          description: The Username Value Of The New Customer Record
-          example: customerusername1
-        createdDate:
-          type: string
-          description: >-
-            A Timestamp Of When The Customer Was Added (see Handling Dates And
-            Times)
-          example: '1588305190'
-      description: >-
-        The Response Structure For The Add Customer Endpoint and Add Testing
-        Customer Endpoint
-    AddCustomerRequest:
-      required:
-        - username
-      type: object
-      properties:
-        username:
-          type: string
-          description: >-
-            The customer's username, assigned by the partner (a unique
-            identifier), following these rules: minimum 6 characters maximum 255
-            characters any mix of uppercase, lowercase, numeric, and
-            non-alphabet special characters ! @ . # $ % & * _ – + the use of
-            email in this field is discouraged it is recommended to use a unique
-            non-email identifier Use of special characters may result in an
-            error (e.g. í, ü, etc.)
-          example: customerusername1
-        firstName:
-          type: string
-          description: The customer's first name(s) / given name(s) (optional)
-          example: John
-        lastName:
-          type: string
-          description: The customer's last name(s) / surname(s) (optional)
-          example: Smith
-        applicationId:
-          type: string
-          description: >-
-            The application Id for the app the partner would like to assign the
-            customer to. This cannot be changed once set. Only applicable in
-            cases of partners with multiple registered applications. If the
-            partner only has one app this can be omitted. This value comes from
-            the "applicationId" from the Get App Registration Status endpoint
-          example: '123456789'
-      description: >-
-        Request Structure For The Add Customer Endpoint and Add Testing Customer
-        Endpoint
     PrequalificationReportNon-CRA:
       required:
         - id
@@ -7621,9 +7616,7 @@ components:
         source:
           type: string
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         title:
           type: string
           description: Title of the report
@@ -8039,9 +8032,7 @@ components:
         source:
           type: string
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         title:
           type: string
           description: Title of the report
@@ -8186,9 +8177,7 @@ components:
             created for the same customer.
           example: dyr6qvqd2yhb-1-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -8291,9 +8280,7 @@ components:
             created for the same customer.
           example: dyr6weqd2yhb-1-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -8394,9 +8381,7 @@ components:
             created for the same customer.
           example: 0whcism47ttt-5-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -8517,9 +8502,7 @@ components:
             created for the same customer.
           example: dyr6qvqd2erw-1-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -8623,9 +8606,7 @@ components:
             created for the same customer.
           example: spd8aehuw63i-10-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -8754,9 +8735,7 @@ components:
           format: int64
           example: 1579819592
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         constraints:
           $ref: '#/components/schemas/VOIE-PaystubwithTXVerifyResponseConstraints'
         title:
@@ -8872,21 +8851,6 @@ components:
           dayOfMonth: 13
         email: finicity@test.com
         suffix: Mr
-    ModifyCustomerRequest:
-      required:
-        - firstName
-        - lastName
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: The first name associated with the customer
-          example: John
-        lastName:
-          type: string
-          description: The last name associated with the customer
-          example: Smith
-      description: The fields to be modified for a customer record
     AccountType:
       enum:
         - checking
@@ -9052,13 +9016,6 @@ components:
         status: pending
         postedDate: 1588888169
         transactionDate: 1588801769
-    CustomerType:
-      enum:
-        - active
-        - testing
-      type: string
-      description: The type of Finicity Customer
-      example: active
     GenerateTransactionsReportResponse:
       required:
         - id
@@ -9089,9 +9046,7 @@ components:
             created for the same customer.
           example: hupvwpdzr9dq-16-port
         customerType:
-          type: string
-          description: active or testing
-          example: testing
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestID:
@@ -9704,9 +9659,7 @@ components:
             created for the same customer.
           example: sy7aa68w2ugx-1-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -9937,7 +9890,7 @@ components:
                   lastModifiedDate: 1595526300
                   status: true
       description: >-
-        The response for the Get App Registration Status endpoint which returns
+        The response for the "Get App Registration Status" endpoint which returns
         an array of App Status objects to be able to determine their
         registration status. This is version 2 of this response.
     AppStatus:
@@ -9964,12 +9917,7 @@ components:
             rejected apps.
           example: Approved
         applicationId:
-          type: string
-          description: >-
-            The official applicationId to be used in customer creation and
-            setting customer application Id services. This is populated after
-            the app is in A status for approved.
-          example: '123456789'
+          $ref: '#/components/schemas/ApplicationId'
         appName:
           type: string
           description: The App Name submitted during registration
@@ -10041,49 +9989,6 @@ components:
             createdDate: 1595526300
             lastModifiedDate: 1595526300
             status: true
-    CustomerWithApplicationData:
-      required:
-        - id
-        - username
-        - firstName
-        - lastName
-        - type
-        - createdDate
-        - applicationId
-        - applicationName
-      type: object
-      properties:
-        id:
-          type: string
-          description: Finicity's ID for the customer
-          example: '1005061234'
-        username:
-          type: string
-          description: The username associated with the customer
-          example: customerusername1
-        firstName:
-          type: string
-          description: The first name associated with the customer
-          example: John
-        lastName:
-          type: string
-          description: The last name associated with the customer
-          example: Smith
-        type:
-          $ref: '#/components/schemas/CustomerType'
-        createdDate:
-          type: string
-          description: The date the customer was created
-          example: '1588305190'
-        applicationId:
-          type: string
-          description: The application id of the application assigned to the customer
-          example: '123456789'
-        applicationName:
-          type: string
-          description: The application name of the application assigned to the customer
-          example: Awesome Budget App
-      description: The finicity customer record
     PayrollData:
       required:
         - ssn
@@ -10154,9 +10059,7 @@ components:
         constraints:
           $ref: '#/components/schemas/PayrollReportRefreshResponseConstraints'
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         title:
           type: string
           description: Title of the report
@@ -10471,9 +10374,7 @@ components:
           description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-13-port
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -10550,9 +10451,7 @@ components:
           description: Finicity's report ID
           example: 383z55zudewm-cfrb
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -10603,9 +10502,7 @@ components:
           description: Finicity's report ID
           example: 383z51zurqwo-cfrp
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -10667,9 +10564,7 @@ components:
           description: Finicity's portfolio ID associated with the consumer on the report.
           example: 9qud7dtuzbew-3-port
         customerType:
-          type: string
-          description: Customer type
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
@@ -10781,9 +10676,7 @@ components:
             created for the same customer.
           example: dyr6weqd2yhb-2-port
         customerType:
-          type: string
-          description: Type of the customer
-          example: active
+          $ref: '#/components/schemas/CustomerType'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         requestId:
