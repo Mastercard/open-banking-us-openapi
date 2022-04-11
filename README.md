@@ -3,7 +3,7 @@
 
 ## Overview
 
-The [OpenAPI](https://swagger.io/specification/) specification for [Finicity APIs](https://docs.finicity.com/), along with a suite of tests using the [Finicity Test Drive](https://signup.finicity.com/).
+The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/), along with a suite of tests using the [Finicity Test Drive](https://signup.finicity.com/).
 
 ## Workflows
 
@@ -23,7 +23,7 @@ If you see some red, please [contact us](https://www.finicity.com/contact/)!
 #### Things to Know
 
 * The [test project](./tests) uses an API client library generated from the API specification using [OpenAPI Generator](https://openapi-generator.tech/)
-* A free [Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**
+* A [free Finicity account](https://signup.finicity.com/) is required to get your **Partner ID**, **Partner Secret** and **Finicity App Key**
 * Before running the test, you must:
    * Call `addTestingCustomer` and note the **Customer ID** returned
    * Use `generateConnectUrlV2` to add to this customer all accounts from the test [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3)
@@ -44,9 +44,10 @@ mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***
 #### Run Tests In GitHub
 
 1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
-2. Go to **Settings** > **Actions secrets**
+2. Go to **Settings** > **Secrets** > **Actions**
 3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
 4. Enable workflows in the **Actions** tab
+5. Click "Run workflow" under **Integration Tests**. Expected result: ✔️
 
 ## Guidelines
 
