@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.0.1
+  version: 1.1.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
