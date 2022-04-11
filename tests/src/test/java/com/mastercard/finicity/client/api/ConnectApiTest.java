@@ -4,15 +4,19 @@ import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
 import com.mastercard.finicity.client.test.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
-import org.junit.jupiter.api.Disabled;
+import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.mastercard.finicity.client.model.BorrowerType.JOINTBORROWER;
+import static com.mastercard.finicity.client.model.BorrowerType.PRIMARY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConnectApiTest extends BaseAppKeyAppTokenTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
     private final AccountsApi accountApi = new AccountsApi();
+
     private final static String FINBANK_A = "102105";
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
 
@@ -23,9 +27,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
             var connectUrl = api.generateConnectUrlV2(request);
-            assertNotNull(connectUrl);
             var link = connectUrl.getLink();
-            assertNotNull(link);
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
         } catch (ApiException e) {
@@ -76,9 +78,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
             var connectUrl = api.generateLiteConnectUrlV2(request);
-            assertNotNull(connectUrl);
             var link = connectUrl.getLink();
-            assertNotNull(link);
             assertTrue(link.contains("type=lite"));
             assertTrue(link.contains("institutionId=" + FINBANK_A));
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
@@ -116,7 +116,6 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .partnerId(PARTNER_ID);
             var connectUrl = api.generateFixConnectUrlV2(request);
             var link = connectUrl.getLink();
-            assertNotNull(link);
             assertTrue(link.contains("type=fix"));
             assertTrue(link.contains("institutionLoginId=" + institutionLoginId));
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
@@ -128,7 +127,6 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    @Disabled
     public void sendConnectEmailV2Test() {
         try {
             var request = new ConnectEmailRequest()
@@ -136,7 +134,6 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
                     .partnerId(PARTNER_ID)
                     .consumerId(CONSUMER_ID)
                     .email(new EmailOptions().to("someone@company.com"));
-                    //.experience("default");
             var connectEmailUrl = api.sendConnectEmailV2(request);
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
@@ -152,18 +149,42 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    @Disabled
-    public void generateV2ConnectURLJointBorrowerTest() throws ApiException {
-        var request = new ConnectUrlRequestJointBorrower();
-        ConnectUrl response = api.generateV2ConnectURLJointBorrower(request);
-        // TODO: test validations
+    public void generateJointBorrowerConnectUrlV2Test() {
+        try {
+            var request = new ConnectJointBorrowerUrlRequest()
+                    .partnerId(PARTNER_ID)
+                    .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
+                    .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID));
+            var connectUrl = api.generateJointBorrowerConnectUrlV2(request);
+            var link = connectUrl.getLink();
+            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains("consumerId=" + CONSUMER_ID));
+            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 
     @Test
-    @Disabled
-    public void sendV2ConnectEmailJointBorrowerTest() throws ApiException {
-        var request = new V2ConnectEmailRequestJointBorrower();
-        var connectEmailUrl = api.sendV2ConnectEmailJointBorrower(request);
-        // TODO: test validations
+    public void sendJointBorrowerConnectEmailV2Test() {
+        try {
+            var request = new ConnectJointBorrowerEmailRequest()
+                    .partnerId(PARTNER_ID)
+                    .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
+                    .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID))
+                    .email(new EmailOptions().to("someone@company.com"));
+            var connectEmailUrl = api.sendJointBorrowerConnectEmailV2(request);
+            var link = connectEmailUrl.getLink();
+            var emailConfig = connectEmailUrl.getEmailConfig();
+            assertTrue(link.contains("origin=email"));
+            assertTrue(link.contains("consumerId=" + CONSUMER_ID));
+            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
+            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertEquals("someone@company.com", emailConfig.getTo());
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 }
