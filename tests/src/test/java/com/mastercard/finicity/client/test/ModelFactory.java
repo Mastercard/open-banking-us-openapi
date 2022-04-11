@@ -1,9 +1,6 @@
 package com.mastercard.finicity.client.test;
 
-import com.mastercard.finicity.client.model.Borrower;
-import com.mastercard.finicity.client.model.BorrowerType;
-import com.mastercard.finicity.client.model.ConsumerInfo;
-import com.mastercard.finicity.client.model.NewCustomer;
+import com.mastercard.finicity.client.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public final class ModelFactory {
@@ -25,6 +22,20 @@ public final class ModelFactory {
                 .firstName("John_" + randomStr())
                 .lastName("Smith_" + randomStr())
                 .username(username);
+    }
+
+    public static NewConsumer newConsumer() {
+        return new NewConsumer()
+                .firstName("John_" + randomStr())
+                .lastName("Smith_" + randomStr())
+                .address("434 W Ascension Way")
+                .city("Murray")
+                .state("UT")
+                .zip("84123")
+                .phone("6786786786")
+                .ssn("111222333")
+                .email("finicity@test.com")
+                .birthday(new Birthday().year(1989).month(8).dayOfMonth(13));
     }
 
     public static String randomStr() {

@@ -6,19 +6,14 @@ import com.mastercard.finicity.client.model.NewCustomer;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.mastercard.finicity.client.test.ModelFactory.randomStr;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomersApiTest extends BaseAppKeyAppTokenTest {
 
-    private final static CustomersApi api = new CustomersApi();
-    private final static List<String> createdCustomerIds = new ArrayList<>();
+    private final static CustomersApi api = new CustomersApi(apiClient);
 
     @Test
     void addTestingCustomerTest() {
@@ -150,18 +145,5 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
             assertErrorCodeEquals("14001", e);
             assertErrorMessageEquals("Customer not found.", e);
         }
-    }
-
-    @AfterAll
-    static void afterAll() {
-        // Clean-up
-        createdCustomerIds.forEach(id -> {
-            try {
-                api.deleteCustomer(id);
-            } catch (ApiException e) {
-                logApiException(e);
-                fail();
-            }
-        });
     }
 }

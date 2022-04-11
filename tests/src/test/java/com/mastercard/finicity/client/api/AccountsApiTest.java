@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AccountsApiTest extends BaseAppKeyAppTokenTest {
 
-    private final AccountsApi api = new AccountsApi();
+    private final AccountsApi api = new AccountsApi(apiClient);
 
     @Test
     void refreshCustomerAccountsTest() {

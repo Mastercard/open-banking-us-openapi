@@ -4,9 +4,14 @@ import com.google.gson.Gson;
 import com.mastercard.finicity.client.ApiClient;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.Configuration;
+import com.mastercard.finicity.client.api.CustomersApi;
 import com.mastercard.finicity.client.model.ErrorMessage;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,6 +28,9 @@ public abstract class BaseTest {
     protected final static String CUSTOMER_ID = System.getProperty("customerId");
 
     protected final static ApiClient apiClient = Configuration.getDefaultApiClient();
+
+    protected final static List<String> createdCustomerIds = new ArrayList<>();
+    protected final static CustomersApi customersApi = new CustomersApi(apiClient);
 
     @BeforeEach
     void setUp() {
@@ -55,5 +63,21 @@ public abstract class BaseTest {
 
     protected static void fail() {
         Assertions.fail("Shouldn't reach this line");
+    }
+
+
+    @AfterAll
+    static void afterAll() {
+        // Clean-up
+        var toDelete = new ArrayList<>(createdCustomerIds);
+        createdCustomerIds.clear();
+        toDelete.forEach(id -> {
+            try {
+                customersApi.deleteCustomer(id);
+            } catch (ApiException e) {
+                logApiException(e);
+                fail();
+            }
+        });
     }
 }
