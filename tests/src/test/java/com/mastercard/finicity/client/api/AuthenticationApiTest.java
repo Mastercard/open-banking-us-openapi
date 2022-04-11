@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AuthenticationApiTest extends BaseAppKeyTest {
 
-    private final AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
+    private final AuthenticationApi api = new AuthenticationApi(apiClient);
 
     @Test
     void createTokenTest() {
         try {
-            var response = authenticationApi.createToken(new PartnerCredentials()
+            var response = api.createToken(new PartnerCredentials()
                     .partnerId(PARTNER_ID)
                     .partnerSecret(PARTNER_SECRET));
             assertNotNull(response);
@@ -35,7 +35,7 @@ class AuthenticationApiTest extends BaseAppKeyTest {
                     .partnerId(PARTNER_ID)
                     .partnerSecret(PARTNER_SECRET)
                     .newPartnerSecret(PARTNER_SECRET + "_updated");
-            authenticationApi.modifyPartnerSecret(credentials);
+            api.modifyPartnerSecret(credentials);
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -43,7 +43,7 @@ class AuthenticationApiTest extends BaseAppKeyTest {
 
         try {
             // 2. Try to get a token using the old secret
-            authenticationApi.createToken(new PartnerCredentials()
+            api.createToken(new PartnerCredentials()
                     .partnerId(PARTNER_ID)
                     .partnerSecret(PARTNER_SECRET));
             fail();
@@ -58,7 +58,7 @@ class AuthenticationApiTest extends BaseAppKeyTest {
                     .partnerId(PARTNER_ID)
                     .partnerSecret(PARTNER_SECRET + "_updated")
                     .newPartnerSecret(PARTNER_SECRET);
-            authenticationApi.modifyPartnerSecret(credentials);
+            api.modifyPartnerSecret(credentials);
         } catch (ApiException e) {
             logApiException(e);
             fail();

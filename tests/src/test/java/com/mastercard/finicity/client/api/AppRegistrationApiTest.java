@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
 
     private final AppRegistrationApi api = new AppRegistrationApi(apiClient);
-    private final static AccountsApi accountApi = new AccountsApi(apiClient);
 
     @Test
     void registerAppTest() {
@@ -58,6 +57,7 @@ class AppRegistrationApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void migrateInstitutionLoginAccountsV2Test() {
         try {
+            var accountApi = new AccountsApi(apiClient);
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
             var existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
             var accounts = api.migrateInstitutionLoginAccountsV2(CUSTOMER_ID, existingInstitutionLoginId, new Object());

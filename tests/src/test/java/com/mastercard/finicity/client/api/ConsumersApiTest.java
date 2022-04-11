@@ -3,6 +3,7 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.ConsumerUpdate;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.ConsumerUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,23 +18,11 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
 
     @BeforeAll
     protected static void beforeAll() {
-        try  {
-            // Try to create a consumer for the given customer id
-            BaseAppKeyAppTokenTest.beforeAll();
-            var response = api.createConsumer(CUSTOMER_ID, ModelFactory.newConsumer());
-            assertEquals(CUSTOMER_ID, response.getCustomerId());
-            existingConsumerId = response.getId();
+        try {
+            existingConsumerId = ConsumerUtils.getOrCreateDefaultConsumer(api, CUSTOMER_ID);
         } catch (ApiException e) {
-            // {"code":11000,"message":"A consumer already exists for customer 5025024821"}
             logApiException(e);
-            assertErrorCodeEquals(11000, e);
-            assertErrorMessageEquals("A consumer already exists for customer " + CUSTOMER_ID, e);
-            try {
-                existingConsumerId = api.getConsumerForCustomer(CUSTOMER_ID).getId();
-            } catch (ApiException ex) {
-                logApiException(e);
-                fail();
-            }
+            fail();
         }
     }
 

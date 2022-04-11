@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ConnectApiTest extends BaseAppKeyAppTokenTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
-    private final AccountsApi accountApi = new AccountsApi(apiClient);
 
     private final static int FINBANK_A = 102105;
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
@@ -109,6 +108,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void generateFixConnectUrlV2Test() {
         try {
+            var accountApi = new AccountsApi(apiClient);
             var institutionLoginId = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0).getInstitutionLoginId();
             var request = new FixConnectUrlRequest()
                     .institutionLoginId(institutionLoginId)
