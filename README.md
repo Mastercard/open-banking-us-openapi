@@ -1,4 +1,4 @@
-# finicity-us-openapi
+# finicity-openapi
 [![](https://prod-finweb-frontend.s3-us-west-2.amazonaws.com/wp-content/uploads/20210512010711/Finicity_mc-logo-400x162.png)](https://www.finicity.com/)
 
 ## Overview
@@ -9,10 +9,10 @@ The [OpenAPI](https://swagger.io/specification/) specification for [Finicity API
 
 The following workflows ensure the API specification stays in good shape and can be used to consume the Finicity APIs:
 
-[![](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/swagger-editor.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/openapi-generator.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/integration.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-us-openapi/actions/workflows/prettier.yml)
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml)
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml)
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml)
+[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml)
 
 If you see some red, please [contact us](https://www.finicity.com/contact/)!
 
@@ -43,7 +43,7 @@ mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***
 
 #### Run Tests In GitHub
 
-1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-us-openapi/fork)
+1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
 2. Go to **Settings** > **Actions secrets**
 3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
 4. Enable workflows in the **Actions** tab
