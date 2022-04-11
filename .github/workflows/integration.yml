@@ -22,5 +22,5 @@ jobs:
           distribution: adopt
       - name: Run Tests
         run: |
-          cd api-client-tests
+          cd tests
           mvn clean test -DpartnerId=${{ secrets.PARTNER_ID }} -DpartnerSecret=${{ secrets.PARTNER_SECRET }} -DappKey=${{ secrets.APP_KEY }} -DcustomerId=${{ secrets.CUSTOMER_ID }}
