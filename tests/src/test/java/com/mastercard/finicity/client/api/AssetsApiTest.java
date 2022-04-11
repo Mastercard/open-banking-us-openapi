@@ -1,8 +1,14 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
+import com.mastercard.finicity.client.model.PayStatement;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssetsApiTest extends BaseAppKeyAppTokenTest {
 
@@ -18,6 +24,23 @@ public class AssetsApiTest extends BaseAppKeyAppTokenTest {
             logApiException(e);
             assertErrorCodeEquals(13002, e);
             assertErrorMessageEquals("Asset not found", e);
+        }
+    }
+
+    @Test
+    public void getAssetByCustomerIDTest() throws IOException {
+        try {
+            var payStatementsApi = new PayStatementsApi(apiClient);
+            var asset = payStatementsApi.storeCustomerPayStatement(CUSTOMER_ID,
+                    new PayStatement()
+                            .label("lastPayPeriodMinusOne")
+                            .statement("VGhpcyBtdXN0IGJlIGFuIGltYWdl")
+            );
+            var file = api.getAssetByCustomerID(CUSTOMER_ID, asset.getAssetId());
+            assertEquals("This must be an image", Files.readString(file.toPath()));
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
         }
     }
 }

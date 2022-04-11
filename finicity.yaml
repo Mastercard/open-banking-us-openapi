@@ -33,23 +33,24 @@ tags:
     description: Fetch or refresh customer accounts
   - name: Institutions
     description: Search and fetch financial institutions
+  - name: Pay Statements
+    description: Upload pay statements
+  - name: Assets
+    description: Download asset files
   - name: Verify Assets
     description: Generate asset reports asynchronously
   - name: Verify Income and Employment
     description: Generate income and employment reports asynchronously
   - name: Reports
-    description: Fetch reports when available
-  - name: Assets
-    description: Download asset files
+    description: Fetch generated reports when ready
   - name: Bank Statements
   - name: Transactions
-  - name: Pay Statements
+  - name: Payments
   - name: Liabilities
-  - name: Analytics and Attributes
   - name: Portfolios
   - name: TxPush
-  - name: Payments
   - name: Cash Flow
+  - name: Analytics and Attributes (Beta)
 security:
   - FinicityAppKey: []
   - FinicityAppToken: []
@@ -1487,8 +1488,8 @@ paths:
       summary: "\U0001F6A7 Generate VOIE - Paystub Report"
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
-        paystub(s), which are passed into the request body as assetIds
-        (generated using the Store Customer Pay Statement API) to generate the
+        paystub(s), which are passed into the request body as asset IDs
+        (generated using the "Store Customer Pay Statement" API) to generate the
         VOIE - Paystub (with TXVerify) report with digitized paystub details.
 
 
@@ -1929,30 +1930,18 @@ paths:
     post:
       tags:
         - Pay Statements
-      summary: "\U0001F6A7 StoreCustomerPayStatement"
-      description: >-
-        Services to store a pay statement for a customer. Within the body of the
-        request, the base 64 encoded value of the pay statement must be passed
-        with a label.
+      summary: Store Customer Pay Statement
+      description: Use this service to upload pay statements for a customer.
       operationId: StoreCustomerPayStatement
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
       requestBody:
-        description: >-
-          The base 64 encoded value of the pay statement and pay statement
-          label.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StorePayStatementRequest'
-        required: true
+        $ref: '#/components/requestBodies/StoreCustomerPayStatementRequest'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StorePayStatementResponse'
+          $ref: '#/components/responses/StoreCustomerPayStatementResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v2/customers/{customerId}/accounts/{accountId}/loanDetails':
@@ -2643,8 +2632,8 @@ paths:
   '/analytics/ca360/v1/customers/{customerId}/analytics':
     post:
       tags:
-        - Analytics and Attributes
-      summary: "\U0001F6A7 Generate Consumer Attributes - Beta"
+        - Analytics and Attributes (Beta)
+      summary: "\U0001F6A7 Generate Consumer Attributes"
       description: >-
         Used to generate a Consumer Attributes report for a customer. The `To`
         and `From` date range is the last 12 months of consumer data, based on
@@ -2677,8 +2666,8 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
     get:
       tags:
-        - Analytics and Attributes
-      summary: "\U0001F6A7 List Consumer Attributes - Beta"
+        - Analytics and Attributes (Beta)
+      summary: "\U0001F6A7 List Consumer Attributes"
       description: >-
         Used to retrieve a list of all the `analytic_ids` created for a customer
         from the Generate Consumer Attributes API. 
@@ -2709,8 +2698,8 @@ paths:
   '/analytics/ca360/v1/customers/{customerId}/analytics/{analytics_id}':
     get:
       tags:
-        - Analytics and Attributes
-      summary: "\U0001F6A7 Get Consumer Attributes By ID - Beta"
+        - Analytics and Attributes (Beta)
+      summary: "\U0001F6A7 Get Consumer Attributes By ID"
       description: >-
         Used to retrieve a Consumer Attributes (CA) report for a customer. The
         `analytic_id` and the `created_date` are generated from the [Generate
@@ -2886,11 +2875,15 @@ components:
         application/json:
           schema: {}
     GenerateReportRequest:
-      description: Constraints for the report generation
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportConstraints'
+    StoreCustomerPayStatementRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayStatement'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3107,6 +3100,12 @@ components:
           schema:
             type: string
             format: binary
+    StoreCustomerPayStatementResponse:
+      description: The pay statement was successfully uploaded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Asset'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -4072,7 +4071,7 @@ components:
 
         However, Connect doesn't pass this parameter to the following reports:
 
-        * Pay Statement ExtractionReport 
+        * Pay Statement Extraction Report 
 
         * VOIE - Paystub (with TXVerify) Report 
 
@@ -6014,7 +6013,8 @@ components:
       properties:
         assetId:
           # Asset ID assigned to the pay statement.
-          # Generated by Connect or by the Client by using the Store Customer Pay Statement API.
+          # Generated by Connect or by the client
+          # by using the "Store Customer Pay Statement" API.
           $ref: '#/components/schemas/AssetId'
         accounts:
           type: array
@@ -6581,7 +6581,8 @@ components:
       type: string
       description: Pay Statement matches found at the transaction level
       example: DATE
-    StorePayStatementRequest:
+    PayStatement:
+      description: A pay statement document and pay statement label
       required:
         - label
         - statement
@@ -6590,22 +6591,30 @@ components:
         label:
           type: string
           description: >-
-            The label to be associated with the pay statement: * `lastPayPeriod`
-            This label will allow the paystub to go through data extraction.
-            This is the default label that should be used for our VOIE - Paystub
-            products. * `lastPayPeriodMinusOne` The second most recent pay
-            statement. * `lastPayPeriodMinusTwo` The third most recent pay
-            statement. * `previousYearLastPayPeriod` Last pay statement of the
-            previous calendar year. * `previousYear2LastPayPeriod` Last pay
-            statement of the calendar year 2 years prior. * `earliestPayPeriod`
-            The earliest pay statement.
+            The label to be associated with the pay statement: 
+
+            * `lastPayPeriod`: this label will allow the paystub to go through
+            data extraction. This is the default label that should be used for
+            our VOIE - Paystub products
+
+            * `lastPayPeriodMinusOne`: the second most recent pay statement
+
+            * `lastPayPeriodMinusTwo`: the third most recent pay statement
+
+            * `previousYearLastPayPeriod` Last pay statement of the previous
+            calendar year
+
+            * `previousYear2LastPayPeriod`: last pay statement of the calendar
+            year 2 years prior
+
+            * `earliestPayPeriod`: the earliest pay statement
           example: lastPayPeriod
         statement:
           type: string
-          description: >-
-            The base 64 encoded value for the pay statement. Finicity supported
-            file types are .pdf, .jpg, or .png.
-          example: base64
+          description:
+            A Base64 encoded pay statement file. Finicity supports PDF, JPG, or
+            PNG files.
+          example: 'VGhpcyBtdXN0IGJlIGFuIGltYWdl'
     ReportStatus:
       type: string
       description:
@@ -6655,7 +6664,8 @@ components:
         accountDetail:
           $ref: '#/components/schemas/LoanPaymentDetails-AccountDetail'
       description: The loan payment details for the customer account
-    StorePayStatementResponse:
+    Asset:
+      description: A Finicity asset
       required:
         - assetId
       type: object
