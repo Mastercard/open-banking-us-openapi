@@ -1,25 +1,41 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.CustomerAccount;
 import com.mastercard.finicity.client.model.CustomerAccounts;
 import com.mastercard.finicity.client.test.AccountUtils;
 import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AccountsApiTest extends BaseAppKeyAppTokenTest {
 
-    private final AccountsApi api = new AccountsApi(apiClient);
+    private final static AccountsApi api = new AccountsApi(apiClient);
+    private static String existingInstitutionLoginId;
+    private static String existingInstitutionId;
+    private static String existingAccountId;
+
+    @BeforeAll
+    protected static void beforeAll() {
+        try {
+            // Load existing IDs to be used in the subsequent tests
+            BaseAppKeyAppTokenTest.beforeAll();
+            var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
+            existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
+            existingAccountId = existingAccount.getId();
+            existingInstitutionId = existingAccount.getInstitutionId();
+        } catch (ApiException e) {
+            fail();
+            logApiException(e);
+        }
+    }
 
     @Test
-    void refreshCustomerAccountsTest() {
+    void getCustomerAccountsByInstitutionLoginTest() {
         try {
-            var response = api.refreshCustomerAccounts(CUSTOMER_ID, new Object());
-            assertNotNull(response.getAccounts());
-            assertTrue(response.getAccounts().size() > 0);
+            var accounts = api.getCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId);
+            assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -27,30 +43,38 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    @Disabled
-    void deleteCustomerAccountTest() throws ApiException {
-        String customerId = null;
-        Long accountId = null;
-                api.deleteCustomerAccount(customerId, accountId);
-        // TODO: test validations
+    void refreshCustomerAccountsByInstitutionLoginTest() {
+        try {
+            CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(false, CUSTOMER_ID, existingInstitutionLoginId, new Object());
+            assertTrue(accounts.getAccounts().size() > 0);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 
     @Test
-    @Disabled
-    void deleteCustomerAccountsByInstitutionLoginTest() throws ApiException {
-        String customerId = null;
-        String institutionLoginId = null;
-                api.deleteCustomerAccountsByInstitutionLogin(customerId, institutionLoginId);
-        // TODO: test validations
+    void getAccountOwnerTest() {
+        try {
+            var owner = api.getAccountOwner(CUSTOMER_ID, existingAccountId);
+            assertNotNull(owner);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 
     @Test
-    @Disabled
-    void getCustomerAccountTest() throws ApiException {
-        String customerId = null;
-        Long accountId = null;
-                CustomerAccount response = api.getCustomerAccount(customerId, accountId);
-        // TODO: test validations
+    void getCustomerAccountTest() {
+        try {
+            var account = api.getCustomerAccount(CUSTOMER_ID, existingAccountId);
+            assertEquals(existingAccountId, account.getId());
+            assertEquals(CUSTOMER_ID, account.getCustomerId());
+            assertNotNull(account);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
     }
 
     @Test
@@ -70,10 +94,9 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void getCustomerAccountsByInstitutionTest() {
         try  {
-            var institutionId = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0).getInstitutionId();
-            var accounts = api.getCustomerAccountsByInstitution(CUSTOMER_ID, Long.valueOf(institutionId));
+            var accounts = api.getCustomerAccountsByInstitution(CUSTOMER_ID, existingInstitutionId);
             var firstAccount = accounts.getAccounts().get(0);
-            assertEquals(institutionId, firstAccount.getInstitutionId());
+            assertEquals(existingInstitutionId, firstAccount.getInstitutionId());
         } catch (ApiException e) {
             fail();
             logApiException(e);
@@ -81,10 +104,31 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
+    void loadHistoricTransactionsForCustomerAccountTest() {
+        try {
+            api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId, new Object());
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
+    }
+
+    @Test
+    void refreshCustomerAccountsTest() {
+        try {
+            var response = api.refreshCustomerAccounts(CUSTOMER_ID, new Object());
+            assertNotNull(response.getAccounts());
+            assertTrue(response.getAccounts().size() > 0);
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
+    }
+
+    @Test
     void getCustomerAccountsByInstitutionTest_UnknownInstitution() {
-        try  {
-            var institutionId = 1234567L;
-            api.getCustomerAccountsByInstitution(CUSTOMER_ID, institutionId);
+        try {
+            api.getCustomerAccountsByInstitution(CUSTOMER_ID, "1234567");
             fail();
         } catch (ApiException e) {
             // HTTP 404
@@ -96,33 +140,54 @@ class AccountsApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    @Disabled
-    void getCustomerAccountsByInstitutionLoginTest() throws ApiException {
-        String customerId = null;
-        String institutionLoginId = null;
-                CustomerAccounts response = api.getCustomerAccountsByInstitutionLogin(customerId, institutionLoginId);
-        // TODO: test validations
+    void deleteCustomerAccountsByInstitutionLoginTest_UnknownCustomerId() {
+        try {
+            api.deleteCustomerAccountsByInstitutionLogin("1234", "1234");
+            fail();
+        } catch (ApiException e) {
+            // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
+            logApiException(e);
+            assertErrorCodeEquals("38007", e);
+            assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId = (1234)", e);
+        }
     }
 
     @Test
-    @Disabled
-    void loadHistoricTransactionsForCustomerAccountTest() throws ApiException {
-        Integer contentLength = null;
-        String customerId = null;
-        Long accountId = null;
-                api.loadHistoricTransactionsForCustomerAccount(contentLength, customerId, accountId);
-        // TODO: test validations
+    void deleteCustomerAccountsByInstitutionLoginTest_UnknownInstitutionLoginId() {
+        try {
+            api.deleteCustomerAccountsByInstitutionLogin(CUSTOMER_ID, "1234");
+            fail();
+        } catch (ApiException e) {
+            // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
+            logApiException(e);
+            assertErrorCodeEquals("38007", e);
+            assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId = (1234)", e);
+        }
     }
 
     @Test
-    @Disabled
-    void refreshCustomerAccountsByInstitutionLoginTest() throws ApiException {
-        Integer contentLength = null;
-        Boolean interactive = null;
-        String customerId = null;
-        String institutionLoginId = null;
-                CustomerAccounts response = api.refreshCustomerAccountsByInstitutionLogin(contentLength, interactive, customerId, institutionLoginId);
-        // TODO: test validations
+    void deleteCustomerAccountTest_UnknownCustomerId() {
+        try {
+            api.deleteCustomerAccount("1234", "1234");
+            fail();
+        } catch (ApiException e) {
+            // {"code":38003,"message":"customer does not have given account (customerId = 1234, accountId = [1234])"}
+            logApiException(e);
+            assertErrorCodeEquals("38003", e);
+            assertErrorMessageEquals("customer does not have given account (customerId = 1234, accountId = [1234])", e);
+        }
     }
-    
+
+    @Test
+    void deleteCustomerAccountTest_UnknownAccountId() {
+        try {
+            api.deleteCustomerAccount(CUSTOMER_ID, "1234");
+            fail();
+        } catch (ApiException e) {
+            // {"code":38003,"message":"customer does not have given account (customerId = 5026247981, accountId = [1234])"}
+            logApiException(e);
+            assertErrorCodeEquals("38003", e);
+            assertErrorMessageEquals("customer does not have given account (customerId = " + CUSTOMER_ID + ", accountId = [1234])", e);
+        }
+    }
 }

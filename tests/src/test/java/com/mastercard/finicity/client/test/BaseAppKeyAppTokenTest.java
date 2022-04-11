@@ -5,20 +5,24 @@ import com.mastercard.finicity.client.api.AuthenticationApi;
 import com.mastercard.finicity.client.auth.ApiKeyAuth;
 import com.mastercard.finicity.client.model.AccessToken;
 import com.mastercard.finicity.client.model.PartnerCredentials;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class BaseAppKeyAppTokenTest extends BaseAppKeyTest {
 
     protected final static AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
 
-    @BeforeEach
-    void setUp() {
-        // Add 'Finicity-App-Key'
-        super.setUp();
+    @BeforeAll
+    protected static void beforeAll() {
+        BaseAppKeyTest.beforeAll(); // Add 'Finicity-App-Key'
+        addAppToken();
+    }
 
-        // Add 'Finicity-App-Token'
+    /**
+     * Add 'Finicity-App-Token'
+     */
+    private static void addAppToken() {
         AccessToken accessToken = null;
         try {
             accessToken = authenticationApi.createToken(new PartnerCredentials()

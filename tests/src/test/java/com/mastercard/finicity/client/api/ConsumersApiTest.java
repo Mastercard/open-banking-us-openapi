@@ -16,9 +16,10 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
     private static String existingConsumerId;
 
     @BeforeAll
-    static void beforeAll() throws ApiException {
+    protected static void beforeAll() {
         try  {
             // Try to create a consumer for the given customer id
+            BaseAppKeyAppTokenTest.beforeAll();
             var response = api.createConsumer(CUSTOMER_ID, ModelFactory.newConsumer());
             assertEquals(CUSTOMER_ID, response.getCustomerId());
             existingConsumerId = response.getId();
@@ -27,7 +28,12 @@ class ConsumersApiTest extends BaseAppKeyAppTokenTest {
             logApiException(e);
             assertErrorCodeEquals("11000", e);
             assertErrorMessageEquals("A consumer already exists for customer " + CUSTOMER_ID, e);
-            existingConsumerId = api.getConsumerForCustomer(CUSTOMER_ID).getId();
+            try {
+                existingConsumerId = api.getConsumerForCustomer(CUSTOMER_ID).getId();
+            } catch (ApiException ex) {
+                logApiException(e);
+                fail();
+            }
         }
     }
 

@@ -127,7 +127,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void sendConnectEmailV2Test() {
+    void sendConnectEmailV2Test() {
         try {
             var request = new ConnectEmailRequest()
                     .customerId(CUSTOMER_ID)
@@ -149,7 +149,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void generateJointBorrowerConnectUrlV2Test() {
+    void generateJointBorrowerConnectUrlV2Test() {
         try {
             var request = new ConnectJointBorrowerUrlRequest()
                     .partnerId(PARTNER_ID)
@@ -167,7 +167,7 @@ class ConnectApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    public void sendJointBorrowerConnectEmailV2Test() {
+    void sendJointBorrowerConnectEmailV2Test() {
         try {
             var request = new ConnectJointBorrowerEmailRequest()
                     .partnerId(PARTNER_ID)
