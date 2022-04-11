@@ -1,8 +1,18 @@
 #!/bin/bash
+
+api_error() {
+   echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US."
+   enter_to_exit
+}
+
+enter_to_exit() {
+  read -p "Press [Enter] to exit..."
+  exit
+}
+
 if [ "$#" -ne 3 ]; then
     echo "Usage: ./setup.sh {partnerId} {partnerSecret} {appKey}"
-    read -p "Press [Enter] to exit..."
-    exit
+    enter_to_exit
 fi
 
 echo "Creating access token ..."
@@ -11,7 +21,12 @@ token_response=$(curl -s --location --request POST 'https://api.finicity.com/agg
 --header 'Accept: application/json' \
 --header 'Finicity-App-Key:'$3 \
 --data-raw '{ "partnerId": "'$1'", "partnerSecret": "'$2'" }')
+
 # {"token":"P09NAglkaBTyJrHoFGmL"}
+if [[ "$token_response" != *"token"* ]]; then 
+  api_error
+fi;
+
 token=$(echo $token_response | sed -E 's/\{"token":"(.*)"\}/\1/')
 echo "Access token: "$token
 
@@ -22,7 +37,11 @@ customer_response=$(curl -s --location --request POST 'https://api.finicity.com/
 --header 'Finicity-App-Key:'$3 \
 --header 'Finicity-App-Token:'$token \
 --data-raw '{ "username": "customerusername_'$RANDOM$RANDOM'" }')
+
 # {"id":"5026948632","username":"customerusername1","createdDate":"1649244189"}
+if [[ "$customer_response" != *"username"* ]]; then 
+  api_error
+fi;
 
 customer_id=$(echo $customer_response | sed -E 's/\{"id":"([0-9]*).*/\1/')
 echo "Customer ID: "$customer_id
@@ -34,6 +53,7 @@ connect_url_response=$(curl -s --location --request POST 'https://api.finicity.c
 --header 'Finicity-App-Key:'$3 \
 --header 'Finicity-App-Token:'$token \
 --data-raw '{ "partnerId": "'$1'", "customerId": "'$customer_id'" }')
+
 # {"link":"https://..."}
 link=$(echo $connect_url_response | sed -E 's/\{"link":"(.*)"\}/\1/')
 
@@ -51,6 +71,7 @@ accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/
 --header 'Finicity-App-Key:'$3 \
 --header 'Finicity-App-Token:'$token \
 --data-raw '{}')
+
 # { "accounts": [...]}
 
 echo ""
@@ -61,4 +82,4 @@ echo "PARTNER_SECRET: "$2
 echo ""
 
 echo "mvn clean test -DpartnerId="$1" -DpartnerSecret="$2" -DappKey="$3" -DcustomerId="$customer_id
-read -p "Press [Enter] to exit..."
+enter_to_exit
