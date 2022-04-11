@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AuthenticationApiTest extends BaseAppKeyTest {
 
+    private final AuthenticationApi authenticationApi = new AuthenticationApi(apiClient);
+
     @Test
     void createTokenTest() throws ApiException {
         var response = authenticationApi.createToken(new PartnerCredentials()
