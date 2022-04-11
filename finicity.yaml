@@ -206,7 +206,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GenerateV2ConnectEmailRequest'
             example:
-              partnerId: '1445585709680'
+              partnerId: '1234583871234'
               customerId: '1005061234'
               consumerId: 86238nvnw7269e224a4e3de12352d87d
               type: voa
@@ -279,7 +279,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ConnectUrlRequest-JointBorrower'
             example:
-              partnerId: '1445585709680'
+              partnerId: '1234583871234'
               borrowers:
                 - customerId: '1005061234'
                   consumerId: 1973f901305e2ab3ba8840f411f6b057
@@ -348,7 +348,7 @@ paths:
             schema:
               $ref: '#/components/schemas/V2ConnectEmailRequest-JointBorrower'
             example:
-              partnerId: '1445585709680'
+              partnerId: '1234583871234'
               borrowers:
                 - customerId: '1005061234'
                   consumerId: 1973f901305e2ab3ba8840f411f6b057
@@ -2997,7 +2997,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GenerateConnectURLRequest'
             example:
-              partnerId: '1445585709680'
+              partnerId: '1234583871234'
               customerId: '1005061234'
               type: aggregation
               webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
@@ -3470,7 +3470,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GenerateConnectEmailRequest'
             example:
-              partnerId: '1445585709680'
+              partnerId: '1234583871234'
               customerId: '1005061234'
               consumerId: 86238nvnw7269e224a4e3de12352d87d
               type: voa
@@ -4599,6 +4599,10 @@ components:
           example: '5003507225'
         tags:
           type: string
+    PartnerId:
+      type: string
+      description: Partner ID displayed in the Developer Dashboard
+      example: '1234583871234'
     PartnerCredentials:
       required:
         - partnerId
@@ -4606,9 +4610,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1234583871234'
+          $ref: '#/components/schemas/PartnerId'
         partnerSecret:
           type: string
           description: Partner Secret displayed in the Developer Dashboard
@@ -4645,9 +4647,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -6416,9 +6416,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -6537,7 +6535,7 @@ components:
             This is optional.
           example: 'google:UA-123456789-1'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         type: aggregation
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
@@ -7524,8 +7522,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
+          $ref: '#/components/schemas/PartnerId'
         customers:
           type: array
           items:
@@ -7599,7 +7596,7 @@ components:
         email:
           $ref: '#/components/schemas/ConnectEmailOptions'
       example:
-        partnerId: '{{PARTNER_ID}}'
+        partnerId: '1234583871234'
         customers:
           - customerId: '{{CUSTOMER_ID}}'
             consumerId: '{{CONSUMER_ID}}'
@@ -13148,9 +13145,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -13214,7 +13209,7 @@ components:
             This is optional.
           example: 'google:UA-123456789-1'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         type: aggregation
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
@@ -13229,9 +13224,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -13345,7 +13338,7 @@ components:
             This is optional.
           example: 'google:UA-123456789-1'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         consumerId: 86238nvnw7269e224a4e3de12352d87d
         type: voa
@@ -13361,9 +13354,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -13425,7 +13416,7 @@ components:
             This is optional.
           example: 'google:UA-123456789-1'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         type: lite
         institutionId: 102224
@@ -13440,9 +13431,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -13506,7 +13495,7 @@ components:
             This is optional.
           example: 'google:UA-123456789-1'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         type: fix
         institutionLoginId: '1007302745'
@@ -13911,9 +13900,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -14020,7 +14007,7 @@ components:
         email:
           $ref: '#/components/schemas/ConnectEmailOptions'
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         consumerId: 86238nvnw7269e224a4e3de12352d87d
         type: voa
@@ -14620,7 +14607,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
+          $ref: '#/components/schemas/PartnerId'
         preAppId:
           type: integer
           description: An identifier to track the application registration request
@@ -14688,7 +14675,7 @@ components:
               status: true
       description: The registration status fields for the application
       example:
-        partnerId: 1234567
+        partnerId: '1234583871234'
         note: Approved
         appName: Awesome Budget App
         submittedDate: 1595303316
@@ -14719,14 +14706,14 @@ components:
             $ref: '#/components/schemas/AppStatusV1'
           description: List of App Status's
           example:
-            - partnerId: 1234567
+            - partnerId: '1234583871234'
               appName: Cool Budget App
               submittedDate: 1595303316
               preAppId: 4567
               modifiedDate: 1595303316
               scopes: Account Info
               status: P
-            - partnerId: 1234567
+            - partnerId: '1234583871234'
               note: Approved
               appName: Awesome Budget App
               submittedDate: 1595303316
@@ -15566,9 +15553,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -15640,7 +15625,7 @@ components:
             in the `experience` parameter.
           example: true
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         institutionId: 101723
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
@@ -15655,9 +15640,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: Finicity's customer ID. Obtained from the Add Customer call.
@@ -15729,7 +15712,7 @@ components:
             in the `experience` parameter.
           example: true
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         institutionLoginId: 13556634
         webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
@@ -15746,11 +15729,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: >-
-            Your partner id from the [Finicity Developer
-            Portal](https://signup.finicity.com/).
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         customerId:
           type: string
           description: The customerID from the Add Customer call.
@@ -15866,7 +15845,7 @@ components:
             in the `experience` parameter.
           example: true
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         customerId: '1005061234'
         consumerId: 86238nvnw7269e224a4e3de12352d87d
         type: voa
@@ -16004,14 +15983,14 @@ components:
             $ref: '#/components/schemas/AppStatus'
           description: List of applications with their status information
           example:
-            - partnerId: 1234567
+            - partnerId: '1234583871234'
               appName: Cool Budget App
               submittedDate: 1595303316
               preAppId: 4567
               modifiedDate: 1595303316
               scopes: Account Info
               status: P
-            - partnerId: 1234567
+            - partnerId: '1234583871234'
               note: Approved
               appName: Awesome Budget App
               submittedDate: 1595303316
@@ -16046,7 +16025,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
+          $ref: '#/components/schemas/PartnerId'
         preAppId:
           type: integer
           description: An identifier to track the application registration request
@@ -16116,7 +16095,7 @@ components:
         The registration status fields for the application. This is version 2 of
         this object.
       example:
-        partnerId: 1234567
+        partnerId: '1234583871234'
         note: Approved
         appName: Awesome Budget App
         submittedDate: 1595303316
@@ -17387,9 +17366,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: Partner ID displayed in the Developer Dashboard
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         borrowers:
           type: array
           items:
@@ -17515,7 +17492,7 @@ components:
             in the `experience` parameter.
           example: true
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         borrowers:
           - customerId: '1005061234'
             consumerId: 1973f901305e2ab3ba8840f411f6b057
@@ -17573,11 +17550,7 @@ components:
       type: object
       properties:
         partnerId:
-          type: string
-          description: >-
-            Your partner id from the [Finicity Developer
-            Portal](https://signup.finicity.com/).
-          example: '1445585709680'
+          $ref: '#/components/schemas/PartnerId'
         borrowers:
           type: array
           items:
@@ -17699,7 +17672,7 @@ components:
             in the `experience` parameter.
           example: true
       example:
-        partnerId: '1445585709680'
+        partnerId: '1234583871234'
         borrowers:
           - customerId: '1005061234'
             consumerId: 1973f901305e2ab3ba8840f411f6b057
