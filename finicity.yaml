@@ -47,13 +47,14 @@ tags:
     description:
       Fetch customer and account transactions and generate reports
       asynchronously
+  - name: Cash Flow
+    description: Generate cash flow reports asynchronously
   - name: Reports
     description: Fetch generated reports when ready
   - name: Payments
   - name: Liabilities
   - name: Portfolios
   - name: TxPush
-  - name: Cash Flow
   - name: Analytics and Attributes (Beta)
 security:
   - FinicityAppKey: []
@@ -2262,10 +2263,10 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: "\U0001F6A7 Generate Cash Flow Report - Business"
+      summary: Generate Cash Flow Report - Business
       description: >-
         Generate a Cash Flow Report (Business) report for all checking and
-        savings under the given Customer. This service retrieves up to two years
+        savings under the given customer. This service retrieves up to two years
         of transaction history for the given account. It then uses this
         information to generate the CFR report. A consumer is not required to
         generate this report.
@@ -2277,7 +2278,7 @@ paths:
 
         If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
-      operationId: GenerateCashFlowReport-Business
+      operationId: GenerateCashFlowBusinessReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
@@ -2292,18 +2293,10 @@ paths:
           schema:
             $ref: '#/components/schemas/UnixDate'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReportConstraints'
-        required: false
+        $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
         '202':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateCashFlowReport-BusinessResponse'
+          $ref: '#/components/responses/GenerateReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2312,10 +2305,10 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: "\U0001F6A7 Generate Cash Flow Report - Personal"
+      summary: Generate Cash Flow Report - Personal
       description: >-
         Generate a Cash Flow Report (Personal) report for all checking and
-        savings under the given Customer. This service retrieves up to two years
+        savings under the given customer. This service retrieves up to two years
         of transaction history for the given account. It then uses this
         information to generate the CFR report.
 
@@ -2325,8 +2318,8 @@ paths:
         the report - for example, with an individual acting as an personal
         guarantor on the loan - then this version of the report should be used.
         In case of an adverse action on the loan where the decision was based on
-        this report, then the borrower can be referred to the Finicity Consumer
-        Portal (https://consumer.finicityreports.com) where they can view this
+        this report, then the borrower can be referred to the [Finicity Consumer
+        Portal](https://consumer.finicityreports.com) where they can view this
         report and submit a dispute if they feel any information in this report
         is inaccurate.
 
@@ -2337,7 +2330,7 @@ paths:
 
         If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
-      operationId: GenerateCashFlowReport-Personal
+      operationId: GenerateCashFlowPersonalReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
@@ -2352,18 +2345,10 @@ paths:
           schema:
             $ref: '#/components/schemas/UnixDate'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReportConstraints'
-        required: false
+        $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
         '202':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateCashFlowReport-PersonalResponse'
+          $ref: '#/components/responses/GenerateReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -6553,6 +6538,8 @@ components:
         - voiePayroll
         - voeTransactions
         - voePayroll
+        - cfrp
+        - cfrb
       type: string
       example: voi
     LoanPaymentDetails:
@@ -7203,84 +7190,6 @@ components:
           properties:
             constraints:
               $ref: '#/components/schemas/VOIEWithStatementReportConstraints'
-    GenerateCashFlowReport-BusinessResponse:
-      required:
-        - id
-        - customerType
-        - customerId
-        - requestId
-        - requesterName
-        - createdDate
-        - title
-        - constraints
-        - type
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        constraints:
-          $ref: '#/components/schemas/ReportConstraintsOut'
-        type:
-          type: string
-          description: Report type
-          example: cfrb
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-    GenerateCashFlowReport-PersonalResponse:
-      required:
-        - id
-        - customerType
-        - customerId
-        - requestId
-        - requesterName
-        - createdDate
-        - title
-        - consumerId
-        - consumerSsn
-        - constraints
-        - type
-        - status
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/ReportId'
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        requestId:
-          $ref: '#/components/schemas/ReportRequestId'
-        requesterName:
-          $ref: '#/components/schemas/PartnerName'
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        title:
-          $ref: '#/components/schemas/ReportTitle'
-        consumerId:
-          $ref: '#/components/schemas/ConsumerId'
-        consumerSsn:
-          $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
-        constraints:
-          $ref: '#/components/schemas/ReportConstraintsOut'
-        type:
-          type: string
-          description: Report type
-          example: cfrp
-        status:
-          $ref: '#/components/schemas/ReportStatus'
     VOETransactionsReportConstraints:
       type: object
       properties:

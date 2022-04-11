@@ -21,6 +21,7 @@ class ReportsApiTest extends BaseTest {
     private final VerifyAssetsApi verifyAssetsApi = new VerifyAssetsApi(apiClient);
     private final VerifyIncomeAndEmploymentApi verifyIncomeAndEmploymentApi = new VerifyIncomeAndEmploymentApi(apiClient);
     private final TransactionsApi transactionsApi = new TransactionsApi(apiClient);
+    private final CashFlowApi cashFlowApi = new CashFlowApi();
 
     private static String existingAssetId;
 
@@ -184,6 +185,26 @@ class ReportsApiTest extends BaseTest {
     void getVOETransactionsReportByConsumerTest() throws Exception {
         try {
             var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
+            fetchReport(reportData.getId(), reportData.getConsumerId());
+        } catch (ApiException e) {
+            logApiException(e);
+        }
+    }
+
+    @Test
+    void getCashFlowBusinessReportByConsumerTest() throws Exception {
+        try {
+            var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+            fetchReport(reportData.getId(), reportData.getConsumerId());
+        } catch (ApiException e) {
+            logApiException(e);
+        }
+    }
+
+    @Test
+    void getCashFlowPersonalReportByConsumerTest() throws Exception {
+        try {
+            var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
             logApiException(e);
