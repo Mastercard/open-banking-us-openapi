@@ -1,15 +1,14 @@
 package com.mastercard.finicity.client.api;
 
-import com.google.gson.Gson;
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.ErrorMessage;
 import com.mastercard.finicity.client.model.PartnerCredentials;
 import com.mastercard.finicity.client.model.PartnerCredentialsWithNewSecret;
+import com.mastercard.finicity.client.test.BaseAppKeyTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AuthenticationApiTest extends BaseTest {
+class AuthenticationApiTest extends BaseAppKeyTest {
 
     @Test
     void createTokenTest() throws ApiException {
@@ -26,7 +25,7 @@ class AuthenticationApiTest extends BaseTest {
         var credentials = new PartnerCredentialsWithNewSecret()
                 .partnerId(PARTNER_ID)
                 .partnerSecret(PARTNER_SECRET)
-                .newPartnerSecret("newC4uE82VYpX1X66WGz");
+                .newPartnerSecret("yESweOaabuRK4Qkotest");
         authenticationApi.modifyPartnerSecret(credentials);
 
         try {
@@ -34,26 +33,18 @@ class AuthenticationApiTest extends BaseTest {
             authenticationApi.createToken(new PartnerCredentials()
                     .partnerId(PARTNER_ID)
                     .partnerSecret(PARTNER_SECRET));
-            fail("Shouldn't reach this line");
+            fail();
         } catch (ApiException e) {
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
             // {"code":10001,"message":"Invalid credentials"}
-            var errorMessage = new Gson().fromJson(e.getResponseBody(), ErrorMessage.class);
-            assertEquals(10001, errorMessage.getCode());
-            assertEquals("Invalid credentials", errorMessage.getMessage());
-            assertNull(errorMessage.getUserMessage());
-            assertNull(errorMessage.getStatus());
-            assertNull(errorMessage.getTags());
-            assertNull(errorMessage.getAccountId());
-            assertNull(errorMessage.getAssetId());
+            logApiException(e);
+            assertErrorCodeEquals(10001, e);
+            assertErrorMessageEquals("Invalid credentials", e);
         }
 
         // 3. Rollback
         credentials = new PartnerCredentialsWithNewSecret()
                 .partnerId(PARTNER_ID)
-                .partnerSecret("newC4uE82VYpX1X66WGz")
+                .partnerSecret("yESweOaabuRK4Qkotest")
                 .newPartnerSecret(PARTNER_SECRET);
         authenticationApi.modifyPartnerSecret(credentials);
     }
