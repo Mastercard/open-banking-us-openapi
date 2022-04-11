@@ -86,7 +86,7 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
     }
 
     @Test
-    void getCustomersTest() {
+    void getCustomersTest_NoFilter() {
         try {
             var customers = api.getCustomers(null, null, null, null, null);
             assertTrue(customers.getCustomers().size() > 0);
@@ -99,10 +99,22 @@ class CustomersApiTest extends BaseAppKeyAppTokenTest {
     @Test
     void getCustomersTest_UnknownUsername() {
         try {
-            var customers = api.getCustomers(null, "1234", null, null, null);
+            var customers = api.getCustomers("1234", null, null, null, null);
             assertEquals(0, customers.getCustomers().size());
             assertEquals(0, customers.getDisplaying());
             assertFalse(customers.getMoreAvailable());
+        } catch (ApiException e) {
+            logApiException(e);
+            fail();
+        }
+    }
+
+    @Test
+    void getCustomersTest_UsernameFilter() {
+        try {
+            var customer = api.getCustomer(CUSTOMER_ID);
+            var customers = api.getCustomers(customer.getUsername(), null, null, null, null);
+            assertTrue(customers.getCustomers().size() > 0);
         } catch (ApiException e) {
             logApiException(e);
             fail();
