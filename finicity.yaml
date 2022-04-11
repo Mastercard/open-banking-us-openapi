@@ -23,11 +23,14 @@ tags:
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
+  - name: App Registration
+    description: Register and assign apps to customers
   - name: Consumers
     description:
       Create and manage consumers associated with customers in order to use
       report services
   - name: Accounts
+    description: Fetch or refresh customer accounts
   - name: Institutions
   - name: Verify Assets
   - name: Verify Income and Employment
@@ -40,7 +43,6 @@ tags:
   - name: Portfolios
   - name: TxPush
   - name: Payments
-  - name: App Registration and OAuth Migration
   - name: Assets
   - name: Cash Flow
 security:
@@ -553,9 +555,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
       requestBody:
-        content:
-          application/json:
-            schema: {}
+        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
@@ -634,10 +634,11 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: status
           in: query
+          required: false
           description: >-
-            append, ?status=pending, to return accounts in the pending status.
+            Append `?status=pending` to return accounts in the pending status.
             Pending accounts were discovered but not activated and will not have
-            transactions or have balance updates
+            transactions or have balance updates.
           schema:
             type: string
             example: pending
@@ -681,9 +682,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
       requestBody:
-        content:
-          application/json:
-            schema: {}
+        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
@@ -767,9 +766,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
       requestBody:
-        content:
-          application/json:
-            schema: {}
+        $ref: '#/components/requestBodies/LoadHistoricTransactionsForCustomerAccountRequest'
       responses:
         '203':
           $ref: '#/components/responses/MFAChallengeNeededResponse'
@@ -812,6 +809,162 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /aggregation/v1/partners/applications:
+    post:
+      tags:
+        - App Registration
+      summary: Register App
+      description: >-
+        Register a new application to access financial institutions using OAuth
+        connections.
+      operationId: RegisterApp
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterAppRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/RegisterAppResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/aggregation/v1/partners/applications/{preAppId}':
+    put:
+      tags:
+        - App Registration
+      summary: Modify App Registration
+      description: Update a registered application.
+      operationId: ModifyAppRegistration
+      parameters:
+        - $ref: '#/components/parameters/PreAppIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/ModifyAppRegistrationRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ModifyAppRegistrationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /aggregation/v2/partners/applications:
+    get:
+      tags:
+        - App Registration
+      summary: Get App Registration Status V2
+      description: Get the status of your application registration(s).
+      operationId: GetAppRegistrationStatusV2
+      parameters:
+        - $ref: '#/components/parameters/PreAppIdQueryParameter'
+        - $ref: '#/components/parameters/ApplicationIdQueryParameter'
+        - name: status
+          in: query
+          description: Look up app registration requests by status
+          required: false
+          schema:
+            $ref: '#/components/schemas/AppRegistrationStatus'
+        - name: appName
+          in: query
+          required: false
+          description: Look up app registration requests by app name
+          schema:
+            $ref: '#/components/schemas/ApplicationName'
+        - name: submittedDate
+          in: query
+          required: false
+          description:
+            Look up app registration requests by the date they were submitted
+          schema:
+            $ref: '#/components/schemas/UnixDate'
+        - name: modifiedDate
+          in: query
+          required: false
+          description:
+            Look up app registration requests by the date the request was
+            updated. This can be used to determine when a request was updated to
+            "A" or "R".
+          schema:
+            $ref: '#/components/schemas/UnixDate'
+        - name: page
+          in: query
+          required: false
+          description: Select which page of results to return
+          schema:
+            type: integer
+            format: int64
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          required: false
+          description: Select how many results per page to return
+          schema:
+            type: integer
+            format: int64
+            default: 1
+            example: 20
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAppRegistrationStatusResponseV2'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
+    put:
+      tags:
+        - App Registration
+      summary: Set Customer App ID
+      description: >-
+        If you have multiple applications for a single client, and you want to
+        register their applications to access financial institutions using OAuth
+        connections, then use this API to assign applications to an existing
+        customer.
+      operationId: SetCustomerAppID
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ApplicationIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/SetCustomerAppIDRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SetCustomerAppIDResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v2/customers/{customerId}/institutionLogins/{institutionLoginId}/migration':
+    put:
+      tags:
+        - App Registration
+      summary: 'Migrate Institution Login Accounts V2'
+      description: >-
+        The `institutionLoginId` parameter uses Finicity's internal FI mapping
+        to move accounts from the current FI legacy connection to the new OAuth
+        FI connection.
+
+
+        This API returns a list of accounts for the institution login ID
+        specified.
+      operationId: MigrateInstitutionLoginAccountsV2
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/MigrateInstitutionLoginAccountsRequestV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/MigrateInstitutionLoginAccountsResponseV2'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /institution/v2/certifiedInstitutions/rssd:
     get:
       tags:
@@ -830,11 +983,12 @@ paths:
         - name: start
           in: query
           description: 'Page (Default: 1)'
-          required: true
+          required: false
           schema:
             type: integer
             format: int32
             example: 1
+            default: 1
         - name: limit
           in: query
           description: 'Limits the number of results returned (max: 1000)'
@@ -892,6 +1046,7 @@ paths:
       parameters:
         - name: search
           in: query
+          required: false
           description: >-
             Match the text for the query. URL-encoded required. See Handling
             Spaces in Queries.
@@ -906,6 +1061,7 @@ paths:
             example: finbank
         - name: start
           in: query
+          required: false
           description: >-
             The starting page number of records returned. The default is 1.
 
@@ -918,6 +1074,7 @@ paths:
             example: 1
         - name: limit
           in: query
+          required: false
           description: >-
             The maximum number of records per page returned for the search
             request. The default is 25 records per page.
@@ -953,6 +1110,7 @@ paths:
             example: finbank
         - name: start
           in: query
+          required: false
           description: >-
             Starting index for this page of results (ignored if returning all
             institutions). This will default to 1.
@@ -963,6 +1121,7 @@ paths:
             example: 1
         - name: limit
           in: query
+          required: false
           description: >-
             Maximum number of entries for this page of results (ignored if
             returning all institutions). This will default to 25. Limits the
@@ -1081,6 +1240,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1134,6 +1294,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1142,6 +1303,7 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
+          required: false
           description:
             Without this parameter, the report defaults to 6 months if
             available. If included, the epoch timestamp should be 10 digits long
@@ -1222,6 +1384,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1230,6 +1393,7 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
+          required: false
           description: >-
             Without this parameter, the report defaults to 61 days if available.
             This will limit the amount of credit and debit transactions included
@@ -1308,6 +1472,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1380,6 +1545,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1446,6 +1612,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1521,6 +1688,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1594,6 +1762,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1668,6 +1837,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -1762,6 +1932,7 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
         - name: index
           in: query
+          required: false
           description: >-
             Request statements from 1- 24. By default, 1 is the most recent
             statement. Increase the index value to count back (by month) and
@@ -1820,6 +1991,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
@@ -1892,6 +2064,7 @@ paths:
             $ref: '#/components/schemas/UnixDate'
         - name: start
           in: query
+          required: false
           description: Starting index for this page of results
           schema:
             type: integer
@@ -1900,6 +2073,7 @@ paths:
             example: 1
         - name: limit
           in: query
+          required: false
           description:
             Maximum number of entries for this page of results (max is 1000)
           schema:
@@ -1909,6 +2083,7 @@ paths:
             example: 1000
         - name: sort
           in: query
+          required: false
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
@@ -1918,6 +2093,7 @@ paths:
             example: desc
         - name: includePending
           in: query
+          required: false
           description: true to include pending transactions if available.
           schema:
             type: boolean
@@ -2008,6 +2184,7 @@ paths:
             $ref: '#/components/schemas/UnixDate'
         - name: start
           in: query
+          required: false
           description: Starting index for this page of results
           schema:
             type: integer
@@ -2016,6 +2193,7 @@ paths:
             example: 1
         - name: limit
           in: query
+          required: false
           description:
             Maximum number of entries for this page of results (max is 1000)
           schema:
@@ -2025,6 +2203,7 @@ paths:
             example: 1000
         - name: sort
           in: query
+          required: false
           description: >-
             Sort order: asc for ascending order (oldest transactions are on page
             1), descfor descending order (newest transactions are on page 1).
@@ -2034,6 +2213,7 @@ paths:
             example: desc
         - name: includePending
           in: query
+          required: false
           description: true to include pending transactions if available.
           schema:
             type: boolean
@@ -2088,10 +2268,10 @@ paths:
       parameters:
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
-          required: true
           schema:
             type: string
             example: 'https://finicity-test/webhook'
@@ -2104,11 +2284,8 @@ paths:
             ?fromDate=1494449017.   If fromDate is not used or it's longer than
             10 digits, the transaction report history defaults to 24 months of
             data.    (Optional)
-          required: true
           schema:
-            type: integer
-            format: int64
-            example: 1578952809
+            $ref: '#/components/schemas/UnixDate'
         - name: toDate
           in: query
           description: >-
@@ -2119,10 +2296,10 @@ paths:
             $ref: '#/components/schemas/UnixDate'
         - name: includePending
           in: query
+          required: false
           description: >-
             True: Include pending transactions in the report. False: Set by
             default.
-          required: true
           schema:
             type: boolean
             example: true
@@ -2440,6 +2617,7 @@ paths:
             example: rceiqx616awa-assetsummary
         - name: onBehalfOf
           in: query
+          required: true
           description:
             The name of the entity you are retrieving the report on behalf of.
           schema:
@@ -2485,198 +2663,6 @@ paths:
       responses:
         '200':
           description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
-    put:
-      tags:
-        - App Registration and OAuth Migration
-      summary: "\U0001F6A7 Set Customer Application ID"
-      description: >-
-        If you have multiple applications for a single client, and you want to
-        register their applications to access financial institutions using OAuth
-        connections, then use this API to assign all applications to an existing
-        customer.
-      operationId: SetCustomerApplicationID
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: applicationId
-          in: path
-          description: >-
-            Application ID you want to assign the customer to. This is the
-            `applicationId` value returned from the "Get App Registration
-            Status" endpoint
-          required: true
-          schema:
-            $ref: '#/components/schemas/ApplicationId'
-      responses:
-        '200':
-          description: ''
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v1/partners/applications:
-    post:
-      tags:
-        - App Registration and OAuth Migration
-      summary: "\U0001F6A7 App Registration"
-      description: >-
-        Register new applications to access financial institutions using OAuth
-        connections.
-      operationId: AppRegistration
-      requestBody:
-        description: The values for the new app registration
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AppRegistrationRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppRegistrationResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/partners/applications/{preAppId}':
-    put:
-      tags:
-        - App Registration and OAuth Migration
-      summary: "\U0001F6A7 Modify App Registration"
-      description: >-
-        Update the field values you want to change for the registered
-        applications accessing financial institutions using OAuth connections.
-      operationId: ModifyAppRegistration
-      parameters:
-        - name: preAppId
-          in: path
-          description: >-
-            The preAppId from the App Registration and Get App Registration
-            Status endpoints
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1234
-      requestBody:
-        description: The values for the app registration modification
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ModifyAppRegistrationRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppRegistrationResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v2/customers/{customerId}/institutionLogins/{institutionLoginId}/migration':
-    put:
-      tags:
-        - App Registration and OAuth Migration
-      summary: "\U0001F6A7 Migrate Institution Login Accounts V2"
-      description: >-
-        The `institutionLoginId` parameter uses Finicity's internal FI mapping
-        to move accounts from the current FI legacy connection to the new OAuth
-        FI connection.
-
-
-        The API returns a list of accounts for the institution login ID
-        specified with an HTTP status code 200.
-      operationId: MigrateInstitutionLoginAccountsV2
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAccounts'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /aggregation/v2/partners/applications:
-    get:
-      tags:
-        - App Registration and OAuth Migration
-      summary: "\U0001F6A7 Get App Registration Status V2"
-      description: >-
-        Get the status of your application registration to access financial
-        institutions using OAuth connections.
-      operationId: GetAppRegistrationStatusV2
-      parameters:
-        - name: preAppId
-          in: query
-          description: Look up the status of an app by the preAppId
-          schema:
-            type: integer
-            format: int64
-            example: 7456
-        - name: applicationId
-          in: query
-          description: Look up the status of an app by its application ID
-          schema:
-            $ref: '#/components/schemas/ApplicationId'
-        - name: status
-          in: query
-          description: >-
-            Look up the status of app registration requests by the registration
-            request status. Valid values P (For Pending), A (For Approved), R
-            (For Rejected)
-          schema:
-            type: string
-            example: A
-        - name: appName
-          in: query
-          description: Look up app registration requests by the application name
-          schema:
-            type: string
-        - name: submittedDate
-          in: query
-          description: >-
-            Look up app registration requests by the date they were submitted in
-            epoch format.
-          schema:
-            type: integer
-            format: int64
-            example: 1595303316
-        - name: modifiedDate
-          in: query
-          description: >-
-            Look up app registration requests by the date the request was
-            updated. This could be used to determine when the app was updated to
-            approved or rejected.
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: page
-          in: query
-          description: Select which page of results to return
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: pageSize
-          in: query
-          description: Select how many results per page to return
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 20
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppStatuses'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/customers/{customerId}/reports':
@@ -2738,6 +2724,7 @@ paths:
             example: 88w4fbssrbja-prequalvoa
         - name: onBehalfOf
           in: query
+          required: true
           description:
             The name of the entity you are retrieving the report on behalf of.
           schema:
@@ -2819,6 +2806,7 @@ paths:
             example: 41h4nzppn37u
         - name: onBehalfOf
           in: query
+          required: true
           description:
             The name of the entity you are retrieving the report on behalf of.
           schema:
@@ -2931,10 +2919,6 @@ paths:
         Retrieve the available and cleared account balances for a single account
         in real-time directly from a financial institution. 
 
-
-        Timestamps are in Unix Epoch time.
-
-
         Note: this is a premium service, billable per every successful API call.
       operationId: GetAvailableBalance-Live
       parameters:
@@ -2960,10 +2944,6 @@ paths:
         the most accurate balance information available when a connection to a
         financial institution is unavailable or when a faster response is
         needed. 
-
-
-        Timestamps are in Unix Epoch time.
-
 
         Note: this is a premium service, billable per every successful API call.
         Enrollment is required.
@@ -3018,6 +2998,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
@@ -3026,15 +3007,14 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
+          required: false
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
             10 digits long and within two years of the present day.  If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
           schema:
-            type: integer
-            format: int64
-            example: 1578952809
+            $ref: '#/components/schemas/UnixDate'
       requestBody:
         content:
           application/json:
@@ -3099,6 +3079,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded)
@@ -3107,15 +3088,14 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
+          required: false
           description: >-
             The `fromDate` param is an Epoch Timestamp (in seconds). It must be
             10 digits long and within two years of the present day.  If fromDate
             is not used or it's longer than 10 digits, the cash flow report
             history defaults to 6 months of data if available.
           schema:
-            type: integer
-            format: int64
-            example: 1578952809
+            $ref: '#/components/schemas/UnixDate'
       requestBody:
         content:
           application/json:
@@ -3162,6 +3142,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -3231,6 +3212,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - name: callbackUrl
           in: query
+          required: false
           description: >-
             The Report Listener URL to receive notifications (optional, must be
             URL-encoded).
@@ -3239,6 +3221,7 @@ paths:
             example: 'https://finicity-test/webhook'
         - name: fromDate
           in: query
+          required: false
           description: >-
             The fromDate parameter is an Epoch Timestamp (in seconds), such as
             ?1494449017. Without this parameter, the report defaults to 120 days
@@ -3490,6 +3473,38 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerUpdate'
+    RefreshCustomerAccountsRequest:
+      description: No payload expected
+      content:
+        application/json:
+          schema: {}
+    LoadHistoricTransactionsForCustomerAccountRequest:
+      description: No payload expected
+      content:
+        application/json:
+          schema: {}
+    RegisterAppRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Application'
+    ModifyAppRegistrationRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Application'
+    MigrateInstitutionLoginAccountsRequestV2:
+      description: No payload expected
+      content:
+        application/json:
+          schema: {}
+    SetCustomerAppIDRequest:
+      description: No payload expected
+      content:
+        application/json:
+          schema: {}
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3613,6 +3628,35 @@ components:
         The response contains an MFA challenge in XML or JSON format. Contact
         your Account Manager or Systems Engineers to determine the best route to
         handle this error.
+    RegisterAppResponse:
+      description: The app registration was successfully created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RegisteredApplication'
+    SetCustomerAppIDResponse:
+      description: The app was successfully assigned.
+      content:
+        application/json:
+          schema: {}
+    ModifyAppRegistrationResponse:
+      description: The app registration was updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RegisteredApplication'
+    GetAppRegistrationStatusResponseV2:
+      description: The app registration statuses were returned
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AppStatuses'
+    MigrateInstitutionLoginAccountsResponseV2:
+      description: The migration succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccounts'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3778,24 +3822,52 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+    ApplicationIdPathParameter:
+      name: applicationId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ApplicationId'
+    ApplicationIdQueryParameter:
+      name: applicationId
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ApplicationId'
+    PreAppIdQueryParameter:
+      name: preAppId
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/PreAppId'
+    PreAppIdPathParameter:
+      name: preAppId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PreAppId'
     CustomerSearchParameter:
       name: search
       in: query
+      required: false
       description: >-
         The text you wish to match. Leave this empty if you wish to return all
-        customers. Must be URL-encoded (see also: "Handling Spaces in Queries").
+        customers. Must be URL-encoded (see also: [Handling Spaces in
+        Queries](https://docs.finicity.com/endpoint-syntax-and-format/)).
       schema:
         type: string
         example: searchvalue
     CustomerUsernameParameter:
       name: username
       in: query
+      required: false
       description: Username for exact match (will return 0 or 1 record)
       schema:
         $ref: '#/components/schemas/CustomerUsername'
     CustomerTypeParameter:
       name: type
       in: query
+      required: false
       description: >-
         "testing" or "active" to return only customers of that type, or leave
         empty to return all customers.
@@ -3829,6 +3901,7 @@ components:
     PurposeParameter:
       name: purpose
       in: query
+      required: false
       description: >-
         2-digit code from Permissible Purpose Codes, specifying the reason for
         retrieving this report.
@@ -3843,6 +3916,7 @@ components:
     StartParameter:
       name: start
       in: query
+      required: false
       description: Starting index for this page of results
       schema:
         type: integer
@@ -3852,6 +3926,7 @@ components:
     LimitParameter:
       name: limit
       in: query
+      required: false
       description: >-
         Maximum number of entries for this page of results
       schema:
@@ -4366,7 +4441,7 @@ components:
 
         * Verification of Income Report 
 
-        * VOIE -Payroll Report 
+        * VOIE - Payroll Report 
 
 
         Note: this field isn't used if you're only collecting transaction data
@@ -4495,14 +4570,19 @@ components:
       example: Mr
     ApplicationId:
       type: string
-      description: >-
-        An application ID for the app the partner would like to assign the
-        customer to. This cannot be changed once set. Only applicable in cases
-        of partners with multiple registered applications. If the partner only
-        has one app this can be omitted.  This is the `applicationId` from the
-        "Get App Registration Status" endpoint and is populated after the app is
-        in a status for approved.
+      description:
+        '`applicationId` value returned from the "Get App Registration Status"
+        endpoint and the partner assign the customers to. This cannot be changed
+        once set. Only applicable in cases of partners with multiple registered
+        applications. If the partner only has one app, this can usually be
+        omitted. This field is populated after the app is in a status approved.'
       example: '123456789'
+    PreAppId:
+      type: string
+      description:
+        Identifier to track the application registration from the "App
+        Registration" and "Get App Registration Status" endpoints
+      example: '2581'
     ApplicationName:
       type: string
       description:
@@ -4510,7 +4590,9 @@ components:
       example: Awesome Budget App
     UnixDate:
       type: integer
-      description: A date in Unix epoch time (in seconds)
+      description:
+        'A date in Unix epoch time (in seconds). See also: [Handling Epoch Dates
+        and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
     Currency:
@@ -4765,10 +4847,21 @@ components:
         asOfDate:
           $ref: '#/components/schemas/UnixDate'
       description: Owner of a customer account
+    CustomerAccounts:
+      description: A list of customer accounts
+      required:
+        - accounts
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerAccount'
+          description: List of customer accounts
     CustomerAccount:
-      description: >-
-        A customer account represents a bank account such as a checking or
-        savings that the customer has added via the Connect interface.
+      description:
+        An account represents a bank account such as a checking or savings that
+        the customer has added via the Connect interface.
       required:
         - id
         - number
@@ -5469,6 +5562,217 @@ components:
         totalAmountPaid:
           type: number
           description: (Student Loan) The total amount paid
+    Application:
+      required:
+        - appDescription
+        - appName
+        - appUrl
+        - ownerAddressLine1
+        - ownerAddressLine2
+        - ownerCity
+        - ownerCountry
+        - ownerName
+        - ownerPostalCode
+        - ownerState
+        - image
+      type: object
+      properties:
+        appDescription:
+          type: string
+          description:
+            A short description of the app. This will be visible to end users in
+            the FI interface.
+          example: 'The app that makes your budgeting experience awesome'
+        appName:
+          $ref: '#/components/schemas/ApplicationName'
+        appUrl:
+          type: string
+          description:
+            An URL for the app. This will be visible to end users in the FI
+            interface.
+          example: 'https://www.finicity.com/'
+        ownerAddressLine1:
+          type: string
+          description: >-
+            Address Line 1 for the business entity that owns the app.
+            Information for registration purposes only and not given to the end
+            user.
+          example: 434 W Ascension Way
+        ownerAddressLine2:
+          type: string
+          description: >-
+            Address Line 2 for the business entity that owns the app.
+            Information for registration purposes only and not given to the end
+            user.
+          example: 'Suite #200'
+        ownerCity:
+          type: string
+          description: >-
+            City for the business entity that owns the app. Information for
+            registration purposes only and not given to the end user.
+          example: Murray
+        ownerCountry:
+          type: string
+          description: >-
+            Country for the  business entity that owns the app. Information for
+            registration purposes only and not given to the end user.
+          example: USA
+        ownerName:
+          type: string
+          description: >-
+            Business name for the business entity that owns the app. Information
+            for registration purposes only and not given to the end user.
+          example: Finicity
+        ownerPostalCode:
+          type: string
+          description: >-
+            Zip code for the business entity that owns the app. Information for
+            registration purposes only and not given to the end user.
+          example: '84123'
+        ownerState:
+          type: string
+          description: >-
+            State for the business entity that owns the app. Information for
+            registration purposes only and not given to the end user.
+          example: UT
+        image:
+          type: string
+          description:
+            An app logo passed as a Base64 encoded image (1:1 SVG file, must be
+            less than 50KB)
+          example: 'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgICAKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB2ZXJzaW9uPSIxLjEiCiAgIHZpZXdCb3g9IjAgMCAwIDAiCiAgIGhlaWdodD0iMCIKICAgd2lkdGg9IjAiPgogICAgPGcvPgo8L3N2Zz4K'
+    RegisteredApplication:
+      required:
+        - preAppId
+        - status
+      type: object
+      properties:
+        preAppId:
+          $ref: '#/components/schemas/PreAppId'
+        status:
+          $ref: '#/components/schemas/AppRegistrationStatus'
+    AppStatuses:
+      description: >-
+        The response for the "Get App Registration Status" endpoint which
+        returns an array of status objects
+      required:
+        - totalRecords
+        - totalPages
+        - pageNumber
+        - numberOfRecordsPerPage
+        - applications
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: The total number of results
+          format: int64
+          example: 50
+        totalPages:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 5
+        pageNumber:
+          type: integer
+          description: The current page number
+          format: int64
+          example: 2
+        numberOfRecordsPerPage:
+          type: integer
+          description: The number of results per page
+          format: int64
+          example: 10
+        applications:
+          description: A list of applications with their statuses
+          type: array
+          items:
+            $ref: '#/components/schemas/AppStatus'
+    AppRegistrationStatus:
+      description:
+        The status of an app registration request. "A" means approved. "P" means
+        pending which is the status when initially submitted or when the app is
+        modified and awaiting approval. "R" means rejected. If it is rejected
+        there will be a note with the rejected reason.
+      type: string
+      example: P
+    AppStatus:
+      description: Registration status details for the application
+      required:
+        - partnerId
+        - preAppId
+        - appName
+        - submittedDate
+        - modifiedDate
+        - status
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        preAppId:
+          $ref: '#/components/schemas/PreAppId'
+        note:
+          type: string
+          description:
+            A note on the registration. Typically used to indicate reasons for
+            rejected apps.
+          example: Approved
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+        appName:
+          $ref: '#/components/schemas/ApplicationName'
+        submittedDate:
+          $ref: '#/components/schemas/UnixDate'
+        modifiedDate:
+          $ref: '#/components/schemas/UnixDate'
+        status:
+          $ref: '#/components/schemas/AppRegistrationStatus'
+        scopes:
+          type: string
+          description: Indicates scopes of data accessible to the app
+          example: Account Info
+        institutionDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppFinancialInstitutionStatus'
+          description:
+            A list of the registration status for each FI for the application
+    AppFinancialInstitutionStatus:
+      description: >-
+        The registration status fields for each specific OAuth financial
+        institution
+      required:
+        - id
+        - decryptionKeyActivated
+        - createdDate
+        - lastModifiedDate
+        - status
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/InstitutionId'
+        abbrvName:
+          type: string
+          description: The application's abbreviated name
+          example: VAEJ
+        logoUrl:
+          type: string
+          description: An URL to a logo file
+          example: >-
+            https://prod-direct-integration-client.s3.us-west-2.amazonaws.com/976521f99-7b36-4b3b-a3e0-faff9545836d/102224/90x90.png
+        decryptionKeyActivated:
+          type: boolean
+          description:
+            Status of decryption keys for financial institution app registration
+          example: false
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        lastModifiedDate:
+          $ref: '#/components/schemas/UnixDate'
+        status:
+          type: boolean
+          description: '`false` indicates registration is still pending'
+          example: true
     GetInstitutionsResponse:
       required:
         - found
@@ -5736,9 +6040,9 @@ components:
           $ref: '#/components/schemas/CustomerId'
         status:
           type: string
-          description: >-
-            One of active, pending, or shadow (see Pending Transactions and
-            Shadow Transactions)
+          description:
+            One of active, pending, or shadow (see [Pending and Shadow
+            Transactions](https://docs.finicity.com/pending-and-shadow-transactions/))
           example: active
         description:
           type: string
@@ -8670,21 +8974,6 @@ components:
       type: string
       description: The enumeration of supported account types
       example: checking
-    CustomerAccounts:
-      required:
-        - accounts
-      type: object
-      properties:
-        accounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerAccount'
-          description: List of customer accounts
-      description: >-
-        The response to calls to refresh accounts or get customer accounts is a
-        list of account in the `accounts` array. A customer account represents a
-        bank account such as a checking or savings that the customer has added
-        via the Connect interface.
     GetTransactionsResponse:
       required:
         - found
@@ -8970,196 +9259,6 @@ components:
           - label: vendorName
             value: PSC Finance
             shown: false
-    AppRegistrationRequest:
-      required:
-        - appDescription
-        - appName
-        - appUrl
-        - ownerAddressLine1
-        - ownerAddressLine2
-        - ownerCity
-        - ownerCountry
-        - ownerName
-        - ownerPostalCode
-        - ownerState
-        - image
-      type: object
-      properties:
-        appDescription:
-          type: string
-          description: A short description of the app
-          example: The app that makes your budgeting experience awesome
-        appName:
-          type: string
-          description:
-            App Name. This will be visible to end users in the FI interface.
-          example: Awesome Budget App
-        appUrl:
-          type: string
-          description: App URL
-          example: 'https://www.finicity.com/'
-        ownerAddressLine1:
-          type: string
-          description: >-
-            Address Line 1 for business entity that owns the app. Information
-            for registration purposes only and not given to the end user.
-          example: 434 W Ascension Way
-        ownerAddressLine2:
-          type: string
-          description: >-
-            Address Line 2 for business entity that owns the app. Information
-            for registration purposes only and not given to the end user.
-          example: 'Suite #200'
-        ownerCity:
-          type: string
-          description: >-
-            City for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: Murray
-        ownerCountry:
-          type: string
-          description: >-
-            Country  for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: USA
-        ownerName:
-          type: string
-          description: >-
-            Business name for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: Finicity
-        ownerPostalCode:
-          type: string
-          description: >-
-            Zip code for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: '84123'
-        ownerState:
-          type: string
-          description: >-
-            State for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: UT
-        image:
-          type: string
-          description: >-
-            App Logo. The base 64 encoded value for the logo. 1:1 .svg file less
-            than 50 KB
-          example: '{bytes of image}'
-    AppRegistrationResponse:
-      required:
-        - preAppId
-        - status
-      type: object
-      properties:
-        preAppId:
-          type: integer
-          description:
-            An identifier to track the application registration request
-          format: int64
-          example: 1234
-        status:
-          type: string
-          description: >-
-            The status of the app registration request. When submitted starts as
-            P for pending.
-          example: P
-    ModifyAppRegistrationRequest:
-      required:
-        - appDescription
-        - appName
-        - appUrl
-        - ownerAddressLine1
-        - ownerAddressLine2
-        - ownerCity
-        - ownerCountry
-        - ownerName
-        - ownerPostalCode
-        - ownerState
-        - image
-      type: object
-      properties:
-        appDescription:
-          type: string
-          description: >-
-            A short description of the app. This will be visible to end users in
-            the FI interface.
-          example: The app that makes your budgeting experience awesome
-        appName:
-          type: string
-          description:
-            App Name. This will be visible to end users in the FI interface.
-          example: Awesome Budget App
-        appUrl:
-          type: string
-          description:
-            App URL. This will be visible to end users in the FI interface.
-          example: 'https://www.finicity.com/'
-        ownerAddressLine1:
-          type: string
-          description: >-
-            Address Line 1 for business entity that owns the app. Information
-            for registration purposes only and not given to the end user.
-          example: 434 W Ascension Way
-        ownerAddressLine2:
-          type: string
-          description: >-
-            Address Line 2 for business entity that owns the app. Information
-            for registration purposes only and not given to the end user.
-          example: 'Suite #200'
-        ownerCity:
-          type: string
-          description: >-
-            City for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: Murray
-        ownerCountry:
-          type: string
-          description: >-
-            Country  for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: USA
-        ownerName:
-          type: string
-          description: >-
-            Business name for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: Finicity
-        ownerPostalCode:
-          type: integer
-          description: >-
-            Zip code for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          format: int32
-          example: 84123
-        ownerState:
-          type: string
-          description: >-
-            State for business entity that owns the app. Information for
-            registration purposes only and not given to the end user.
-          example: UT
-        image:
-          type: string
-          description: >-
-            App Logo. The base 64 encoded value for the logo. 1:1 .svg file less
-            than 50 KB
-          example: '{bytes of image}'
-      description: >-
-        Body for the request when you are submitting and app modification
-        request
-      example:
-        appDescription:
-          The app that makes your budgeting experience even more awesome
-        appName: New Awesome Budget App
-        appUrl: 'https://www.finicity.com/'
-        ownerAddressLine1: 434 W Ascension Way
-        ownerAddressLine2: 'Suite #200'
-        ownerCity: Murray
-        ownerCountry: USA
-        ownerName: Finicity
-        ownerPostalCode: 84123
-        ownerState: UT
-        image: '{bytes of new logo image}'
     RequestConstraints:
       type: object
       properties:
@@ -9301,53 +9400,6 @@ components:
           month: 8
           dayOfMonth: 13
         suffix: Mr
-    AppFIStatus:
-      required:
-        - id
-        - decryptionKeyActivated
-        - createdDate
-        - lastModifiedDate
-        - status
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The finicity financial institution id
-          format: int64
-          example: 102224
-        abbrvName:
-          type: string
-          description: The applications abbreviated name
-          example: VAEJ
-        logoUrl:
-          type: string
-          description: Logo URL for stored logo file
-          example: >-
-            https://prod-direct-integration-client.s3.us-west-2.amazonaws.com/976521f99-7b36-4b3b-a3e0-faff9545836d/102224/90x90.png
-        decryptionKeyActivated:
-          type: boolean
-          description:
-            Status of decryption keys for financial institution app registration
-          example: false
-        createdDate:
-          $ref: '#/components/schemas/UnixDate'
-        lastModifiedDate:
-          $ref: '#/components/schemas/UnixDate'
-        status:
-          type: boolean
-          description: >-
-            App registered for specific FI what status is true. False indicates
-            registration is still pending.
-          example: true
-      description: >-
-        The registration status fields for each specific OAuth financial
-        institution
-      example:
-        id: 102224
-        decryptionKeyActivated: false
-        createdDate: 1595526299
-        lastModifiedDate: 1595526299
-        status: false
     EstimateInclusion:
       enum:
         - HIGH
@@ -9501,173 +9553,6 @@ components:
       properties:
         branding:
           $ref: '#/components/schemas/Branding'
-    AppStatuses:
-      required:
-        - totalRecords
-        - totalPages
-        - pageNumber
-        - numberOfRecordsPerPage
-        - applications
-      type: object
-      properties:
-        totalRecords:
-          type: integer
-          description: Total number of applications in query
-          format: int64
-          example: 50
-        totalPages:
-          type: integer
-          description: >-
-            Total number of pages in application query for size of results per
-            page
-          format: int64
-          example: 5
-        pageNumber:
-          type: integer
-          description: The page number returned as per the application query
-          format: int64
-          example: 2
-        numberOfRecordsPerPage:
-          type: integer
-          description:
-            The number of records per page as per the application query
-          format: int64
-          example: 10
-        applications:
-          type: array
-          items:
-            $ref: '#/components/schemas/AppStatus'
-          description: List of applications with their status information
-          example:
-            - partnerId: '1234583871234'
-              appName: Cool Budget App
-              submittedDate: 1595303316
-              preAppId: 4567
-              modifiedDate: 1595303316
-              scopes: Account Info
-              status: P
-            - partnerId: '1234583871234'
-              note: Approved
-              appName: Awesome Budget App
-              submittedDate: 1595303316
-              preAppId: 1234
-              modifiedDate: 1595303316
-              scopes: Account Info
-              status: A
-              applicationId: '123456789'
-              institutionDetails:
-                - id: 102224
-                  decryptionKeyActivated: false
-                  createdDate: 1595526299
-                  lastModifiedDate: 1595526299
-                  status: false
-                - id: 170881
-                  decryptionKeyActivated: false
-                  createdDate: 1595526300
-                  lastModifiedDate: 1595526300
-                  status: true
-      description: >-
-        The response for the "Get App Registration Status" endpoint which
-        returns an array of App Status objects to be able to determine their
-        registration status. This is version 2 of this response.
-    AppStatus:
-      required:
-        - partnerId
-        - preAppId
-        - appName
-        - submittedDate
-        - modifiedDate
-        - status
-      type: object
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        preAppId:
-          type: integer
-          description:
-            An identifier to track the application registration request
-          format: int64
-          example: 1234
-        note:
-          type: string
-          description: >-
-            A note on registration. Typically used to indicate reasons for
-            rejected apps.
-          example: Approved
-        applicationId:
-          $ref: '#/components/schemas/ApplicationId'
-        appName:
-          type: string
-          description: The App Name submitted during registration
-          example: Awesome Budget App
-        submittedDate:
-          type: integer
-          description: >-
-            A timestamp showing when the registration was submitted (see
-            Handling Dates and Times)
-          format: int64
-          example: 1595303316
-        modifiedDate:
-          type: integer
-          description: >-
-            A timestamp showing when the registration was last modified.
-            Typically when it was approved or rejected. (see Handling Dates and
-            Times)
-          format: int64
-          example: 1595303316
-        status:
-          type: string
-          description: >-
-            The status of the app registration request. A means approved. P
-            means pending which is the status when initially submitted or when
-            the app is modified and awaiting approval. R means rejected. If it
-            is rejected there will be a note with the rejected reason.
-          example: A
-        scopes:
-          type: string
-          description: Indicates scopes of data accessible to the app
-          example: Account Info
-        institutionDetails:
-          type: array
-          items:
-            $ref: '#/components/schemas/AppFIStatus'
-          description:
-            A list of the registration status for each FI for the application
-          example:
-            - id: 102224
-              decryptionKeyActivated: false
-              createdDate: 1595526299
-              lastModifiedDate: 1595526299
-              status: false
-            - id: 170881
-              decryptionKeyActivated: false
-              createdDate: 1595526300
-              lastModifiedDate: 1595526300
-              status: true
-      description: >-
-        The registration status fields for the application. This is version 2 of
-        this object.
-      example:
-        partnerId: '1234583871234'
-        note: Approved
-        appName: Awesome Budget App
-        submittedDate: 1595303316
-        preAppId: 7456
-        modifiedDate: 1595303316
-        scopes: Account Info
-        status: A
-        euaId: '123456789'
-        institutionDetails:
-          - id: 102224
-            decryptionKeyActivated: false
-            createdDate: 1595526299
-            lastModifiedDate: 1595526299
-            status: false
-          - id: 170881
-            decryptionKeyActivated: false
-            createdDate: 1595526300
-            lastModifiedDate: 1595526300
-            status: true
     PayrollData:
       required:
         - ssn
@@ -9836,11 +9721,7 @@ components:
           description: The available balance of the account
           example: 173.47
         availableBalanceDate:
-          type: integer
-          description:
-            Epoch Unix Timestamp for when the available balance was retrieved
-          format: int64
-          example: 1613992231
+          $ref: '#/components/schemas/UnixDate'
         clearedBalance:
           type: number
           description: >-
@@ -9848,11 +9729,7 @@ components:
             current balance, ledger balance
           example: 222.25
         clearedBalanceDate:
-          type: integer
-          description:
-            Epoch Unix Timestamp for when the cleared balance was retrieved
-          format: int64
-          example: 1613985946
+          $ref: '#/components/schemas/UnixDate'
         aggregationStatusCode:
           type: integer
           description: >-
@@ -9892,11 +9769,7 @@ components:
           description: The available balance of the account
           example: 173.47
         availableBalanceDate:
-          type: integer
-          description:
-            Epoch Unix Timestamp for when the available balance was retrieved
-          format: int64
-          example: 1613992231
+          $ref: '#/components/schemas/UnixDate'
         clearedBalance:
           type: number
           description: >-
@@ -9904,11 +9777,7 @@ components:
             current balance, ledger balance
           example: 222.25
         clearedBalanceDate:
-          type: integer
-          description:
-            Epoch Unix Timestamp for when the cleared balance was retrieved
-          format: int64
-          example: 1613985946
+          $ref: '#/components/schemas/UnixDate'
         aggregationStatusCode:
           type: integer
           description: >-
