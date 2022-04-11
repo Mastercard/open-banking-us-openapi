@@ -3778,7 +3778,7 @@ paths:
         generated report for the type will be returned.  
          
         HTTP 404 status means that there is no data for the customer or
-        portfolio. HTTP 200 (OK) status means that the call was successful. 
+        portfolio. HTTP 200 (OK) status means that the call was successful.
       operationId: GetPortfoliobyCustomer
       parameters:
         - name: customerId
@@ -8088,7 +8088,7 @@ components:
           example: finbank.ds5@finicity.com
         status:
           type: string
-          description: 'Institution''s status: online, offline, maintenance, testing'
+          description: "Institution's status: online, offline, maintenance, testing"
           example: online
         newInstitutionId:
           type: integer
