@@ -1,4 +1,4 @@
-package org.openapitools.client.api;
+package com.mastercard.finicity.client.api;
 
 import com.google.gson.Gson;
 import com.mastercard.finicity.client.ApiException;

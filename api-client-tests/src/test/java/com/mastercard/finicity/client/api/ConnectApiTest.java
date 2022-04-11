@@ -1,7 +1,6 @@
-package org.openapitools.client.api;
+package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.api.ConnectApi;
 import com.mastercard.finicity.client.auth.ApiKeyAuth;
 import com.mastercard.finicity.client.model.ConnectUrlRequest;
 import com.mastercard.finicity.client.model.PartnerCredentials;
