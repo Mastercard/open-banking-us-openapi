@@ -1,7 +1,10 @@
 openapi: 3.0.3
 info:
   title: Finicity API
-  description: Finicity API
+  description: |-
+    OpenAPI specification for Finicity API
+
+    ![](https://api-reference.finicity.com/custom/img/fin-developer-logo.png)
   contact:
     name: Finicity
     url: 'https://www.finicity.com'
@@ -31,7 +34,7 @@ paths:
         - Authentication
       summary: Create Access Token
       description: |-
-        Send Partner ID and Partner Secret to the Partner Authentication
+        Sends Partner ID and Partner Secret to the Partner Authentication
         service to obtain a token for accessing Finicity APIs.
 
         * The token is valid for two hours and is required on all calls to the
@@ -51,19 +54,19 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
+          $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
       security:
         - FinicityAppKey: []
     put:
       tags:
         - Authentication
       summary: Modify Partner Secret
-      description: >-
-        Change the partner secret that is used to authenticate this partner. The
-        secret does not expire, but can be changed by calling this endpoint.  A
-        valid partner secret may contain upper and lowercase characters,
-        numbers, and the characters !, @, #, $, %, &, *, _, -, +. It must
-        include at least one number and at least one letter, and its length
+      description: |-
+        Changes the Partner Secret that is used to authenticate this partner.
+        The secret does not expire, but can be changed by calling this
+        endpoint. A valid Partner Secret may contain upper and lowercase
+        characters, numbers, and the characters !, @, #, $, %, &, *, _, -, +. It
+        must include at least one number and at least one letter, and its length
         should be between 12 and 255 characters.
       operationId: ModifyPartnerSecret
       requestBody:
@@ -74,54 +77,45 @@ paths:
         '400':
           $ref: '#/components/responses/ModifyPartnerSecretBadRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
+          $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
       security:
         - FinicityAppKey: []
   /connect/v2/generate:
     post:
       tags:
         - Connect
-      summary: Generate V2 Connect URL
-      description: >-
+      summary: Generate Connect URL V2
+      description: |-
         Generates a Connect 2.0 URL link to add within your own applications.
         Use the `experience` parameter to call Connect (per session) in the body
         of the request. Configure the `experience` parameter to change the brand
         color, logo, icon, which credit decisioning report to generate when the
         Connect application completes, and more.
 
-
         **Note**: Contact your Sales Account Team to set up the `experience`
         parameter.
          
-        **MVS Developers** : You can pre-populate the consumer's SSN on the Find
+        **MVS Developers**: You can pre-populate the consumer's SSN on the Find
         employment records page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
-      operationId: GenerateV2ConnectURL
+      operationId: GenerateConnectUrlV2
       requestBody:
-        description: Expected body to be sent with the request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateV2ConnectURLRequest'
-        required: true
+        $ref: '#/components/requestBodies/GenerateConnectUrlRequestV2'
       responses:
         '200':
-          description: todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateConnectURLResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+          $ref: '#/components/responses/GenerateConnectUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+      security:
+        - FinicityAppKey: []
+        - FinicityAppToken: []
   /connect/v2/generate/lite:
     post:
       tags:
         - Connect
-      summary: Generate V2 Lite Connect URL
+      summary: "\U0001F6A7 Generate V2 Lite Connect URL"
       description: >-
         Connect Lite is a variation of Connect Full, which has a limited set of
         features.
@@ -148,18 +142,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenerateConnectURLResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ConnectUrl'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/generate/fix:
     post:
       tags:
         - Connect
-      summary: Generate V2 Fix Connect URL
+      summary: "\U0001F6A7 Generate V2 Fix Connect URL"
       description: |-
         Use the connect fix endpoint when the following conditions occur:
         * The connection to the user's financial institution is lost.
@@ -179,18 +169,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenerateConnectURLResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ConnectUrl'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/send/email:
     post:
       tags:
         - Connect
-      summary: Send V2 Connect Email
+      summary: "\U0001F6A7 Send V2 Connect Email"
       description: >-
         Send a Connect email to the consumer. 
 
@@ -259,17 +245,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateV2ConnectEmailResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/generate/jointBorrower:
     post:
       tags:
         - Connect
-      summary: Generate V2 Connect URL - Joint Borrower
+      summary: "\U0001F6A7 Generate V2 Connect URL - Joint Borrower"
       description: >-
         Generates a Connect 2.0 URL link to add within your own applications.
         Use the `experience` parameter to call Connect (per session) in the body
@@ -295,7 +277,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GenerateV2ConnectURLRequest-JointBorrower'
+              $ref: '#/components/schemas/ConnectUrlRequest-JointBorrower'
             example:
               partnerId: '1445585709680'
               borrowers:
@@ -330,18 +312,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenerateConnectURLResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ConnectUrl'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/send/email/jointBorrower:
     post:
       tags:
         - Connect
-      summary: Send V2 Connect Email - Joint Borrower
+      summary: "\U0001F6A7 Send V2 Connect Email - Joint Borrower"
       description: >-
         Send a Connect email to at least one of the joint borrower's email
         addresses. When the consumer opens the email, MVS prompts both the
@@ -416,17 +394,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateV2ConnectEmailResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /institution/v2/certifiedInstitutions/rssd:
     get:
       tags:
         - Institutions
-      summary: Get Certified Institutions With RSSD
+      summary: "\U0001F6A7 Get Certified Institutions With RSSD"
       description: Get Certified Institution List w/RSSD
       operationId: GetCertifiedInstitutionsWithRSSD
       parameters:
@@ -473,17 +447,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetCertifiedInstitutionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /institution/v2/institutions:
     get:
       tags:
         - Institutions
-      summary: Get Institutions
+      summary: "\U0001F6A7 Get Institutions"
       description: >-
         Search for all the connected financial institutions (FI) that we
         support. This returns all the FIs that match the search text for the
@@ -550,17 +520,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetInstitutionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /institution/v2/certifiedInstitutions:
     get:
       tags:
         - Institutions
-      summary: Get Certified Institutions
+      summary: "\U0001F6A7 Get Certified Institutions"
       description: Search for institutions by certified product.
       operationId: GetCertifiedInstitutions
       parameters:
@@ -611,17 +577,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetCertifiedInstitutionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/institution/v2/institutions/{institutionId}':
     get:
       tags:
         - Institutions
-      summary: Get Institution
+      summary: "\U0001F6A7 Get Institution"
       description: Get details for the specified institution
       operationId: GetInstitution
       parameters:
@@ -640,17 +602,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Institution'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/institution/v2/institutions/{id}/branding':
     get:
       tags:
         - Institutions
-      summary: Get Institution Branding
+      summary: "\U0001F6A7 Get Institution Branding"
       description: >-
         This endpoint returns the branding information for an Institution given
         the `id`
@@ -671,22 +629,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstitutionBrandingResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           description: The requested entity was not found
           content:
             application/json:
               schema: {}
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
   /institution/v2/institutions/subscription:
     get:
       tags:
         - Institutions
-      summary: Get Institution Subscription V2
+      summary: "\U0001F6A7 Get Institution Subscription V2"
       description: >-
         Use to subscribe to a webhook service that provides notification details
         for a specific financial institution (FI) only when there are changes in
@@ -711,17 +665,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetInstitutionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}':
     put:
       tags:
         - Consumer
-      summary: ModifyConsumer
+      summary: "\U0001F6A7 ModifyConsumer"
       description: >-
         Modify the details for an existing consumer. All fields are required for
         a consumer record, but individual fields for this call are optional
@@ -749,22 +699,18 @@ paths:
       responses:
         '204':
           description: No Content
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
     get:
       tags:
         - Consumer
-      summary: GetConsumer
+      summary: "\U0001F6A7 GetConsumer"
       description: >-
         Get the details of a consumer record. If the service successfully
         retrieves the consumer record, HTTP 200 will be returned. If the
@@ -786,23 +732,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Consumer'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
   '/decisioning/v1/customers/{customerId}/consumer':
     get:
       tags:
         - Consumer
-      summary: GetConsumerForCustomer
+      summary: "\U0001F6A7 GetConsumerForCustomer"
       description: >-
         Get the details of a consumer record.
 
@@ -820,22 +762,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Consumer'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
         - Consumer
-      summary: Create Consumer
+      summary: "\U0001F6A7 Create Consumer"
       description: >-
         Create a consumer record associated with the given customer. A consumer
         persists as the owner of any reports that are generated, even after the
@@ -863,23 +801,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateConsumerResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
   '/decisioning/v2/customers/{customerId}/voi':
     post:
       tags:
         - Verify Income
-      summary: Generate VOI Report
+      summary: "\U0001F6A7 Generate VOI Report"
       description: >-
         Generate a Verification of Income (VOI) report for all checking,
         savings, and money market accounts for the given customer. This service
@@ -929,18 +863,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v3/customers/{customerId}/voa':
     post:
       tags:
         - Verify Assets
-      summary: GenerateVOAReport
+      summary: "\U0001F6A7 GenerateVOAReport"
       description: >-
 
         Generate a Verification of Assets (VOA) report for all checking,
@@ -1005,18 +935,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voaHistory':
     post:
       tags:
         - Verify Assets
-      summary: GenerateVOAWithIncomeReport
+      summary: "\U0001F6A7 GenerateVOAWithIncomeReport"
       description: >-
         Generate a Verification of Assets with Income (VOAI) report for all
         checking, savings, money market, and investment accounts for the given
@@ -1109,18 +1035,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/preQualVoa':
     post:
       tags:
         - Verify Assets
-      summary: Generate Prequalification Report
+      summary: "\U0001F6A7 Generate Prequalification Report"
       description: >-
         Generate a Prequalification Report (preQualVoa) for all checking,
         savings, money market, and investment accounts for the given customer.
@@ -1186,18 +1108,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/assetSummary':
     post:
       tags:
         - Verify Assets
-      summary: Generate Asset Summary Report
+      summary: "\U0001F6A7 Generate Asset Summary Report"
       description: >-
         Generate Asset Summary report (assetSummary) for all checking, savings,
         money market, and investment accounts for the given customer. This
@@ -1262,18 +1180,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/payStatement':
     post:
       tags:
         - Verify Income and Employment
-      summary: GeneratePayStatementReport
+      summary: "\U0001F6A7 GeneratePayStatementReport"
       description: >-
         Generate Pay Statement Extraction Report for the given customer. This
         service accepts asset IDs of the stored pay statements to generate a Pay
@@ -1332,18 +1246,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withInterview':
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Paystub (with TXVerify) Report
+      summary: "\U0001F6A7 Generate VOIE - Paystub (with TXVerify) Report"
       description: >-
         Generate a VOIE - Paystub (with TXVerify) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -1422,18 +1332,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voiePayroll':
     post:
       tags:
         - Verify Income and Employment
-      summary: Refresh VOIE - Payroll Report
+      summary: "\U0001F6A7 Refresh VOIE - Payroll Report"
       description: >-
         The VOIE – Payroll report generates when the customer completes Connect.
         Lenders, who commonly use this report for pre-close verification
@@ -1499,18 +1405,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withStatement':
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Paystub Report
+      summary: "\U0001F6A7 Generate VOIE - Paystub Report"
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as assetIds
@@ -1580,18 +1482,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts':
     get:
       tags:
         - Accounts
-      summary: Get Customer Accounts By Institution Login
+      summary: "\U0001F6A7 Get Customer Accounts By Institution Login"
       description: >-
         Get details for all accounts associated with the given institution
         login. All accounts returned are accessible by a single set of
@@ -1614,16 +1512,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     post:
       tags:
         - Accounts
-      summary: Refresh Customer Accounts By Institution Login
+      summary: "\U0001F6A7 Refresh Customer Accounts By Institution Login"
       description: >-
         Refresh account and transaction data for all accounts associated with a
         given institutionLoginId with a connection to the institution.
@@ -1681,17 +1575,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}':
     delete:
       tags:
         - Accounts
-      summary: Delete Customer Accounts By Institution Login
+      summary: "\U0001F6A7 Delete Customer Accounts By Institution Login"
       description: >-
         Remove the specified set of accounts by institution login id from the
         Finicity system.
@@ -1715,17 +1605,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
     get:
       tags:
         - Accounts
-      summary: Get Customer Account
+      summary: "\U0001F6A7 Get Customer Account"
       description: Get details for the specified account.
       operationId: GetCustomerAccount
       parameters:
@@ -1745,16 +1631,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccount'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     delete:
       tags:
         - Accounts
-      summary: Delete Customer Account
+      summary: "\U0001F6A7 Delete Customer Account"
       description: |+
         Remove the specified account from Finicity Aggregation.
 
@@ -1772,17 +1654,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts':
     get:
       tags:
         - Accounts
-      summary: Get Customer Accounts
+      summary: "\U0001F6A7 Get Customer Accounts"
       description: Get details for all accounts owned by the specified customer.
       operationId: GetCustomerAccounts
       parameters:
@@ -1804,16 +1682,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     post:
       tags:
         - Accounts
-      summary: Refresh Customer Accounts
+      summary: "\U0001F6A7 Refresh Customer Accounts"
       description: >-
         Refresh account and transaction data for all accounts associated with a
         given customerId with a connection to the institution.
@@ -1855,17 +1729,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/institutions/{institutionId}/accounts':
     get:
       tags:
         - Accounts
-      summary: Get Customer Accounts By Institution
+      summary: "\U0001F6A7 Get Customer Accounts By Institution"
       description: >-
         Get details for all active accounts owned by the specified customer at
         the specified institution.
@@ -1887,17 +1757,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
     post:
       tags:
         - Accounts
-      summary: Load Historic Transactions For Customer Account
+      summary: "\U0001F6A7 Load Historic Transactions For Customer Account"
       description: >-
         Connect to the account's financial institution and load up to 24 months
         of historic transactions for the account. Length of history varies by
@@ -1977,17 +1843,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
         - Account Owner
-      summary: Get Account Owner
+      summary: "\U0001F6A7 Get Account Owner"
       description: >-
         Retrieve the names and addresses of the account owner from a financial
         institution.
@@ -2027,17 +1889,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountOwnerv1'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/customers:
     get:
       tags:
         - Customer
-      summary: Get Customers
+      summary: "\U0001F6A7 Get Customers"
       description: >-
         Find all customers enrolled by the current partner, where the search
         text is found in the customer's username or any combination of firstName
@@ -2107,17 +1965,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetCustomersResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}':
     put:
       tags:
         - Customer
-      summary: Modify Customer
+      summary: "\U0001F6A7 Modify Customer"
       description: >-
         Modify the details for an enrolled customer. You must specify either the
         first name, the last name, or both in the request.
@@ -2137,16 +1991,12 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     get:
       tags:
         - Customer
-      summary: Get Customer
+      summary: "\U0001F6A7 Get Customer"
       description: >-
         Get the details for the specified customer. The service will return HTTP
         200 upon a successful call. If the customer does not exist, the service
@@ -2168,16 +2018,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customer'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     delete:
       tags:
         - Customer
-      summary: Delete Customer
+      summary: "\U0001F6A7 Delete Customer"
       description: >-
         Completely remove a customer from the system. This will remove the
         customer and all associated accounts and transactions.
@@ -2198,17 +2044,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v2/customers/active:
     post:
       tags:
         - Customer
-      summary: Add Customer
+      summary: "\U0001F6A7 Add Customer"
       description: >-
         This is a version 2 service that replaces version 1. The new version
         supports passing an applicationId for assigning applicationId's to
@@ -2243,17 +2085,13 @@ paths:
               example:
                 id: '41442'
                 createdDate: '1412792539'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v2/customers/testing:
     post:
       tags:
         - Customer
-      summary: Add Testing Customer
+      summary: "\U0001F6A7 Add Testing Customer"
       description: >-
         This is a version 2 service that replaces version 1. The new version
         supports passing an applicationId for assigning applicationId's to
@@ -2291,17 +2129,13 @@ paths:
               example:
                 id: '41442'
                 createdDate: '1412792539'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/application':
     get:
       tags:
         - Customer
-      summary: Get Customer With Application Data
+      summary: "\U0001F6A7 Get Customer With Application Data"
       description: >-
         Get the details for the specified customer with additional details that
         includes the OAuth application info. The service will return HTTP 200
@@ -2317,17 +2151,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerWithApplicationData'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
     get:
       tags:
         - Bank Statements
-      summary: Get Customer Account Statement
+      summary: "\U0001F6A7 Get Customer Account Statement"
       description: >-
         Retrieve the customer's bank statements in PDF format. Up to 24 months
         of history is available depending on the financial institution. Since
@@ -2413,17 +2243,13 @@ paths:
                 type: string
                 description: default response
                 format: binary
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/statement':
     post:
       tags:
         - Bank Statements
-      summary: Generate Statement Report
+      summary: "\U0001F6A7 Generate Statement Report"
       description: >-
         Generate a Statement Report report for specified accounts under the
         given customer. This report requires a consumer. 
@@ -2475,17 +2301,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateStatementReportResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v3/customers/{customerId}/transactions':
     get:
       tags:
         - Transactions
-      summary: Get Customer Transactions (All)
+      summary: "\U0001F6A7 Get Customer Transactions (All)"
       description: >-
         Get all transactions available for this customer within the given date
         range, across all accounts. This service supports paging and sorting by
@@ -2577,17 +2399,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTransactionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v2/customers/{customerId}/transactions/{transactionId}':
     get:
       tags:
         - Transactions
-      summary: Get Customer Transaction
+      summary: "\U0001F6A7 Get Customer Transaction"
       description: Get details for the specified transaction.
       operationId: GetCustomerTransaction
       parameters:
@@ -2606,17 +2424,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Transaction'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/transactions':
     get:
       tags:
         - Transactions
-      summary: Get Customer Account Transactions
+      summary: "\U0001F6A7 Get Customer Account Transactions"
       description: >-
         Get all transactions available for this customer account within the
         given date range. This service supports paging and sorting by
@@ -2715,17 +2529,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetTransactionsResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/transactions':
     post:
       tags:
         - Transactions
-      summary: Generate Transactions Report
+      summary: "\U0001F6A7 Generate Transactions Report"
       description: >-
         Generate a Transaction Report for specified accounts under the given
         customer. This service retrieves up to 24 months of transaction history
@@ -2818,17 +2628,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateTransactionsReportResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/payStatements':
     post:
       tags:
         - Pay Statements
-      summary: StoreCustomerPayStatement
+      summary: "\U0001F6A7 StoreCustomerPayStatement"
       description: >-
         Services to store a pay statement for a customer. Within the body of the
         request, the base 64 encoded value of the pay statement must be passed
@@ -2874,17 +2680,13 @@ paths:
                 $ref: '#/components/schemas/StorePayStatementResponse'
               example:
                 assetId: 6b599a7e-236f-4a25-b070-425b52b9c1fe
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/loanDetails':
     get:
       tags:
         - Liabilities
-      summary: Get Loan Payment Details
+      summary: "\U0001F6A7 Get Loan Payment Details"
       description: >-
         This returns the loan payment details of the customer for a loan-type
         account. 
@@ -2914,17 +2716,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoanPaymentDetails'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
     get:
       tags:
         - Get Portfolios
-      summary: Get Portfolio by Customer
+      summary: "\U0001F6A7 Get Portfolio by Customer"
       description: >
         Returns a portfolio of most recently generated report for each report
         type for a specified customer. If there are multiple reports that were
@@ -2958,18 +2756,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/txpush':
     post:
       tags:
         - TxPush
-      summary: Subscribe To TxPush Notifications
+      summary: "\U0001F6A7 Subscribe To TxPush Notifications"
       description: >-
         Register a client app's TxPUSH Listener to receive TxPUSH notifications
         related to the given account.
@@ -3016,16 +2810,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TxPushSubscriptions'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     delete:
       tags:
         - TxPush
-      summary: Disable TxPush Notifications
+      summary: "\U0001F6A7 Disable TxPush Notifications"
       description: >-
         Delete all TxPush subscriptions with their notifications for the
         indicated account. No more notifications will be sent for account or
@@ -3046,17 +2836,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/customers/{customerId}/reports/{reportId}':
     get:
       tags:
         - Deprecated
-      summary: Get Report by Customer
+      summary: "\U0001F6A7 Get Report by Customer"
       description: >-
         Get a report that has been generated by calling one of the Generate
         Report services.
@@ -3161,18 +2947,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v1/generate:
     post:
       tags:
         - Deprecated
-      summary: Generate Connect URL All Types
+      summary: "\U0001F6A7 Generate Connect URL All Types"
       description: >-
         No matter how you plan on implementing Finicity Connect, you'll need to
         generate and retrieve a Finicity Connect Link.  You will need to specify
@@ -3228,18 +3010,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenerateConnectURLResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ConnectUrl'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/institutions/{newInstitutionId}':
     put:
       tags:
         - Deprecated
-      summary: Migrate Institution Login Accounts V1
+      summary: "\U0001F6A7 Migrate Institution Login Accounts V1"
       description: >-
         This service has been replaced by version 2 call now "Migrate
         Institution Login Accounts"
@@ -3276,17 +3054,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
     get:
       tags:
         - Get Portfolios
-      summary: Get Portfolio by Consumer
+      summary: "\U0001F6A7 Get Portfolio by Consumer"
       description: >-
         Returns a portfolio of most recently generated report for each report
         type for a specified consumer. If there are multiple reports that were
@@ -3326,18 +3100,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details':
     get:
       tags:
         - Payments
-      summary: Get Account ACH Details
+      summary: "\U0001F6A7 Get Account ACH Details"
       description: >-
         This will return the real account number and routing number details for
         an ACH payment.
@@ -3361,17 +3131,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ACHDetails'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/customers/testing:
     post:
       tags:
         - Deprecated
-      summary: Add Testing Customer V1
+      summary: "\U0001F6A7 Add Testing Customer V1"
       description: >-
         Enroll a testing customer. A testing customer may only register accounts
         with FinBank institutions.
@@ -3390,17 +3156,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddCustomerResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
         - Deprecated
-      summary: Get Report by Consumer
+      summary: "\U0001F6A7 Get Report by Consumer"
       description: >-
         Get a report that has been generated by calling one of the Generate
         Report services.
@@ -3511,18 +3273,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
     post:
       tags:
         - TxPush
-      summary: Create TxPush Test Transaction
+      summary: "\U0001F6A7 Create TxPush Test Transaction"
       description: >-
         Inject a transaction into the transaction list for a testing account.
         This allows an app to trigger TxPush notifications for the account in
@@ -3562,17 +3320,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateTxPushTestTransactionResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
     get:
       tags:
         - Get Reports by Customer
-      summary: Get Prequalification Report Non-CRA By Customer
+      summary: "\U0001F6A7 Get Prequalification Report Non-CRA By Customer"
       description: >-
         Get a report that has been generated by calling one of the Generate
         Report services.
@@ -3614,18 +3368,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/customers/active:
     post:
       tags:
         - Deprecated
-      summary: Add Customer V1
+      summary: "\U0001F6A7 Add Customer V1"
       description: >-
         This version 1 service has been replaced with version 2
 
@@ -3659,17 +3409,13 @@ paths:
               example:
                 id: '41442'
                 createdDate: '1412792539'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
     delete:
       tags:
         - TxPush
-      summary: Delete TxPush Subscription
+      summary: "\U0001F6A7 Delete TxPush Subscription"
       description: >-
         Delete a specific subscription to TxPush notifications for the indicated
         account. This could be individual deleting the account or transactions
@@ -3690,17 +3436,13 @@ paths:
       responses:
         '200':
           description: default response
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v1/send/email:
     post:
       tags:
         - Deprecated
-      summary: Send Connect Email
+      summary: "\U0001F6A7 Send Connect Email"
       description: >-
         A connect email sends an email to the customer which will contain a link
         to the connect flow. You will need to specify what type of Finicity
@@ -3757,17 +3499,13 @@ paths:
               schema:
                 $ref: >-
                   #/components/schemas/GenerateConnectEmailResponseMulti-Borrowers
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
     put:
       tags:
         - App Registration and OAuth Migration
-      summary: Set Customer Application ID
+      summary: "\U0001F6A7 Set Customer Application ID"
       description: >-
         If you have multiple applications for a single client, and you want to
         register their applications to access financial institutions using OAuth
@@ -3790,17 +3528,13 @@ paths:
       responses:
         '200':
           description: todo
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/partners/applications:
     post:
       tags:
         - App Registration and OAuth Migration
-      summary: App Registration
+      summary: "\U0001F6A7 App Registration"
       description: >-
         Register new applications to access financial institutions using OAuth
         connections.
@@ -3820,16 +3554,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppRegistrationResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
     get:
       tags:
         - Deprecated
-      summary: Get App Registration Status V1
+      summary: "\U0001F6A7 Get App Registration Status V1"
       description: >-
         Get the status of your application registration to access FI's with
         OAuth connections.
@@ -3842,17 +3572,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppStatusesV1'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/partners/applications/{preAppId}':
     put:
       tags:
         - App Registration and OAuth Migration
-      summary: Modify App Registration
+      summary: "\U0001F6A7 Modify App Registration"
       description: >-
         Update the field values you want to change for the registered
         applications accessing financial institutions using OAuth connections.
@@ -3882,17 +3608,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppRegistrationResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v2/customers/{customerId}/institutionLogins/{institutionLoginId}/migration':
     put:
       tags:
         - App Registration and OAuth Migration
-      summary: Migrate Institution Login Accounts V2
+      summary: "\U0001F6A7 Migrate Institution Login Accounts V2"
       description: >-
         The institutionLoginId parameter uses Finicity's internal FI mapping to
         move accounts from the current FI legacy connection to the new OAuth FI
@@ -3921,17 +3643,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerAccounts'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v2/partners/applications:
     get:
       tags:
         - App Registration and OAuth Migration
-      summary: Get App Registration Status V2
+      summary: "\U0001F6A7 Get App Registration Status V2"
       description: >-
         Get the status of your application registration to access financial
         institutions using OAuth connections.
@@ -4014,17 +3732,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppStatuses'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/customers/{customerId}/reports':
     get:
       tags:
         - Get Reports by Customer
-      summary: Get Reports by Customer
+      summary: "\U0001F6A7 Get Reports by Customer"
       description: >-
         Get a list of reports that have been generated for the given customer.
 
@@ -4048,18 +3762,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/reports':
     get:
       tags:
         - Get Reports by Consumer
-      summary: Get Reports by Consumer
+      summary: "\U0001F6A7 Get Reports by Consumer"
       description: >-
         Get a list of reports that have been generated for the given consumer.
 
@@ -4089,18 +3799,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
         - Get Reports by Consumer
-      summary: Get Report by Consumer
+      summary: "\U0001F6A7 Get Report by Consumer"
       description: >-
         Get a report that has been generated by calling one of the Generate
         Report services.
@@ -4211,18 +3917,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
         - Asset
-      summary: Get Asset by Customer ID
+      summary: "\U0001F6A7 Get Asset by Customer ID"
       description: >-
         Retrieve a binary file with the given assetId. The returned content type
         is always application/octet-stream. If the service successfully
@@ -4237,17 +3939,13 @@ paths:
       responses:
         '200':
           description: todo
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v1/partners/{partnerId}/billing/reseller':
     get:
       tags:
         - Deprecated
-      summary: Invoice Billing Endpoint
+      summary: "\U0001F6A7 Invoice Billing Endpoint"
       description: >-
         Partners would like the capability to see the reports generated for a
         specific date range as well as the custom fields associated with the
@@ -4311,17 +4009,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InvoiceBillingResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance/live':
     get:
       tags:
         - Payments
-      summary: Get Available Balance - Live
+      summary: "\U0001F6A7 Get Available Balance - Live"
       description: >-
         Retrieve the available and cleared account balances for a single account
         in real-time directly from a financial institution. 
@@ -4350,17 +4044,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAvailableBalance-LiveResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance':
     get:
       tags:
         - Payments
-      summary: Get Available Balance
+      summary: "\U0001F6A7 Get Available Balance"
       description: >-
         Retrieve the latest cached available and cleared account balances for a
         customer. Since we update and store balances throughout the day, this is
@@ -4392,17 +4082,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAvailableBalanceResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowBusiness':
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report - Business
+      summary: "\U0001F6A7 Generate Cash Flow Report - Business"
       description: >-
         Generate a Cash Flow Report (Business) report for all checking and
         savings under the given Customer. This service retrieves up to two years
@@ -4468,17 +4154,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateCashFlowReport-BusinessResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowPersonal':
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report - Personal
+      summary: "\U0001F6A7 Generate Cash Flow Report - Personal"
       description: >-
         Generate a Cash Flow Report (Personal) report for all checking and
         savings under the given Customer. This service retrieves up to two years
@@ -4555,17 +4237,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateCashFlowReport-PersonalResponse'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voePayroll':
     post:
       tags:
         - Verify Employment
-      summary: Generate VOE - Payroll Report
+      summary: "\U0001F6A7 Generate VOE - Payroll Report"
       description: >-
         **Premium Service**: A billable event when the API response is
         successful. 
@@ -4634,18 +4312,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voeTransactions':
     post:
       tags:
         - Verify Employment
-      summary: Generate VOE - Transactions Report
+      summary: "\U0001F6A7 Generate VOE - Transactions Report"
       description: >-
         **Premium Service**: A billable event when the API response is
         successful. 
@@ -4724,13 +4398,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error1_Error'
-        default:
-          description: The token has expired.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExpiredToken'
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -4756,6 +4426,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PartnerCredentialsWithNewSecret'
+    GenerateConnectUrlRequestV2:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectUrlRequest'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -4765,12 +4441,6 @@ components:
             $ref: '#/components/schemas/AccessToken'
     ModifyPartnerSecretResponse:
       description: The Partner Secret was successfully updated
-    TokenExpiredResponse:
-      description: The access token expired
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ExpiredToken'
     ModifyPartnerSecretBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -4780,12 +4450,18 @@ components:
           examples:
             InvalidNewPartnerSecretExample:
               $ref: '#/components/examples/InvalidNewPartnerSecretExample'
-            BadRequestExample:
-              $ref: '#/components/examples/BadRequestExample'
-    UnauthorizedErrorResponse:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+    GenerateConnectUrlResponse:
+      description: The URL link was successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectUrl'
+    AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
-        Partner Secret or Finicity-App-Key
+        Partner Secret or Finicity-App-Key.
       content:
         application/json:
           schema:
@@ -4795,6 +4471,19 @@ components:
               $ref: '#/components/examples/MissingFinicityAppKeyExample'
             InvalidCredentialsExample:
               $ref: '#/components/examples/InvalidCredentialsExample'
+    UnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check
+        Finicity-App-Key or Finicity-App-Token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ExpiredTokenExample:
+              $ref: '#/components/examples/ExpiredTokenExample'
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/MissingFinicityAppKeyExample'
     BadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -4802,8 +4491,12 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            BadRequestExample:
-              $ref: '#/components/examples/BadRequestExample'
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            InvalidFieldExample:
+              $ref: '#/components/examples/InvalidFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -4813,14 +4506,39 @@ components:
       value:
         code: 10001
         message: Invalid credentials
-    BadRequestExample:
+    GenericBadRequestExample:
       value:
         code: 14020
         message: Bad request.
+    MissingFieldExample:
+      value:
+        code: 10010
+        status: 400
+        message: '"partnerId" is required'
+        user_message: >-
+          One or more of the fields could not be validated. Please ensure you
+          have entered the correct data.
+        tags: ''
+    InvalidFieldExample:
+      value:
+        code: 10010
+        status: 400
+        message: Customer ID does not exist or does not belong to this partner
+        user_message: >-
+          One or more of the fields could not be validated. Please ensure you
+          have entered the correct data.
+        tags: ''
     InvalidNewPartnerSecretExample:
       value:
         code: 24437
         message: New password is not as per policy
+    ExpiredTokenExample:
+      value:
+        code: 10022
+        status: 401
+        message: Invalid authorization credentials
+        user_message: The session has expired or is invalid
+        tags: ''
   parameters:
     AssetIdParameter:
       name: assetId
@@ -4840,7 +4558,7 @@ components:
     PurposeParameter:
       name: purpose
       in: query
-      description: >-
+      description: |-
         2-digit code from Permissible Purpose Codes, specifying the reason for
         retrieving this report.
       explode: true
@@ -4857,10 +4575,19 @@ components:
           description: Error code
           format: int32
           example: 10001
+        status:
+          type: integer
+          description: Status code
+          format: int32
+          example: 401
         message:
           type: string
           description: Error message
-          example: Invalid credentials
+          example: Invalid authorization credentials
+        user_message:
+          type: string
+          description: Some more details about the error
+          example: The session has expired or is invalid
         assetId:
           type: string
           description: Finicity's asset ID
@@ -4870,6 +4597,8 @@ components:
           description: The generated Finicity ID of the account that had the error
           format: int64
           example: '5003507225'
+        tags:
+          type: string
     PartnerCredentials:
       required:
         - partnerId
@@ -4902,16 +4631,163 @@ components:
       required:
         - token
       type: object
-      description: >-
+      description: |-
         A temporary access token to be passed in the `Finicity-App-Token` HTTP
         Header of all subsequent API requests
       properties:
         token:
           type: string
           example: YBh22Sb9Es6e66Q7lWdt
-    ExpiredToken:
+    ConnectUrlRequest:
+      required:
+        - partnerId
+        - customerId
       type: object
-      description: The Finicity-App-Token has expired--Error code (10023)
+      properties:
+        partnerId:
+          type: string
+          description: Partner ID displayed in the Developer Dashboard
+          example: '1445585709680'
+        customerId:
+          type: string
+          description: Finicity's customer ID. Obtained from the Add Customer call.
+          example: '1005061234'
+        consumerId:
+          type: string
+          description: |-
+            Finicity's consumer ID. Obtained from the Create Consumer call.
+            *Required for any connect type that generate a report*
+          example: 86238nvnw7269e224a4e3de12352d87d
+        redirectUri:
+          type: string
+          description: |-
+            The URL that customers will be redirected to after completing
+            Finicity Connect. *Required unless Connect is embedded inside our
+            application (iframe)*
+          example: 'https://www.finicity.com/connect/'
+        webhook:
+          type: string
+          description: |-
+            The publicly available URL you want to be notified with events as
+            the user progresses through the application. See [Connect Webhook
+            Event](https://docs.finicity.com/connect-webhooks/) for event
+            details.
+          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
+        webhookContentType:
+          type: string
+          description: |-
+            The content type the webhook events will be sent in. Supported
+            types: `application/json` and `application/xml`
+          default: application/json
+          example: application/json
+        webhookData:
+          type: object
+          description: |-
+            Allows additional identifiable information to be inserted into the
+            payload of connect webhook events. See this article for
+            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+        webhookHeaders:
+          type: object
+          description: |-
+            Allows additional identifiable information to be included as headers
+            of connect webhook event. See this article for
+            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
+        institutionSettings:
+          type: object
+          description: |-
+            Advanced options for configuration of which institutions to display
+            in. See [Institution
+            Settings](https://docs.finicity.com/connect-institution-settings/)
+        experience:
+          type: string
+          description: |-
+            The `experience` field allows you to customize: 
+
+            * **Brand**: color and logo
+            * **Icon**: displayed on the Share your data page
+            * **Popular institutions**: displayed on the Bank Search page
+            * **Report**: the credit decisioning report to send when Connect completes.
+            * **MVS modules**: financial, payroll, paystub
+
+            **Note**: The Finicity sales engineers (SE) help you set up a
+            default experience for your company when you migrate to Connect 2.0.
+            For each additional experience you create thereafter, they'll give
+            you a unique ID. See [Generate 2.0 ConnectURL
+            APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
+                        
+            **Experience values options**:
+
+            * **default**: your default experience
+            * **unique ID**: the code for a different experience
+            * **not defined**: If you don't pass the experience parameter, then
+            Connect's out of the box default experience (add accounts but no
+            branding) is used, and the MVS modules will not run.
+          example: default
+        fromDate:
+          type: integer
+          description: |-
+            The `fromDate` parameter is used when experiences are associated
+            with a credit decisioning report and any other reports with
+            transaction data. The value is in epoch time and must be 10 digits.
+            **Example**: 1494449017. If it's greater than 10 digits, then the
+            `fromDate` is set to the credit decisioning report's default
+            `fromDate`.
+
+            For an experience that generates multiple reports, the `fromDate`
+            gets passed to the reports that support it.
+
+            However, Connect doesn't pass this parameter to the following
+            reports:
+
+            * Pay Statement ExtractionReport
+            * VOIE - Paystub (with TXVerify) Report
+            * Statement Report
+            * Verification of Income Report
+            * VOIE -Payroll Report 
+
+            **Note**: this field isn't used if you're only collecting transaction
+            data without a report.
+          format: int64
+          example: 1607450357
+        reportCustomFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportCustomField'
+          description: |-
+            The `reportCustomFields` parameter is used when experiences are associated with a credit decisioning report.
+
+            Designate up to 5 custom fields that you'd like associated with the
+            report when it's generated. Every custom field consists of three variables: `label`, `value`, and `shown`. The `shown` variable is true or false.
+
+            * **True**: (default) display the custom field in the PDF report. 
+            * **False**: don't display the custom field in the DF report. 
+
+            For an experience that generates multiple reports, the `reportCustomFields` parameter gets passed to all reports.
+
+            All custom fields display in the Reseller Billing endpoint.
+        optionalConsumerInfo:
+          $ref: '#/components/schemas/OptionalConsumerInfo'
+        singleUseUrl:
+          type: boolean
+          description: |-
+            **True**: The URL link expires after a Connect session successfully
+            completes. 
+
+            **Note**: When the `singleUseUrl` and the `experience` parameters
+            are passed in the same call, the `singleUseUrl` value overrides the
+            `singleUseUrl` value configured in the `experience` parameter.
+          example: true
+    ConnectUrl:
+      description: A Connect URL object
+      required:
+        - link
+      type: object
+      properties:
+        link:
+          type: string
+          description: The generated Connect URL
+          example: >-
+            https://connect2.finicity.com?consumerId=f1ca88bea722ef1f8178f8230756bbcf&customerId=54411976&partnerId=2445582695152&signature=d34c1352c45f54cfd76454e7e8c3e85cc923b60fae5f28b26cd6c7b6f8aaa201×tamp=1584733720994&ttl=1584740920994&type=aggregation
     GenerateConnectEmailResponseMulti-Borrowers:
       required:
         - links
@@ -4962,27 +4838,6 @@ components:
           supportPhone: 801-987-6543
           from: noreply@finicity.com
           to: fin.user@finicity.com
-    ReportCustomFields:
-      required:
-        - label
-        - value
-        - shown
-      type: object
-      properties:
-        label:
-          type: string
-          description: The label for the custom field
-          example: loanID
-        value:
-          type: string
-          description: The value of the custom field
-          example: '123456'
-        shown:
-          type: boolean
-          description: >-
-            Indicates whether the field should be shown in the consumer version
-            of the report
-          example: true
     ConnectOAuthOptions:
       required:
         - enabled
@@ -5614,13 +5469,6 @@ components:
           description: The date the customer was created
           example: '1588305190'
       description: The finicity customer record
-    error:
-      type: object
-      properties:
-        errorCode:
-          type: string
-        errorMessage:
-          type: string
     GenerateReportResponse:
       required:
         - id
@@ -5690,17 +5538,6 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
         source:
           type: string
-    GenerateConnectURLResponse:
-      required:
-        - link
-      type: object
-      properties:
-        link:
-          type: string
-          description: The generated Connect URL
-          example: >-
-            https://connect.finicity.com?consumerId=f1ca88bea722ef1f8178f8230756bbcf&customerId=54411976&partnerId=2445582695152&signature=d34c1352c45f54cfd76454e7e8c3e85cc923b60fae5f28b26cd6c7b6f8aaa201×tamp=1584733720994&ttl=1584740920994&type=aggregation
-      description: Response from create url call
     Transaction:
       required:
         - id
@@ -6580,7 +6417,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -6636,7 +6473,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -6676,7 +6513,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             Designate up to 5 custom fields that you would like associated with
             the report upon generation by providing a label for the field and a
@@ -7688,7 +7525,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
         customers:
           type: array
           items:
@@ -7697,7 +7534,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect.
         type:
           type: string
@@ -7741,7 +7578,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             Designate up to 5 custom fields that you would like associated with
             the report upon generation by providing a label for the field and a
@@ -8303,16 +8140,6 @@ components:
             The TxPUSH Listener URL to receive TxPUSH notifications (must use
             https protocol for any real-world account)
           example: 'https://www.mydomain.com/txpush/listener'
-    Error1_Error:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        assetId:
-          type: string
     Status:
       enum:
         - ACTIVE
@@ -8638,7 +8465,7 @@ components:
           example: account
         callbackUrl:
           type: string
-          description: The url for the events
+          description: The URL for the events
           example: 'https://www.mydomain.com/txpush/listener'
         signingKey:
           type: string
@@ -13322,7 +13149,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -13342,7 +13169,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -13403,7 +13230,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -13454,7 +13281,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -13494,7 +13321,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             Designate up to 5 custom fields that you would like associated with
             the report upon generation by providing a label for the field and a
@@ -13535,7 +13362,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -13553,7 +13380,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -13614,7 +13441,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -13634,7 +13461,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -14085,7 +13912,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -14127,7 +13954,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -14167,7 +13994,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             Designate up to 5 custom fields that you would like associated with
             the report upon generation by providing a label for the field and a
@@ -15400,7 +15227,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             Designate up to 5 custom fields that you would like associated with
             the report upon generation by providing a label for the field and a
@@ -15731,147 +15558,6 @@ components:
       properties:
         branding:
           $ref: '#/components/schemas/Branding'
-    GenerateV2ConnectURLRequest:
-      required:
-        - partnerId
-        - customerId
-      type: object
-      properties:
-        partnerId:
-          type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
-          example: '1445585709680'
-        customerId:
-          type: string
-          description: Finicity's customer ID. Obtained from the Add Customer call.
-          example: '1005061234'
-        consumerId:
-          type: string
-          description: >-
-            Finicity's consumer ID. Obtained from the Create Consumer call. <br>
-            *Required for any connect type that generate a report*
-          example: 86238nvnw7269e224a4e3de12352d87d
-        redirectUri:
-          type: string
-          description: >-
-            The url that customers will be redirected to after completing
-            Finicity Connect. <br> *Required unless Connect is embedded inside
-            your application. (iframe)*
-          example: 'https://www.finicity.com/connect/'
-        webhook:
-          type: string
-          description: >-
-            The publicly available URL you want to be notified with events as
-            the user progresses through the application. See [Connect Webhook
-            Event](https://docs.finicity.com/connect-webhooks/) for event
-            details.
-          example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType:
-          type: string
-          description: >-
-            The Content Type The Webhooks Events Will Be Sent In. Supported
-            Types `application/json` and `application/xml`
-          default: application/json
-          example: application/json
-        webhookData:
-          type: object
-          description: >-
-            Allows additional identifiable information to be inserted into the
-            payload of connect webhook events. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
-        webhookHeaders:
-          type: object
-          description: >-
-            Allows additional identifiable information to be included as headers
-            of connect webhook event. See this article for
-            [Details](https://docs.finicity.com/connect-custom-webhook-data-and-headers/).
-        institutionSettings:
-          type: object
-          description: >-
-            Advanced options for configuration of which institutions to display
-            in. See [Institution
-            Settings](https://docs.finicity.com/connect-institution-settings/)
-        experience:
-          type: string
-          description: >-
-            The `experience` field allows you to customize: <br> * **Brand**:
-            color and logo <br> * **Icon**: displayed on the Share your data
-            page <br> * **Popular institutions**: displayed on the Bank Search
-            page <br> * **Report**: the credit decisioning report to send when
-            Connect completes. <br> * **MVS modules**: financial, payroll,
-            paystub <br>      <br>**Note**: The Finicity sales engineers (SE)
-            help you set up a default experience for your company when you
-            migrate to Connect 2.0. For each additional experience you create
-            thereafter, they'll give you a unique ID. See [Generate 2.0 Connect
-            URL
-            APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1)
-            <br>       <br>**Experience values options**: <br> * **default**:
-            your default experience <br> * **unique ID**: the code for a
-            different experience <br> * **not defined**: If you don't pass the
-            experience parameter, then Connect's out of the box default
-            experience (add accounts but no branding) is used, and the MVS
-            modules will not run. <br>
-          example: default
-        fromDate:
-          type: integer
-          description: >-
-            The `fromDate` parameter is used when experiences are associated
-            with a credit decisioning report and any other reports with
-            transaction data. <br> The value is in epoch time and must be 10
-            digits. **Example**: 1494449017. <br>  <br>If it's greater than 10
-            digits, then the `fromDate` is set to the credit decisioning
-            report's default `fromDate`.<br>  <br>For an experience that
-            generates multiple reports the `fromDate` gets passed to the reports
-            that support it. <br>  <br>However, Connect doesn't pass this
-            parameter to the following reports: <br> * Pay Statement Extraction
-            Report <br> * VOIE - Paystub (with TXVerify) Report <br>  *
-            Statement Report <br> * Verification of Income Report  <br> * VOIE -
-            Payroll Report  <br> <br>**Note**: this field isn't used if you're
-            only collecting transaction data without a report.
-          format: int64
-          example: 1607450357
-        reportCustomFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportCustomFields'
-          description: >-
-            The `reportCustomFields` parameter is used when experiences are
-            associated with a credit decisioning report. <br>  <br>Designate up
-            to 5 custom fields that you'd like associated with the report when
-            it's generated. Every custom field consists of three variables:
-            `label`, `value`, and `shown`. The `shown` variable is true or
-            false. <br>* **True**: (default) display the custom field in the PDF
-            report. <br>  <br>* **False**: don't display the custom field in the
-            PDF report. <br>  <br>For an experience that generates multiple
-            reports, the `reportCustomFields` parameter gets passed to all
-            reports.<br>  <br>All custom fields display in the Reseller Billing
-            endpoint.<br>
-        optionalConsumerInfo:
-          $ref: '#/components/schemas/OptionalConsumerInfo'
-        singleUseUrl:
-          type: boolean
-          description: >-
-            **True**: The URL link expires after a Connect session successfully
-            completes. <br> <br> **Note**: When the `singleUseUrl` and the
-            `experience` parameters are passed in the same call, the
-            `singleUseUrl` value overrides the `singleUseUrl` value configured
-            in the `experience` parameter.
-          example: true
-      example:
-        partnerId: '1445585709680'
-        customerId: '1005061234'
-        webhook: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
-        webhookContentType: application/json
-        experience: default
-        fromDate: 1607450357
-        reportCustomFields:
-          - label: loanID
-            value: '12345'
-            shown: true
-          - label: branchID
-            value: '55555'
-            shown: false
-        singleUseUrl: true
     GenerateConnectURLRequestlite-V2:
       required:
         - partnerId
@@ -15881,7 +15567,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -15897,7 +15583,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -15970,7 +15656,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         customerId:
           type: string
@@ -15987,7 +15673,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -16153,7 +15839,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             The `fromDate` parameter is used when experiences are associated
             with a credit decisioning report and any other reports with
@@ -17694,7 +17380,7 @@ components:
         estimatedMonthlyOvertimePay: 50
         estimatedMonthlyBonusPay: 20
         estimatedMonthlyCommissionPay: 50
-    GenerateV2ConnectURLRequest-JointBorrower:
+    ConnectUrlRequest-JointBorrower:
       required:
         - partnerId
         - borrowers
@@ -17702,7 +17388,7 @@ components:
       properties:
         partnerId:
           type: string
-          description: The partner id you can obtain from your Finicity developer dashboard
+          description: Partner ID displayed in the Developer Dashboard
           example: '1445585709680'
         borrowers:
           type: array
@@ -17727,7 +17413,7 @@ components:
         redirectUri:
           type: string
           description: >-
-            The url that customers will be redirected to after completing
+            The URL that customers will be redirected to after completing
             Finicity Connect. <br> *Required unless Connect is embedded inside
             your application. (iframe)*
           example: 'https://www.finicity.com/connect/'
@@ -17806,7 +17492,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             The `reportCustomFields` parameter is used when experiences are
             associated with a credit decisioning report. <br>  <br>Designate up
@@ -17990,7 +17676,7 @@ components:
         reportCustomFields:
           type: array
           items:
-            $ref: '#/components/schemas/ReportCustomFields'
+            $ref: '#/components/schemas/ReportCustomField'
           description: >-
             The `reportCustomFields` parameter is used when experiences are
             associated with a credit decisioning report. <br>  <br>Designate up
