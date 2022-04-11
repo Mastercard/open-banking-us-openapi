@@ -1,7 +1,7 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AssetsApiTest extends BaseAppKeyAppTokenTest {
+public class AssetsApiTest extends BaseTest {
 
     private final AssetsApi api = new AssetsApi(apiClient);
 

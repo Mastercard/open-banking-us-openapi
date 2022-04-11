@@ -4,8 +4,8 @@ import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccount;
 import com.mastercard.finicity.client.model.ReportConstraints;
 import com.mastercard.finicity.client.model.ReportType;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
+public class VerifyAssetsApiTest extends BaseTest {
 
     private final VerifyAssetsApi api = new VerifyAssetsApi(apiClient);
     private static String accountIds; // "5053253032 5053253033 ... 5053253038 5053253039"
@@ -23,8 +23,6 @@ public class VerifyAssetsApiTest extends BaseAppKeyAppTokenTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            BaseAppKeyAppTokenTest.beforeAll();
-
             // A consumer is required to generate reports
             ConsumersApi consumersApi = new ConsumersApi(apiClient);
             ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);

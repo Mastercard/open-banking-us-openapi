@@ -2,8 +2,8 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import static com.mastercard.finicity.client.model.BorrowerType.PRIMARY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ConnectApiTest extends BaseAppKeyAppTokenTest {
+class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
 

@@ -2,13 +2,13 @@ package com.mastercard.finicity.client.api;
 
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.ModelFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PayStatementsApiTest extends BaseAppKeyAppTokenTest {
+public class PayStatementsApiTest extends BaseTest {
 
     private final PayStatementsApi api = new PayStatementsApi(apiClient);
 
@@ -23,5 +23,5 @@ public class PayStatementsApiTest extends BaseAppKeyAppTokenTest {
             fail();
         }
     }
-    
+
 }

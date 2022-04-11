@@ -2,7 +2,7 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
-import com.mastercard.finicity.client.test.BaseAppKeyAppTokenTest;
+import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
 import com.mastercard.finicity.client.test.utils.PayStatementUtils;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class VerifyIncomeAndEmploymentApiTest extends BaseAppKeyAppTokenTest {
+public class VerifyIncomeAndEmploymentApiTest extends BaseTest {
 
     private static String existingAssetId;
     private final VerifyIncomeAndEmploymentApi api = new VerifyIncomeAndEmploymentApi(apiClient);
@@ -20,8 +20,6 @@ public class VerifyIncomeAndEmploymentApiTest extends BaseAppKeyAppTokenTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            BaseAppKeyAppTokenTest.beforeAll();
-
             // A consumer is required to generate reports
             ConsumersApi consumersApi = new ConsumersApi(apiClient);
             ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);
