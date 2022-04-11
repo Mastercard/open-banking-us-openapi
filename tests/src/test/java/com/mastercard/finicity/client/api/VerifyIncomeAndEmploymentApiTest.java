@@ -20,6 +20,7 @@ public class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            BaseTest.beforeAll();
             // A consumer is required to generate reports
             ConsumersApi consumersApi = new ConsumersApi(apiClient);
             ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);

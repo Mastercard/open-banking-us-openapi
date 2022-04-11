@@ -19,6 +19,7 @@ class AccountsApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            BaseTest.beforeAll();
             // Load existing IDs to be used in the subsequent tests
             var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
             existingInstitutionLoginId = existingAccount.getInstitutionLoginId();

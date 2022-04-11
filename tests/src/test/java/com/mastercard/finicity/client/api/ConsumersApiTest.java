@@ -19,6 +19,7 @@ class ConsumersApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            BaseTest.beforeAll();
             existingConsumerId = ConsumerUtils.getOrCreateDefaultConsumer(api, CUSTOMER_ID);
         } catch (ApiException e) {
             logApiException(e);
