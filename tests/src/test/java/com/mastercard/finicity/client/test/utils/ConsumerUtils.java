@@ -16,11 +16,7 @@ public class ConsumerUtils {
             return response.getId();
         } catch (ApiException e) {
             // {"code":11000,"message":"A consumer already exists for customer 5025024821"}
-            try {
-                return api.getConsumerForCustomer(customerId).getId();
-            } catch (ApiException ex) {
-                throw ex;
-            }
+            return api.getConsumerForCustomer(customerId).getId();
         }
     }
 }

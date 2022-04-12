@@ -79,7 +79,7 @@ public abstract class BaseTest {
 
     @AfterAll
     static void afterAll() {
-        // Clean-up
+        // Delete created resources
         var toDelete = new ArrayList<>(createdCustomerIds);
         createdCustomerIds.clear();
         toDelete.forEach(id -> {

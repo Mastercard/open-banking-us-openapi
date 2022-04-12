@@ -54,9 +54,13 @@ tags:
   - name: Reports
     description: Fetch generated reports when ready
   - name: Liabilities
+    description: Fetch loan payment details
   - name: Portfolios
+    description: Generate portfolios of the most recent reports
   - name: TxPush
-  - name: Analytics and Attributes (Beta)
+    description: Manage TxPush subscriptions
+  - name: Analytics and Attributes
+    description: Generate and fetch consumer attributes (Beta)
 security:
   - FinicityAppKey: []
   - FinicityAppToken: []
@@ -446,6 +450,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
         '409':
           $ref: '#/components/responses/ConflictErrorResponse'
     get:
@@ -616,7 +622,7 @@ paths:
       tags:
         - Accounts
       summary: Delete Customer Account by ID
-      description: Remove the specified account from the Finicity system.
+      description: Remove the given account from the Finicity system.
       operationId: DeleteCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -635,7 +641,7 @@ paths:
       tags:
         - Accounts
       summary: Get Customer Accounts
-      description: Get all accounts owned by the specified customer.
+      description: Get all accounts owned by the given customer.
       operationId: GetCustomerAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -705,7 +711,7 @@ paths:
         - Accounts
       summary: Get Customer Accounts by Institution ID
       description: >-
-        Get all active accounts owned by the specified customer at the specified
+        Get all active accounts owned by the given customer at the given
         institution.
       operationId: GetCustomerAccountsByInstitution
       parameters:
@@ -955,8 +961,7 @@ paths:
         FI connection.
 
 
-        This API returns a list of accounts for the institution login ID
-        specified.
+        This API returns a list of accounts for the given institution login ID.
       operationId: MigrateInstitutionLoginAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1085,6 +1090,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voa':
     post:
       tags:
@@ -1238,6 +1245,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voi':
     post:
       tags:
@@ -1270,6 +1279,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voePayroll':
     post:
       tags:
@@ -1304,6 +1315,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voeTransactions':
     post:
       tags:
@@ -1338,8 +1351,8 @@ paths:
             The fromDate parameter is an Epoch Timestamp (in seconds), such as
             ?1494449017. Without this parameter, the report defaults to 120 days
             if available. This field will limit the amount of credit
-            transactions included in the report up to the date specified, up to
-            120 days.
+            transactions included in the report up to the given date, up to 120
+            days.
 
             Example: ?fromDate={fromDate}
 
@@ -1358,6 +1371,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/payStatement':
     post:
       tags:
@@ -1386,6 +1401,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withInterview':
     post:
       tags:
@@ -1424,6 +1441,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withStatement':
     post:
       tags:
@@ -1452,6 +1471,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voiePayroll':
     post:
       tags:
@@ -1486,6 +1507,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
     get:
       tags:
@@ -1549,13 +1572,15 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/statement':
     post:
       tags:
         - Bank Statements
       summary: Generate Statement Report
       description: >-
-        Generate a Statement Report report for specified accounts under the
+        Generate a Statement Report report for the given accounts under the
         given customer.
 
 
@@ -1578,6 +1603,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v3/customers/{customerId}/transactions':
     get:
       tags:
@@ -1654,12 +1681,14 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v2/customers/{customerId}/transactions/{transactionId}':
     get:
       tags:
         - Transactions
       summary: Get Customer Transaction by ID
-      description: Get details for the specified transaction.
+      description: Get details for the given transaction.
       operationId: GetCustomerTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1671,6 +1700,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/transactions':
     get:
       tags:
@@ -1747,13 +1778,15 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/transactions':
     post:
       tags:
         - Transactions
       summary: Generate Transactions Report
       description: >-
-        Generate a Transaction Report for specified accounts under the given
+        Generate a Transaction Report for the given accounts under the given
         customer. This service retrieves up to 24 months of transaction history
         for the given customer. It then uses this information to generate the
         Transaction Report. 
@@ -1800,6 +1833,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/payStatements':
     post:
       tags:
@@ -1818,14 +1853,15 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v2/customers/{customerId}/accounts/{accountId}/loanDetails':
     get:
       tags:
         - Liabilities
-      summary: "\U0001F6A7 Get Loan Payment Details"
+      summary: Get Loan Payment Details
       description: >-
-        This returns the loan payment details of the customer for a loan-type
-        account.
+        Return the loan payment details of the customer for a loan-type account.
 
 
         Note: this is a premium service, billable per every successful API call.
@@ -1835,57 +1871,41 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoanPaymentDetails'
+          $ref: '#/components/responses/GetLoanPaymentDetailsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v1/customers/{customerId}/portfolios/{portfolioId}':
     get:
       tags:
         - Portfolios
-      summary: "\U0001F6A7 Get Portfolio by Customer"
+      summary: Get Portfolio by Customer
       description: >
-        Returns a portfolio of most recently generated report for each report
-        type for a specified customer. If there are multiple reports that were
+        Return a portfolio of most recently generated reports for each report
+        type for the given customer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
-        generated report for the type will be returned. 
-
-         
-        HTTP 404 status means that there is no data for the customer or
-        portfolio. HTTP 200 (OK) status means that the call was successful.
-      operationId: GetPortfoliobyCustomer
+        generated report for the type will be returned.
+      operationId: GetPortfolioByCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: portfolioId
-          in: path
-          description: >-
-            Finicity portfolio ID (Max 17 characters) with the portfolio version
-            number. Using the portfolio number without a version number will
-            return the most recently generated reports for the consumer.
-          required: true
-          schema:
-            $ref: '#/components/schemas/PortfolioId'
+        - $ref: '#/components/parameters/PortfolioIdParameter'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PortfolioSummaryByCustomer'
+          $ref: '#/components/responses/GetPortfolioByCustomerResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/txpush':
     post:
       tags:
         - TxPush
-      summary: "\U0001F6A7 Subscribe To TxPush Notifications"
+      summary: Subscribe to Txpush Notifications
       description: >-
         Register a client app's TxPush Listener to receive TxPush notifications
         related to the given account.
@@ -1893,98 +1913,138 @@ paths:
 
         Each call to this service will return two records, one with class
         account and one with class transaction. Account events are sent when
-        values change in the account's fields (such as balance or interestRate).
-        Transaction events are sent whenever a new transaction is posted for the
-        account. For institutions that do not provide TxPush services,
-        notifications are sent as soon as Finicity finds a new transaction or
-        new account data through regular aggregation processes.
+        values change in the account's fields (such as `balance` or
+        `interestRate`). Transaction events are sent whenever a new transaction
+        is posted for the account. For institutions that do not provide TxPush
+        services, notifications are sent as soon as Finicity finds a new
+        transaction or new account data through regular aggregation processes.
 
 
-        The listener's URL must be secure (https) for any real-world account. In
-        addition, the client'sTxPush Listener will need to be verified. HTTP and
-        HTTPS connections are only allowed on the standard ports 80 (HTTP) and
-        443 (HTTPS). The use of other ports will result with the call failing.
-        For additional details on this process please see, TxPush Listener
-        Service.
+        For additional details on this process, see [TxPush Listener
+        Service](https://docs.finicity.com/txpush-listener-service/).
       operationId: SubscribeToTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
           # ID of the account whose events will be sent to the TxPush Listener
         - $ref: '#/components/parameters/AccountIdParameter'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TxPushSubscriptionRequest'
-        required: true
+        $ref: '#/components/requestBodies/SubscribeToTxPushNotificationsRequest'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TxPushSubscriptions'
+        '201':
+          $ref: '#/components/responses/SubscribeToTxPushNotificationsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     delete:
       tags:
         - TxPush
-      summary: "\U0001F6A7 Disable TxPush Notifications"
+      summary: Disable TxPush Notifications
       description: >-
-        Delete all TxPush subscriptions with their notifications for the
-        indicated account. No more notifications will be sent for account or
-        transaction events.
+        Delete all TxPush subscriptions with their notifications for the given
+        account. No more notifications will be sent for account or transaction
+        events.
+
+
+        For additional details on this process, see [TxPush Listener
+        Service](https://docs.finicity.com/txpush-listener-service/).
       operationId: DisableTxPushNotifications
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+          # ID of the account whose events won't be sent to the TxPush Listener
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/DisableTxPushNotificationsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
+    post:
+      tags:
+        - TxPush
+      summary: Create TxPush Test Transaction
+      description: >-
+        Inject a transaction into the transaction list for a testing account.
+        This allows an app to trigger TxPush notifications for the account in
+        order to test the app's TxPush Listener service. This causes the
+        platform to send one transaction event and one account event (showing
+        that the account balance has changed). This service is only supported
+        for testing accounts.
+
+
+        For additional details on this process, see [TxPush Listener
+        Service](https://docs.finicity.com/txpush-listener-service/).
+      operationId: CreateTxPushTestTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
           # ID of the account whose events will be sent to the TxPush Listener
         - $ref: '#/components/parameters/AccountIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTxPushTestTransactionRequest'
       responses:
-        '200':
-          description: ''
+        '201':
+          $ref: '#/components/responses/CreateTxPushTestTransactionResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
+    delete:
+      tags:
+        - TxPush
+      summary: Delete TxPush Subscription
+      description: >-
+        Delete a specific subscription to TxPush notifications for the given
+        account. This could be individual deleting the account or transactions
+        events. No more events will be sent for that specific subscription.
+
+
+        For additional details on this process, see [TxPush Listener
+        Service](https://docs.finicity.com/txpush-listener-service/).
+      operationId: DeleteTxPushSubscription
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/SubscriptionIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/DeleteTxPushSubscriptionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v1/consumers/{consumerId}/portfolios/{portfolioId}':
     get:
       tags:
         - Portfolios
-      summary: "\U0001F6A7 Get Portfolio by Consumer"
+      summary: Get Portfolio by Consumer
       description: >-
-        Returns a portfolio of most recently generated report for each report
-        type for a specified consumer. If there are multiple reports that were
+        Return a portfolio of most recently generated reports for each report
+        type for a given consumer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
-        generated report for the type will be returned. 
-
-         
-        HTTP 404 status means that there is no data for the consumer or
-        portfolio. HTTP 200 (OK) status means that the call was successful.
-      operationId: GetPortfoliobyConsumer
+        generated report for the type will be returned.
+      operationId: GetPortfolioByConsumer
       parameters:
         - $ref: '#/components/parameters/ConsumerIdParameter'
-        - name: portfolioId
-          in: path
-          description: >-
-            Finicity portfolio ID (Max 17 characters) with the portfolio version
-            number. Using the portfolio number without a version number will
-            return the most recently generated reports for the consumer.
-          required: true
-          schema:
-            $ref: '#/components/schemas/PortfolioId'
+        - $ref: '#/components/parameters/PortfolioIdParameter'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PortfolioSummary'
+          $ref: '#/components/responses/GetPortfolioByConsumerResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details':
     get:
       tags:
@@ -2007,69 +2067,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions':
-    post:
-      tags:
-        - TxPush
-      summary: "\U0001F6A7 Create TxPush Test Transaction"
-      description: >-
-        Inject a transaction into the transaction list for a testing account.
-        This allows an app to trigger TxPush notifications for the account in
-        order to test the app's TxPush Listener service. This causes the
-        platform to send one transaction event and one account event (showing
-        that the account balance has changed). This service is only supported
-        for testing accounts (accounts on institution 101732).
-      operationId: CreateTxPushTestTransaction
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-          # ID of the account whose events will be sent to the TxPush Listener
-        - $ref: '#/components/parameters/AccountIdParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTxPushTestTransactionRequest'
-        required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateTxPushTestTransactionResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-  '/aggregation/v1/customers/{customerId}/subscriptions/{subscriptionId}':
-    delete:
-      tags:
-        - TxPush
-      summary: "\U0001F6A7 Delete TxPush Subscription"
-      description: >-
-        Delete a specific subscription to TxPush notifications for the indicated
-        account. This could be individual deleting the account or transactions
-        events. No more events will be sent for that specific subscription.
-      operationId: DeleteTxPushSubscription
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: subscriptionId
-          in: path
-          description: >-
-            The ID of the specific subscription to be deleted, returned from
-            Enable TxPush Notifications
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 12345678
-      responses:
-        '200':
-          description: ''
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
     get:
       tags:
@@ -2222,6 +2221,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance':
     get:
       tags:
@@ -2248,6 +2249,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowBusiness':
     post:
       tags:
@@ -2290,6 +2293,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowPersonal':
     post:
       tags:
@@ -2342,141 +2347,84 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/analytics/ca360/v1/customers/{customerId}/analytics':
     post:
       tags:
-        - Analytics and Attributes (Beta)
-      summary: "\U0001F6A7 Generate Consumer Attributes"
+        - Analytics and Attributes
+      summary: Generate Consumer Attributes
       description: >-
-        Used to generate a Consumer Attributes report for a customer. The `To`
-        and `From` date range is the last 12 months of consumer data, based on
-        the `created_date` when the report was generated.
+        Generate a Consumer Attributes report for a customer. The "to" and
+        "from" date range is the last 12 months of consumer data, based on the
+        date at which the report was generated.
 
 
-        An `analityic_id` value is also created and associated with a customer's
-        ID. If you generate multiple Consumer Attributes reports for the same
-        `customerId`, a new `analityic_id` and `created_date` are created for
-        each instance.
-
-
-        To view a list of all the `analytic_ids` for a customer, use the List
-        Consumer Attributes API.
-
-
-        See [List Consumer Attributes - Beta
-        API](https://api-reference.finicity.com/#/rest/api-endpoints/analytics/list-consumer-attributes-beta)
+        An analytic ID is created and associated with the customer's ID. If you
+        generate multiple Consumer Attributes reports for the same customer,
+        then each report will have its own analytic ID.
       operationId: GenerateConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateConsumerAttributesRequest'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateConsumerAttributesReponse'
+          $ref: '#/components/responses/GenerateConsumerAttributesReponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     get:
       tags:
-        - Analytics and Attributes (Beta)
-      summary: "\U0001F6A7 List Consumer Attributes"
+        - Analytics and Attributes
+      summary: List Consumer Attributes
       description: >-
-        Used to retrieve a list of all the `analytic_ids` created for a customer
-        from the Generate Consumer Attributes API. 
-
-
-        The list displays all the `analytic_ids` and `created_date` (Epoch time)
-        associated with a customer's ID. 
-
-
-        Depending on the `created_date`, select an analytic_id to retrieve the
-        Consumer Attributes report using the "Get Consumer Attributes by ID"
-        API.
-
-
-        See [Get Consumer Attributes by ID – Beta API]
-        (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/get-consumer-attributes-by-id-beta)
+        Retrieve the list of all analytic IDs created for a customer using the
+        "Generate Consumer Attributes" API.
       operationId: ListConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListConsumerAttributesResponse'
+          $ref: '#/components/responses/ListConsumerAttributesResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/analytics/ca360/v1/customers/{customerId}/analytics/{analytics_id}':
     get:
       tags:
-        - Analytics and Attributes (Beta)
-      summary: "\U0001F6A7 Get Consumer Attributes By ID"
+        - Analytics and Attributes
+      summary: Get Consumer Attributes By ID
       description: >-
-        Used to retrieve a Consumer Attributes (CA) report for a customer. The
-        `analytic_id` and the `created_date` are generated from the [Generate
-        Consumer Attributes API-Beta]
-        (https://api-reference.finicity.com/#/rest/api-endpoints/analytics/generate-consumer-attributes-beta).
+        Retrieve a Consumer Attributes report for a customer.
 
 
-        Use the `analytic_id` and `customerId` to retrieve 12 months of data
-        attributes according to the `To` and `From` date range of the report at
+        Use the analytic and customer IDs to retrieve 12 months of data
+        attributes according to the "to" and "from" date range of the report at
         the time it was created. 
 
 
         If the current date is before the end of the calendar month, then the
         most recent month provides all available data up to the current date.
-
-
-        The CA data response is grouped into the following attribute objects: 
-
-        * `accountIds` 
-
-        * `dateRange` 
-
-        * `income` 
-
-        * `expenses` 
-
-        * `netAmount` 
-
-        * `nsf` (insufficient funds) 
-
-        * `assets`
-
-            * `customer`
-
-            * `account`
-
-        * `liabilities`
-
       operationId: GetConsumerAttributesByID
       parameters:
-        - name: analytics_id
-          in: path
-          description: An analytic ID generated for the requested report.
-          required: true
-          schema:
-            type: string
-            example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
+        - $ref: '#/components/parameters/AnalyticIdParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetConsumerAttributesByIDResponse'
+          $ref: '#/components/responses/GetConsumerAttributesByIDResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -2643,6 +2591,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/StatementReportConstraints'
+    CreateTxPushTestTransactionRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TestTxPushTransaction'
+    SubscribeToTxPushNotificationsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TxPushSubscriptionRequest'
+    GenerateConsumerAttributesRequest:
+      description: No payload expected
+      content:
+        application/json:
+          schema: {}
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -2995,6 +2960,58 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AvailableBalance'
+    GetLoanPaymentDetailsResponse:
+      description: The loan payment details were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoanPaymentDetails'
+    GetPortfolioByCustomerResponse:
+      description: The portfolio was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PortfolioSummary'
+    GetPortfolioByConsumerResponse:
+      description: The portfolio was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PortfolioWithConsumerSummary'
+    DeleteTxPushSubscriptionResponse:
+      description: The subscription was successfully deleted
+    DisableTxPushNotificationsResponse:
+      description: Subscriptions were successfully deleted for the given account
+    SubscribeToTxPushNotificationsResponse:
+      description: The subscription was successfully created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TxPushSubscriptions'
+    CreateTxPushTestTransactionResponse:
+      description: The test notification was successfully sent
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedTestTxPushTransaction'
+    GenerateConsumerAttributesReponse:
+      description: Attributes were successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAttributesAnalyticId'
+    GetConsumerAttributesByIDResponse:
+      description: Attributes were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAttributes'
+    ListConsumerAttributesResponse:
+      description: Attributes were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAttributeList'
     AuthenticationUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check Partner ID,
@@ -3167,6 +3184,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+    AnalyticIdParameter:
+      name: analytics_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/AnalyticId'
     TransactionIdParameter:
       description: A Finicity transaction ID
       name: transactionId
@@ -3245,6 +3268,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/AccountId'
+    SubscriptionIdParameter:
+      name: subscriptionId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/SubscriptionId'
     InstitutionLoginIdParameter:
       name: institutionLoginId
       in: path
@@ -3289,6 +3318,16 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ConsumerId'
+    PortfolioIdParameter:
+      description:
+        A portfolio ID with the portfolio version number. Using the portfolio
+        number without a version number will return the most recently generated
+        reports.
+      name: portfolioId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PortfolioId'
     StartParameter:
       name: start
       in: query
@@ -3456,11 +3495,20 @@ components:
       type: string
       description: A Finicity account ID
       example: '5011648377'
+    SubscriptionId:
+      description: ID of a TxPush subscription
+      type: integer
+      format: int64
+      example: 17554874
+    SubscriptionType:
+      type: string
+      description: A TxPush subscription type ("account" or "transaction")
+      example: 'account'
     TransactionId:
       type: integer
       description: A Finicity transaction ID
       format: int64
-      example: 102122887150
+      example: 21284820852
     IncludePending:
       type: boolean
       description: If pending transactions must be included
@@ -4171,6 +4219,14 @@ components:
         and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    NoZoneDateTime:
+      type: string
+      description: A date-time without time zone
+      example: '2022-04-12T11:51:23'
+    AnalyticId:
+      type: string
+      description: An ID for a Consumer Attributes report
+      example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
     MoreResultsAvailable:
       type: boolean
       description: If `true`, you can retrieve the next page of results
@@ -5907,19 +5963,27 @@ components:
     PortfolioSummary:
       required:
         - portfolioId
-        - consumer
         - reports
       type: object
       properties:
         portfolioId:
           $ref: '#/components/schemas/PortfolioId'
-        consumer:
-          $ref: '#/components/schemas/PortfolioConsumer'
         reports:
           type: array
           items:
             $ref: '#/components/schemas/PortfolioReport'
           description: A list of reports in the portfolio
+    PortfolioWithConsumerSummary:
+      required:
+        - portfolioId
+        - consumer
+        - reports
+      allOf:
+        - $ref: '#/components/schemas/PortfolioSummary'
+        - type: object
+          properties:
+            consumer:
+              $ref: '#/components/schemas/PortfolioConsumer'
     ReportSummaries:
       required:
         - reports
@@ -6164,6 +6228,10 @@ components:
         statements
       default: true
       example: true
+    TxPushCallbackUrl:
+      type: string
+      description: A callback URL where to receive TxPush notifications
+      example: 'https://www.mydomain.com/txpush/listener'
     PayStatementData:
       required:
         - assetIds
@@ -6439,11 +6507,7 @@ components:
       type: object
       properties:
         callbackUrl:
-          type: string
-          description: >-
-            The TxPush Listener URL to receive TxPush notifications (must use
-            https protocol for any real-world account)
-          example: 'https://www.mydomain.com/txpush/listener'
+          $ref: '#/components/schemas/TxPushCallbackUrl'
     Status:
       enum:
         - ACTIVE
@@ -6549,6 +6613,7 @@ components:
       type: string
       example: voi
     LoanPaymentDetails:
+      description: Loan payment details for a customer account
       required:
         - loanNumber
         - loanPaymentNumber
@@ -6570,8 +6635,7 @@ components:
           description: The payment address to send manual payments to
           example: Heartland ECSI       PO Box 718       Wexford PA 15090
         accountDetail:
-          $ref: '#/components/schemas/LoanPaymentDetailsAccountDetail'
-      description: The loan payment details for the customer account
+          $ref: '#/components/schemas/LoanPaymentDetailsAccount'
     Asset:
       description: A Finicity asset
       required:
@@ -6599,26 +6663,19 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          description: Unique subscription identifier
-          format: int64
-          example: 12345678
+          $ref: '#/components/schemas/SubscriptionId'
         accountId:
           $ref: '#/components/schemas/AccountId'
         type:
-          type: string
-          description: Event subscription type. account or transaction
-          example: 'account'
+          $ref: '#/components/schemas/SubscriptionType'
         callbackUrl:
-          type: string
-          description: The URL for the events
-          example: 'https://www.mydomain.com/txpush/listener'
+          $ref: '#/components/schemas/TxPushCallbackUrl'
         signingKey:
           type: string
           description: Signing key for events
           example: 'zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0QzkDdwp39IAKuNOFxOVqCOgHLMS1Zpe4ZL40NX83aJkqI6v0Ez5B7BLBtvr7Ag11kPH3uG1taTeOV0CTyI4LOg7ohSHn0DqaRu2aBq26KI90nYe0CecTCzzhu4yMXL43JV8YfydAexNdkzfg8tY44MlhBPUh2neHW2EFTT2ja4s4Ul10JgID03un8WBSrIm2adHw3QYJB4jk4k1e'
       description: TxPush subscription details
-    CreateTxPushTestTransactionResponse:
+    CreatedTestTxPushTransaction:
       required:
         - id
         - createdDate
@@ -6803,11 +6860,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Transaction'
-    CreateTxPushTestTransactionRequest:
+    TestTxPushTransaction:
+      description: A fake transaction for TxPush testing
       required:
         - amount
         - description
-        - postedDate
         - transactionDate
       type: object
       properties:
@@ -6825,13 +6882,12 @@ components:
           default: active
           example: pending
         postedDate:
-          # An optional timestamp for the transaction's posted date value for
+          # A timestamp for the transaction's posted date value for
           # this transaction. Timestamp must be
           # no more than 6 months from the current date.
           $ref: '#/components/schemas/UnixDate'
         transactionDate:
           $ref: '#/components/schemas/UnixDate'
-      description: Create a text transaction for TxPush testing
     TransactionsReportData:
       required:
         - id
@@ -6897,19 +6953,6 @@ components:
           $ref: '#/components/schemas/IncludePending'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    PortfolioSummaryByCustomer:
-      required:
-        - portfolioId
-        - reports
-      type: object
-      properties:
-        portfolioId:
-          $ref: '#/components/schemas/PortfolioId'
-        reports:
-          type: array
-          items:
-            $ref: '#/components/schemas/PortfolioReport'
-          description: A list of reports in the portfolio
     PortfolioConsumer:
       required:
         - id
@@ -7222,7 +7265,7 @@ components:
           description:
             Beginning balance of account per the time period in the report
           example: -17795.6
-    LoanPaymentDetailsAccountDetail:
+    LoanPaymentDetailsAccount:
       required:
         - accountId
         - accountNumber
@@ -7260,12 +7303,12 @@ components:
         groupDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetailsGroupDetail'
+            $ref: '#/components/schemas/LoanPaymentDetailsGroup'
         loanDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetailsLoanDetail'
-    LoanPaymentDetailsGroupDetail:
+            $ref: '#/components/schemas/LoanPaymentDetailsLoan'
+    LoanPaymentDetailsGroup:
       required:
         - accountId
         - groupNumber
@@ -7306,8 +7349,8 @@ components:
         groupLoanDetail:
           type: array
           items:
-            $ref: '#/components/schemas/LoanPaymentDetailsLoanDetail'
-    LoanPaymentDetailsLoanDetail:
+            $ref: '#/components/schemas/LoanPaymentDetailsLoan'
+    LoanPaymentDetailsLoan:
       required:
         - accountId
         - loanNumber
@@ -7344,22 +7387,17 @@ components:
           description: The date to which the `Future Payoff Amount` applies
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
-    GenerateConsumerAttributesReponse:
+    ConsumerAttributesAnalyticId:
       required:
         - analytic_id
         - created_date
       type: object
       properties:
         analytic_id:
-          type: string
-          description: An analytic ID generated for the requested report.
-          example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
+          $ref: '#/components/schemas/AnalyticId'
         created_date:
-          type: string
-          description:
-            The date and time (Epoch) that the data analytics report generated.
-          example: '2/2/2022 18:14:13'
-    ListConsumerAttributesResponse:
+          $ref: '#/components/schemas/NoZoneDateTime'
+    ConsumerAttributeList:
       required:
         - analytic_ids
       type: object
@@ -7367,18 +7405,7 @@ components:
         analytic_ids:
           type: array
           items:
-            type: object
-          description: >-
-            A list of all analytic IDs generated for a customer, The date and
-            time (Epoch) that the data analytics report generated.and used to
-            Get the Consumer Attributes report.
-          example:
-            - analytic_id: ad68d233-cc56-453b-b872-e74fb86c79f8
-              created_date: 2022-02-01T18:46:08.665Z
-            - analytic_id: f6cee82e-4347-42b0-be38-64b26f3d6aea
-              created_date: 2022-02-02T12:37:12.962Z
-            - analytic_id: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
-              created_date: 2022-02-02T18:14:13.000Z
+            $ref: '#/components/schemas/ConsumerAttributesAnalyticId'
     ConsumerAttributesDataDateRange:
       required:
         - From
@@ -7387,16 +7414,13 @@ components:
       properties:
         From:
           type: string
-          description: The `From` date of the date range for the report.
-          xml:
-            attribute: true
-            wrapped: false
+          description: The `From` date of the date range for the report
           example: 2021-02-01T00:00:00.000Z
         To:
           type: string
-          description: The `To` date of the date range for the report.
+          description: The `To` date of the date range for the report
           example: 2022-02-08T00:00:00.000Z
-    ConsumerAttributesDataResponse:
+    ConsumerAttributesData:
       required:
         - dateRange
         - income
@@ -7633,12 +7657,6 @@ components:
             3-2021: 1
             4-2021: 1
             5-2021: 1
-      example:
-        liabilities:
-          monthlyLoanDeposits: {}
-          monthlyLoanWithdrawls: {}
-          monthlyNumberOfLoanDeposits: {}
-          monthlyNumberOfLoanWithdrawls: {}
     ConsumerAttributesAssetsCustomer:
       required:
         - monthlyMinimumBalance
@@ -8094,18 +8112,16 @@ components:
           $ref: '#/components/schemas/ConsumerAttributesAssetsCustomer'
         account:
           $ref: '#/components/schemas/ConsumerAttributesAssetsAccount'
-    GetConsumerAttributesByIDResponse:
+    ConsumerAttributes:
       required:
         - analytics_id
         - ca360_data
       type: object
       properties:
         analytics_id:
-          type: string
-          description: An analytic ID generated for the requested report.
-          example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
+          $ref: '#/components/schemas/AnalyticId'
         ca360_data:
-          $ref: '#/components/schemas/ConsumerAttributesDataResponse'
+          $ref: '#/components/schemas/ConsumerAttributesData'
     ConsumerAttributesDataNetAmount:
       required:
         - monthlyNetAmount
