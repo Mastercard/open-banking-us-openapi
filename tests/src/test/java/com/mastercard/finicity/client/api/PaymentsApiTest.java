@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PaymentsApiTest extends BaseTest {
+class PaymentsApiTest extends BaseTest {
 
     private final PaymentsApi api = new PaymentsApi(apiClient);
 
@@ -27,7 +27,7 @@ public class PaymentsApiTest extends BaseTest {
     }
 
     @Test
-    public void getAccountACHDetailsTest() {
+    void getAccountACHDetailsTest() {
         try {
             var achDetails = api.getAccountACHDetails(CUSTOMER_ID, existingAccount.getId());
             assertNotNull(achDetails.getRealAccountNumber());
@@ -39,7 +39,7 @@ public class PaymentsApiTest extends BaseTest {
     }
 
     @Test
-    public void getAvailableBalanceTest() {
+    void getAvailableBalanceTest() {
         try {
             var balance = api.getAvailableBalance(CUSTOMER_ID, existingAccount.getId());
             assertNotNull(balance.getAvailableBalance());
@@ -50,7 +50,7 @@ public class PaymentsApiTest extends BaseTest {
     }
 
     @Test
-    public void getAvailableBalanceLiveTest() {
+    void getAvailableBalanceLiveTest() {
         try {
             var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId());
             assertNotNull(balance.getAvailableBalance());

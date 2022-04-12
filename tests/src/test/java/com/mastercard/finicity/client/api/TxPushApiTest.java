@@ -3,7 +3,7 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccount;
 import com.mastercard.finicity.client.model.TestTxPushTransaction;
-import com.mastercard.finicity.client.model.TxPushSubscriptionRequest;
+import com.mastercard.finicity.client.model.TxPushSubscriptionParameters;
 import com.mastercard.finicity.client.model.TxPushSubscriptions;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
@@ -86,8 +86,8 @@ class TxPushApiTest extends BaseTest {
     private TxPushSubscriptions subscribe() {
         TxPushSubscriptions subscriptions = new TxPushSubscriptions();
         try {
-            var request = new TxPushSubscriptionRequest().callbackUrl(WEB_HOOK_URL);
-            subscriptions = api.subscribeToTxPushNotifications(CUSTOMER_ID, existingAccount.getId(), request);
+            var params = new TxPushSubscriptionParameters().callbackUrl(WEB_HOOK_URL);
+            subscriptions = api.subscribeToTxPushNotifications(CUSTOMER_ID, existingAccount.getId(), params);
             var records = subscriptions.getSubscriptions();
             assertTrue(records.size() > 0);
         } catch (ApiException e) {

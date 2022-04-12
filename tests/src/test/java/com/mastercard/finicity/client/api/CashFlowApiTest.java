@@ -13,7 +13,7 @@ public class CashFlowApiTest extends BaseTest {
     private final CashFlowApi api = new CashFlowApi();
 
     @Test
-    public void generateCashFlowReportBusinessTest() {
+    void generateCashFlowReportBusinessTest() {
         try {
             var reportData = api.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             assertEquals("inProgress", reportData.getStatus());
@@ -25,7 +25,7 @@ public class CashFlowApiTest extends BaseTest {
     }
 
     @Test
-    public void generateCashFlowReportPersonalTest() {
+    void generateCashFlowReportPersonalTest() {
         try {
             var reportData = api.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             assertEquals("inProgress", reportData.getStatus());

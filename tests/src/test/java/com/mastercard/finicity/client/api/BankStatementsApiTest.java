@@ -39,7 +39,7 @@ class BankStatementsApiTest extends BaseTest {
     }
 
     @Test
-    public void generateStatementReportTest() {
+    void generateStatementReportTest() {
         try {
             var constraints = new StatementReportConstraints()
                     .statementReportData(new StatementData()
@@ -55,7 +55,7 @@ class BankStatementsApiTest extends BaseTest {
     }
 
     @Test
-    public void getCustomerAccountStatementTest() {
+    void getCustomerAccountStatementTest() {
         try {
             var pdf = api.getCustomerAccountStatement(CUSTOMER_ID, existingAccountId, 1);
             assertNotNull(pdf);

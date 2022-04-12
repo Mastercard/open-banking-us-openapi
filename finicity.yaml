@@ -102,7 +102,7 @@ paths:
         - Authentication
       summary: Modify Partner Secret
       description: >-
-        Change the Partner Secret that is used to authenticate this partner.
+        Change the Partner Secret used to authenticate this partner.
 
 
         The secret does not expire, but can be changed by calling this endpoint.
@@ -276,7 +276,8 @@ paths:
         - Customers
       summary: Add Testing Customer
       description: >-
-        Enroll a testing customer (Test Drive accounts).
+        Enroll a testing customer ([Test Drive](https://signup.finicity.com/)
+        accounts).
 
 
         For using Testing customers, register a test application with your
@@ -285,11 +286,6 @@ paths:
         only be assigned to testing OAuth applications and can only add accounts
         to Finbank OAuth for testing OAuth implementation as well as other
         Finbank testing institutions.
-
-
-        Note: this is a v2 service that replaces v1. The new version supports
-        passing an `applicationId` for assigning `applicationId`'s to customers
-        if a partner has more than one registered app.
       operationId: AddTestingCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -308,11 +304,6 @@ paths:
       description: >-
         Enroll an active customer, which is the actual owner of one or more
         real-world accounts. This is a billable customer.
-
-
-        Note: this is a v2 service that replaces v1. The new version supports
-        passing an `applicationId` for assigning `applicationId`'s to customers
-        if a partner has more than one registered app.
       operationId: AddCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -333,8 +324,8 @@ paths:
       description: >-
         Find all customers enrolled by the current partner, where the search
         text is found in the customer's username or any combination of
-        `firstName` and `lastName` fields. If no search text is provided, return
-        all customers.
+        `firstName` and `lastName` fields. If no search text is provided, all
+        customers will be returned.
       operationId: GetCustomers
       parameters:
         - $ref: '#/components/parameters/CustomerUsernameParameter'
@@ -435,9 +426,11 @@ paths:
       description: >-
         Create a consumer record associated with the given customer. A consumer
         persists as the owner of any reports that are generated, even after the
-        original customer is deleted from the system. A consumer must be created
-        for the given customer before calling any of the "Generate Report"
-        services.
+        original customer is deleted from the system.
+
+
+        A consumer must be created for the given customer before calling any of
+        the "Generate Report" services.
       operationId: CreateConsumer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -564,7 +557,6 @@ paths:
         know when the refresh is complete.
       operationId: RefreshCustomerAccountsByInstitutionLogin
       parameters:
-        - $ref: '#/components/parameters/InteractiveParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
       requestBody:
@@ -645,18 +637,9 @@ paths:
       operationId: GetCustomerAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: status
-          in: query
-          required: false
-          description: >-
-            Append `?status=pending` to return accounts in the pending status.
-            Pending accounts were discovered but not activated and will not have
-            transactions or have balance updates.
-          schema:
-            type: string
-            example: pending
+        - $ref: '#/components/parameters/AccountStatusParameter'
       responses:
-        '204':
+        '200':
           $ref: '#/components/responses/GetCustomerAccountsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
@@ -870,52 +853,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/PreAppIdQueryParameter'
         - $ref: '#/components/parameters/ApplicationIdQueryParameter'
-        - name: status
-          in: query
-          description: Look up app registration requests by status
-          required: false
-          schema:
-            $ref: '#/components/schemas/AppRegistrationStatus'
-        - name: appName
-          in: query
-          required: false
-          description: Look up app registration requests by app name
-          schema:
-            $ref: '#/components/schemas/ApplicationName'
-        - name: submittedDate
-          in: query
-          required: false
-          description:
-            Look up app registration requests by the date they were submitted
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: modifiedDate
-          in: query
-          required: false
-          description:
-            Look up app registration requests by the date the request was
-            updated. This can be used to determine when a request was updated to
-            "A" or "R".
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: page
-          in: query
-          required: false
-          description: Select which page of results to return
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: pageSize
-          in: query
-          required: false
-          description: Select how many results per page to return
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 20
+        - $ref: '#/components/parameters/AppRegistrationStatusParameter'
+        - $ref: '#/components/parameters/ApplicationNameParameter'
+        - $ref: '#/components/parameters/SubmittedDateParameter'
+        - $ref: '#/components/parameters/ModifiedDateParameter'
+        - $ref: '#/components/parameters/ResultPageParameter'
+        - $ref: '#/components/parameters/ResultPageSizeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetAppRegistrationStatusResponse'
@@ -1344,24 +1287,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - name: fromDate
-          in: query
-          required: false
-          description: >-
-            The fromDate parameter is an Epoch Timestamp (in seconds), such as
-            ?1494449017. Without this parameter, the report defaults to 120 days
-            if available. This field will limit the amount of credit
-            transactions included in the report up to the given date, up to 120
-            days.
-
-            Example: ?fromDate={fromDate}
-
-            If included, the epoch timestamp should be 10 digits long and be
-            within 120 days of the present day. Extending the epoch timestamp
-            beyond 10 digits or beyond 120 days from the present date will
-            default back to 120 days of data. This query is optional.
-          schema:
-            $ref: '#/components/schemas/UnixDate'
+        - $ref: '#/components/parameters/VoeTransactionsReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateVOETransactionsReportRequest'
       responses:
@@ -1544,25 +1470,13 @@ paths:
         * Line of credit
 
 
-        Set request timeout: we recommend setting the timeout to 180 seconds to
-        allow plenty of time for a response.
+        Note: setting the timeout to 180 seconds is recommended to allow enough
+        time for a response.
       operationId: GetCustomerAccountStatement
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
-        - name: index
-          in: query
-          required: false
-          description:
-            Request statements from 1-24. By default, 1 is the most recent
-            statement. Increase the index value to count back (by month) and
-            retrieve its most recent statement.
-          schema:
-            type: integer
-            format: int32
-            default: 1
-            example: 1
-            maximum: 24
+        - $ref: '#/components/parameters/StatementIndexParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountStatementResponse'
@@ -1629,50 +1543,11 @@ paths:
       operationId: GetAllCustomerTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: fromDate
-          in: query
-          description: >-
-            Starting timestamp for the date range
-          required: true
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: toDate
-          in: query
-          description: >-
-            Ending timestamp for the date range (required, must be greater than
-            fromDate)
-          required: true
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: start
-          in: query
-          required: false
-          description: Starting index for this page of results
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          required: false
-          description:
-            Maximum number of entries for this page of results (max is 1000)
-          schema:
-            type: integer
-            format: int64
-            default: 1000
-            example: 1000
-        - name: sort
-          in: query
-          required: false
-          description: >-
-            Sort order: asc for ascending order (oldest transactions are on page
-            1), descfor descending order (newest transactions are on page 1).
-          schema:
-            type: string
-            default: desc
-            example: desc
+        - $ref: '#/components/parameters/RequiredFromDateParameter'
+        - $ref: '#/components/parameters/RequiredToDateParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
+        - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       responses:
         '200':
@@ -1727,49 +1602,11 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
-        - name: fromDate
-          in: query
-          description: Starting timestamp for the date range
-          required: true
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: toDate
-          in: query
-          description: >-
-            Ending timestamp for the date range (required, must be greater than
-            fromDate)
-          required: true
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: start
-          in: query
-          required: false
-          description: Starting index for this page of results
-          schema:
-            type: integer
-            format: int64
-            default: 1
-            example: 1
-        - name: limit
-          in: query
-          required: false
-          description:
-            Maximum number of entries for this page of results (max is 1000)
-          schema:
-            type: integer
-            format: int64
-            default: 1000
-            example: 1000
-        - name: sort
-          in: query
-          required: false
-          description: >-
-            Sort order: asc for ascending order (oldest transactions are on page
-            1), descfor descending order (newest transactions are on page 1).
-          schema:
-            type: string
-            default: desc
-            example: desc
+        - $ref: '#/components/parameters/RequiredFromDateParameter'
+        - $ref: '#/components/parameters/RequiredToDateParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/LimitParameter'
+        - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       responses:
         '200':
@@ -1805,24 +1642,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - name: fromDate
-          in: query
-          description: >-
-            The `fromDate` param is an Epoch Timestamp (in seconds). It must be
-            10 digits long and within two years of the present day.   Example:
-            ?fromDate=1494449017.  If fromDate is not used or it's longer than
-            10 digits, the transaction report history defaults to 24 months of
-            data.   (Optional)
-          schema:
-            $ref: '#/components/schemas/UnixDate'
-        - name: toDate
-          in: query
-          description: >-
-            The ending timestamp for the date range. The value must be greater
-            than `fromDate`.
-          required: true
-          schema:
-            $ref: '#/components/schemas/UnixDate'
+        - $ref: '#/components/parameters/TransactionReportFromDateParameter'
+        - $ref: '#/components/parameters/RequiredToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
@@ -2207,7 +2028,8 @@ paths:
       summary: Get Available Balance - Live
       description: >-
         Retrieve the available and cleared account balances for a single account
-        in real-time directly from a financial institution. 
+        in real-time directly from a financial institution.
+
 
         Note: this is a premium service, billable per every successful API call.
       operationId: GetAvailableBalanceLive
@@ -2274,16 +2096,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - name: fromDate
-          in: query
-          required: false
-          description: >-
-            The `fromDate` param is an Epoch Timestamp (in seconds). It must be
-            10 digits long and within two years of the present day. If fromDate
-            is not used or it's longer than 10 digits, the cash flow report
-            history defaults to 6 months of data if available.
-          schema:
-            $ref: '#/components/schemas/UnixDate'
+        - $ref: '#/components/parameters/CashFlowReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -2328,16 +2141,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - name: fromDate
-          in: query
-          required: false
-          description: >-
-            The `fromDate` param is an Epoch Timestamp (in seconds). It must be
-            10 digits long and within two years of the present day. If fromDate
-            is not used or it's longer than 10 digits, the cash flow report
-            history defaults to 6 months of data if available.
-          schema:
-            $ref: '#/components/schemas/UnixDate'
+        - $ref: '#/components/parameters/CashFlowReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -2355,9 +2159,9 @@ paths:
         - Analytics and Attributes
       summary: Generate Consumer Attributes
       description: >-
-        Generate a Consumer Attributes report for a customer. The "to" and
-        "from" date range is the last 12 months of consumer data, based on the
-        date at which the report was generated.
+        Generate a Consumer Attributes report for the given customer. The "to"
+        and "from" date range is the last 12 months of consumer data, based on
+        the date at which the report was generated.
 
 
         An analytic ID is created and associated with the customer's ID. If you
@@ -2382,8 +2186,8 @@ paths:
         - Analytics and Attributes
       summary: List Consumer Attributes
       description: >-
-        Retrieve the list of all analytic IDs created for a customer using the
-        "Generate Consumer Attributes" API.
+        Retrieve the list of all analytic IDs previously created for a customer
+        using the "Generate Consumer Attributes" API.
       operationId: ListConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2455,37 +2259,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ConnectUrlRequest'
+            $ref: '#/components/schemas/ConnectParameters'
     GenerateLiteConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/LiteConnectUrlRequest'
+            $ref: '#/components/schemas/LiteConnectParameters'
     GenerateFixConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/FixConnectUrlRequest'
+            $ref: '#/components/schemas/FixConnectParameters'
     SendConnectEmailRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ConnectEmailRequest'
+            $ref: '#/components/schemas/ConnectEmailParameters'
     GenerateJointBorrowerConnectUrlRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ConnectJointBorrowerUrlRequest'
+            $ref: '#/components/schemas/ConnectJointBorrowerParameters'
     SendJointBorrowerConnectEmailRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ConnectJointBorrowerEmailRequest'
+            $ref: '#/components/schemas/ConnectJointBorrowerEmailParameters'
     AddCustomerRequest:
       required: true
       content:
@@ -2602,7 +2406,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TxPushSubscriptionRequest'
+            $ref: '#/components/schemas/TxPushSubscriptionParameters'
     GenerateConsumerAttributesRequest:
       description: No payload expected
       content:
@@ -2647,7 +2451,7 @@ components:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
     AddCustomerResponse:
-      description: The customer was successfully added
+      description: The customer was successfully created
       content:
         application/json:
           schema:
@@ -2739,9 +2543,6 @@ components:
             $ref: '#/components/schemas/RegisteredApplication'
     SetCustomerAppIDResponse:
       description: The app was successfully assigned
-      content:
-        application/json:
-          schema: {}
     ModifyAppRegistrationResponse:
       description: The app registration was updated
       content:
@@ -2995,19 +2796,19 @@ components:
           schema:
             $ref: '#/components/schemas/CreatedTestTxPushTransaction'
     GenerateConsumerAttributesReponse:
-      description: Attributes were successfully generated
+      description: The Consumer Attributes report was successfully generated
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerAttributesAnalyticId'
     GetConsumerAttributesByIDResponse:
-      description: Attributes were successfully retrieved
+      description: The Consumer Attributes report was successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerAttributes'
     ListConsumerAttributesResponse:
-      description: Attributes were successfully retrieved
+      description: Attributes IDs were successfully retrieved
       content:
         application/json:
           schema:
@@ -3057,9 +2858,6 @@ components:
       description:
         The service can't accept more requests or is not available from the
         [Test Drive](https://signup.finicity.com/).
-      content:
-        application/json:
-          schema: {}
     ResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -3172,11 +2970,13 @@ components:
         message: 'A consumer already exists for customer 4025024821'
   parameters:
     AssetIdParameter:
+      description: The Finicity asset ID
       name: assetId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/AssetId'
+      example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     CustomerIdParameter:
       description: A Finicity customer ID
       name: customerId
@@ -3184,12 +2984,23 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/CustomerId'
+      example: '1005061234'
+    AccountStatusParameter:
+      description: A filter to fetch account in the given status
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/AccountStatus'
+      example: pending
     AnalyticIdParameter:
+      description: The Finicity analytic ID
       name: analytics_id
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/AnalyticId'
+      example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
     TransactionIdParameter:
       description: A Finicity transaction ID
       name: transactionId
@@ -3197,6 +3008,7 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/TransactionId'
+      example: 21284820852
     IncludePendingParameter:
       description: If pending transactions must be included
       name: includePending
@@ -3204,30 +3016,74 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/IncludePending'
+      example: false
     ApplicationIdPathParameter:
+      description: The application ID
       name: applicationId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/ApplicationId'
+      example: '123456789'
     ApplicationIdQueryParameter:
+      description: The application ID
       name: applicationId
       in: query
       required: false
       schema:
         $ref: '#/components/schemas/ApplicationId'
+      example: '123456789'
+    AppRegistrationStatusParameter:
+      description: Look up app registration requests by status
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/AppRegistrationStatus'
+      example: P
+    ApplicationNameParameter:
+      description: Look up app registration requests by app name
+      name: appName
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ApplicationName'
+      example: Awesome Budget App
+    SubmittedDateParameter:
+      description:
+        Look up app registration requests by the date they were submitted
+      name: submittedDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
+    ModifiedDateParameter:
+      description:
+        Look up app registration requests by the date the request was updated.
+        This can be used to determine when a request was updated to "A" or "R".
+      name: modifiedDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
     PreAppIdQueryParameter:
+      description: The application registration tracking ID
       name: preAppId
       in: query
       required: false
       schema:
         $ref: '#/components/schemas/PreAppId'
+      example: '2581'
     PreAppIdPathParameter:
+      description: The application registration tracking ID
       name: preAppId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/PreAppId'
+      example: '2581'
     CustomerSearchParameter:
       name: search
       in: query
@@ -3246,6 +3102,7 @@ components:
       description: Username for exact match (will return 0 or 1 record)
       schema:
         $ref: '#/components/schemas/CustomerUsername'
+      example: customerusername1
     CustomerTypeParameter:
       name: type
       in: query
@@ -3255,37 +3112,53 @@ components:
         empty to return all customers.
       schema:
         $ref: '#/components/schemas/CustomerType'
-    InteractiveParameter:
-      name: interactive
-      in: header
-      required: true
-      schema:
-        type: boolean
-        example: false
+      example: 'active'
     AccountIdParameter:
+      description: The account ID
       name: accountId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/AccountId'
+      example: '5011648377'
+    StatementIndexParameter:
+      name: index
+      in: query
+      required: false
+      description:
+        Request statements from 1-24. By default, 1 is the most recent
+        statement. Increase the index value to count back (by month) and
+        retrieve its most recent statement.
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        example: 1
+        maximum: 24
     SubscriptionIdParameter:
+      description: The subscription ID
       name: subscriptionId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/SubscriptionId'
+      example: 17554874
     InstitutionLoginIdParameter:
+      description: The institution login ID
       name: institutionLoginId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/InstitutionLoginId'
+      example: '1007302745'
     InstitutionIdParameter:
+      description: The institution ID
       name: institutionId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/InstitutionId'
+      example: 4222
     PurposeParameter:
       name: purpose
       in: query
@@ -3296,6 +3169,7 @@ components:
         the reason for retrieving this report.
       schema:
         type: string
+      example: '99'
     ReportIdParameter:
       name: reportId
       in: path
@@ -3303,6 +3177,7 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ReportId'
+      example: u4hstnnak45g
     OnBehalfOfParameter:
       name: onBehalfOf
       in: query
@@ -3313,11 +3188,13 @@ components:
         type: string
         example: 'Some entity'
     ConsumerIdParameter:
+      description: The consumer ID
       name: consumerId
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/ConsumerId'
+      example: '0bf46322c167b562e6cbed9d40e19a4c'
     PortfolioIdParameter:
       description:
         A portfolio ID with the portfolio version number. Using the portfolio
@@ -3328,6 +3205,7 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/PortfolioId'
+      example: y4zsgccj4xpw-6-port
     StartParameter:
       name: start
       in: query
@@ -3335,6 +3213,7 @@ components:
       description: Index of the page of results to return
       schema:
         type: integer
+        format: int32
         default: 1
         example: 1
     LimitParameter:
@@ -3344,9 +3223,39 @@ components:
       description: Maximum number of results per page
       schema:
         type: integer
+        format: int32
         default: 25
         maximum: 1000
         example: 25
+    SortParameter:
+      name: sort
+      in: query
+      required: false
+      description: 'Date sort order: "asc" for ascending, "desc" for descending'
+      schema:
+        type: string
+        default: 'desc'
+        example: 'desc'
+    ResultPageParameter:
+      name: page
+      in: query
+      required: false
+      description: Index of the page of results to return
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        example: 1
+    ResultPageSizeParameter:
+      name: pageSize
+      in: query
+      required: false
+      description: Maximum number of results per page
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        example: 20
     ProductTypeParameter:
       name: type
       in: query
@@ -3367,6 +3276,44 @@ components:
       schema:
         type: string
         example: finbank
+    RequiredFromDateParameter:
+      description: A from date
+      name: fromDate
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
+    RequiredToDateParameter:
+      description: A to date
+      name: toDate
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
+    TransactionReportFromDateParameter:
+      name: fromDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      description:
+        Limit the amount of credit transactions included in the report up to the
+        given date, up to 24 months. Without this parameter, a report defaults
+        to 24 months if available. Must be within 2 years of the present day.
+      example: 1607450357
+    VoeTransactionsReportFromDateParameter:
+      name: fromDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      description:
+        Limit the amount of credit transactions included in the report up to the
+        given date, up to 120 days. Without this parameter, a report defaults to
+        120 days if available. Must be within 120 days of the present day.
+      example: 1607450357
     ReportCallbackUrlParameter:
       name: callbackUrl
       in: query
@@ -3386,6 +3333,7 @@ components:
         included, the date should be within two years of the present day.
       schema:
         $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
     VoaWithIncomeReportFromDateParameter:
       name: fromDate
       in: query
@@ -3400,6 +3348,17 @@ components:
         years of the present day.
       schema:
         $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
+    CashFlowReportFromDateParameter:
+      name: fromDate
+      in: query
+      required: false
+      description:
+        Without this parameter, the report defaults to 6 months if available. If
+        included, the date should be within two years of the present day.
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
   schemas:
     ErrorMessage:
       required:
@@ -3434,8 +3393,6 @@ components:
           $ref: '#/components/schemas/AssetId'
         accountId:
           $ref: '#/components/schemas/AccountId'
-        tags:
-          type: string
     PartnerId:
       type: string
       description:
@@ -3457,12 +3414,16 @@ components:
         Customer".'
       example: '1005061234'
     CustomerIdNumeric:
-      type: number
+      type: integer
       format: int64
       description:
         'A Finicity customer ID represented as a number. See also: "Add
         Customer".'
       example: 1005061234
+    AccountStatus:
+      description: An account status
+      type: string
+      example: pending
     ReportId:
       type: string
       description: A Finicity report ID
@@ -3636,12 +3597,13 @@ components:
       type: object
       description: >-
         A temporary access token to be passed in the `Finicity-App-Token` HTTP
-        Header of all subsequent API requests
+        header of all subsequent API requests
       properties:
         token:
+          description: The access token value
           type: string
           example: YBh22Sb9Es6e66Q7lWdt
-    ConnectUrlRequest:
+    ConnectParameters:
       required:
         - partnerId
         - customerId
@@ -3676,7 +3638,7 @@ components:
           $ref: '#/components/schemas/ConnectFromDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
-    LiteConnectUrlRequest:
+    LiteConnectParameters:
       required:
         - partnerId
         - customerId
@@ -3703,7 +3665,7 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
-    FixConnectUrlRequest:
+    FixConnectParameters:
       required:
         - partnerId
         - customerId
@@ -3732,7 +3694,7 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
-    ConnectEmailRequest:
+    ConnectEmailParameters:
       required:
         - partnerId
         - customerId
@@ -3772,7 +3734,7 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         optionalConsumerInfo:
           $ref: '#/components/schemas/ConsumerInfo'
-    ConnectJointBorrowerUrlRequest:
+    ConnectJointBorrowerParameters:
       required:
         - partnerId
         - borrowers
@@ -3802,7 +3764,7 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
-    ConnectJointBorrowerEmailRequest:
+    ConnectJointBorrowerEmailParameters:
       required:
         - partnerId
         - borrowers
@@ -3865,6 +3827,7 @@ components:
       type: string
       example: primary
     ConsumerInfo:
+      description: The SSN and date of birth of a consumer
       required:
         - ssn
       type: object
@@ -4229,15 +4192,15 @@ components:
       example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
     MoreResultsAvailable:
       type: boolean
-      description: If `true`, you can retrieve the next page of results
+      description: If `true`, you can fetch the next page of results
       example: true
     DisplayingResults:
       type: integer
-      description: Number of results returned
+      description: The number of results returned
       example: 2
     FoundResults:
       type: integer
-      description: Total number of results matching search criteria
+      description: The total number of results matching search criteria
       example: 200
     Currency:
       type: string
@@ -4603,14 +4566,17 @@ components:
           # The Finicity assigned account ID for the account one level higher in the student loan account hierarchy
           $ref: '#/components/schemas/AccountId'
         financialinstitutionAccountStatus:
+          description: Current account status with the financial institution
           type: string
           example: 'OPEN'
         accountNickname:
+          description: Nickname for account
           type: string
-          example: 'Roth IRA'
+          example: Checking
         marketSegment:
+          description: Market segment of account
           type: string
-          example: 'personal'
+          example: personal
     CustomerAccountPosition:
       description: Details for investment account holdings
       type: object
@@ -5125,32 +5091,39 @@ components:
         loanAwardId:
           type: string
           description: (Student Loan) The federal unique loan identifying number
+          example: '1234568'
         originalInterestRate:
           type: number
           description: >-
             (Student Loan) The original interest rate to which the loan was
             disbursed, in APY
+          example: 12
         guarantor:
           type: string
           description: >-
             (Student Loan) The financial institution guarantor of the loan (who
             will pay the loan amount to the owner if the borrower defaults)
+          example: 'FinBank'
         interestSubsityType:
           type: string
           description: >-
             (Student Loan) The indication of the presence of an interest subsidy
             (i.e. subsidized)
+          example: Subsity type
         interestBalance:
           type: number
           description: (Student Loan) The total outstanding interest balance
+          example: 2000
         feesBalance:
           type: number
           description: (Student Loan) The total outstanding fees balance
+          example: 150
         loanStatus:
           type: string
           description: >-
             (Student Loan) The repayment status phase (i.e. In School, Grace,
             Repayment, Deferment, Forbearance)
+          example: Deferment
         loanStatusStartDate:
           # Student Loan
           $ref: '#/components/schemas/UnixDate'
@@ -5162,6 +5135,7 @@ components:
           description: >-
             (Student Loan) The interest rate of multiple interest rates and
             balances at the group level, in APY
+          example: 12
         repaymentPlanStartDate:
           # Student Loan
           $ref: '#/components/schemas/UnixDate'
@@ -5180,16 +5154,20 @@ components:
             (Student Loan) The number of days past a due date that a payment
             should have been made
           format: int32
+          example: 5
         totalPrincipalPaid:
           type: number
           description:
             (Student Loan) The total amount paid towards the principal balance
+          example: 15000
         totalInterestPaid:
           type: number
           description: (Student Loan) The total amount paid towards interest
+          example: 1125
         totalAmountPaid:
           type: number
           description: (Student Loan) The total amount paid
+          example: 16125
     Application:
       required:
         - appDescription
@@ -5570,6 +5548,7 @@ components:
             Instructions given to the customer before they are sent to the
             institution website to login for OAuth institutions.
 
+
             Note: this helps the customer to provide the proper permission for
             data needed for the application.
           example:
@@ -5679,6 +5658,7 @@ components:
         accountOwner:
           $ref: '#/components/schemas/InstitutionAccountOwner'
         childInstitutions:
+          description: An array of child financial institutions
           minItems: 0
           type: array
           items:
@@ -5774,6 +5754,7 @@ components:
         status:
           $ref: '#/components/schemas/ReportStatus'
         errors:
+          description: In case errors occurred during the report generation
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
@@ -6015,9 +5996,9 @@ components:
       properties:
         normalizedPayeeName:
           type: string
-          description: >-
+          description:
             A normalized payee, derived from the transaction's description and
-            memo fields.
+            memo fields
           example: Mad Science Research
         category:
           type: string
@@ -6025,21 +6006,15 @@ components:
             One of the values from Categories (assigned based on the payee name)
           example: Paycheck
         city:
-          type: string
-          description: City of transaction (if available)
-          example: Murray
+          $ref: '#/components/schemas/City'
         state:
-          type: string
-          description: State of transaction (if available)
-          example: UT
+          $ref: '#/components/schemas/State'
         postalCode:
-          type: string
-          example: '84123'
+          $ref: '#/components/schemas/ZipCode'
         country:
-          type: string
-          description: Country where the transaction occurred
-          example: USA
+          $ref: '#/components/schemas/Country'
         bestRepresentation:
+          description: A descriptive string
           type: string
           example: YOU BOUGHT DELTA AIR LINES INC DAL CASH
       description: Categorization Record
@@ -6106,6 +6081,7 @@ components:
           description: >-
             Before-tax gross annual income (estimated from netAnnual) across all
             income stream in the past 12 months
+          example: 100000
         projectedGrossAnnual:
           type: number
           description: >-
@@ -6184,11 +6160,15 @@ components:
         securityType:
           type: string
           description: The type of investment security (VOA only)
+          example: Cash
         symbol:
           type: string
           description: Investment symbol (VOA only)
+          example: JPM
         commission:
+          description: Commission amount
           type: number
+          example: 0
     Birthday:
       type: object
       properties:
@@ -6199,7 +6179,7 @@ components:
           example: 1989
         month:
           type: integer
-          description: The birthday 2-digit month (01 is January)
+          description: The birthday 2-digit month ("01" is January)
           format: int32
           example: 08
         dayOfMonth:
@@ -6334,6 +6314,7 @@ components:
             A list of institution records, including information about the
             individual accounts used in this report
         errors:
+          description: In case errors occurred during the report generation
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
@@ -6459,7 +6440,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ReportTransaction'
-          description: An array of transactions belonging to the account.
+          description: An array of transactions belonging to the account
         asset:
           $ref: '#/components/schemas/PrequalificationReportAssetSummary'
         details:
@@ -6501,7 +6482,7 @@ components:
           $ref: '#/components/schemas/ExtractDeductions'
         extractDirectDeposit:
           $ref: '#/components/schemas/ExtractDirectDeposit'
-    TxPushSubscriptionRequest:
+    TxPushSubscriptionParameters:
       required:
         - callbackUrl
       type: object
@@ -6857,6 +6838,7 @@ components:
             Value of the sort request parameter that generated this response
           example: desc
         transactions:
+          description: The array of transactions
           type: array
           items:
             $ref: '#/components/schemas/Transaction'
@@ -6934,6 +6916,7 @@ components:
         status:
           $ref: '#/components/schemas/ReportStatus'
         errors:
+          description: In case errors occurred during the report generation
           type: array
           items:
             $ref: '#/components/schemas/ErrorMessage'
@@ -7301,14 +7284,17 @@ components:
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
         groupDetail:
+          description: Group details
           type: array
           items:
             $ref: '#/components/schemas/LoanPaymentDetailsGroup'
         loanDetail:
+          description: Loan details
           type: array
           items:
             $ref: '#/components/schemas/LoanPaymentDetailsLoan'
     LoanPaymentDetailsGroup:
+      description: Group details
       required:
         - accountId
         - groupNumber
@@ -7343,7 +7329,7 @@ components:
           example: 7500
         groupFuturePayoffDate:
           type: string
-          description: The date to which the `Future Payoff Amount` applies
+          description: The date to which the "Future Payoff Amount" applies
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
         groupLoanDetail:
@@ -7351,6 +7337,7 @@ components:
           items:
             $ref: '#/components/schemas/LoanPaymentDetailsLoan'
     LoanPaymentDetailsLoan:
+      description: Loan details
       required:
         - accountId
         - loanNumber
@@ -7384,10 +7371,11 @@ components:
           example: 5000
         loanFuturePayoffDate:
           type: string
-          description: The date to which the `Future Payoff Amount` applies
+          description: The date to which the "Future Payoff Amount" applies
           format: date-time
           example: '2022-01-01T00:00:00.000Z'
     ConsumerAttributesAnalyticId:
+      description: An analytic ID and a date
       required:
         - analytic_id
         - created_date
@@ -7403,6 +7391,7 @@ components:
       type: object
       properties:
         analytic_ids:
+          description: A list of analytic IDs
           type: array
           items:
             $ref: '#/components/schemas/ConsumerAttributesAnalyticId'
@@ -7516,49 +7505,20 @@ components:
           type: string
           description: >-
             Total dwelling expenses for the last 12 months: rent, mortgage,
-            utilities, and insurance.
+            utilities, and insurance
           example: '5856.07'
         dwellingExpensesByAccount:
           type: object
           description: >-
             Total dwelling expenses by account for the last 12 months: rent,
-            mortgage, utilities, and insurance.
+            mortgage, utilities, and insurance
           example:
             dwellingExpensesByAccount:
               '5001861693': -5856.07
         monthlyDwellingExpenseByCustomer:
           type: object
-          description: Monthly dwelling expenses by customer.
-        monthlyDwellingExpenseByAccount:
-          type: object
-          description: Monthly dwelling expenses by account.
-        monthlyDebitAmountByCustomer:
-          type: object
-          description: Total monthly debit amounts by customer.
-        monthlyExpenseAmountByCustomer:
-          type: object
-          description: >-
-            Total monthly debit amounts, excluding transfers and credit card
-            payments.
-      example:
-        dwellingExpenseTotal: -5856.07
-        dwellingExpensesByAccount:
-          '5001861693': -5856.07
-        monthlyDwellingExpenseByCustomer:
-          'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -217.37
-          'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -146.25
-          'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -205.86
-          'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -309.84
-          'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -593.07
-          'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -202.1
-          'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -243.55
-          'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -136.96
-          'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -145.37
-          'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -261.35
-          'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -172.99
-          'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -176.96
-        monthlyDwellingExpenseByAccount:
-          '5001861693':
+          description: Monthly dwelling expenses by customer
+          example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -217.37
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -146.25
             'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -205.86
@@ -7571,32 +7531,57 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -261.35
             'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -172.99
             'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -176.96
+        monthlyDwellingExpenseByAccount:
+          type: object
+          description: Monthly dwelling expenses by account
+          example:
+            '5001861693':
+              'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -217.37
+              'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -146.25
+              'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -205.86
+              'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -309.84
+              'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -593.07
+              'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -202.1
+              'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -243.55
+              'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -136.96
+              'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -145.37
+              'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -261.35
+              'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -172.99
+              'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -176.96
         monthlyDebitAmountByCustomer:
-          'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
-          'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
-          'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
-          'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
-          'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
-          'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
-          'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
-          'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
-          'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
-          'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
-          'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
-          'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
+          type: object
+          description: Total monthly debit amounts by customer
+          example:
+            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
+            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
+            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
+            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
+            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
+            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
+            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
+            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
+            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
+            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
+            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
+            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
         monthlyExpenseAmountByCustomer:
-          'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
-          'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
-          'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
-          'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
-          'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
-          'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
-          'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
-          'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
-          'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
-          'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
-          'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
-          'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
+          type: object
+          description: >-
+            Total monthly debit amounts, excluding transfers and credit card
+            payments.
+          example:
+            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
+            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
+            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
+            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
+            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
+            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
+            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
+            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
+            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
+            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
+            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
+            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
     ConsumerAttributesDataNSF:
       required:
         - monthlyNSFOccurrences
@@ -8094,7 +8079,7 @@ components:
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2947.63
             'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2863.37
             'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3065.62
-            '2021-07-31},': 3224.32
+            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3224.32
             'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3479.49
             'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3846
             'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4149.2
@@ -8130,11 +8115,13 @@ components:
         monthlyNetAmount:
           $ref: '#/components/schemas/MonthlyNetAmount'
     MonthlyNetAmount:
+      description: Monthly net amount
       required:
         - NetAmount
       type: object
       properties:
         NetAmount:
+          description: Net amount per month
           type: object
           example:
             'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4333.85
