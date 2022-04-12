@@ -4,7 +4,7 @@
 
 ## Overview
 
-The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (🇺🇸), along with a suite of integration tests using a generated API client and the [Finicity Test Drive](https://signup.finicity.com/).
+The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (🇺🇸), along with a suite of [integration tests](./tests/src/test/java/com/mastercard/finicity/client/api) using a generated API client and the [Finicity Test Drive](https://signup.finicity.com/).
 
 ## Workflows
 
