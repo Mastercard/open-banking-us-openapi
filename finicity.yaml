@@ -2875,6 +2875,8 @@ components:
               $ref: '#/components/examples/NoConsumerForCustomerExample'
             ResourceNotFoundExample:
               $ref: '#/components/examples/ResourceNotFoundExample'
+            NoRegisteredApplicationExample:
+              $ref: '#/components/examples/NoRegisteredApplicationExample'
     ConflictErrorResponse:
       description: The resource already exists
       content:
@@ -2964,6 +2966,10 @@ components:
       value:
         code: 14001
         message: 'Resource not found.'
+    NoRegisteredApplicationExample:
+      value:
+        code: 50051
+        message: 'No registered partner applications found.'
     ConsumerExistsConflictExample:
       value:
         code: 11000
@@ -3277,7 +3283,7 @@ components:
         type: string
         example: finbank
     RequiredFromDateParameter:
-      description: A from date
+      description: A "from" date
       name: fromDate
       in: query
       required: true
@@ -3285,7 +3291,7 @@ components:
         $ref: '#/components/schemas/UnixDate'
       example: 1607450357
     RequiredToDateParameter:
-      description: A to date
+      description: A "to" date
       name: toDate
       in: query
       required: true
@@ -3367,23 +3373,23 @@ components:
       properties:
         code:
           type: object
-          description: Error code (can be a number or a string)
+          description: An error code (can be returned as a number or a string)
           example: '10001'
         status:
           type: string
-          description: Status code
+          description: A status code
           example: '401'
         title:
           type: string
-          description: Error title
+          description: A title for the error
           example: Connecting accounts error
         level:
           type: string
-          description: Error level
+          description: An error level
           example: error
         message:
           type: string
-          description: Error message
+          description: An error message
           example: Invalid authorization credentials
         user_message:
           type: string
@@ -3396,7 +3402,7 @@ components:
     PartnerId:
       type: string
       description:
-        Partner ID displayed in the [Developer
+        Your Partner ID displayed in the [Developer
         Dashboard](https://developer.finicity.com/admin)
       example: '1234583871234'
     PartnerName:
@@ -3413,7 +3419,7 @@ components:
         'A Finicity customer ID represented as a string. See also: "Add
         Customer".'
       example: '1005061234'
-    CustomerIdNumeric:
+    NumericCustomerId:
       type: integer
       format: int64
       description:
@@ -3574,7 +3580,7 @@ components:
         partnerSecret:
           type: string
           description:
-            Partner Secret displayed in the [Developer
+            Your Partner Secret displayed in the [Developer
             Dashboard](https://developer.finicity.com/admin)
           example: aqJ5Ic4SEVx2IgDQ6oR4
     PartnerCredentialsWithNewSecret:
@@ -4182,6 +4188,13 @@ components:
         and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    StringUnixDate:
+      type: string
+      description:
+        'A date in Unix epoch time (in seconds). See also: [Handling Epoch Dates
+        and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: '1607450357'
     NoZoneDateTime:
       type: string
       description: A date-time without time zone
@@ -4209,7 +4222,7 @@ components:
     CustomerType:
       type: string
       description:
-        The type of Finicity Customer ("active" or "testing" or "" for all
+        The type of Finicity customer ("active" or "testing" or "" for all
         types)
       example: active
     NewCustomer:
@@ -4268,9 +4281,9 @@ components:
         type:
           $ref: '#/components/schemas/CustomerType'
         createdDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/StringUnixDate'
         lastModifiedDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/StringUnixDate'
     CustomerWithAppData:
       description: A finicity customer record with application info
       required:
@@ -7099,7 +7112,7 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/CustomerIdNumeric'
+          $ref: '#/components/schemas/NumericCustomerId'
         realAccountNumberLast4:
           type: integer
           description: The last 4 digits of the ACH account number
