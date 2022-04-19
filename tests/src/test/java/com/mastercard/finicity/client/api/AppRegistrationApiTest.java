@@ -45,7 +45,7 @@ class AppRegistrationApiTest extends BaseTest {
             var application = ModelFactory.newApplication();
             var preAppId = api.registerApp(application).getPreAppId();
             application.setAppDescription("Updated description");
-            var updatedApplication = api.modifyAppRegistration(preAppId, application);
+            var updatedApplication = api.modifyAppRegistration(String.valueOf(preAppId), application);
             assertEquals(preAppId, updatedApplication.getPreAppId());
             assertEquals("P", updatedApplication.getStatus());
         } catch (ApiException e) {
@@ -60,7 +60,7 @@ class AppRegistrationApiTest extends BaseTest {
             var accountApi = new AccountsApi(apiClient);
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
             var existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
-            var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, existingInstitutionLoginId, new Object());
+            var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, String.valueOf(existingInstitutionLoginId), new Object());
             assertTrue(accounts.getAccounts().size() > 0);
             fail();
         } catch (ApiException e) {

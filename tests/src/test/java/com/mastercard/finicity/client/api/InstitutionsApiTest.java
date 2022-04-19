@@ -11,7 +11,7 @@ class InstitutionsApiTest extends BaseTest {
     private final InstitutionsApi api = new InstitutionsApi(apiClient);
 
     private static final String existingInstitutionName = "Principal Financial - Retirement (Personal)";
-    private static final int existingInstitutionId = 4222;
+    private static final String existingInstitutionId = "4222";
 
     @Test
     void getCertifiedInstitutionsTest() {

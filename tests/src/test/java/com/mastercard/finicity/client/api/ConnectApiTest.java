@@ -16,7 +16,7 @@ class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
 
-    private final static int FINBANK_A = 102105;
+    private final static Long FINBANK_A = 102105L;
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
 
     @Test
@@ -111,7 +111,7 @@ class ConnectApiTest extends BaseTest {
             var accountApi = new AccountsApi(apiClient);
             var institutionLoginId = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0).getInstitutionLoginId();
             var params = new FixConnectParameters()
-                    .institutionLoginId(institutionLoginId)
+                    .institutionLoginId(String.valueOf(institutionLoginId))
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID);
             var connectUrl = api.generateFixConnectUrl(params);

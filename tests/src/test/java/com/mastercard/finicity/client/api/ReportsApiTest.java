@@ -21,7 +21,7 @@ class ReportsApiTest extends BaseTest {
     private final VerifyAssetsApi verifyAssetsApi = new VerifyAssetsApi(apiClient);
     private final VerifyIncomeAndEmploymentApi verifyIncomeAndEmploymentApi = new VerifyIncomeAndEmploymentApi(apiClient);
     private final TransactionsApi transactionsApi = new TransactionsApi(apiClient);
-    private final CashFlowApi cashFlowApi = new CashFlowApi();
+    private final CashFlowApi cashFlowApi = new CashFlowApi(apiClient);
 
     private static String existingAssetId;
 
@@ -134,7 +134,7 @@ class ReportsApiTest extends BaseTest {
         try {
             var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
             var reportData = verifyIncomeAndEmploymentApi.generatePayStatementReport(CUSTOMER_ID, constraints, null);
-            // This report with have the 'failure' status since the asset uploaded isn't a valid statement
+            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
@@ -147,7 +147,7 @@ class ReportsApiTest extends BaseTest {
         try {
             var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
             var constraints = new VOIEWithStatementReportConstraints().voieWithStatementData(voieWithStatementData);
-            // This report with have the 'failure' status since the asset uploaded isn't a valid statement
+            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
             var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
@@ -162,7 +162,7 @@ class ReportsApiTest extends BaseTest {
             var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
             var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
             var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
-            // This report with have the 'failure' status since the asset uploaded isn't a valid statement
+            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {

@@ -1,7 +1,6 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.CustomerAccount;
 import com.mastercard.finicity.client.model.ReportConstraints;
 import com.mastercard.finicity.client.model.ReportType;
 import com.mastercard.finicity.client.test.BaseTest;
@@ -10,29 +9,22 @@ import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class VerifyAssetsApiTest extends BaseTest {
 
     private final VerifyAssetsApi api = new VerifyAssetsApi(apiClient);
-    private static String accountIds; // "5053253032 5053253033 ... 5053253038 5053253039"
+    private static String customerAccountList;
 
     @BeforeAll
     protected static void beforeAll() {
         try {
             // A consumer is required to generate reports
-            ConsumersApi consumersApi = new ConsumersApi(apiClient);
-            ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);
+            ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
 
             // Fetch some accounts IDs to be included in reports
-            AccountsApi accountApi = new AccountsApi(apiClient);
-            accountIds = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID)
-                    .stream()
-                    .map(CustomerAccount::getId)
-                    .collect(Collectors.joining(" "));
+            customerAccountList = AccountUtils.getCustomerAccountListString(new AccountsApi(apiClient), CUSTOMER_ID);
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -42,7 +34,7 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generateAssetSummaryReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(accountIds);
+            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
             var reportData = api.generateAssetSummaryReport(CUSTOMER_ID, reportConstraints, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
@@ -56,7 +48,7 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generatePrequalificationReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(accountIds);
+            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
             var reportData = api.generatePrequalificationReport(CUSTOMER_ID, reportConstraints, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
@@ -70,7 +62,7 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generateVOAReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(accountIds);
+            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
             var reportData = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
@@ -84,7 +76,7 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generateVOAWithIncomeReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(accountIds);
+            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
             var reportData = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());

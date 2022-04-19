@@ -13,7 +13,7 @@ class AccountsApiTest extends BaseTest {
 
     private final static AccountsApi api = new AccountsApi(apiClient);
     private static String existingInstitutionLoginId;
-    private static Integer existingInstitutionId;
+    private static String existingInstitutionId;
     private static String existingAccountId;
 
     @BeforeAll
@@ -21,7 +21,7 @@ class AccountsApiTest extends BaseTest {
         try {
             // Load existing IDs to be used in the subsequent tests
             var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
-            existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
+            existingInstitutionLoginId = existingAccount.getInstitutionLoginId().toString();
             existingAccountId = existingAccount.getId();
             existingInstitutionId = existingAccount.getInstitutionId();
         } catch (ApiException e) {
@@ -127,7 +127,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void getCustomerAccountsByInstitutionTest_UnknownInstitution() {
         try {
-            api.getCustomerAccountsByInstitution(CUSTOMER_ID, 1234567);
+            api.getCustomerAccountsByInstitution(CUSTOMER_ID, "1234567");
             fail();
         } catch (ApiException e) {
             // HTTP 404

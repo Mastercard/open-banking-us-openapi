@@ -3,8 +3,9 @@ package com.mastercard.finicity.client.api;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.*;
 import com.mastercard.finicity.client.test.BaseTest;
-import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.ModelFactory;
+import com.mastercard.finicity.client.test.utils.AccountUtils;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import com.mastercard.finicity.client.test.utils.PayStatementUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,17 +16,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class VerifyIncomeAndEmploymentApiTest extends BaseTest {
 
     private static String existingAssetId;
+    private static String customerAccountList;
     private final VerifyIncomeAndEmploymentApi api = new VerifyIncomeAndEmploymentApi(apiClient);
 
     @BeforeAll
     protected static void beforeAll() {
         try {
             // A consumer is required to generate reports
-            ConsumersApi consumersApi = new ConsumersApi(apiClient);
-            ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);
+            ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
 
             // Upload a pay statement for the tests
             existingAssetId = PayStatementUtils.storeAsset(new PayStatementsApi(apiClient), CUSTOMER_ID);
+
+            // Fetch some accounts IDs to be included in reports
+            customerAccountList = AccountUtils.getCustomerAccountListString(new AccountsApi(apiClient), CUSTOMER_ID);
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -35,7 +39,7 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     @Test
     void generateVOIReportTest() {
         try {
-            var constraints = new ReportConstraints();
+            var constraints = new ReportConstraints().accountIds(customerAccountList);
             var reportData = api.generateVOIReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOI, reportData.getType());
@@ -75,7 +79,7 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generatePayStatementReportTest() {
         try {
             var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
-            // This report with have the 'failure' status since the asset uploaded isn't a valid statement
+            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
             var reportData = api.generatePayStatementReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.PAYSTATEMENT, reportData.getType());
@@ -114,7 +118,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generateVOIEPaystubWithTXVerifyReportTest() {
         try {
             var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
-            var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
+            var constraints = new VOIEWithTXVerifyReportConstraints()
+                    .voieWithInterviewData(voieWithInterviewData)
+                    .accountIds(customerAccountList);
             var reportData = api.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOIETXVERIFY, reportData.getType());
@@ -127,7 +133,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     @Test
     void generateVOETransactionsReportTest() {
         try {
-            var reportData = api.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
+            var constraints = new VOETransactionsReportConstraints().accountIds(customerAccountList);
+            var reportData = api.generateVOETransactionsReport(CUSTOMER_ID, constraints, null, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOETRANSACTIONS, reportData.getType());
         } catch (ApiException e) {

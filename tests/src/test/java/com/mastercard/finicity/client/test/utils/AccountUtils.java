@@ -33,4 +33,14 @@ public class AccountUtils {
                 .filter(a -> type.equals(a.getType().getValue()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Return a list of accounts: "5053253032 5053253033 ... 5053253038 5053253039"
+     */
+    public static String getCustomerAccountListString(AccountsApi api, String customerId) throws ApiException {
+        return AccountUtils.getCustomerAccounts(api, customerId)
+                .stream()
+                .map(CustomerAccount::getId)
+                .collect(Collectors.joining(" "));
+    }
 }

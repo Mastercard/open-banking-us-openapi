@@ -34,7 +34,7 @@ class ConsumersApiTest extends BaseTest {
             var consumer = api.createConsumer(customer.getId(), ModelFactory.newConsumer());
             assertNotNull(consumer.getId());
             assertNotNull(consumer.getCreatedDate());
-            assertEquals(customer.getId(), consumer.getCustomerId());
+            assertEquals(customer.getId(), String.valueOf(consumer.getCustomerId()));
         } catch (ApiException e) {
             logApiException(e);
             fail();
