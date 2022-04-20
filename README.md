@@ -16,8 +16,6 @@ The following workflows ensure the API specification stays in good shape and can
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml)
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml)
 
-If you see some red, please [contact us](https://www.finicity.com/contact/)!
-
 ## Specification
 [YAML ⭳](./finicity.yaml) | [Swagger Editor 🡕](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc 🡕](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/finicity.yaml)
 
@@ -59,7 +57,3 @@ When updating the Finicity API specification:
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using `npx prettier --write --single-quote --prose-wrap always finicity.yaml`
 4. Update and/or add tests to the [integration test project](./tests)
-
-## Support
-
-:love_letter: Contact us [here](https://www.finicity.com/contact/).
