@@ -81,5 +81,8 @@ echo "PARTNER_ID: "$1
 echo "PARTNER_SECRET: "$2
 echo ""
 
-echo "mvn clean test -DpartnerId="$1" -DpartnerSecret="$2" -DappKey="$3" -DcustomerId="$customer_id
+echo "mvn clean test -DpartnerId="$1" -DpartnerSecret="$2" -DappKey="$3" -DcustomerId="$customer_id""
+echo ""
+
+echo "npx newman run finicity.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id""
 enter_to_exit
