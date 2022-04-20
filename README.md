@@ -8,7 +8,7 @@ The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (ðŸ‡ºð
 
 ## Workflows
 
-The following workflows ensure the API specification stays in good shape and can be used to consume the Finicity APIs:
+The following workflows ensure the API specification stays in good shape and can be used to consume the Finicity APIs from your application:
 
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml)
 [![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml)
@@ -22,7 +22,7 @@ The following workflows ensure the API specification stays in good shape and can
 ## Tests
 #### Things to Know
 
-* The [integration test project](./tests) generates an API client library from the API specification: [finicity.yaml](./finicity.yaml) (OpenAPI Generator is used for that)
+* The [integration test project](./tests) generates an API client library from the API specification like you would do in a real application (OpenAPI Generator is used for that)
 * A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
 
 [![](./res/dashboard.png)](./res/dashboard.png?raw=true#gh-light-mode-only)
