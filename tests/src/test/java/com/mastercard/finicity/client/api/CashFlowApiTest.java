@@ -5,6 +5,7 @@ import com.mastercard.finicity.client.model.ReportConstraints;
 import com.mastercard.finicity.client.model.ReportType;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,9 @@ public class CashFlowApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            // A consumer is required to generate reports
+            ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
+
             // Fetch some accounts IDs to be included in reports
             customerAccountList = AccountUtils.getCustomerAccountListString(new AccountsApi(apiClient), CUSTOMER_ID);
         } catch (ApiException e) {

@@ -24,6 +24,7 @@ class ReportsApiTest extends BaseTest {
     private final CashFlowApi cashFlowApi = new CashFlowApi(apiClient);
 
     private static String existingAssetId;
+    private static String consumerId;
 
     private final static String IN_PROGRESS = "inProgress";
     private final static String ON_BEHALF_OF = "Someone";
@@ -33,8 +34,7 @@ class ReportsApiTest extends BaseTest {
     protected static void beforeAll() {
         try {
             // A consumer is required to generate reports
-            ConsumersApi consumersApi = new ConsumersApi(apiClient);
-            ConsumerUtils.getOrCreateDefaultConsumer(consumersApi, CUSTOMER_ID);
+            consumerId = ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
 
             // Upload a pay statement for the tests
             existingAssetId = PayStatementUtils.storeAsset(new PayStatementsApi(apiClient), CUSTOMER_ID);
@@ -87,8 +87,6 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getReportsByConsumerTest() {
         try {
-            var consumerApi = new ConsumersApi(apiClient);
-            var consumerId = ConsumerUtils.getOrCreateDefaultConsumer(consumerApi, CUSTOMER_ID);
             var reports = api.getReportsByConsumer(consumerId, null);
             assertNotNull(reports);
         } catch (ApiException e) {

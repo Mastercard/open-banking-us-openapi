@@ -19,9 +19,8 @@ class PortfoliosApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            // Get the consumer ID
-            var consumerApi = new ConsumersApi(apiClient);
-            consumerId = ConsumerUtils.getOrCreateDefaultConsumer(consumerApi, CUSTOMER_ID);
+            // Get the existing consumer ID
+            consumerId = ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
 
             // Create a report and get the portfolio ID
             var verifyAssetsApi = new VerifyAssetsApi(apiClient);
