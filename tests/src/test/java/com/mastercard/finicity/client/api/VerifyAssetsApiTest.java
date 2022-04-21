@@ -40,8 +40,8 @@ class VerifyAssetsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.ASSETSUMMARY, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -54,8 +54,8 @@ class VerifyAssetsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.PREQUALVOA, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -68,8 +68,8 @@ class VerifyAssetsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOA, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -82,8 +82,8 @@ class VerifyAssetsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOAHISTORY, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 }

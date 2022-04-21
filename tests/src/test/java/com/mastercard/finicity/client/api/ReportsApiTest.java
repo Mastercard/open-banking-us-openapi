@@ -50,6 +50,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyAssetsApi.generatePrequalificationReport(CUSTOMER_ID, new ReportConstraints(), null);
             fetchPrequalificationReportReport(reportData.getId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -60,6 +61,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -70,6 +72,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -80,6 +83,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyAssetsApi.generateAssetSummaryReport(CUSTOMER_ID, new ReportConstraints(), null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -112,6 +116,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyIncomeAndEmploymentApi.generateVOIReport(CUSTOMER_ID, new ReportConstraints(), null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -123,6 +128,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyIncomeAndEmploymentApi.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -136,6 +142,7 @@ class ReportsApiTest extends BaseTest {
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -150,6 +157,7 @@ class ReportsApiTest extends BaseTest {
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -164,6 +172,7 @@ class ReportsApiTest extends BaseTest {
             var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -175,6 +184,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, null, true);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -185,6 +195,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -195,6 +206,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -205,6 +217,7 @@ class ReportsApiTest extends BaseTest {
             var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
             fetchReport(reportData.getId(), reportData.getConsumerId());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }

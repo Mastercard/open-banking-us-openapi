@@ -44,8 +44,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOI, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -57,8 +57,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOEPAYROLL, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -70,8 +70,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOIEPAYROLL, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -84,6 +84,7 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.PAYSTATEMENT, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
         }
     }
@@ -109,8 +110,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOIETXVERIFY, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -125,8 +126,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOIETXVERIFY, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -138,8 +139,8 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOETRANSACTIONS, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 }

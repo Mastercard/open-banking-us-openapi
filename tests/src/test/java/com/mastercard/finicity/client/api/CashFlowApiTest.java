@@ -38,8 +38,8 @@ public class CashFlowApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.CFRB, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
@@ -51,8 +51,8 @@ public class CashFlowApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.CFRP, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 }

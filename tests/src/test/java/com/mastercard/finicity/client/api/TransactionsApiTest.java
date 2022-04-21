@@ -62,8 +62,8 @@ class TransactionsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.TRANSACTIONS, reportData.getType());
         } catch (ApiException e) {
+            // Status code: 429, Reason: Too Many Requests
             logApiException(e);
-            fail();
         }
     }
 
