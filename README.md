@@ -67,6 +67,14 @@ The following workflows ensure the API specification stays in good shape and can
 4. Enable workflows in the **Actions** tab
 5. Click "Run workflow" under **Integration Tests**. Expected result: :heavy_check_mark:
 
+
+## What's Next?
+
+The [Finicity API specification](./finicity.yaml) and a [generated API client](./tests) are the only things you need to call Finicity from your application. 
+
+* For other software development frameworks and languages, see: OpenAPI Generator > [Generators List](https://openapi-generator.tech/docs/generators).
+* You may also be interested in trying our [Postman collection](https://github.com/FY-Dev-Relations/finicity-postman).
+
 ## Guidelines
 
 When updating the Finicity API specification:
