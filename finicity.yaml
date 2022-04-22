@@ -300,7 +300,7 @@ paths:
     post:
       tags:
         - Customers
-      summary: Add Real Customer
+      summary: Add Customer
       description: >-
         Enroll an active customer, which is the actual owner of one or more
         real-world accounts. This is a billable customer.
