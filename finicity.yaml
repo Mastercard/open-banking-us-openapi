@@ -6225,9 +6225,9 @@ components:
           example: 1989
         month:
           type: integer
-          description: The birthday 2-digit month ("01" is January)
+          description: The birthday 2-digit month (1 is January)
           format: int32
-          example: 08
+          example: 8
         dayOfMonth:
           type: integer
           description: The birthday 2-digit day-of-month
@@ -7433,11 +7433,11 @@ components:
         From:
           type: string
           description: The `From` date of the date range for the report
-          example: 2021-02-01T00:00:00.000Z
+          example: '2021-02-01T00:00:00.000Z'
         To:
           type: string
           description: The `To` date of the date range for the report
-          example: 2022-02-08T00:00:00.000Z
+          example: '2022-02-08T00:00:00.000Z'
     ConsumerAttributesData:
       required:
         - dateRange
@@ -7622,19 +7622,13 @@ components:
           description:
             The number of non-sufficient funds occurrences per calendar month.
           example:
-            monthlyNSFOccurrences:
-              'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-              'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-        monthlyLateFeeOccurrences:
-          type: object
-          description: The number of late fee occurrences.
-          example: {}
-      example:
-        nsf:
-          monthlyNSFOccurrences:
             'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
             'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-          monthlyLateFeeOccurrences: 35
+        monthlyLateFeeOccurrences:
+          type: integer
+          format: int32
+          description: The number of late fee occurrences.
+          example: 35
     ConsumerAttributesDataLiabilities:
       required:
         - monthlyLoanDeposits
