@@ -20,7 +20,7 @@ The following workflows ensure the API specification stays in good shape and can
 [YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/finicity.yaml)
 
 ## Tests
-#### Things to Know
+### Things to Know :point_down:
 
 * The [integration test project](./tests) generates an API client library from the API specification like you would do in a real application (OpenAPI Generator is used for that)
 * A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
@@ -36,7 +36,7 @@ The following workflows ensure the API specification stays in good shape and can
 [![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)
 [![](./res/connect-for-tests-dark.png)](./res/connect-for-tests.png?raw=true#gh-dark-mode-only)
 
-#### Run Tests Locally
+### Run Tests Locally
 
 1. Clone this repository
 2. Run `cd tests && mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***`
@@ -59,7 +59,7 @@ The following workflows ensure the API specification stays in good shape and can
 [INFO] ------------------------------------------------------------------------
 ```
 
-#### Run Tests in GitHub
+### Run Tests in GitHub
 
 1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
 2. Go to **Settings** > **Secrets** > **Actions**
