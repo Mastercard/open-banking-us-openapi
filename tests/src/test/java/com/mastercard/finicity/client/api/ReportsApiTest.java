@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,6 +27,7 @@ class ReportsApiTest extends BaseTest {
 
     private static String existingAssetId;
     private static String consumerId;
+    private static Map<ReportType, String> reportsByType; // type <-> id
 
     private final static String IN_PROGRESS = "inProgress";
     private final static String ON_BEHALF_OF = "Someone";
@@ -38,6 +41,12 @@ class ReportsApiTest extends BaseTest {
 
             // Upload a pay statement for the tests
             existingAssetId = PayStatementUtils.storeAsset(new PayStatementsApi(apiClient), CUSTOMER_ID);
+
+            // Fetch existing reports
+            ReportSummaries reports = new ReportsApi(apiClient).getReportsByCustomer(CUSTOMER_ID, null);
+            reportsByType = reports.getReports()
+                    .stream()
+                    .collect(Collectors.toMap(ReportSummary::getType, ReportSummary::getId, (key1, key2) -> key1));
         } catch (ApiException e) {
             logApiException(e);
             fail();
@@ -47,8 +56,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getPrequalificationReportByCustomerTest() throws Exception {
         try {
-            var reportData = verifyAssetsApi.generatePrequalificationReport(CUSTOMER_ID, new ReportConstraints(), null);
-            fetchPrequalificationReportReport(reportData.getId());
+            var reportId = reportsByType.get(ReportType.PREQUALVOA);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyAssetsApi.generatePrequalificationReport(CUSTOMER_ID, new ReportConstraints(), null);
+                reportId = reportData.getId();
+            }
+            fetchPrequalificationReportReport(reportId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -58,8 +72,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOAReportByConsumerTest() throws Exception {
         try {
-            var reportData = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.VOA);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -69,8 +88,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOAWithIncomeReportByConsumerTest() throws Exception {
         try {
-            var reportData = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new ReportConstraints(), null, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.VOAHISTORY);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -80,8 +104,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getAssetSummaryReportByConsumerTest() throws Exception {
         try {
-            var reportData = verifyAssetsApi.generateAssetSummaryReport(CUSTOMER_ID, new ReportConstraints(), null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.ASSETSUMMARY);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyAssetsApi.generateAssetSummaryReport(CUSTOMER_ID, new ReportConstraints(), null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -113,8 +142,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOIReportByConsumerTest() throws Exception {
         try {
-            var reportData = verifyIncomeAndEmploymentApi.generateVOIReport(CUSTOMER_ID, new ReportConstraints(), null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.VOI);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyIncomeAndEmploymentApi.generateVOIReport(CUSTOMER_ID, new ReportConstraints(), null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -124,9 +158,14 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOEPayrollReportByConsumerTest() throws Exception {
         try {
-            var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
-            var reportData = verifyIncomeAndEmploymentApi.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.VOEPAYROLL);
+            if (reportId == null) {
+                // Create a report the first time
+                var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
+                var reportData = verifyIncomeAndEmploymentApi.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -136,10 +175,15 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getPayStatementReportByConsumerTest() {
         try {
-            var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
-            var reportData = verifyIncomeAndEmploymentApi.generatePayStatementReport(CUSTOMER_ID, constraints, null);
+            var reportId = reportsByType.get(ReportType.PAYSTATEMENT);
+            if (reportId == null) {
+                // Create a report the first time
+                var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
+                var reportData = verifyIncomeAndEmploymentApi.generatePayStatementReport(CUSTOMER_ID, constraints, null);
+                reportId = reportData.getId();
+            }
             // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
+            var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
@@ -150,11 +194,16 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOIEPaystubReportByConsumerTest() {
         try {
-            var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
-            var constraints = new VOIEWithStatementReportConstraints().voieWithStatementData(voieWithStatementData);
+            var reportId = reportsByType.get(ReportType.VOIETXVERIFY);
+            if (reportId == null) {
+                // Create a report the first time
+                var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
+                var constraints = new VOIEWithStatementReportConstraints().voieWithStatementData(voieWithStatementData);
+                var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
+                reportId = reportData.getId();
+            }
             // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
-            var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
+            var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
@@ -165,11 +214,16 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOIEPaystubWithTXVerifyReportByConsumerTest() {
         try {
-            var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
-            var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
-            var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
+            var reportId = reportsByType.get(ReportType.VOIETXVERIFY);
+            if (reportId == null) {
+                // Create a report the first time
+                var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
+                var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
+                var reportData = verifyIncomeAndEmploymentApi.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
+                reportId = reportData.getId();
+            }
             // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            var report = api.getReportByConsumer(reportData.getConsumerId(), reportData.getId(), ON_BEHALF_OF, PURPOSE);
+            var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
             assertNotNull(report);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
@@ -180,9 +234,14 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getTransactionReportByConsumerTest() throws Exception {
         try {
-            var toDate = LocalDateTime.now().toEpochSecond(UTC);
-            var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, null, true);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.TRANSACTIONS);
+            if (reportId == null) {
+                // Create a report the first time
+                var toDate = LocalDateTime.now().toEpochSecond(UTC);
+                var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, null, true);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -192,8 +251,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getVOETransactionsReportByConsumerTest() throws Exception {
         try {
-            var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.VOETRANSACTIONS);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -203,8 +267,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getCashFlowBusinessReportByConsumerTest() throws Exception {
         try {
-            var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.CFRB);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -214,8 +283,13 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getCashFlowPersonalReportByConsumerTest() throws Exception {
         try {
-            var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
-            fetchReport(reportData.getId(), reportData.getConsumerId());
+            var reportId = reportsByType.get(ReportType.CFRP);
+            if (reportId == null) {
+                // Create a report the first time
+                var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                reportId = reportData.getId();
+            }
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
