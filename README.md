@@ -62,11 +62,10 @@ The following workflows ensure the API specification stays in good shape and can
 ### Run Tests in GitHub
 
 1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
-2. Go to **Settings** > **Secrets** > **Actions**
+2. Go to _Settings_ > _Secrets_ > _Actions_
 3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
-4. Enable workflows in the **Actions** tab
-5. Click "Run workflow" under **Integration Tests**. Expected result: :heavy_check_mark:
-
+4. Enable workflows in the _Actions_ tab
+5. Click _Run workflow_ under _Integration Tests_. Expected result: :heavy_check_mark:
 
 ## What's Next?
 
