@@ -82,9 +82,9 @@ paths:
         making any calls. If the token is greater than 90 minutes, generate a
         new one.
 
-        * ⚠️ After five failed attempts to authenticate, your account is locked.
-        Contact [support@finicity.com](mailto:support@finicity.com) to get help
-        resetting your account.
+        * ⚠️ After five failed attempts to authenticate, your account will be
+        locked. Contact [support@finicity.com](mailto:support@finicity.com) to
+        get help resetting your account.
       operationId: CreateToken
       requestBody:
         $ref: '#/components/requestBodies/CreateTokenRequest'
@@ -551,7 +551,7 @@ paths:
 
 
         The recommended timeout setting for this request is 120 seconds in order
-        to receive a response. However you can terminate the connection after
+        to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
@@ -670,7 +670,7 @@ paths:
 
 
         The recommended timeout setting for this request is 120 seconds in order
-        to receive a response. However you can terminate the connection after
+        to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
@@ -728,7 +728,7 @@ paths:
 
 
         The recommended timeout setting for this request is 180 seconds in order
-        to receive a response. However you can terminate the connection after
+        to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
