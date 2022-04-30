@@ -1,7 +1,7 @@
 #!/bin/bash
 
 api_error() {
-   echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US."
+   echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US or Canada."
    enter_to_exit
 }
 
