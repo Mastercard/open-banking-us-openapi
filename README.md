@@ -4,7 +4,7 @@
 
 ## Overview
 
-The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (🇺🇸), along with a suite of [integration tests](./tests/src/test/java/com/mastercard/finicity/client/api) using a generated API client and the [Finicity Test Drive](https://signup.finicity.com/).
+The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (🇺🇸), along with a suite of [tests](./tests/src/test/java/com/mastercard/finicity/client/api) using a generated API client and the [Finicity Test Drive](https://signup.finicity.com/).
 
 ## Workflows
 
@@ -14,7 +14,7 @@ The following workflows ensure the API specification stays in good shape and can
 [![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/swagger-editor.yml)
 [![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/redoc.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/redoc.yml)
 [![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/openapi-generator.yml)
-[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/integration.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/tests.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/tests.yml)
 
 ## Specification
 [YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Finicity-Mastercard/finicity-openapi/main/finicity.yaml)
@@ -22,7 +22,7 @@ The following workflows ensure the API specification stays in good shape and can
 ## Tests
 ### Things to Know :point_down:
 
-* The [integration test project](./tests) generates an API client library from the API specification like you would do in a real application (OpenAPI Generator is used for that)
+* The [test project](./tests) generates an API client library from the API specification like you would do in a real application (OpenAPI Generator is used for that)
 * A [free Finicity account](https://signup.finicity.com/) is required to obtain your **Partner ID**, **Partner Secret** and **Finicity App Key**:
 
 [![](./res/dashboard.png)](./res/dashboard.png?raw=true#gh-light-mode-only)
@@ -65,7 +65,7 @@ The following workflows ensure the API specification stays in good shape and can
 2. Go to _Settings_ > _Secrets_ > _Actions_
 3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
 4. Enable workflows in the _Actions_ tab
-5. Click _Run workflow_ under _Integration Tests_. Expected result: :heavy_check_mark:
+5. Click _Run workflow_ under _API Client Tests_. Expected result: :heavy_check_mark:
 
 ## What's Next?
 
@@ -80,4 +80,7 @@ When updating the Finicity API specification:
 1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) or [Redoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Finicity-Mastercard/finicity-openapi/main/finicity.yaml)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using `npx prettier --write --single-quote --prose-wrap always finicity.yaml`
-4. Update and/or add tests to the [integration test project](./tests)
+4. Update and/or add tests to the [test project](./tests)
+   * Generate new tests by using `true` for `generateApiTests` in the [POM file](./tests/pom.xml)
+   * Move the generated classes from `/target/generated-sources/openapi/src/test/` to [`/src`](./tests/src/test/java/com/mastercard/finicity/client/api)
+   * Update the generated test methods
