@@ -85,6 +85,9 @@ paths:
         * ⚠️ After five failed attempts to authenticate, your account will be
         locked. Contact [support@finicity.com](mailto:support@finicity.com) to
         get help resetting your account.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: CreateToken
       requestBody:
         $ref: '#/components/requestBodies/CreateTokenRequest'
@@ -110,6 +113,9 @@ paths:
         numbers, and the characters !, @, #, $, %, &, *, _, -, +. It must
         include at least one number and at least one letter, and its length
         should be between 12 and 255 characters.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: ModifyPartnerSecret
       requestBody:
         $ref: '#/components/requestBodies/ModifyPartnerSecretRequest'
@@ -144,6 +150,9 @@ paths:
         MVS Developers: You can pre-populate the consumer's SSN on the "Find
         employment records" page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateConnectUrl
       requestBody:
         $ref: '#/components/requestBodies/GenerateConnectUrlRequest'
@@ -171,6 +180,9 @@ paths:
         The Connect Web SDK isn't a requirement when using Connect lite.
         However, if you want to use the SDK events, routes, and user events,
         then you must integrate with the Connect Web SDK.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateLiteConnectUrl
       requestBody:
         $ref: '#/components/requestBodies/GenerateLiteConnectUrlRequest'
@@ -194,6 +206,9 @@ paths:
         * The user's credentials were updated (for any number of reasons)
 
         * The user's MFA challenge has expired
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateFixConnectUrl
       requestBody:
         $ref: '#/components/requestBodies/GenerateFixConnectUrlRequest'
@@ -214,6 +229,9 @@ paths:
       description: >-
         Same as Connect Full (`POST /connect/v2/generate`) but send a Connect
         email to a consumer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: SendConnectEmail
       requestBody:
         $ref: '#/components/requestBodies/SendConnectEmailRequest'
@@ -236,6 +254,9 @@ paths:
 
         MVS prompts both the primary and joint borrower to enter each of their
         financial, payroll, and paystub information in the same Connect session.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateJointBorrowerConnectUrl
       requestBody:
         $ref: '#/components/requestBodies/GenerateJointBorrowerConnectUrlRequest'
@@ -260,6 +281,9 @@ paths:
         When the consumer opens the email, MVS prompts both the primary and
         joint borrower to enter each of their financial, payroll, and paystub
         information in the same Connect session.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: SendJointBorrowerConnectEmail
       requestBody:
         $ref: '#/components/requestBodies/SendJointBorrowerConnectEmailRequest'
@@ -286,6 +310,9 @@ paths:
         only be assigned to testing OAuth applications and can only add accounts
         to Finbank OAuth for testing OAuth implementation as well as other
         Finbank testing institutions.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: AddTestingCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -304,6 +331,9 @@ paths:
       description: >-
         Enroll an active customer, which is the actual owner of one or more
         real-world accounts. This is a billable customer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: AddCustomer
       requestBody:
         $ref: '#/components/requestBodies/AddCustomerRequest'
@@ -326,6 +356,9 @@ paths:
         text is found in the customer's username or any combination of
         `firstName` and `lastName` fields. If no search text is provided, all
         customers will be returned.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomers
       parameters:
         - $ref: '#/components/parameters/CustomerUsernameParameter'
@@ -348,6 +381,9 @@ paths:
       description: >-
         Retrieve a customer along with additional details about the OAuth
         application.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerWithAppData
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -365,7 +401,11 @@ paths:
       tags:
         - Customers
       summary: Get Customer by ID
-      description: Retrieve a customer by ID.
+      description: >-
+        Retrieve a customer by ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -382,7 +422,11 @@ paths:
       tags:
         - Customers
       summary: Modify Customer by ID
-      description: Modify an enrolled customer by ID.
+      description: >-
+        Modify an enrolled customer by ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: ModifyCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -408,6 +452,9 @@ paths:
 
         ⚠️ Use this service carefully! It will not pause for confirmation before
         performing the operation!
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -431,6 +478,9 @@ paths:
 
         A consumer must be created for the given customer before calling any of
         the "Generate Report" services.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: CreateConsumer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -453,6 +503,9 @@ paths:
       summary: Get Consumer For Customer
       description: >-
         Get the details of a consumer record by customer ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetConsumerForCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -472,6 +525,9 @@ paths:
       summary: Get Consumer by ID
       description: >-
         Get the details of a consumer record by consumer ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetConsumer
       parameters:
         - $ref: '#/components/parameters/ConsumerIdParameter'
@@ -492,6 +548,9 @@ paths:
         Modify an existing consumer. All fields are required for a consumer
         record, but individual fields for this call are optional because fields
         that are not specified will be left unchanged.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: ModifyConsumer
       parameters:
         - $ref: '#/components/parameters/ConsumerIdParameter'
@@ -515,6 +574,9 @@ paths:
         Get all accounts associated with the given institution login. All
         accounts returned are accessible by a single set of credentials on a
         single institution.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccountsByInstitutionLogin
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -555,6 +617,9 @@ paths:
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RefreshCustomerAccountsByInstitutionLogin
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -575,9 +640,12 @@ paths:
       tags:
         - Accounts
       summary: Delete Customer Accounts by Institution Login ID
-      description:
+      description: >-
         Remove from the Finicity system the set of accounts matching the
         institution login ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomerAccountsByInstitutionLogin
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -596,7 +664,11 @@ paths:
       tags:
         - Accounts
       summary: Get Customer Account by ID
-      description: Get a customer account by ID.
+      description: >-
+        Get a customer account by ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -614,7 +686,11 @@ paths:
       tags:
         - Accounts
       summary: Delete Customer Account by ID
-      description: Remove the given account from the Finicity system.
+      description: >-
+        Remove the given account from the Finicity system.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -633,7 +709,11 @@ paths:
       tags:
         - Accounts
       summary: Get Customer Accounts
-      description: Get all accounts owned by the given customer.
+      description: >-
+        Get all accounts owned by the given customer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -674,6 +754,9 @@ paths:
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RefreshCustomerAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -696,6 +779,9 @@ paths:
       description: >-
         Get all active accounts owned by the given customer at the given
         institution.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccountsByInstitution
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -757,6 +843,9 @@ paths:
 
         In these cases, the POST request can contain the parameter `force=true`
         in the request body to force the second connection.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: LoadHistoricTransactionsForCustomerAccount
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -790,6 +879,9 @@ paths:
         This service retrieves account data from the institution. This usually
         returns quickly, but in some scenarios may take a few minutes to
         complete. In the event of a timeout condition, retry the call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAccountOwner
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -813,6 +905,9 @@ paths:
       description: >-
         Register a new application to access financial institutions using OAuth
         connections.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RegisterApp
       requestBody:
         $ref: '#/components/requestBodies/RegisterAppRequest'
@@ -828,7 +923,11 @@ paths:
       tags:
         - App Registration
       summary: Modify App Registration
-      description: Update a registered application.
+      description: >-
+        Update a registered application.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: ModifyAppRegistration
       parameters:
         - $ref: '#/components/parameters/PreAppIdPathParameter'
@@ -848,7 +947,11 @@ paths:
       tags:
         - App Registration
       summary: Get App Registration Status
-      description: Get the status of your application registration(s).
+      description: >-
+        Get the status of your application registration(s).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAppRegistrationStatus
       parameters:
         - $ref: '#/components/parameters/PreAppIdQueryParameter'
@@ -878,6 +981,9 @@ paths:
         register their applications to access financial institutions using OAuth
         connections, then use this API to assign applications to an existing
         customer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: SetCustomerAppID
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -905,6 +1011,9 @@ paths:
 
 
         This API returns a list of accounts for the given institution login ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: MigrateInstitutionLoginAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -925,7 +1034,11 @@ paths:
       tags:
         - Institutions
       summary: Get Certified Institutions With RSSD
-      description: Search for certified financial institutions w/RSSD.
+      description: >-
+        Search for certified financial institutions w/RSSD.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCertifiedInstitutionsWithRSSD
       parameters:
         - $ref: '#/components/parameters/InstitutionSearchParameter'
@@ -944,7 +1057,11 @@ paths:
       tags:
         - Institutions
       summary: Get Institutions
-      description: Search for financial institutions.
+      description: >-
+        Search for financial institutions.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutions
       parameters:
         - $ref: '#/components/parameters/InstitutionSearchParameter'
@@ -963,7 +1080,11 @@ paths:
       tags:
         - Institutions
       summary: 'Get Certified Institutions'
-      description: Search for financial institutions by certified product.
+      description: >-
+        Search for financial institutions by certified product.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCertifiedInstitutions
       parameters:
         - $ref: '#/components/parameters/InstitutionSearchParameter'
@@ -982,7 +1103,11 @@ paths:
       tags:
         - Institutions
       summary: Get Institution by ID
-      description: Get financial institution details by ID.
+      description: >-
+        Get financial institution details by ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitution
       parameters:
         - $ref: '#/components/parameters/InstitutionIdParameter'
@@ -1000,7 +1125,11 @@ paths:
       tags:
         - Institutions
       summary: Get Institution Branding by ID
-      description: Return the branding information for a financial institution.
+      description: >-
+        Return the branding information for a financial institution.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutionBranding
       parameters:
         - $ref: '#/components/parameters/InstitutionIdParameter'
@@ -1025,6 +1154,9 @@ paths:
 
 
         Note: The webhook URL partners use to subscribe must be HTTPS.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutionSubscription
       responses:
         '200':
@@ -1058,6 +1190,9 @@ paths:
 
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOAReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1102,6 +1237,9 @@ paths:
 
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOAWithIncomeReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1141,6 +1279,9 @@ paths:
 
         If no account of type checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GeneratePrequalificationReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1175,6 +1316,9 @@ paths:
 
         If no account type of checking, savings, money market, or investment is
         found, the service will return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateAssetSummaryReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1209,6 +1353,9 @@ paths:
 
         If no account of type checking, savings, or money market is found, the
         service will return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOIReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1245,6 +1392,9 @@ paths:
         To generate this report, pass the values from the customer `SSN`, `DOB`,
         and the `reportId` from the first VOIE-Payroll report generated after
         the Connect session.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOEPayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1283,6 +1433,9 @@ paths:
         the expected cadence. The report displays transaction descriptions
         without any dollar amounts so that income re-verification isn't
         necessary.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOETransactionsReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1314,6 +1467,9 @@ paths:
         Statement Extraction Report under the current subscription plan. The
         billable event is the successful generation of a Pay Statement
         Extraction Report.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GeneratePayStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1354,6 +1510,9 @@ paths:
         This is a premium service. The billing rate is the variable rate for
         VOIE TXVerify under the current subscription plan. The billable event is
         the successful generation of a VOIE TXVerify Report.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOIEPaystubWithTXVerifyReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1384,6 +1543,9 @@ paths:
         This is a premium service. The billing rate is the variable rate for
         VOIE - Paystub under the current subscription plan. The billable event
         is the successful generation of a VOIE - Paystub Report.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateVOIEPaystubReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1420,6 +1582,9 @@ paths:
         Note: lenders can only refresh this report one time in a 60-day period
         starting from the date of the first report. Any further report refreshes
         will incur additional charges.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RefreshVOIEPayrollReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1472,6 +1637,9 @@ paths:
 
         Note: setting the timeout to 180 seconds is recommended to allow enough
         time for a response.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccountStatement
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1504,6 +1672,9 @@ paths:
 
         A report consumer must be created for the given customer before calling
         this API (see "Consumers").
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateStatementReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1540,6 +1711,9 @@ paths:
         There is no limit for the size of the window between `fromDate` and
         `toDate`, however, the maximum number of transactions returned on one
         page is 1000.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAllCustomerTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1563,7 +1737,11 @@ paths:
       tags:
         - Transactions
       summary: Get Customer Transaction by ID
-      description: Get details for the given transaction.
+      description: >-
+        Get details for the given transaction.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1598,6 +1776,9 @@ paths:
         There is no limit for the size of the window between `fromDate` and
         `toDate`, however, the maximum number of transactions returned on one
         page is 1000.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCustomerAccountTransactions
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1638,6 +1819,9 @@ paths:
 
 
         There cannot be more than 24 months between `fromDate` and `toDate`.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateTransactionsReport
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
@@ -1661,7 +1845,11 @@ paths:
       tags:
         - Pay Statements
       summary: Store Customer Pay Statement
-      description: Use this service to upload pay statements for a customer.
+      description: >-
+        Upload pay statements for a customer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: StoreCustomerPayStatement
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1686,6 +1874,9 @@ paths:
 
 
         Note: this is a premium service, billable per every successful API call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetLoanPaymentDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1709,6 +1900,9 @@ paths:
         type for the given customer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
         generated report for the type will be returned.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetPortfolioByCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1743,6 +1937,9 @@ paths:
 
         For additional details on this process, see [TxPush Listener
         Service](https://docs.finicity.com/txpush-listener-service/).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: SubscribeToTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1771,6 +1968,9 @@ paths:
 
         For additional details on this process, see [TxPush Listener
         Service](https://docs.finicity.com/txpush-listener-service/).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DisableTxPushNotifications
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1801,6 +2001,9 @@ paths:
 
         For additional details on this process, see [TxPush Listener
         Service](https://docs.finicity.com/txpush-listener-service/).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: CreateTxPushTestTransaction
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1830,6 +2033,9 @@ paths:
 
         For additional details on this process, see [TxPush Listener
         Service](https://docs.finicity.com/txpush-listener-service/).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteTxPushSubscription
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1853,6 +2059,9 @@ paths:
         type for a given consumer. If there are multiple reports that were
         generated for a report type (VOA, VOI, etc), only the most recently
         generated report for the type will be returned.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetPortfolioByConsumer
       parameters:
         - $ref: '#/components/parameters/ConsumerIdParameter'
@@ -1877,6 +2086,9 @@ paths:
 
 
         Note: this is a premium service, billable per every successful API call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAccountACHDetails
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1903,6 +2115,9 @@ paths:
         The report's status field will contain `inProgress`, `failure`, or
         `success`. If the status shows `inProgress`, the client app should wait
         20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetPrequalificationReportByCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1931,6 +2146,9 @@ paths:
         The report's status field will contain `inProgress`, `failure`, or
         `success`. If the status shows `inProgress`, the client app should wait
         20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetReportsByCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -1959,6 +2177,9 @@ paths:
         The report's status field will contain `inProgress`, `failure`, or
         `success`. If the status shows `inProgress`, the client app should wait
         20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetReportsByConsumer
       parameters:
         - $ref: '#/components/parameters/PurposeParameter'
@@ -1987,6 +2208,9 @@ paths:
         The report's status field will contain `inProgress`, `failure`, or
         `success`. If the status shows `inProgress`, the client app should wait
         20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetReportByConsumer
       parameters:
         - $ref: '#/components/parameters/PurposeParameter'
@@ -2007,7 +2231,11 @@ paths:
       tags:
         - Assets
       summary: Get Asset by Customer and ID
-      description: Retrieve a binary file for the given asset ID.
+      description: >-
+        Retrieve a binary file for the given asset ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAssetByCustomerID
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2032,6 +2260,9 @@ paths:
 
 
         Note: this is a premium service, billable per every successful API call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAvailableBalanceLive
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2060,6 +2291,9 @@ paths:
 
         Note: this is a premium service, billable per every successful API call.
         Enrollment is required.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAvailableBalance
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2092,6 +2326,9 @@ paths:
 
         If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateCashFlowBusinessReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2137,6 +2374,9 @@ paths:
 
         If no account of type checking or savings is found, the service will
         return HTTP 400 Bad Request.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateCashFlowPersonalReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2167,6 +2407,9 @@ paths:
         An analytic ID is created and associated with the customer's ID. If you
         generate multiple Consumer Attributes reports for the same customer,
         then each report will have its own analytic ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GenerateConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2188,6 +2431,9 @@ paths:
       description: >-
         Retrieve the list of all analytic IDs previously created for a customer
         using the "Generate Consumer Attributes" API.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: ListConsumerAttributes
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
@@ -2216,6 +2462,9 @@ paths:
 
         If the current date is before the end of the calendar month, then the
         most recent month provides all available data up to the current date.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetConsumerAttributesByID
       parameters:
         - $ref: '#/components/parameters/AnalyticIdParameter'
