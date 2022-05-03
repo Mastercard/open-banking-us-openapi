@@ -10,14 +10,14 @@ The OpenAPI specification for [Finicity APIs](https://docs.finicity.com/) (🇺�
 
 The following workflows ensure the API specification stays in good shape and can be used to consume the Finicity APIs from your application:
 
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/prettier.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/swagger-editor.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/redoc.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/redoc.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/openapi-generator.yml)
-[![](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/FY-Dev-Relations/finicity-openapi/actions/workflows/integration.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/prettier.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/swagger-editor.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/redoc.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/redoc.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/openapi-generator.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/openapi-generator.yml)
+[![](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/integration.yml/badge.svg)](https://github.com/Finicity-Mastercard/finicity-openapi/actions/workflows/integration.yml)
 
 ## Specification
-[YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/finicity.yaml)
+[YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Finicity-Mastercard/finicity-openapi/main/finicity.yaml)
 
 ## Tests
 ### Things to Know :point_down:
@@ -61,7 +61,7 @@ The following workflows ensure the API specification stays in good shape and can
 
 ### Run Tests in GitHub
 
-1. [Fork this repository](https://github.com/FY-Dev-Relations/finicity-openapi/fork)
+1. [Fork this repository](https://github.com/Finicity-Mastercard/finicity-openapi/fork)
 2. Go to _Settings_ > _Secrets_ > _Actions_
 3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
 4. Enable workflows in the _Actions_ tab
@@ -72,12 +72,12 @@ The following workflows ensure the API specification stays in good shape and can
 The [Finicity API specification](./finicity.yaml) and a [generated API client](./tests) are the only things you need to call Finicity from your application. 
 
 * For other software development frameworks and languages, see: OpenAPI Generator > [Generators List](https://openapi-generator.tech/docs/generators).
-* You may also be interested in trying our [Postman collection](https://github.com/FY-Dev-Relations/finicity-postman).
+* You may also be interested in trying our [Postman collection](https://github.com/Finicity-Mastercard/finicity-postman).
 
 ## Guidelines
 
 When updating the Finicity API specification:
-1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) or [Redoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FY-Dev-Relations/finicity-openapi/main/finicity.yaml)
+1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) or [Redoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Finicity-Mastercard/finicity-openapi/main/finicity.yaml)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using `npx prettier --write --single-quote --prose-wrap always finicity.yaml`
 4. Update and/or add tests to the [integration test project](./tests)
