@@ -1,6 +1,9 @@
 #!/bin/bash
 
 api_error() {
+   echo ""
+   echo "Response: $1"
+   echo ""
    echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US or Canada."
    enter_to_exit
 }
@@ -24,7 +27,7 @@ token_response=$(curl -s --location --request POST 'https://api.finicity.com/agg
 
 # {"token":"P09NAglkaBTyJrHoFGmL"}
 if [[ "$token_response" != *"token"* ]]; then 
-  api_error
+  api_error "$token_response"
 fi;
 
 token=$(echo $token_response | sed -E 's/\{"token":"(.*)"\}/\1/')
@@ -40,7 +43,7 @@ customer_response=$(curl -s --location --request POST 'https://api.finicity.com/
 
 # {"id":"5026948632","username":"customerusername1","createdDate":"1649244189"}
 if [[ "$customer_response" != *"username"* ]]; then 
-  api_error
+  api_error "$customer_response"
 fi;
 
 customer_id=$(echo $customer_response | sed -E 's/\{"id":"([0-9]*).*/\1/')
