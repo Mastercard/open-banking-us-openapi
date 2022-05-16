@@ -7513,8 +7513,6 @@ components:
         - groupNumber
         - groupPaymentNumber
         - groupPaymentAddress
-        - groupFuturePayoffAmount
-        - groupFuturePayoffDate
         - groupLoanDetail
       type: object
       properties:
@@ -7556,8 +7554,6 @@ components:
         - loanNumber
         - loanPaymentNumber
         - loanPaymentAddress
-        - loanFuturePayoffAmount
-        - loanFuturePayoffDate
       type: object
       properties:
         accountId:
