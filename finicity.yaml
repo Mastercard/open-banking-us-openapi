@@ -1142,31 +1142,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  /institution/v2/institutions/subscription:
-    get:
-      tags:
-        - Institutions
-      summary: Get Institution Subscription
-      description: >-
-        Retrieve details of a subscription the partner has created to be alerted
-        of changes to production status of financial institutions, products, and
-        certification and decertification of products.
-
-
-        Note: The webhook URL partners use to subscribe must be HTTPS.
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetInstitutionSubscription
-      responses:
-        '200':
-          $ref: '#/components/responses/GetSubscriptionResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voa':
     post:
       tags:
@@ -2828,12 +2803,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Institutions'
-    GetSubscriptionResponse:
-      description: The institution subscription details were retrieved
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Subscription'
     GetInstitutionBrandingResponse:
       description: Institution branding was successfully retrieved
       content:
@@ -5883,27 +5852,6 @@ components:
         oauthInstitutionId:
           # The new ID for the OAuth institution's ID you are replacing.
           $ref: '#/components/schemas/NumericInstitutionId'
-    Subscription:
-      type: object
-      description:
-        A subscription the partner has created to be alerted of changes to
-        production status of financial institutions, products, and certification
-        and decertification of products.
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        webhookUrl:
-          type: string
-          description: Partner webhook HTTPS URL where events will be sent
-          example: https://acmewebhooks.com
-        createdAt:
-          type: string
-          description: Date the subscription was created.
-          example: '2022-03-28T21:48:31.000Z'
-        updatedAt:
-          type: string
-          description: Date the subscription was last updated
-          example: '2022-03-28T21:48:31.000Z'
     CertifiedInstitutions:
       description:
         A list of Finicity financial institutions from the "Get Certified

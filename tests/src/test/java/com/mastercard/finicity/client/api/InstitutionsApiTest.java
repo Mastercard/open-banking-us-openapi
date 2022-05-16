@@ -158,16 +158,4 @@ class InstitutionsApiTest extends BaseTest {
             fail();
         }
     }
-
-    @Test
-    void getInstitutionSubscriptionTest() {
-        try {
-            api.getInstitutionSubscription();
-            fail();
-        } catch (ApiException e) {
-            // {"source":"3f7ebe00d3a67d70fd217a231a783469","code":2001,"status":404,"title":"SUBSCRIPTION NOT FOUND","message":"The requested entity was not found","user_message":"The requested entity was not found","tags":""}
-            logApiException(e);
-            assertErrorTitleEquals("SUBSCRIPTION NOT FOUND", e);
-        }
-    }
 }
