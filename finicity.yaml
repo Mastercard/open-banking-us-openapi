@@ -2390,7 +2390,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  /analytics/ca360/v1/customer/{customerId}/analytics/fcra:
+  /analytics/ca360/v1/customers/{customerId}/analytics/fcra:
     post:
       tags:
         - Analytics and Attributes
