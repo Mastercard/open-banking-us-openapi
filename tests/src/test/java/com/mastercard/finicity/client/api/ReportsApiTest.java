@@ -75,7 +75,7 @@ class ReportsApiTest extends BaseTest {
             var reportId = reportsByType.get(ReportType.VOA);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                var reportData = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -91,7 +91,7 @@ class ReportsApiTest extends BaseTest {
             var reportId = reportsByType.get(ReportType.VOAHISTORY);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                var reportData = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -102,12 +102,12 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
-    void getAssetSummaryReportByConsumerTest() throws Exception {
+    void getPrequalificationNonCRAReportByConsumerTest() throws Exception {
         try {
             var reportId = reportsByType.get(ReportType.ASSETSUMMARY);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = verifyAssetsApi.generateAssetSummaryReport(CUSTOMER_ID, new ReportConstraints(), null);
+                var reportData = verifyAssetsApi.generatePrequalificationNonCRAReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -238,7 +238,7 @@ class ReportsApiTest extends BaseTest {
             if (reportId == null) {
                 // Create a report the first time
                 var toDate = LocalDateTime.now().toEpochSecond(UTC);
-                var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, null, true);
+                var reportData = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new ReportConstraints(), null, true);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -254,7 +254,7 @@ class ReportsApiTest extends BaseTest {
             var reportId = reportsByType.get(ReportType.VOETRANSACTIONS);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null, null);
+                var reportData = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -270,7 +270,7 @@ class ReportsApiTest extends BaseTest {
             var reportId = reportsByType.get(ReportType.CFRB);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                var reportData = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);
@@ -286,7 +286,7 @@ class ReportsApiTest extends BaseTest {
             var reportId = reportsByType.get(ReportType.CFRP);
             if (reportId == null) {
                 // Create a report the first time
-                var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null, null);
+                var reportData = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
             fetchReport(reportId, consumerId);

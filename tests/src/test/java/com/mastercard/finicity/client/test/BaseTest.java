@@ -68,10 +68,6 @@ public abstract class BaseTest {
         assertEquals(message, parseError(e).getMessage());
     }
 
-    protected static void assertErrorTitleEquals(String title, ApiException e) {
-        assertEquals(title, parseError(e).getTitle());
-    }
-
     protected static void fail() {
         Assertions.fail("Shouldn't reach this line");
     }

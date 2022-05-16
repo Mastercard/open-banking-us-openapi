@@ -58,7 +58,7 @@ class TransactionsApiTest extends BaseTest {
     void generateTransactionsReportTest() {
         try {
             var constraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateTransactionsReport(CUSTOMER_ID, toDate, constraints, null, null, true);
+            var reportData = api.generateTransactionsReport(CUSTOMER_ID, toDate, constraints, null, true);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.TRANSACTIONS, reportData.getType());
         } catch (ApiException e) {

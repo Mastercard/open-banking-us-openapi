@@ -1172,7 +1172,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - $ref: '#/components/parameters/VoaReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -1219,7 +1218,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - $ref: '#/components/parameters/VoaWithIncomeReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -1276,17 +1274,14 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate Asset Summary Report
+      summary: Generate Prequalification (Non-CRA) Report
       description: >-
-        Generate Asset Summary (Non-CRA) Report (`assetSummary`) for all
-        checking, savings, money market, and investment accounts for the given
-        customer. This service retrieves account and owner information as well
-        as the number of NSFs for any account that is a checking account for the
-        customer. 
+        Retrieve all checking, savings, money market, and investment accounts
+        for a customer. The account, owner information, and the number of
+        insufficient funds (NSFs) for checking accounts are also provided.
 
 
-        This is a premium service. The billing rate is billed per report for the
-        Asset Summary report. 
+        This is a premium service, billable per every successful API call.
 
 
         If no account type of checking, savings, money market, or investment is
@@ -1294,7 +1289,7 @@ paths:
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GenerateAssetSummaryReport
+      operationId: GeneratePrequalificationNonCRAReport
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
@@ -1415,7 +1410,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - $ref: '#/components/parameters/VoeTransactionsReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateVOETransactionsReportRequest'
       responses:
@@ -1801,7 +1795,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/TransactionReportFromDateParameter'
         - $ref: '#/components/parameters/RequiredToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       requestBody:
@@ -2308,7 +2301,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - $ref: '#/components/parameters/CashFlowReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -2356,7 +2348,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
-        - $ref: '#/components/parameters/CashFlowReportFromDateParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateReportRequest'
       responses:
@@ -3516,28 +3507,6 @@ components:
       schema:
         $ref: '#/components/schemas/UnixDate'
       example: 1607450357
-    TransactionReportFromDateParameter:
-      name: fromDate
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/UnixDate'
-      description:
-        Limit the amount of credit transactions included in the report up to the
-        given date, up to 24 months. Without this parameter, a report defaults
-        to 24 months if available. Must be within 2 years of the present day.
-      example: 1607450357
-    VoeTransactionsReportFromDateParameter:
-      name: fromDate
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/UnixDate'
-      description:
-        Limit the amount of credit transactions included in the report up to the
-        given date, up to 120 days. Without this parameter, a report defaults to
-        120 days if available. Must be within 120 days of the present day.
-      example: 1607450357
     ReportCallbackUrlParameter:
       name: callbackUrl
       in: query
@@ -3548,41 +3517,6 @@ components:
       schema:
         type: string
         example: 'https://finicity-test/webhook'
-    VoaReportFromDateParameter:
-      name: fromDate
-      in: query
-      required: false
-      description:
-        Without this parameter, the report defaults to 6 months if available. If
-        included, the date should be within two years of the present day.
-      schema:
-        $ref: '#/components/schemas/UnixDate'
-      example: 1607450357
-    VoaWithIncomeReportFromDateParameter:
-      name: fromDate
-      in: query
-      required: false
-      description:
-        Without this parameter, the report defaults to 61 days if available.
-        This will limit the amount of credit and debit transactions included in
-        the report up to the date specified, but will not limit the amount of
-        income stream transactions. The income stream transactions are all
-        included, up to 24 months, to help the lender and GSE's have the full
-        history to validate income. If included, the date should be within two
-        years of the present day.
-      schema:
-        $ref: '#/components/schemas/UnixDate'
-      example: 1607450357
-    CashFlowReportFromDateParameter:
-      name: fromDate
-      in: query
-      required: false
-      description:
-        Without this parameter, the report defaults to 6 months if available. If
-        included, the date should be within two years of the present day.
-      schema:
-        $ref: '#/components/schemas/UnixDate'
-      example: 1607450357
   schemas:
     ErrorMessage:
       required:

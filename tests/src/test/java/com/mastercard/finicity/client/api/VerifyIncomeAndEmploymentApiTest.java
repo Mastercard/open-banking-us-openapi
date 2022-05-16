@@ -135,7 +135,7 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generateVOETransactionsReportTest() {
         try {
             var constraints = new VOETransactionsReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOETransactionsReport(CUSTOMER_ID, constraints, null, null);
+            var reportData = api.generateVOETransactionsReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOETRANSACTIONS, reportData.getType());
         } catch (ApiException e) {

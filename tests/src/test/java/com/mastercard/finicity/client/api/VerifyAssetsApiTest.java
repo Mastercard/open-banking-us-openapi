@@ -32,10 +32,10 @@ class VerifyAssetsApiTest extends BaseTest {
     }
 
     @Test
-    void generateAssetSummaryReportTest() {
+    void generatePrequalificationNonCRAReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateAssetSummaryReport(CUSTOMER_ID, reportConstraints, null);
+            var reportData = api.generatePrequalificationNonCRAReport(CUSTOMER_ID, reportConstraints, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.ASSETSUMMARY, reportData.getType());
@@ -63,7 +63,7 @@ class VerifyAssetsApiTest extends BaseTest {
     void generateVOAReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null, null);
+            var reportData = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOA, reportData.getType());
@@ -77,7 +77,7 @@ class VerifyAssetsApiTest extends BaseTest {
     void generateVOAWithIncomeReportTest() {
         try {
             var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null, null);
+            var reportData = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null);
             assertNotNull(reportData);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.VOAHISTORY, reportData.getType());
