@@ -4185,6 +4185,8 @@ components:
           $ref: '#/components/schemas/ReportAccountIdsString'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        showNsf:
+          $ref: '#/components/schemas/ShowNsf'
     ReportConstraintsOut:
       type: object
       properties:
@@ -4192,6 +4194,8 @@ components:
           $ref: '#/components/schemas/ReportAccountIds'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        showNsf:
+          $ref: '#/components/schemas/ShowNsf'
     ReportCustomField:
       type: object
       properties:
@@ -8350,3 +8354,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountId'
+    ShowNsf:
+      type: boolean
+      description:
+        Include the non-sufficient funds (NSF) summary in the JSON and PDF
+        reports
+      example: false

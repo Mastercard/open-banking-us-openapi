@@ -33,7 +33,9 @@ public class CashFlowApiTest extends BaseTest {
     @Test
     void generateCashFlowReportBusinessTest() {
         try {
-            var constraints = new ReportConstraints().accountIds(customerAccountList);
+            var constraints = new ReportConstraints()
+                    .showNsf(true)
+                    .accountIds(customerAccountList);
             var reportData = api.generateCashFlowBusinessReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.CFRB, reportData.getType());
@@ -46,7 +48,9 @@ public class CashFlowApiTest extends BaseTest {
     @Test
     void generateCashFlowReportPersonalTest() {
         try {
-            var constraints = new ReportConstraints().accountIds(customerAccountList);
+            var constraints = new ReportConstraints()
+                    .showNsf(true)
+                    .accountIds(customerAccountList);
             var reportData = api.generateCashFlowPersonalReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.CFRP, reportData.getType());
