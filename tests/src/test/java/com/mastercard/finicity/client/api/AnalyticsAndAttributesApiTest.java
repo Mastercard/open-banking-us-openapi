@@ -1,8 +1,11 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
+import com.mastercard.finicity.client.model.ConsumerAttributeAccountIDs;
 import com.mastercard.finicity.client.test.BaseTest;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -14,7 +17,19 @@ public class AnalyticsAndAttributesApiTest extends BaseTest {
     @Test
     void generateConsumerAttributesTest() {
         try {
-            api.generateConsumerAttributes(CUSTOMER_ID, new Object());
+            var attributes = new ArrayList<ConsumerAttributeAccountIDs>();
+            api.generateConsumerAttributes(CUSTOMER_ID, attributes);
+        } catch (ApiException e) {
+            // {"detail":"CA360 System Error"}
+            logApiException(e);
+        }
+    }
+
+    @Test
+    public void generateFCRAConsumerAttributesTest() {
+        try {
+            var attributes = new ArrayList<ConsumerAttributeAccountIDs>();
+            api.generateFCRAConsumerAttributes(CUSTOMER_ID, attributes);
         } catch (ApiException e) {
             // {"detail":"CA360 System Error"}
             logApiException(e);

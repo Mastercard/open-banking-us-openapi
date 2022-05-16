@@ -2390,13 +2390,34 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /analytics/ca360/v1/customer/{customerId}/analytics/fcra:
+    post:
+      tags:
+        - Analytics and Attributes
+      summary: Generate FCRA Consumer Attributes
+      description: >-
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateFCRAConsumerAttributes
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateConsumerAttributesRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateConsumerAttributesReponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     get:
       tags:
         - Analytics and Attributes
       summary: List Consumer Attributes
       description: >-
         Retrieve the list of all analytic IDs previously created for a customer
-        using the "Generate Consumer Attributes" API.
+        using the "Generate Consumer Attributes" APIs.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2412,7 +2433,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/analytics/ca360/v1/customers/{customerId}/analytics/{analytics_id}':
+  '/analytics/ca360/v1/customers/{customerId}/analytics/{analyticsId}':
     get:
       tags:
         - Analytics and Attributes
@@ -2623,10 +2644,12 @@ components:
           schema:
             $ref: '#/components/schemas/TxPushSubscriptionParameters'
     GenerateConsumerAttributesRequest:
-      description: No payload expected
       content:
         application/json:
-          schema: {}
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ConsumerAttributeAccountIDs'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3210,7 +3233,7 @@ components:
       example: pending
     AnalyticIdParameter:
       description: The Finicity analytic ID
-      name: analytics_id
+      name: analyticsId
       in: path
       required: true
       schema:
@@ -8316,3 +8339,14 @@ components:
             'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -35750.48
             'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -21232.13
             'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -6723.7
+    ConsumerAttributeAccountIDs:
+      description: A list of account IDs
+      required:
+        - accountIds
+      type: object
+      properties:
+        accountIds:
+          description: The list of account IDs
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountId'
