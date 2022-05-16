@@ -3627,6 +3627,20 @@ components:
       type: string
       description: Name of a Finicity partner
       example: Finicity Test API
+    ConnectLanguage:
+      description: >
+        Generate a translated Connect URL link. 
+
+
+        Supported languages: 
+
+        * English (default)
+
+        * Spanish (United States): `es`
+
+        * French (Canada): `fr` or `fr-CA`
+      type: string
+      example: 'fr-CA'
     ConsumerId:
       type: string
       description: 'A Finicity consumer ID. See also: "Create Consumer".'
@@ -3871,6 +3885,8 @@ components:
         - customerId
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
@@ -3907,6 +3923,8 @@ components:
         - institutionId
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
@@ -3934,6 +3952,8 @@ components:
         - institutionLoginId
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
@@ -3964,6 +3984,8 @@ components:
         - email
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
@@ -4002,6 +4024,8 @@ components:
         - borrowers
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         borrowers:
@@ -4034,6 +4058,8 @@ components:
         - experience
       type: object
       properties:
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         borrowers:

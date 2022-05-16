@@ -24,6 +24,7 @@ class ConnectApiTest extends BaseTest {
         try {
             var params = new ConnectParameters()
                     .customerId(CUSTOMER_ID)
+                    .language("fr-CA")
                     .partnerId(PARTNER_ID);
             var connectUrl = api.generateConnectUrl(params);
             var link = connectUrl.getLink();
@@ -133,6 +134,7 @@ class ConnectApiTest extends BaseTest {
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID)
                     .consumerId(CONSUMER_ID)
+                    .language("fr-CA")
                     .email(new EmailOptions().to("someone@company.com"));
             var connectEmailUrl = api.sendConnectEmail(params);
             var link = connectEmailUrl.getLink();
