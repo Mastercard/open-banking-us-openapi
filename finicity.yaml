@@ -4187,6 +4187,13 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         showNsf:
           $ref: '#/components/schemas/ShowNsf'
+        fromDate:
+          # Without this parameter, the report defaults to 6 months if available
+          # If included, the epoch timestamp should be 10 digits long and be within
+          # two years of the present day
+          $ref: '#/components/schemas/UnixDate'
+        incomeStreamConfidenceMinimum:
+          $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     ReportConstraintsOut:
       type: object
       properties:
@@ -4196,6 +4203,10 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         showNsf:
           $ref: '#/components/schemas/ShowNsf'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+        incomeStreamConfidenceMinimum:
+          $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     ReportCustomField:
       type: object
       properties:
@@ -6992,6 +7003,13 @@ components:
           $ref: '#/components/schemas/VOIEWithInterviewData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          # Without this parameter, the report defaults to 61 days if available
+          # If included, the epoch timestamp should be 10 digits long and be within
+          # two years of the present day
+          $ref: '#/components/schemas/UnixDate'
+        incomeStreamConfidenceMinimum:
+          $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     VOIEWithTXVerifyReportConstraintsOut:
       required:
         - voieWithInterviewData
@@ -7003,6 +7021,10 @@ components:
           $ref: '#/components/schemas/VOIEWithInterviewData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+        incomeStreamConfidenceMinimum:
+          $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     VOIEPaystubWithTXVerifyReportData:
       required:
         - id
@@ -7199,7 +7221,7 @@ components:
         accountIds:
           $ref: '#/components/schemas/ReportAccountIds'
         fromDate:
-          # Without this parameter, the report defaults to 6 months if available
+          # Without this parameter, the report defaults to 61 days if available
           # If included, the epoch timestamp should be 10 digits long and be within
           # two years of the present day
           $ref: '#/components/schemas/UnixDate'
@@ -7328,6 +7350,8 @@ components:
           $ref: '#/components/schemas/PayrollDataOut'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        payStatementsFromDate:
+          $ref: '#/components/schemas/UnixDate'
     PayrollDataOut:
       required:
         - payrollDataRetrievalId
@@ -7360,6 +7384,12 @@ components:
           $ref: '#/components/schemas/PayrollData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        payStatementsFromDate:
+          # Limits the pay statement history in the VOIE – Paryroll
+          # report by entering a pay statement history start date.
+          # Pay statements are included if the `payDate` of the statement
+          # is equal to or greater than the start date
+          $ref: '#/components/schemas/UnixDate'
     AvailableBalance:
       required:
         - id
@@ -7457,6 +7487,11 @@ components:
           $ref: '#/components/schemas/ReportAccountIdsString'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          # Without this parameter, the report defaults to 61 days if available
+          # If included, the epoch timestamp should be 10 digits long and be within
+          # two years of the present day
+          $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     VOETransactionsReportConstraintsOut:
@@ -7468,6 +7503,8 @@ components:
           $ref: '#/components/schemas/ReportAccountIds'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     VOETransactionsReportData:
