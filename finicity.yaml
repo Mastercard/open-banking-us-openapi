@@ -2390,27 +2390,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  /analytics/ca360/v1/customers/{customerId}/analytics/fcra:
-    post:
-      tags:
-        - Analytics and Attributes
-      summary: Generate FCRA Consumer Attributes
-      description: >-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GenerateFCRAConsumerAttributes
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/GenerateConsumerAttributesRequest'
-      responses:
-        '200':
-          $ref: '#/components/responses/GenerateConsumerAttributesReponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     get:
       tags:
         - Analytics and Attributes
@@ -2427,6 +2406,27 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListConsumerAttributesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /analytics/ca360/v1/customers/{customerId}/analytics/fcra:
+    post:
+      tags:
+        - Analytics and Attributes
+      summary: Generate FCRA Consumer Attributes
+      description: >-
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateFCRAConsumerAttributes
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateConsumerAttributesRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateConsumerAttributesReponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
