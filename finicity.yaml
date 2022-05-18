@@ -6677,20 +6677,34 @@ components:
           items:
             $ref: '#/components/schemas/ReportIncomeStream'
           description: A list of income stream records
-        totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount:
+        totNumberInsufficientFundsFeeDebitTxAccount:
           type: integer
-          description: >-
-            (Prequalification Report) The total number of days since the most
-            recent insufficient funds fee for the account
-          format: int32
+          description:
+            The count for the total number of insufficient funds transactions,
+            based on the `fromDate` of the report.
+          format: int64
+          example: 0
+        totNumberInsufficientFundsFeeDebitTxOver2MonthsAccount:
+          type: integer
+          description:
+            The count for the total number of insufficient funds transactions
+            for the last two months, based on the `fromDate` of the report.
+          format: int64
           example: 0
         totNumberInsufficientFundsFeeDebitTxOver6MonthsAccount:
           type: integer
-          description: >-
-            (Prequalification Report) The total number of  insufficient funds
-            fees for the account over six months
-          format: int32
+          description:
+            The count for the total number of insufficient funds transactions
+            for the last six months, based on the `fromDate` of the report.
+          format: int64
           example: 0
+        totNumberDaysSinceMostRecentInsufficientFundsFeeDebitTxAccount:
+          type: integer
+          description:
+            The number of days since the most recent insufficient funds
+            transaction, based on the `fromDate` of the report.
+          format: int64
+          example: 120
     VOIEWithInterviewData:
       required:
         - txVerifyInterview
