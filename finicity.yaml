@@ -2647,9 +2647,7 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/ConsumerAttributeAccountIDs'
+            $ref: '#/components/schemas/ConsumerAttributeAccountIDs'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
