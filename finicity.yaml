@@ -7383,7 +7383,7 @@ components:
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
         payStatementsFromDate:
-          # Limits the pay statement history in the VOIE – Paryroll
+          # Limits the pay statement history in the VOIE – Payroll
           # report by entering a pay statement history start date.
           # Pay statements are included if the `payDate` of the statement
           # is equal to or greater than the start date
