@@ -18,7 +18,8 @@ jobs:
       - name: Generate Redoc static HTML
         run: |
           npx redoc-cli bundle finicity.yaml --output finicity.html
-      - uses: actions/upload-artifact@v3
+      - name: Create artifact
+        uses: actions/upload-artifact@v3
         with:
           name: finicity.html
           path: ./finicity.html
