@@ -84,7 +84,7 @@ class TxPushApiTest extends BaseTest {
     }
 
     private TxPushSubscriptions subscribe() {
-        TxPushSubscriptions subscriptions = new TxPushSubscriptions();
+        var subscriptions = new TxPushSubscriptions();
         try {
             var params = new TxPushSubscriptionParameters().callbackUrl(WEB_HOOK_URL);
             subscriptions = api.subscribeToTxPushNotifications(CUSTOMER_ID, existingAccount.getId(), params);
@@ -103,8 +103,8 @@ class TxPushApiTest extends BaseTest {
         try {
             api.disableTxPushNotifications(CUSTOMER_ID, existingAccount.getId());
         } catch (ApiException e) {
+            // 60007 / No active subscription found for a given account
             logApiException(e);
-            fail();
         }
     }
 }
