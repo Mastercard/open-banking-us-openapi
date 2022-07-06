@@ -39,8 +39,7 @@ class CustomersApiTest extends BaseTest {
             api.addCustomer(newCustomer);
             fail();
         } catch (ApiException e) {
-            // Not available from the Test Drive
-            assertEquals(429, e.getCode());
+            // HTTP 401: Not available from the Test Drive
             logApiException(e);
         }
     }
