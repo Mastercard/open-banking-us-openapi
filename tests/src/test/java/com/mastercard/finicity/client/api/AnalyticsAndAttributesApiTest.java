@@ -21,8 +21,8 @@ public class AnalyticsAndAttributesApiTest extends BaseTest {
             var existingAccount = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID).get(0);
             existingAccountId = existingAccount.getId();
         } catch (ApiException e) {
-            fail();
             logApiException(e);
+            fail();
         }
     }
 

@@ -25,8 +25,8 @@ class AccountsApiTest extends BaseTest {
             existingAccountId = existingAccount.getId();
             existingInstitutionId = existingAccount.getInstitutionId();
         } catch (ApiException e) {
-            fail();
             logApiException(e);
+            fail();
         }
     }
 
@@ -85,8 +85,8 @@ class AccountsApiTest extends BaseTest {
             var firstAccount = accounts.get(0);
             assertEquals(CUSTOMER_ID, firstAccount.getCustomerId());
         } catch (ApiException e) {
-            fail();
             logApiException(e);
+            fail();
         }
     }
 
@@ -97,8 +97,8 @@ class AccountsApiTest extends BaseTest {
             var firstAccount = accounts.getAccounts().get(0);
             assertEquals(existingInstitutionId, firstAccount.getInstitutionId());
         } catch (ApiException e) {
-            fail();
             logApiException(e);
+            fail();
         }
     }
 
