@@ -9,7 +9,9 @@ import com.mastercard.finicity.client.model.ErrorMessage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +36,10 @@ public abstract class BaseTest {
     private final static FinicityAuthInterceptor authInterceptor = new FinicityAuthInterceptor(PARTNER_ID, PARTNER_SECRET, APP_KEY);
 
     static {
+        if (Arrays.asList(PARTNER_ID, PARTNER_SECRET, APP_KEY, CUSTOMER_ID).contains(null)) {
+            throw new InvalidParameterException("Required options: -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***");
+        }
+
         apiClient.setDebugging(true);  // Client logging
         apiClient.setConnectTimeout(240000);
         apiClient.setReadTimeout(240000);
