@@ -33,8 +33,7 @@ class BankStatementsApiTest extends BaseTest {
             }
             existingAccountId = account.get().getId();
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -49,8 +48,7 @@ class BankStatementsApiTest extends BaseTest {
             assertEquals("inProgress", reportData.getStatus());
             assertEquals(ReportType.STATEMENT, reportData.getType());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -60,8 +58,7 @@ class BankStatementsApiTest extends BaseTest {
             var pdf = api.getCustomerAccountStatement(CUSTOMER_ID, existingAccountId, 1);
             assertNotNull(pdf);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

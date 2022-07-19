@@ -78,6 +78,10 @@ public abstract class BaseTest {
         Assertions.fail("Shouldn't reach this line");
     }
 
+    protected static void fail(ApiException e) {
+        logApiException(e);
+        Assertions.fail("Code: " + e.getCode() + ", response: " + e.getResponseBody());
+    }
 
     @AfterAll
     static void afterAll() {

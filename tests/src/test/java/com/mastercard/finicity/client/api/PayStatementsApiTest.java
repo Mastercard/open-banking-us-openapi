@@ -19,8 +19,7 @@ class PayStatementsApiTest extends BaseTest {
             var asset = api.storeCustomerPayStatement(CUSTOMER_ID, payStatement);
             assertNotNull(asset.getAssetId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

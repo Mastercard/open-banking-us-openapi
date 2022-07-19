@@ -31,13 +31,12 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
     @Test
-    void generateLiteConnectUrlV2Test_UnknownCustomerId() {
+    void generateLiteConnectUrlTest_UnknownCustomerId() {
         try {
             var params = new LiteConnectParameters()
                     .institutionId(FINBANK_A)
@@ -54,7 +53,7 @@ class ConnectApiTest extends BaseTest {
     }
 
     @Test
-    void generateLiteConnectUrlV2Test_UnknownPartnerId() {
+    void generateLiteConnectUrlTest_UnknownPartnerId() {
         try {
             var params = new LiteConnectParameters()
                     .institutionId(FINBANK_A)
@@ -84,13 +83,12 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
     @Test
-    void generateFixConnectUrlV2Test_UnknownInstitutionLoginId() {
+    void generateFixConnectUrlTest_UnknownInstitutionLoginId() {
         try {
             var params = new FixConnectParameters()
                     .institutionLoginId("1234")
@@ -122,8 +120,7 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -145,8 +142,7 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
             assertEquals("someone@company.com", emailConfig.getTo());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -163,8 +159,7 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("consumerId=" + CONSUMER_ID));
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -185,8 +180,7 @@ class ConnectApiTest extends BaseTest {
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
             assertEquals("someone@company.com", emailConfig.getTo());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

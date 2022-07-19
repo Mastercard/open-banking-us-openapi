@@ -32,8 +32,7 @@ class TxPushApiTest extends BaseTest {
             // Find an existing account for the tests
             existingAccount = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID).get(0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -54,8 +53,7 @@ class TxPushApiTest extends BaseTest {
             var createdTransaction = api.createTxPushTestTransaction(CUSTOMER_ID, existingAccount.getId(), transaction);
             assertNotNull(createdTransaction);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -78,8 +76,7 @@ class TxPushApiTest extends BaseTest {
             subscribe();
             api.disableTxPushNotifications(CUSTOMER_ID, existingAccount.getId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -91,8 +88,7 @@ class TxPushApiTest extends BaseTest {
             var records = subscriptions.getSubscriptions();
             assertTrue(records.size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
         return subscriptions;
     }

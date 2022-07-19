@@ -23,8 +23,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getRequestedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -38,8 +37,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getRequestedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -49,8 +47,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutions = api.getCertifiedInstitutions(existingInstitutionName, null, null, null);
             assertEquals(1, institutions.getFound());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -64,8 +61,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getRequestedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -79,8 +75,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getRequestedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -90,8 +85,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutions = api.getCertifiedInstitutionsWithRSSD(existingInstitutionName, null, null, null);
             assertEquals(1, institutions.getFound());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -105,8 +99,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getCreatedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -120,8 +113,7 @@ class InstitutionsApiTest extends BaseTest {
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getCreatedDate());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -131,8 +123,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutions = api.getInstitutions(existingInstitutionName, null, null, null);
             assertEquals(1, institutions.getFound());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -142,8 +133,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutionWrapper = api.getInstitution(existingInstitutionId);
             assertEquals(existingInstitutionName, institutionWrapper.getInstitution().getName());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -154,8 +144,7 @@ class InstitutionsApiTest extends BaseTest {
             assertNotNull(brandingWrapper);
             assertNotNull(brandingWrapper.getBranding());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

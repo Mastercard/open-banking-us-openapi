@@ -21,8 +21,7 @@ class ConsumersApiTest extends BaseTest {
         try {
             existingConsumerId = ConsumerUtils.getOrCreateDefaultConsumer(api, CUSTOMER_ID);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -36,8 +35,7 @@ class ConsumersApiTest extends BaseTest {
             assertNotNull(consumer.getCreatedDate());
             assertEquals(customer.getId(), String.valueOf(consumer.getCustomerId()));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -60,8 +58,7 @@ class ConsumersApiTest extends BaseTest {
             var consumer = api.getConsumer(existingConsumerId);
             assertNotNull(consumer);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -84,8 +81,7 @@ class ConsumersApiTest extends BaseTest {
             var consumer = api.getConsumerForCustomer(CUSTOMER_ID);
             assertNotNull(consumer.getId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -108,8 +104,7 @@ class ConsumersApiTest extends BaseTest {
             var request = new ConsumerUpdate().firstName("New first name");
             api.modifyConsumer(existingConsumerId, request);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

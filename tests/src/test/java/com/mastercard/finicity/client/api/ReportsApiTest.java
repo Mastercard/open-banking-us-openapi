@@ -48,8 +48,7 @@ class ReportsApiTest extends BaseTest {
                     .stream()
                     .collect(Collectors.toMap(ReportSummary::getType, ReportSummary::getId, (key1, key2) -> key1));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -123,8 +122,7 @@ class ReportsApiTest extends BaseTest {
             var reports = api.getReportsByConsumer(consumerId, null);
             assertNotNull(reports);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -134,8 +132,7 @@ class ReportsApiTest extends BaseTest {
             var reports = api.getReportsByCustomer(CUSTOMER_ID, null);
             assertNotNull(reports);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

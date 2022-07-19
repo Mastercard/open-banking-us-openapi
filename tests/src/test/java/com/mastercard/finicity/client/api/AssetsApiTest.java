@@ -35,8 +35,7 @@ class AssetsApiTest extends BaseTest {
             var file = api.getAssetByCustomerID(CUSTOMER_ID, asset.getAssetId());
             assertEquals("This must be an image", Files.readString(file.toPath()));
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

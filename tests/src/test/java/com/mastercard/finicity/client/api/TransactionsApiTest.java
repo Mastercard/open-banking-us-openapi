@@ -49,8 +49,7 @@ class TransactionsApiTest extends BaseTest {
             // Fetch some accounts IDs to be included in reports
             customerAccountList = AccountUtils.getCustomerAccountListString(new AccountsApi(apiClient), CUSTOMER_ID);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -73,8 +72,7 @@ class TransactionsApiTest extends BaseTest {
             var transactions = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true);
             assertTrue(transactions.getTransactions().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -84,8 +82,7 @@ class TransactionsApiTest extends BaseTest {
             var transactions = api.getCustomerAccountTransactions(CUSTOMER_ID, existingAccountId, fromDate, toDate, null, null, null, true);
             assertTrue(transactions.getTransactions().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -95,8 +92,7 @@ class TransactionsApiTest extends BaseTest {
             var transaction = api.getCustomerTransaction(CUSTOMER_ID, existingTransactionId);
             assertNotNull(transaction);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

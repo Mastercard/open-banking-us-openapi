@@ -25,8 +25,7 @@ class AccountsApiTest extends BaseTest {
             existingAccountId = existingAccount.getId();
             existingInstitutionId = existingAccount.getInstitutionId();
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -36,8 +35,7 @@ class AccountsApiTest extends BaseTest {
             var accounts = api.getCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId);
             assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -47,8 +45,7 @@ class AccountsApiTest extends BaseTest {
             CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId, new Object());
             assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -58,8 +55,7 @@ class AccountsApiTest extends BaseTest {
             var owner = api.getAccountOwner(CUSTOMER_ID, existingAccountId);
             assertNotNull(owner);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -71,8 +67,7 @@ class AccountsApiTest extends BaseTest {
             assertEquals(CUSTOMER_ID, account.getCustomerId());
             assertNotNull(account);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -85,8 +80,7 @@ class AccountsApiTest extends BaseTest {
             var firstAccount = accounts.get(0);
             assertEquals(CUSTOMER_ID, firstAccount.getCustomerId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -97,8 +91,7 @@ class AccountsApiTest extends BaseTest {
             var firstAccount = accounts.getAccounts().get(0);
             assertEquals(existingInstitutionId, firstAccount.getInstitutionId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -107,8 +100,7 @@ class AccountsApiTest extends BaseTest {
         try {
             api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId, new Object());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -119,8 +111,7 @@ class AccountsApiTest extends BaseTest {
             assertNotNull(response.getAccounts());
             assertTrue(response.getAccounts().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

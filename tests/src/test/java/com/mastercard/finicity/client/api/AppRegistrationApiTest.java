@@ -20,8 +20,7 @@ class AppRegistrationApiTest extends BaseTest {
             assertNotNull(registeredApplication.getPreAppId());
             assertEquals("P", registeredApplication.getStatus());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -34,8 +33,7 @@ class AppRegistrationApiTest extends BaseTest {
             assertNotNull(statuses.getTotalPages());
             assertNotNull(statuses.getTotalRecords());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -49,8 +47,7 @@ class AppRegistrationApiTest extends BaseTest {
             assertEquals(preAppId, updatedApplication.getPreAppId());
             assertEquals("P", updatedApplication.getStatus());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

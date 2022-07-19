@@ -25,8 +25,7 @@ class CustomersApiTest extends BaseTest {
             assertEquals(newCustomer.getUsername(), customer.getUsername());
             createdCustomerIds.add(customer.getId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -53,8 +52,7 @@ class CustomersApiTest extends BaseTest {
             assertNotNull(customer.getCreatedDate());
             assertNotNull(customer.getType());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -90,8 +88,7 @@ class CustomersApiTest extends BaseTest {
             var customers = api.getCustomers(null, null, null, null, null);
             assertTrue(customers.getCustomers().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -103,8 +100,7 @@ class CustomersApiTest extends BaseTest {
             assertEquals(0, customers.getDisplaying());
             assertFalse(customers.getMoreAvailable());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -115,8 +111,7 @@ class CustomersApiTest extends BaseTest {
             var customers = api.getCustomers(customer.getUsername(), null, null, null, null);
             assertTrue(customers.getCustomers().size() > 0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -128,8 +123,7 @@ class CustomersApiTest extends BaseTest {
                     .lastName("Smith_" + randomStr());
             api.modifyCustomer(CUSTOMER_ID, customerUpdate);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -140,8 +134,7 @@ class CustomersApiTest extends BaseTest {
             var customer = api.addTestingCustomer(newCustomer);
             api.deleteCustomer(customer.getId());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

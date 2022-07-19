@@ -21,8 +21,7 @@ class AuthenticationApiTest extends BaseTest {
             assertNotNull(response);
             assertNotNull(response.getToken());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -37,8 +36,7 @@ class AuthenticationApiTest extends BaseTest {
                     .newPartnerSecret(PARTNER_SECRET + "_updated");
             api.modifyPartnerSecret(credentials);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
 
         try {
@@ -60,8 +58,7 @@ class AuthenticationApiTest extends BaseTest {
                     .newPartnerSecret(PARTNER_SECRET);
             api.modifyPartnerSecret(credentials);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

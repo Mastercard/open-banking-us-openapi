@@ -25,8 +25,7 @@ public class CashFlowApiTest extends BaseTest {
             // Fetch some accounts IDs to be included in reports
             customerAccountList = AccountUtils.getCustomerAccountListString(new AccountsApi(apiClient), CUSTOMER_ID);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 

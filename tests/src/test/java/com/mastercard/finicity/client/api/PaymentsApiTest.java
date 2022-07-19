@@ -21,8 +21,7 @@ class PaymentsApiTest extends BaseTest {
             var accountApi = new AccountsApi(apiClient);
             existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID, "savings").get(0);
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -33,8 +32,7 @@ class PaymentsApiTest extends BaseTest {
             assertNotNull(achDetails.getRealAccountNumber());
             assertNotNull(achDetails.getRoutingNumber());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -44,8 +42,7 @@ class PaymentsApiTest extends BaseTest {
             var balance = api.getAvailableBalance(CUSTOMER_ID, existingAccount.getId());
             assertNotNull(balance.getAvailableBalance());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
@@ -55,8 +52,7 @@ class PaymentsApiTest extends BaseTest {
             var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId());
             assertNotNull(balance.getAvailableBalance());
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 }

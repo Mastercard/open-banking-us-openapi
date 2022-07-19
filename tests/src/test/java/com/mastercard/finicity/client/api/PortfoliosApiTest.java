@@ -26,8 +26,7 @@ class PortfoliosApiTest extends BaseTest {
             var verifyAssetsApi = new VerifyAssetsApi(apiClient);
             portfolioId = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null).getPortfolioId();
         } catch (ApiException e) {
-            logApiException(e);
-            fail();
+            fail(e);
         }
     }
 
