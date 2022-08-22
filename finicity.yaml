@@ -2255,7 +2255,8 @@ paths:
         customer. Since we update and store balances throughout the day, this is
         the most accurate balance information available when a connection to a
         financial institution is unavailable or when a faster response is
-        needed.
+        needed. Only deposit account types are supported: Checking, Savings,
+        Money Market, and CD.
 
 
         Note: this is a premium service, billable per every successful API call.
