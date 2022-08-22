@@ -6271,6 +6271,10 @@ components:
           description: A descriptive string
           type: string
           example: YOU BOUGHT DELTA AIR LINES INC DAL CASH
+        runningBalanceAmount:
+          description: The ending balance after the transaction was posted
+          type: number
+          example: 1000
       description: Categorization Record
     ReportIncomeStream:
       required:
