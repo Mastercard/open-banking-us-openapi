@@ -1581,9 +1581,8 @@ paths:
         retrieved. 
 
 
-        Our list of [Supported
-        Institutions](https://docs.finicity.com/institutions/) confirms that you
-        can retrieve statements for the following account types: 
+        For certified financial institutions, statements are available for the
+        following account types:
 
         * Checking
 
@@ -1602,6 +1601,8 @@ paths:
         * Loans
 
         * Line of credit
+
+        * Student Loans
 
 
         Note: setting the timeout to 180 seconds is recommended to allow enough
