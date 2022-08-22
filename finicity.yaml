@@ -5775,6 +5775,14 @@ components:
           $ref: '#/components/schemas/InstitutionAvailableBalance'
         accountOwner:
           $ref: '#/components/schemas/InstitutionAccountOwner'
+        studentLoanData:
+          type: boolean
+          description: If certified for the Student Loan Data product
+          example: true
+        loanPaymentDetail:
+          type: boolean
+          description: If certified for the Loan Payment Detail product
+          example: true
         accountTypeDescription:
           type: string
           description: >-
@@ -5813,6 +5821,10 @@ components:
           example:
             'Please enter your Principal Financial - Retirement (Personal)
             Username and Password.'
+        timeZone:
+          type: string
+          description: The time zone of the institution.
+          example: America/Denver
         specialInstructions:
           type: array
           items:
@@ -5828,6 +5840,11 @@ components:
             - Account details
             - Balances and transactions
             - Personal and account ownership info
+        specialInstutionsTitle:
+          type: string
+          description:
+            The title of the special instructions, if one exists or is required.
+          example: Special OAuth Login Instructions
         address:
           $ref: '#/components/schemas/InstitutionAddress'
         currency:
@@ -7051,35 +7068,9 @@ components:
         Won't be present until you have run your first aggregation for the
         account.
     AccountType:
-      enum:
-        - checking
-        - savings
-        - cd
-        - moneyMarket
-        - creditCard
-        - lineOfCredit
-        - investment
-        - investmentTaxDeferred
-        - employeeStockPurchasePlan
-        - ira
-        - 401k
-        - roth
-        - 403b
-        - 529plan
-        - rollover
-        - ugma
-        - utma
-        - keogh
-        - 457plan
-        - 401a
-        - mortgage
-        - loan
-        - studentLoan
-        - studentLoanGroup
-        - studentLoanAccount
       type: string
       description: >-
-        The enumeration of supported account types.
+        The list of supported account types.
 
         * `checking`: Standard checking
 
@@ -7122,6 +7113,28 @@ components:
         * `457plan`: 457 Plan (True value is 457)
 
         * `401a`: 401A Plan
+
+        * `brokerageAccount`: Brokerage Account
+
+        * `educationSavings`: Education Savings Account that is not a 529
+
+        * `healthSavingsAccount`: HSA (Health Savings Accounts)
+
+        * `pension`: Pension
+
+        * `profitSharingPlan`: Profit Sharing Plan
+
+        * `roth401k`: Roth 401K
+
+        * `sepIRA`: Simplified Employee Pension IRA
+
+        * `simpleIRA`: Simple IRA
+
+        * `thriftSavingsPlan`: Thrift Savings Plan
+
+        * `variableAnnuity`: Variable Annuity
+
+        * `cryptocurrency`: Cryptocurrency Wallet, Cryptocurrency Account
 
         * `mortgage`: Standard Mortgages
 

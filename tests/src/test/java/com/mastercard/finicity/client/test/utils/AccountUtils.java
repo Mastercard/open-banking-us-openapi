@@ -30,7 +30,7 @@ public class AccountUtils {
     public static List<CustomerAccount> getCustomerAccounts(AccountsApi api, String customerId, String type) throws ApiException {
         return AccountUtils.getCustomerAccounts(api, customerId)
                 .stream()
-                .filter(a -> type.equals(a.getType().getValue()))
+                .filter(a -> type.equals(a.getType()))
                 .collect(Collectors.toList());
     }
 
