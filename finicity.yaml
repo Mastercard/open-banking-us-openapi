@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.3.0
+  version: 1.3.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -63,7 +63,7 @@ tags:
     description: Generate and fetch consumer attributes (Beta)
 security:
   - FinicityAppKey: []
-  - FinicityAppToken: []
+    FinicityAppToken: []
 paths:
   /aggregation/v2/partners/authentication:
     post:
