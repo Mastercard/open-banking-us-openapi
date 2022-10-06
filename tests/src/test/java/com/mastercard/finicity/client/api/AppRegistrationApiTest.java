@@ -57,12 +57,11 @@ class AppRegistrationApiTest extends BaseTest {
             var accountApi = new AccountsApi(apiClient);
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
             var existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
-            var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, String.valueOf(existingInstitutionLoginId), new Object());
-            assertTrue(accounts.getAccounts().size() > 0);
-            fail();
+            // Enable this to actually migrate accounts
+            // var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, String.valueOf(existingInstitutionLoginId), new Object());
+            // assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
-            // {"code":20007,"message":"Accounts on institution XXXXXX cannot be migrated "}
-            logApiException(e);
+            fail(e);
         }
     }
 

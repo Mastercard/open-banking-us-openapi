@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Prerequisites:
- * 1. Accounts from "profile_09" were added using Finicity Connect (see: https://docs.finicity.com/test-the-apis/#test-the-apis-3)
+ * 1. Accounts from "FinBank Profiles - A" / "profile_03" were added using Finicity Connect (see: https://docs.finicity.com)
  * 2. "refreshCustomerAccounts" has been called
  */
 public abstract class BaseTest {

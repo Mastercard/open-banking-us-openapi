@@ -4,7 +4,7 @@ api_error() {
    echo ""
    echo "Response: $1"
    echo ""
-   echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US or Canada."
+   echo "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US, UK or Canada."
    enter_to_exit
 }
 
@@ -61,11 +61,11 @@ connect_url_response=$(curl -s --location --request POST 'https://api.finicity.c
 link=$(echo $connect_url_response | sed -E 's/\{"link":"(.*)"\}/\1/')
 
 echo ""
-echo "Ctrl+click on the URL below, search for 'FinBank', then sign in with 'profile_09'/'password' and add all available accounts"
+echo "Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"
 echo ""
 echo $link
 echo ""
-read -p "After you see 'Thank you, your submission was successful', press [Enter] to continue ..."
+read -p "After you see 'Your submission was successful. Thank you!', press [Enter] to continue ..."
 
 echo "Refreshing accounts ..."
 accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v1/customers/'$customer_id'/accounts' \

@@ -12,7 +12,7 @@ class LiabilitiesApiTest extends BaseTest {
     @Test
     void getLoanPaymentDetailsTest() {
         try {
-            var existingAccount = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID, "loan").get(0);
+            var existingAccount = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID).get(0);
             api.getLoanPaymentDetails(CUSTOMER_ID, existingAccount.getId());
             fail();
         } catch (ApiException e) {

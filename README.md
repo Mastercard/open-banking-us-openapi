@@ -30,7 +30,7 @@ The following workflows ensure the API specification stays in good shape and can
 
 * Before running the tests, you need a **Customer ID**. For that, run [setup.sh](./bin/setup.sh) and use the output of the script in the next sections. This script will call:
   * `addTestingCustomer`
-  * `generateConnectUrl` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL and add to your test customer all accounts from [`profile_09`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
+  * `generateConnectUrl` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL, search for "FinBank Profiles - A" and add to your test customer all accounts from [`profile_03`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
   * `refreshCustomerAccounts`
 
 [![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)

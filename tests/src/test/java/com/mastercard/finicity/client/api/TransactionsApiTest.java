@@ -27,14 +27,10 @@ class TransactionsApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
-            // Find an existing account ID
-            var account = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID)
-                    .stream()
-                    .findFirst();
-            if (account.isEmpty()) {
-                fail();
-            }
-            existingAccountId = account.get().getId();
+            // Find the last account ID
+            var accounts = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID);
+            var account = accounts.get(accounts.size() - 1);
+            existingAccountId = account.getId();
 
             // Find an existing transaction ID
             var transaction = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true)
