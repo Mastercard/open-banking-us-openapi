@@ -5785,7 +5785,7 @@ components:
           type: boolean
           description: If certified for the Student Loan Data product
           example: true
-        loanPaymentDetail:
+        loanPaymentDetails:
           type: boolean
           description: If certified for the Loan Payment Detail product
           example: true
