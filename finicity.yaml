@@ -3548,7 +3548,11 @@ components:
       properties:
         code:
           type: object
-          description: An error code (can be returned as a number or a string)
+          description:
+            'An error code (can be returned as a number or a string). Useful
+            links: [API Errors](https://docs.finicity.com/api-errors/),
+            [Aggregation Status
+            Codes](https://docs.finicity.com/aggregation-status-codes/).'
           example: '10001'
         status:
           type: string
