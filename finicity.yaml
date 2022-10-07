@@ -4376,7 +4376,9 @@ components:
         mix of uppercase, lowercase, numeric, and non-alphabet special
         characters ! @ . # $ % & * _ – + the use of email in this field is
         discouraged it is recommended to use a unique non-email identifier. Use
-        of special characters may result in an error (e.g. í, ü, etc.)
+        of special characters may result in an error (e.g. í, ü, etc.).
+        Usernames are unique. A username used in [Test
+        Drive](https://signup.finicity.com/) can't be reused in other plans.
       example: customerusername1
     FirstName:
       type: string
