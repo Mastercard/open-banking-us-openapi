@@ -40,24 +40,8 @@ The following workflows ensure the API specification stays in good shape and can
 
 1. Clone this repository
 2. Run `cd tests && mvn clean test -DpartnerId=*** -DpartnerSecret=*** -DappKey=*** -DcustomerId=***`
-3. Expected result:
 
-```
-[INFO] -------------------------------------------------------
-[INFO]  T E S T S
-[INFO] -------------------------------------------------------
-…
-[INFO] Results:
-[INFO]
-[INFO] Tests run: 111, Failures: 0, Errors: 0, Skipped: 0
-[INFO]
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  01:08 min
-[INFO] Finished at: 2022-04-20T14:47:43+01:00
-[INFO] ------------------------------------------------------------------------
-```
+![](https://user-images.githubusercontent.com/3964455/194875163-af06b1a2-f2a2-44fe-a62e-73eb8fa78b35.gif)
 
 ### Run Tests in GitHub
 
