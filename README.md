@@ -33,8 +33,9 @@ The following workflows ensure the API specification stays in good shape and can
   * `generateConnectUrl` ([Finicity Connect](https://docs.finicity.com/)). Simply open the URL, search for "FinBank Profiles - A" and add to your test customer all accounts from [`profile_03`](https://docs.finicity.com/test-the-apis/#test-the-apis-3).
   * `refreshCustomerAccounts`
 
-[![](./res/connect-for-tests.png)](./res/connect-for-tests.png?raw=true#gh-light-mode-only)
-[![](./res/connect-for-tests-dark.png)](./res/connect-for-tests.png?raw=true#gh-dark-mode-only)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/3964455/195069664-638aa443-d87d-48ea-94fc-167f2ebfff57.gif" width="300px"/>
+</p>
 
 ### Run Tests Locally
 
