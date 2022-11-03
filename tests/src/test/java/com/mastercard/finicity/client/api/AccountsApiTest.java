@@ -96,15 +96,6 @@ class AccountsApiTest extends BaseTest {
     }
 
     @Test
-    void loadHistoricTransactionsForCustomerAccountTest() {
-        try {
-            api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId, new Object());
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
-
-    @Test
     void refreshCustomerAccountsTest() {
         try {
             var response = api.refreshCustomerAccounts(CUSTOMER_ID, new Object());

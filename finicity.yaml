@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.3.3
+  version: 1.4.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -238,6 +238,37 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SendConnectEmailResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/v2/generate/consent/manage:
+    post:
+      tags:
+        - Connect 🔗
+      summary: Generate Connect Dashboard URL
+      operationId: GenerateConnectDashboardUrl
+      description: >-
+        Generate a Connect Dashboard URL link to manage consents within your own
+        applications.
+
+
+        Use the `experience` parameter to call Connect (per session) in the body
+        of the request. Configure the `experience` parameter to change the brand
+        color, logo, icon, which credit decisioning report to generate when the
+        Connect application completes, and more.
+
+
+        Note: contact your Sales Account Team to set up the `experience`
+        parameter.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateConnectDashboardUrlRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateConnectDashboardUrlResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -659,7 +690,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
+  '/aggregation/v2/customers/{customerId}/accounts/{accountId}':
     get:
       tags:
         - Accounts
@@ -682,6 +713,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}':
     delete:
       tags:
         - Accounts
@@ -798,7 +830,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
     post:
       tags:
-        - Accounts
+        - Transactions
       summary: Load Historic Transactions for Customer Account
       description: >-
         Connect to the account's financial institution and load up to 24 months
@@ -1725,7 +1757,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/aggregation/v3/customers/{customerId}/accounts/{accountId}/transactions':
+  '/aggregation/v4/customers/{customerId}/accounts/{accountId}/transactions':
     get:
       tags:
         - Transactions
@@ -2211,7 +2243,7 @@ paths:
         - $ref: '#/components/parameters/AssetIdParameter'
       responses:
         '200':
-          $ref: '#/components/responses/GetAssetbyCustomerIDResponse'
+          $ref: '#/components/responses/GetAssetByCustomerIDResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2510,6 +2542,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FixConnectParameters'
+    GenerateConnectDashboardUrlRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectDashboardParameters'
     SendConnectEmailRequest:
       required: true
       content:
@@ -2671,6 +2709,12 @@ components:
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
     GenerateConnectUrlResponse:
+      description: The URL link was successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectUrl'
+    GenerateConnectDashboardUrlResponse:
       description: The URL link was successfully generated
       content:
         application/json:
@@ -2883,7 +2927,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AuditableReport'
-    GetAssetbyCustomerIDResponse:
+    GetAssetByCustomerIDResponse:
       description: The asset was successfully downloaded
       content:
         application/octet-stream:
@@ -3937,6 +3981,28 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
+    ConnectDashboardParameters:
+      type: object
+      required:
+        - partnerId
+        - customerId
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        experience:
+          $ref: '#/components/schemas/Experience'
     ConnectEmailParameters:
       required:
         - partnerId
@@ -4745,7 +4811,6 @@ components:
         the customer has added via the Connect interface.
       required:
         - id
-        - number
         - accountNumberDisplay
         - name
         - balance
@@ -4767,9 +4832,9 @@ components:
           type: string
           deprecated: true
           description: >-
-            Use `accountNumberDisplay` field. Starting July 1, 2021 the `number`
-            field will sunset with limited support until April 1, 2022, at which
-            time it will be deprecated (no longer available).
+            Use the `accountNumberDisplay` field. Starting July 1, 2021 the
+            `number` field will sunset with limited support until April 1, 2022,
+            at which time it will be deprecated (no longer available).
           example: '2000004444'
         accountNumberDisplay:
           type: string
@@ -4790,7 +4855,7 @@ components:
           example: Super Checking
         balance:
           type: number
-          description: The cleared balance of the account as-of balanceDate
+          description: The cleared balance of the account as of `balanceDate`
           example: 401.26
         type:
           $ref: '#/components/schemas/AccountType'
@@ -4819,13 +4884,14 @@ components:
           $ref: '#/components/schemas/UnixDate'
         createdDate:
           $ref: '#/components/schemas/UnixDate'
-        lastUpdatedDate:
-          $ref: '#/components/schemas/UnixDate'
         currency:
           $ref: '#/components/schemas/Currency'
         lastTransactionDate:
+          # The date of the latest transaction on the account.
+          # This will not be present until you have run your first aggregation for the account.
           $ref: '#/components/schemas/UnixDate'
         oldestTransactionDate:
+          # The date of the oldest transaction in the transactions for the account.
           $ref: '#/components/schemas/UnixDate'
         institutionLoginId:
           $ref: '#/components/schemas/NumericInstitutionLoginId'
@@ -4844,20 +4910,8 @@ components:
           format: int32
           example: 2
         parentAccount:
-          # The Finicity assigned account ID for the account one level higher in the student loan account hierarchy
+          # The assigned `accountId` for the account one level higher in the student loan account hierarchy.
           $ref: '#/components/schemas/AccountId'
-        financialinstitutionAccountStatus:
-          description: Current account status with the financial institution
-          type: string
-          example: 'OPEN'
-        accountNickname:
-          description: Nickname for account
-          type: string
-          example: Checking
-        marketSegment:
-          description: Market segment of account
-          type: string
-          example: personal
     CustomerAccountPosition:
       description: Details for investment account holdings
       type: object
@@ -4870,50 +4924,37 @@ components:
         description:
           type: string
           description: The description of the holding
-          example: 'EMB:iShares Emerging Markets USD Bond ETF'
-        cusipNo:
-          type: string
-          description: >-
-            A nine-digit numeric or nine-character alphanumeric code that
-            identifies a North American financial security (will be changed to
-            SecurityIdType in the next API version, v2)
-          example: '464287242'
-        cusipNoType:
-          type: string
-          description: >-
-            Type of the security, attached Finicity's cusipNo field (will be
-            changed to SecurityIdType in the next API version, v2)
-          example: '464287242'
+          example: 'DELTA AIR LINES INC'
         symbol:
           type: string
-          description: The investment position's market/ticker symbol
-          example: JPM
+          description: The investment position's market ticker symbol
+          example: DAL
         units:
           type: number
-          description: The quantity of investment holdings
-          example: 3.54117
+          description: The number of units of the holding
+          example: 6.537
         currentPrice:
           type: number
           description: The current price of the investment holding
-          example: 49.01
+          example: 41.585
         securityName:
           type: string
           description: The security name for the investment holding
-          example: JPMORGAN CHASE & CO
+          example: DELTA AIR LINES INC
         transactionType:
           type: string
           description:
-            'The transaction type of the holding. Cash, Margin, POSSTOCK, Etc'
-          example: Cash
+            'The transaction type of the holding, such as cash, margin, and more'
+          example: Margin
         marketValue:
           type: number
           description:
             Market value of an investment position at the time of retrieval
-          example: 914.2
+          example: 271.84
         costBasis:
           type: number
           description: The total cost of acquiring the security
-          example: 925.5
+          example: 190.01
         status:
           type: string
           description: The status of the holding
@@ -4921,28 +4962,103 @@ components:
         currentPriceDate:
           # The latest date the price date was updated
           $ref: '#/components/schemas/UnixDate'
-        invSecurityType:
+        securityType:
           type: string
-          description: The investment holding security type
-          example: OTHERINFO
+          description: Type of security for the investment position
+          example: Stock
         mfType:
           type: string
-          description: 'Type of mutual fund (e.g., open-ended)'
-          example: Open-Ended
+          description: 'Type of mutual fund, such as open ended'
+          example: OPENEND
         posType:
           type: string
-          description: Fund Type assigned by the FI (long or short)
+          description: 'Fund type assigned by the FI (long or short)'
           example: Long
         totalGLDollar:
           type: number
           description:
-            'Total Gain/Loss of the position, at the time of aggregation ($)'
-          example: 81.83
+            'Total gain and loss of the position at the time of aggregation in
+            dollars'
+          example: 162742.9
         totalGLPercent:
           type: number
           description:
-            'Total Gain/Loss of the position, at the time of aggregation (%)'
-          example: 43.07
+            'Total gain and loss of the position at the time of aggregation in
+            percentage'
+          example: 68.89
+        optionStrikePrice:
+          type: number
+          description: The strike price of the option contract
+          example: 50
+        optionType:
+          type: string
+          description: The type of option contract (PUT or CALL)
+          example: PUT
+        optionSharesPerContract:
+          type: number
+          description: The number of shares per option contract
+          example: 100
+        optionExpireDate:
+          type: string
+          description: Expiration date of option
+          format: date
+          example: '1644994800'
+        fiAssetClass:
+          type: string
+          description:
+            Financial Institution (FI) defined asset class (COMMON STOCK,
+            COMNEQTY, EQUITY/STOCK, CMA-ISA, CONVERTIBLE PREFERREDS, CORPORATE
+            BONDS, OTHER MONEY FUNDS, ALLOCATION FUNDS, CMA-TAXABLE,
+            FOREIGNEQUITYADRS, COMMONSTOCK, PREFERRED STOCKS, STABLE VALUE,
+            FOREIGN EQUITY ADRS)
+          example: COMNEQTY
+        assetClass:
+          type: string
+          description:
+            An asset class is a grouping of comparable financial securities.
+            These include equities (stocks), fixed income (bonds), and cash
+            equivalent or money market instruments. (DOMESTICBOND, LARGESTOCK,
+            INTLSTOCK, MONEYMRKT, OTHER)
+          example: INTLSTOCK
+        currencyRate:
+          type: number
+          description: Currency rate, ratio of currency to original currency
+          example: 1
+        securityId:
+          type: string
+          description: The security ID of the transaction
+          example: 25400W102
+        securityIdType:
+          type: string
+          description:
+            'The security type: CUSIP, ISIN, SEDOL, SICC, VALOR, and WKN. This
+            field is related to the `securityId`.'
+          example: CUSIP
+        costBasisPerShare:
+          type: number
+          description: The per share cost of acquiring the security
+          example: 13.38
+        subAccountType:
+          type: string
+          description: The subaccount's type, such as cash
+          example: CASH
+        securityCurrency:
+          type: string
+          description:
+            Symbol for the currency that the account is being converted into
+          example: USD
+        todayGLDollar:
+          type: number
+          description:
+            The current day's gain and loss of the position at the time of
+            aggregation in dollars
+          example: 16272.9
+        todayGLPercent:
+          type: number
+          description:
+            The current day's gain and loss of the position at the time of
+            aggregation in percentage
+          example: 18.89
     CustomerAccountDetail:
       description: >-
         Additional customer account details. Not all data points will return for
@@ -4953,7 +5069,7 @@ components:
         - availableBalanceAmount
       type: object
       properties:
-        postedDate:
+        dateAsOf:
           # (All Account Types) Most recent date of the following information
           $ref: '#/components/schemas/UnixDate'
         availableBalanceAmount:
@@ -5281,7 +5397,7 @@ components:
             (Mortgage/Loan) Number of payments remaining before loan is paid off
           format: int32
           example: 45
-        interestMarginBalance:
+        marginBalance:
           type: number
           description:
             (Investment) Net interest earned after deducting interest paid out
@@ -6086,7 +6202,6 @@ components:
         - customerId
         - status
         - description
-        - postedDate
         - createdDate
         - categorization
       type: object
@@ -6098,7 +6213,7 @@ components:
           description: >-
             The total amount of the transaction. Transactions for deposits are
             positive values, withdrawals and debits are negative values.
-          example: 3678.9
+          example: -828.9
         accountId:
           $ref: '#/components/schemas/NumericAccountId'
         customerId:
@@ -6106,81 +6221,78 @@ components:
         status:
           type: string
           description:
-            One of active, pending, or shadow (see [Pending and Shadow
+            One of "active", "pending", or "shadow" (see [Pending and Shadow
             Transactions](https://docs.finicity.com/pending-and-shadow-transactions/))
           example: active
         description:
           type: string
-          description: >-
-            The description of the transaction, as provided by the institution
-            (often known as payee). In the event that this field is left blank
-            by the institution, Finicity will pass a value of "No description
-            provided by institution". All other values are provided by the
-            institution.
-          example: MAD SCIENCE RESEARCH PR PAYMENT
+          description:
+            The description value is from the financial institution (FI), often
+            known as the payee. The value "No description provided by
+            institution" is returned when the FI doesn't provide one
+          example: Buy Stock
         memo:
           type: string
-          description: >-
-            The memo field of the transaction, as provided by the institution.
+          description:
             The institution must provide either a description, a memo, or both.
-            It is recommended to concatenate the two fields into a single value
-          example: PPD ID 098749
+            We recommended concatenating the two fields into a single value.
+          example: UWM HOLDINGS CORPORATION - CLASS A COMMON STOCK
+        type:
+          $ref: '#/components/schemas/TransactionType'
         postedDate:
+          # The timestamp of the transaction when it was posted or cleared by the institution
+          # This value isn't required for student loan transaction data
           $ref: '#/components/schemas/UnixDate'
         transactionDate:
           $ref: '#/components/schemas/UnixDate'
         effectiveDate:
+          # A timestamp of the transaction when it became effective on an account by an institution
           $ref: '#/components/schemas/UnixDate'
         firstEffectiveDate:
+          # The first timestamp of a transaction recorded in the `effectiveDate` field
           $ref: '#/components/schemas/UnixDate'
         createdDate:
+          # The timestamp of the transaction when it was added to our platform
           $ref: '#/components/schemas/UnixDate'
-        type:
-          $ref: '#/components/schemas/TransactionType'
         checkNum:
           type: integer
-          description:
-            'The check number of the transaction, as provided by the institution'
+          description: The check number of the transaction
           format: int32
-          example: 1876
+          example: 299
         escrowAmount:
           type: number
-          description:
-            'The portion of the transaction allocated to escrow, if available'
-          example: 134.01
+          description: The portion of the transaction allocated to escrow
+          example: 2534
         feeAmount:
           type: number
           description:
-            'The portion of the transaction allocated to fee, if available'
-          example: 25
+            The portion of the overall transaction amount applied to fees
+          example: 0.51
         interestAmount:
           type: number
-          description:
-            'The portion of the transaction allocated to interest, if available'
-          example: 256.78
+          description: The portion of the transaction allocated to interest
+          example: 132
         principalAmount:
           type: number
-          description:
-            'The portion of the transaction allocated to principal, if available'
-          example: 1345.56
+          description: The portion of the transaction allocated to principal
+          example: 32560
         unitQuantity:
           type: integer
-          description: >-
-            The number of units (e.g. individual shares) in the transaction, if
-            available
+          description:
+            The number of units (individual shares) in the transaction
           format: int32
-          example: 50
+          example: 150
         unitPrice:
           type: number
           description:
-            'Share Price for investment unit (e.g., stocks, mutual funds)'
-          example: 5
+            'Share price for the investment unit: stocks, mutual funds, ETFs'
+          example: 5.53
         categorization:
           $ref: '#/components/schemas/Categorization'
         subaccountSecurityType:
           type: string
-          description: The type of sub account from which funds came
-          example: Cash
+          description: The type of sub account the funds came from
+          example: MARGIN
         commissionAmount:
           type: integer
           description: Transaction commission
@@ -6190,13 +6302,9 @@ components:
           type: string
           description:
             Ticker symbol for the investment related to the transaction
-          example: DAL
+          example: UWMC
         investmentTransactionType:
-          type: string
-          description: >-
-            Finicity derived field that normalizes the transaction type from the
-            FI
-          example: purchased
+          $ref: '#/components/schemas/InvestmentTransactionTypes'
         taxesAmount:
           type: integer
           description: Taxes applicable to the investment trade
@@ -6208,6 +6316,38 @@ components:
             If the foreign amount value is present then this is the currency
             code of that foreign amount
           example: USD
+        incomeType:
+          type: string
+          description:
+            Capital gains applied in short, long, or miscellaneous terms for tax
+            purposes
+          example: DIV
+        splitDenominator:
+          type: number
+          description: Denominator of the stock split for the transaction
+          example: 152
+        splitNumerator:
+          type: number
+          description: Numerator of the stock split for the transaction
+          example: 20
+        sharesPerContract:
+          type: number
+          description: Shares per contract of the underlying stock option
+          example: 100
+        subAccountFund:
+          type: string
+          description: The sub account where the funds came from
+          example: MARGIN
+        securityId:
+          type: string
+          description: The security ID of the transaction
+          example: '91823B109'
+        securityIdType:
+          type: string
+          description:
+            'The security type: CUSIP, ISIN, SEDOL, SICC, VALOR, and WKN. This
+            field is related to the `securityId`'
+          example: CUSIP
     PortfolioSummary:
       required:
         - portfolioId
@@ -6275,9 +6415,11 @@ components:
         country:
           $ref: '#/components/schemas/Country'
         bestRepresentation:
-          description: A descriptive string
+          description:
+            Combines the `description` and `memo` data together, removing
+            duplicated information and numbers and special characters
           type: string
-          example: YOU BOUGHT DELTA AIR LINES INC DAL CASH
+          example: VERIZON WIRELESS PAYMENTS
         runningBalanceAmount:
           description: The ending balance after the transaction was posted
           type: number
@@ -8508,3 +8650,15 @@ components:
         Transfer, Transfer for Cash Spending, Travel, Tuition, Uncategorized,
         Utilities, Vacation, Veterinary, Internet / Broadband Charges
       example: 'ATM Fee'
+    InvestmentTransactionTypes:
+      type: string
+      description: >-
+        Keywords in the `description` and `memo` fields were used to translate
+        investment transactions into these payStatementMatchTypes.
+
+
+        Possible values: cancel, purchaseToClose, purchaseToCover, contribution,
+        optionExercise, optionExpiration, fee, soldToClose, soldToOpen, split,
+        transfer, returnOfCapital, income, purchased, sold, dividendreInvest,
+        tax, dividend, reinvestOfIncome, interest, deposit, otherInfo
+      example: 'transfer'

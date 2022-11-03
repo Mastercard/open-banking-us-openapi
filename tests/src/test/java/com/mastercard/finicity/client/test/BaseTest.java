@@ -92,8 +92,7 @@ public abstract class BaseTest {
             try {
                 customersApi.deleteCustomer(id);
             } catch (ApiException e) {
-                logApiException(e);
-                fail();
+                fail(e);
             }
         });
     }
