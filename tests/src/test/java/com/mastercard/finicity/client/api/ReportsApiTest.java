@@ -43,7 +43,7 @@ class ReportsApiTest extends BaseTest {
             existingAssetId = PayStatementUtils.storeAsset(new PayStatementsApi(apiClient), CUSTOMER_ID);
 
             // Fetch existing reports
-            ReportSummaries reports = new ReportsApi(apiClient).getReportsByCustomer(CUSTOMER_ID, null);
+            var reports = new ReportsApi(apiClient).getReportsByCustomerId(CUSTOMER_ID, null);
             reportsByType = reports.getReports()
                     .stream()
                     .collect(Collectors.toMap(ReportSummary::getType, ReportSummary::getId, (key1, key2) -> key1));
@@ -61,7 +61,7 @@ class ReportsApiTest extends BaseTest {
                 var reportData = verifyAssetsApi.generatePrequalificationReport(CUSTOMER_ID, new ReportConstraints(), null);
                 reportId = reportData.getId();
             }
-            fetchPrequalificationReportReport(reportId);
+            fetchReport(reportId, consumerId);
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -119,7 +119,7 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getReportsByConsumerTest() {
         try {
-            var reports = api.getReportsByConsumer(consumerId, null);
+            var reports = api.getReportsByConsumerId(consumerId, null);
             assertNotNull(reports);
         } catch (ApiException e) {
             fail(e);
@@ -129,7 +129,7 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getReportsByCustomerTest() {
         try {
-            var reports = api.getReportsByCustomer(CUSTOMER_ID, null);
+            var reports = api.getReportsByCustomerId(CUSTOMER_ID, null);
             assertNotNull(reports);
         } catch (ApiException e) {
             fail(e);
@@ -293,28 +293,14 @@ class ReportsApiTest extends BaseTest {
         }
     }
 
-    private static void fetchPrequalificationReportReport(String reportId) throws Exception {
-        fetchAnyReport(reportId, null, true);
-    }
-
     private static void fetchReport(String reportId, String consumerId) throws Exception {
-        fetchAnyReport(reportId, consumerId, false);
-    }
-
-    private static void fetchAnyReport(String reportId, String consumerId, boolean preQualificationReport) throws Exception {
         String status;
         do {
             System.out.println("Waiting for report " + reportId + " ...");
             Thread.sleep(5000);
-            if (preQualificationReport) {
-                var report = api.getPrequalificationReportByCustomer(CUSTOMER_ID, reportId, ON_BEHALF_OF, PURPOSE);
-                assertNotNull(report);
-                status = report.getStatus();
-            } else {
-                var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
-                assertNotNull(report);
-                status = report.getStatus();
-            }
+            var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
+            assertNotNull(report);
+            status = report.getStatus();
         } while (IN_PROGRESS.equals(status));
     }
 }

@@ -13,7 +13,7 @@ class AccountsApiTest extends BaseTest {
 
     private final static AccountsApi api = new AccountsApi(apiClient);
     private static String existingInstitutionLoginId;
-    private static String existingInstitutionId;
+    private static Long existingInstitutionId;
     private static String existingAccountId;
 
     @BeforeAll
@@ -23,7 +23,7 @@ class AccountsApiTest extends BaseTest {
             var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
             existingInstitutionLoginId = existingAccount.getInstitutionLoginId().toString();
             existingAccountId = existingAccount.getId();
-            existingInstitutionId = existingAccount.getInstitutionId();
+            existingInstitutionId = Long.parseLong(existingAccount.getInstitutionId());
         } catch (ApiException e) {
             fail(e);
         }
@@ -89,7 +89,7 @@ class AccountsApiTest extends BaseTest {
         try  {
             var accounts = api.getCustomerAccountsByInstitution(CUSTOMER_ID, existingInstitutionId);
             var firstAccount = accounts.getAccounts().get(0);
-            assertEquals(existingInstitutionId, firstAccount.getInstitutionId());
+            assertEquals(existingInstitutionId, Long.parseLong(firstAccount.getInstitutionId()));
         } catch (ApiException e) {
             fail(e);
         }
@@ -109,7 +109,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void getCustomerAccountsByInstitutionTest_UnknownInstitution() {
         try {
-            api.getCustomerAccountsByInstitution(CUSTOMER_ID, "1234567");
+            api.getCustomerAccountsByInstitution(CUSTOMER_ID, 1234567L);
             fail();
         } catch (ApiException e) {
             // HTTP 404

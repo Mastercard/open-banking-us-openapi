@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.4.0
+  version: 1.5.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -137,16 +137,16 @@ paths:
         Generate a Connect 2.0 URL link to add within your own applications.
 
 
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect application completes, and more.
+        In option, use the `experience` parameter to call Connect (per session)
+        in the body of the request. Configure the `experience` parameter to
+        change the brand color, logo, icon, which credit decisioning report to
+        generate when the Connect application completes, and more.
 
 
         Note: contact your Sales Account Team to set up the `experience`
         parameter.
 
-         
+
         MVS Developers: You can pre-populate the consumer's SSN on the "Find
         employment records" page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
@@ -242,37 +242,6 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-  /connect/v2/generate/consent/manage:
-    post:
-      tags:
-        - Connect 🔗
-      summary: Generate Connect Dashboard URL
-      operationId: GenerateConnectDashboardUrl
-      description: >-
-        Generate a Connect Dashboard URL link to manage consents within your own
-        applications.
-
-
-        Use the `experience` parameter to call Connect (per session) in the body
-        of the request. Configure the `experience` parameter to change the brand
-        color, logo, icon, which credit decisioning report to generate when the
-        Connect application completes, and more.
-
-
-        Note: contact your Sales Account Team to set up the `experience`
-        parameter.
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      requestBody:
-        $ref: '#/components/requestBodies/GenerateConnectDashboardUrlRequest'
-      responses:
-        '200':
-          $ref: '#/components/responses/GenerateConnectDashboardUrlResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/generate/jointBorrower:
     post:
       tags:
@@ -335,12 +304,13 @@ paths:
         accounts).
 
 
-        For using Testing customers, register a test application with your
-        systems engineer or account manager. Then use that testing
-        `applicationId` when creating testing customers. Testing customers can
-        only be assigned to testing OAuth applications and can only add accounts
-        to Finbank OAuth for testing OAuth implementation as well as other
-        Finbank testing institutions.
+        For using testing customers with FinBank OAuth, you must register a test
+        application with your systems engineer or account manager. Then, use
+        that testing `applicationId` when creating testing customers.
+
+
+        Testing Customers can access FinBank profiles (except "FinBank Billable"
+        profiles), and cannot access live financial institutions.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -362,6 +332,10 @@ paths:
       description: >-
         Enroll an active customer, which is the actual owner of one or more
         real-world accounts. This is a billable customer.
+
+
+        Active customers must use the "FinBank Billable" profiles for testing
+        purposes. 
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -455,6 +429,9 @@ paths:
       summary: Modify Customer by ID
       description: >-
         Modify an enrolled customer by ID.
+
+
+        You must specify either `firstName`, `lastName`, or both in the request.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -672,7 +649,7 @@ paths:
         - Accounts
       summary: Delete Customer Accounts by Institution Login ID
       description: >-
-        Remove from the Finicity system the set of accounts matching the
+        Remove from Finicity aggregation the set of accounts matching the
         institution login ID.
 
 
@@ -719,7 +696,7 @@ paths:
         - Accounts
       summary: Delete Customer Account by ID
       description: >-
-        Remove the given account from the Finicity system.
+        Remove the given account from Finicity aggregation.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1191,8 +1168,8 @@ paths:
         event is the successful generation of a VOA report.
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1237,8 +1214,8 @@ paths:
         generation of a VOAI report.
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1278,8 +1255,8 @@ paths:
         Prequalification report. 
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1672,8 +1649,8 @@ paths:
         successful generation of the Statement Report. 
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1816,8 +1793,8 @@ paths:
         successful generation of the Transactions Report. 
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
         There cannot be more than 24 months between `fromDate` and `toDate`.
@@ -1934,6 +1911,13 @@ paths:
         is posted for the account. For institutions that do not provide TxPush
         services, notifications are sent as soon as Finicity finds a new
         transaction or new account data through regular aggregation processes.
+
+
+        The listener's URL must be secure (HTTPS) for any real-world account. In
+        addition, the client's TxPUSH Listener will need to be verified. HTTP
+        and HTTPS connections are only allowed on the standard ports 80 (HTTP)
+        and 443 (HTTPS). The use of other ports will result with the call
+        failing.
 
 
         For additional details on this process, see [TxPush Listener
@@ -2107,10 +2091,10 @@ paths:
     get:
       tags:
         - Reports
-      summary: Get Prequalification Report by Customer and ID
+      summary: Get Report by Customer and ID
       description: >-
-        Get a report that has been generated by calling one of the "Generate
-        Report" services.
+        Get a report that has been generated by a previous call to one of the
+        "Generate Report" services.
 
 
         The report's status field will contain `inProgress`, `failure`, or
@@ -2119,7 +2103,7 @@ paths:
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetPrequalificationReportByCustomer
+      operationId: GetReportByCustomer
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ReportIdParameter'
@@ -2127,83 +2111,21 @@ paths:
         - $ref: '#/components/parameters/PurposeParameter'
       responses:
         '200':
-          $ref: '#/components/responses/GetPrequalificationReportByCustomerResponse'
+          $ref: '#/components/responses/GetReportByCustomerResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/decisioning/v1/customers/{customerId}/reports':
-    get:
-      tags:
-        - Reports
-      summary: Get Reports by Customer
-      description: >-
-        Get all reports that have been generated by calling one of the "Generate
-        Report" services for the given customer.
-
-
-        The report's status field will contain `inProgress`, `failure`, or
-        `success`. If the status shows `inProgress`, the client app should wait
-        20 seconds and then call this endpoint again.
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetReportsByCustomer
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/PurposeParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/GetReportsByCustomerResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-        '429':
-          $ref: '#/components/responses/TooManyRequestsErrorResponse'
-  '/decisioning/v1/consumers/{consumerId}/reports':
-    get:
-      tags:
-        - Reports
-      summary: Get Reports by Consumer
-      description: >-
-        Get a report that has been generated by calling one of the "Generate
-        Report" services.
-
-
-        The report's status field will contain `inProgress`, `failure`, or
-        `success`. If the status shows `inProgress`, the client app should wait
-        20 seconds and then call this endpoint again.
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetReportsByConsumer
-      parameters:
-        - $ref: '#/components/parameters/PurposeParameter'
-        - $ref: '#/components/parameters/ConsumerIdParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/GetReportsByConsumerResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-        '429':
-          $ref: '#/components/responses/TooManyRequestsErrorResponse'
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
     get:
       tags:
         - Reports
       summary: Get Report by Consumer and ID
       description: >-
-        Get a report that has been generated by calling one of the "Generate
-        Report" services.
+        Get a report that has been generated by a previous call to one of the
+        "Generate Report" services.
 
 
         The report's status field will contain `inProgress`, `failure`, or
@@ -2227,6 +2149,68 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v1/customers/{customerId}/reports':
+    get:
+      tags:
+        - Reports
+      summary: Get Reports by Customer ID
+      description: >-
+        Get all reports that have been generated by previous calls to "Generate
+        Report" services for the given customer.
+
+
+        The status fields in the returned list will contain `inProgress`,
+        `failure`, or `success`. If the status shows `inProgress`, the client
+        app should wait 20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetReportsByCustomerId
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/PurposeParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetReportsByCustomerIdResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
+  '/decisioning/v1/consumers/{consumerId}/reports':
+    get:
+      tags:
+        - Reports
+      summary: Get Reports by Consumer ID
+      description: >-
+        Get all reports that have been generated by previous calls to "Generate
+        Report" services for the given consumer.
+
+
+        The status fields in the returned list will contain `inProgress`,
+        `failure`, or `success`. If the status shows `inProgress`, the client
+        app should wait 20 seconds and then call this endpoint again.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetReportsByConsumerId
+      parameters:
+        - $ref: '#/components/parameters/PurposeParameter'
+        - $ref: '#/components/parameters/ConsumerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetReportsByConsumerIdResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
@@ -2326,7 +2310,7 @@ paths:
         available in the Finicity Consumer Portal for the borrower to view.
 
 
-        If no account of type checking or savings is found, the service will
+        If no account type of checking or savings is found, the service will
         return HTTP 400 Bad Request.
 
 
@@ -2369,11 +2353,11 @@ paths:
         is inaccurate.
 
 
-        A report consumer must be created for the given customer before calling
-        this API (see "Consumers").
+        Before calling this API, a consumer must be created for the given
+        customer ID (see "Consumers").
 
 
-        If no account of type checking or savings is found, the service will
+        If no account type of checking or savings is found, the service will
         return HTTP 400 Bad Request.
 
 
@@ -2477,7 +2461,7 @@ paths:
 
 
         Use the analytic and customer IDs to retrieve 12 months of data
-        attributes according to the "to" and "from" date range of the report at
+        attributes according to the "To" and "From" date range of the report at
         the time it was created. 
 
 
@@ -2490,6 +2474,39 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AnalyticIdParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetConsumerAttributesByIDResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/analytics/ca360/v1/customers/{customerId}/analytics/{analyticsId}/fcra':
+    get:
+      tags:
+        - Analytics and Attributes
+      summary: Get FCRA Consumer Attributes By ID
+      description: >-
+        Retrieve a FCRA Consumer Attributes report for a customer.
+
+
+        Use the analytic and customer IDs to retrieve 12 months of FCRA data
+        attributes according to the "To" and "From" date range of the report at
+        the time it was created. 
+
+
+        If the current date is before the end of the calendar month, then the
+        most recent month provides all available data up to the current date.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetFCRAConsumerAttributesByID
+      parameters:
+        - $ref: '#/components/parameters/AnalyticIdParameter'
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/PurposeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetConsumerAttributesByIDResponse'
@@ -2542,12 +2559,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FixConnectParameters'
-    GenerateConnectDashboardUrlRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ConnectDashboardParameters'
     SendConnectEmailRequest:
       required: true
       content:
@@ -2709,12 +2720,6 @@ components:
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
     GenerateConnectUrlResponse:
-      description: The URL link was successfully generated
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ConnectUrl'
-    GenerateConnectDashboardUrlResponse:
       description: The URL link was successfully generated
       content:
         application/json:
@@ -2903,19 +2908,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/TransactionsReportData'
-    GetPrequalificationReportByCustomerResponse:
+    GetReportByCustomerResponse:
       description: The report was successfully retrieved
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PrequalificationReport'
-    GetReportsByCustomerResponse:
+            $ref: '#/components/schemas/AuditableReport'
+    GetReportsByCustomerIdResponse:
       description: The reports summaries were successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ReportSummaries'
-    GetReportsByConsumerResponse:
+    GetReportsByConsumerIdResponse:
       description: The reports summaries were successfully retrieved
       content:
         application/json:
@@ -3282,7 +3287,7 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/AnalyticId'
-      example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
+      example: CA-5dfbaa3ac-5321
     TransactionIdParameter:
       description: A Finicity transaction ID
       name: transactionId
@@ -3439,8 +3444,8 @@ components:
       in: path
       required: true
       schema:
-        $ref: '#/components/schemas/InstitutionId'
-      example: '4222'
+        $ref: '#/components/schemas/NumericInstitutionId'
+      example: 4222
     PurposeParameter:
       name: purpose
       in: query
@@ -3448,7 +3453,8 @@ components:
       description: >-
         2-digit code from [Permissible Purpose
         Codes](https://docs.finicity.com/permissible-purpose-codes/), specifying
-        the reason for retrieving this report.
+        the reason for retrieving this report. Required for retrieving some
+        reports.
       schema:
         type: string
       example: '99'
@@ -3465,7 +3471,7 @@ components:
       in: query
       description:
         The name of the entity you are retrieving the report on behalf of
-      required: true
+      required: false
       schema:
         type: string
         example: 'Some entity'
@@ -3824,7 +3830,7 @@ components:
         product
 
         `false`: The institution is decertified for the Account Balance Check
-        product
+        (ABC) product
       example: false
     InstitutionAccountOwner:
       type: boolean
@@ -3981,28 +3987,6 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
-    ConnectDashboardParameters:
-      type: object
-      required:
-        - partnerId
-        - customerId
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        redirectUri:
-          $ref: '#/components/schemas/RedirectUri'
-        webhook:
-          $ref: '#/components/schemas/Webhook'
-        webhookContentType:
-          $ref: '#/components/schemas/WebhookContentType'
-        webhookData:
-          $ref: '#/components/schemas/WebhookData'
-        webhookHeaders:
-          $ref: '#/components/schemas/WebhookHeaders'
-        experience:
-          $ref: '#/components/schemas/Experience'
     ConnectEmailParameters:
       required:
         - partnerId
@@ -4225,7 +4209,7 @@ components:
         additional experience you create thereafter, they'll give you a unique
         ID. See [Generate 2.0 Connect URL
         APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1).
-                    
+
 
         Experience values options: 
 
@@ -4535,13 +4519,23 @@ components:
       type: string
       description: A date-time without time zone
       example: '2022-04-12T11:51:23'
+    Date:
+      type: string
+      format: date
+      description:
+        A 'YYYY-MM-DD' date notation as defined by [RFC 3339, section
+        5.6](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
+      example: '2022-04-12'
     AnalyticId:
       type: string
       description: An ID for a Consumer Attributes report
-      example: ce9693d5-a83e-4ad0-a694-6f48c4fc7877
+      example: CA-5dfbaa3ac-5321
     MoreResultsAvailable:
       type: boolean
-      description: If `true`, you can fetch the next page of results
+      description:
+        'If the value of `moreAvailable` is `true`, you can retrieve the next
+        page of results by increasing the value of the start parameter in your
+        next request:"...&start=6&limit=5"'
       example: true
     DisplayingResults:
       type: integer
@@ -5901,11 +5895,23 @@ components:
           $ref: '#/components/schemas/InstitutionAccountOwner'
         studentLoanData:
           type: boolean
-          description: If certified for the Student Loan Data product
+          description: >-
+            `true`: The institution is certified for the Student Loan Data
+            product
+
+
+            `false`: The institution is decertified for the Student Loan Data
+            product
           example: true
         loanPaymentDetails:
           type: boolean
-          description: If certified for the Loan Payment Detail product
+          description: >-
+            `true`: The institution is certified for the Loan Payment Detail
+            product
+
+
+            `false`: The institution is decertified for the Loan Payment Detail
+            product
           example: true
         accountTypeDescription:
           type: string
@@ -5925,7 +5931,11 @@ components:
           example: 'https://www.example.com/login'
         oauthEnabled:
           type: boolean
-          description: '`true`: The institution is an OAuth connection'
+          description: >-
+            `true`: The institution is an OAuth connection
+
+
+            `false`: The institution isn't an OAuth connection
           example: true
         urlForgotPassword:
           type: string
@@ -6718,6 +6728,8 @@ components:
           description: >-
             A list of institution records, including information about the
             individual accounts used in this report
+        assets:
+          $ref: '#/components/schemas/ReportAssetSummary'
         errors:
           description: In case errors occurred during the report generation
           type: array
@@ -6847,7 +6859,7 @@ components:
             $ref: '#/components/schemas/ReportTransaction'
           description: An array of transactions belonging to the account
         asset:
-          $ref: '#/components/schemas/PrequalificationReportAssetSummary'
+          $ref: '#/components/schemas/ReportAssetSummary'
         details:
           $ref: '#/components/schemas/AccountDetail'
         incomeStream:
@@ -7105,33 +7117,6 @@ components:
           example: '002345678901'
       description:
         The routing and account number information to initiate ACH transfers
-    PrequalificationReport:
-      description: A Prequalification report
-      required:
-        - id
-        - customerId
-        - requesterName
-        - requestId
-        - type
-        - status
-        - createdDate
-        - constraints
-        - customerType
-        - title
-        - startDate
-        - endDate
-        - days
-        - seasoned
-        - portfolioId
-        - consolidatedAvailableBalance
-        - institutions
-        - assets
-      allOf:
-        - $ref: '#/components/schemas/AuditableReport'
-        - type: object
-          properties:
-            assets:
-              $ref: '#/components/schemas/PrequalificationReportAssetSummary'
     PayStatementReportConstraints:
       required:
         - paystatementReport
@@ -7692,7 +7677,7 @@ components:
           properties:
             constraints:
               $ref: '#/components/schemas/VOETransactionsReportConstraintsOut'
-    PrequalificationReportAssetSummary:
+    ReportAssetSummary:
       required:
         - currentBalance
         - twoMonthAverage
@@ -7875,13 +7860,11 @@ components:
       type: object
       properties:
         From:
-          type: string
-          description: The `From` date of the date range for the report
-          example: '2021-02-01T00:00:00.000Z'
+          # The `From` date of the date range for the report
+          $ref: '#/components/schemas/Date'
         To:
-          type: string
-          description: The `To` date of the date range for the report
-          example: '2022-02-08T00:00:00.000Z'
+          # The `To` date of the date range for the report
+          $ref: '#/components/schemas/Date'
     ConsumerAttributesData:
       required:
         - dateRange
@@ -7893,6 +7876,12 @@ components:
         - liabilities
       type: object
       properties:
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accountIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumericAccountId'
         dateRange:
           $ref: '#/components/schemas/ConsumerAttributesDataDateRange'
         income:
@@ -7930,40 +7919,40 @@ components:
           type: object
           description: Net monthly income by customer for the last 12 months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2925.73
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2562.52
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2562.96
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2620.28
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2770.59
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2736.4
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2629.26
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2836.89
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1450.15
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1560.06
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3897.18
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2824.58
+            '2021-03-31': 2925.73
+            '2021-04-30': 2562.52
+            '2021-05-31': 2562.96
+            '2021-06-30': 2620.28
+            '2021-07-31': 2770.59
+            '2021-08-31': 2736.4
+            '2021-09-30': 2629.26
+            '2021-10-31': 2836.89
+            '2021-11-30': 1450.15
+            '2021-12-31': 1560.06
+            '2022-01-31': 3897.18
+            '2022-02-28': 2824.58
         monthlyNetIncomeByAccount:
           type: object
           description: Net monthly income by account for the last 12 months.
           example:
             '5001861692':
-              'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 57.32
-              'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 57.32
-              'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 57.32
-              'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 57.32
+              '2021-06-30': 57.32
+              '2021-07-31': 57.32
+              '2021-08-31': 57.32
+              '2021-11-30': 57.32
             '5001861693':
-              'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2925.73
-              'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2562.52
-              'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2562.96
-              'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2620.28
-              'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2770.59
-              'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2736.4
-              'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2629.26
-              'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2836.89
-              'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1450.15
-              'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1560.06
-              'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3897.18
-              'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2824.58
+              '2021-03-31': 2925.73
+              '2021-04-30': 2562.52
+              '2021-05-31': 2562.96
+              '2021-06-30': 2620.28
+              '2021-07-31': 2770.59
+              '2021-08-31': 2736.4
+              '2021-09-30': 2629.26
+              '2021-10-31': 2836.89
+              '2021-11-30': 1450.15
+              '2021-12-31': 1560.06
+              '2022-01-31': 3897.18
+              '2022-02-28': 2824.58
     ConsumerAttributesDataExpenses:
       required:
         - dwellingExpenseTotal
@@ -7975,86 +7964,85 @@ components:
       type: object
       properties:
         dwellingExpenseTotal:
-          type: string
+          type: number
           description: >-
             Total dwelling expenses for the last 12 months: rent, mortgage,
             utilities, and insurance
-          example: '5856.07'
+          example: 0
         dwellingExpensesByAccount:
           type: object
           description: >-
             Total dwelling expenses by account for the last 12 months: rent,
             mortgage, utilities, and insurance
           example:
-            dwellingExpensesByAccount:
-              '5001861693': -5856.07
+            '5001861693': -5856.07
         monthlyDwellingExpenseByCustomer:
           type: object
           description: Monthly dwelling expenses by customer
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -217.37
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -146.25
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -205.86
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -309.84
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -593.07
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -202.1
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -243.55
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -136.96
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -145.37
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -261.35
-            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -172.99
-            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -176.96
+            '2021-03-31': -217.37
+            '2021-04-30': -146.25
+            '2021-05-31': -205.86
+            '2021-06-30': -309.84
+            '2021-07-31': -593.07
+            '2021-08-31': -202.1
+            '2021-09-30': -243.55
+            '2021-10-31': -136.96
+            '2021-11-30': -145.37
+            '2021-12-31': -261.35
+            '2021-01-31': -172.99
+            '2021-02-28': -176.96
         monthlyDwellingExpenseByAccount:
           type: object
           description: Monthly dwelling expenses by account
           example:
             '5001861693':
-              'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -217.37
-              'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -146.25
-              'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -205.86
-              'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -309.84
-              'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -593.07
-              'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -202.1
-              'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -243.55
-              'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -136.96
-              'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -145.37
-              'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -261.35
-              'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -172.99
-              'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -176.96
+              '2021-03-31': -217.37
+              '2021-04-30': -146.25
+              '2021-05-31': -205.86
+              '2021-06-30': -309.84
+              '2021-07-31': -593.07
+              '2021-08-31': -202.1
+              '2021-09-30': -243.55
+              '2021-10-31': -136.96
+              '2021-11-30': -145.37
+              '2021-12-31': -261.35
+              '2021-01-31': -172.99
+              '2021-02-28': -176.96
         monthlyDebitAmountByCustomer:
           type: object
           description: Total monthly debit amounts by customer
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
-            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
-            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
+            '2021-03-31': -7259.58
+            '2021-04-30': -15368.09
+            '2021-05-31': -11937.66
+            '2021-06-30': -12704.43
+            '2021-07-31': -9089.55
+            '2021-08-31': -4099.97
+            '2021-09-30': -19627.13
+            '2021-10-31': -9927.53
+            '2021-11-30': -7694.94
+            '2021-12-31': -37310.54
+            '2021-01-31': -25129.31
+            '2021-02-28': -9548.28
         monthlyExpenseAmountByCustomer:
           type: object
           description: >-
             Total monthly debit amounts, excluding transfers and credit card
             payments.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -7259.58
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -15368.09
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -11937.66
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -12704.43
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9089.55
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4099.97
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -19627.13
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9927.53
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -7694.94
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -37310.54
-            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -25129.31
-            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -9548.28
+            '2021-03-31': -7259.58
+            '2021-04-30': -15368.09
+            '2021-05-31': -11937.66
+            '2021-06-30': -12704.43
+            '2021-07-31': -9089.55
+            '2021-08-31': -4099.97
+            '2021-09-30': -19627.13
+            '2021-10-31': -9927.53
+            '2021-11-30': -7694.94
+            '2021-12-31': -37310.54
+            '2021-01-31': -25129.31
+            '2021-02-28': -9548.28
     ConsumerAttributesDataNSF:
       required:
         - monthlyNSFOccurrences
@@ -8066,13 +8054,12 @@ components:
           description:
             The number of non-sufficient funds occurrences per calendar month.
           example:
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
+            '2021-04-30': 1
+            '2021-07-31': 1
         monthlyLateFeeOccurrences:
-          type: integer
-          format: int32
+          type: object
           description: The number of late fee occurrences.
-          example: 35
+          example: {}
     ConsumerAttributesDataLiabilities:
       required:
         - monthlyLoanDeposits
@@ -8130,202 +8117,202 @@ components:
           description:
             The minimum balance for the month across all customer accounts.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20841.81
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16014.16
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16949.55
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 645.01
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 702.33
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -18.89
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1346.13
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1288.81
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1231.49
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1952.71
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 14614.31
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 19705.31
+            '2021-03-31': 20841.81
+            '2021-04-30': 16014.16
+            '2021-05-31': 16949.55
+            '2021-06-30': 645.01
+            '2021-07-31': 702.33
+            '2021-08-31': -18.89
+            '2021-09-30': -1346.13
+            '2021-10-31': -1288.81
+            '2021-11-30': -1231.49
+            '2021-12-31': -1952.71
+            '2022-01-31': 14614.31
+            '2022-02-28': 19705.31
         monthlyMaximumBalance:
           type: object
           description:
             The maximum balance for the month across all customer accounts.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26321.24
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26528.01
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 25110.12
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22676.89
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22889.45
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 24431.44
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26144.03
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 30679.71
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 29099.98
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 52998.24
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 28163.22
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 26827.62
+            '2021-03-31': 26321.24
+            '2021-04-30': 26528.01
+            '2021-05-31': 25110.12
+            '2021-06-30': 22676.89
+            '2021-07-31': 22889.45
+            '2021-08-31': 24431.44
+            '2021-09-30': 26144.03
+            '2021-10-31': 30679.71
+            '2021-11-30': 29099.98
+            '2021-12-31': 52998.24
+            '2022-01-31': 28163.22
+            '2022-02-28': 26827.62
         monthlyAverageBalance:
           type: object
           description:
             The average balance for the month across all customer accounts.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23166.96
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21500.16
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21079.24
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17207.09
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17680.23
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20177.06
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21624.44
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23147.34
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23024.08
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23156.56
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 20371.3
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 22523.83
+            '2021-03-31': 23166.96
+            '2021-04-30': 21500.16
+            '2021-05-31': 21079.24
+            '2021-06-30': 17207.09
+            '2021-07-31': 17680.23
+            '2021-08-31': 20177.06
+            '2021-09-30': 21624.44
+            '2021-10-31': 23147.34
+            '2021-11-30': 23024.08
+            '2021-12-31': 23156.56
+            '2022-01-31': 20371.3
+            '2022-02-28': 22523.83
         monthlyStandardDeviationOfBalance:
           type: object
           description: >-
             The standard deviation for the month across all customer account
             balances.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1581.38
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3880.2
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2324.47
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4828.27
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5078.26
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5921.8
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6092.64
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 7479.2
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6979.12
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 10374.49
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3116.12
-            'Fri Jan 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2326.82
+            '2021-03-31': 1581.38
+            '2021-04-30': 3880.2
+            '2021-05-31': 2324.47
+            '2021-06-30': 4828.27
+            '2021-07-31': 5078.26
+            '2021-08-31': 5921.8
+            '2021-09-30': 6092.64
+            '2021-10-31': 7479.2
+            '2021-11-30': 6979.12
+            '2021-12-31': 10374.49
+            '2022-01-31': 3116.12
+            '2022-01-28': 2326.82
         monthlyDaysWithPositiveBalance:
           type: object
           description: >-
             The number of days in a month with a positive account balance across
             all customer account balances.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 14
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 18
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 13
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 15
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 16
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 15
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 22
+            '2021-03-31': 21
+            '2021-04-30': 21
+            '2021-05-31': 19
+            '2021-06-30': 17
+            '2021-07-31': 17
+            '2021-08-31': 14
+            '2021-09-30': 18
+            '2021-10-31': 13
+            '2021-11-30': 15
+            '2021-12-31': 16
+            '2022-01-31': 15
+            '2022-02-28': 22
         monthlyDaysWithNegativeBalance:
           type: object
           description: >-
             The number of days in a month with a negative account balance across
             all customer account balances.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 0
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 0
+            '2021-03-31': 0
+            '2021-04-30': 0
+            '2021-05-31': 0
+            '2021-06-30': 0
+            '2021-07-31': 0
+            '2021-08-31': 1
+            '2021-09-30': 1
+            '2021-10-31': 1
+            '2021-11-30': 1
+            '2021-12-31': 1
+            '2022-01-31': 0
+            '2022-02-28': 0
         monthlyTwoMonthAverageBalance:
           type: object
           description: Customer average balance for two months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22845.4
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22333.56
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21289.7
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19143.17
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17443.66
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 18928.64
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20900.75
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22385.89
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23085.71
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23090.32
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21763.93
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 24573.46
+            '2021-03-31': 22845.4
+            '2021-04-30': 22333.56
+            '2021-05-31': 21289.7
+            '2021-06-30': 19143.17
+            '2021-07-31': 17443.66
+            '2021-08-31': 18928.64
+            '2021-09-30': 20900.75
+            '2021-10-31': 22385.89
+            '2021-11-30': 23085.71
+            '2021-12-31': 23090.32
+            '2022-01-31': 21763.93
+            '2022-02-28': 24573.46
         monthlySixMonthAverageBalance:
           type: object
           description: Customer average balance for six months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 28794.93
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 25860.09
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23895.76
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22016.73
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20526.25
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20135.12
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19878.04
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20152.57
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 20476.71
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 21468.29
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21916.8
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 32063.74
+            '2021-03-31': 28794.93
+            '2021-04-30': 25860.09
+            '2021-05-31': 23895.76
+            '2021-06-30': 22016.73
+            '2021-07-31': 20526.25
+            '2021-08-31': 20135.12
+            '2021-09-30': 19878.04
+            '2021-10-31': 20152.57
+            '2021-11-30': 20476.71
+            '2021-12-31': 21468.29
+            '2022-01-31': 21916.8
+            '2022-02-28': 32063.74
         twelveMonthAverageBalance:
           type: object
           description: Customer average balance for twelve months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 33677.33
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 32656.57
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 31325.31
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 29758.99
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 27896.6
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26099.43
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 24336.49
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23006.33
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 22186.24
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 21742.51
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21221.53
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 34637.95
+            '2021-03-31': 33677.33
+            '2021-04-30': 32656.57
+            '2021-05-31': 31325.31
+            '2021-06-30': 29758.99
+            '2021-07-31': 27896.6
+            '2021-08-31': 26099.43
+            '2021-09-30': 24336.49
+            '2021-10-31': 23006.33
+            '2021-11-30': 22186.24
+            '2021-12-31': 21742.51
+            '2022-01-31': 21221.53
+            '2022-02-28': 34637.95
         twoMonthStandardDeviationOfBalance:
           type: object
           description: Two month standard deviation of customer balance.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1954.1
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2730.79
-            'Sun May 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3102.33
-            'Thu Jul 01 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3576.37
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4953.27
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5500.03
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6007.22
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6785.92
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 7229.16
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 8676.8
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 6745.3
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3236.86
+            '2021-03-31': 1954.1
+            '2021-04-30': 2730.79
+            '2021-05-30': 3102.33
+            '2021-06-31': 3576.37
+            '2021-07-31': 4953.27
+            '2021-08-31': 5500.03
+            '2021-09-30': 6007.22
+            '2021-10-31': 6785.92
+            '2021-11-30': 7229.16
+            '2021-12-31': 8676.8
+            '2022-01-31': 6745.3
+            '2022-02-28': 3236.86
         sixMonthStandardDeviationOfBalance:
           type: object
           description: Six month standard deviation of customer balance.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3004.4
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3010.97
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2975.17
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3181.34
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3336.57
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3935.73
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4687.61
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5287.44
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6063.22
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6987.58
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 6660.56
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3023.26
+            '2021-03-31': 3004.4
+            '2021-04-30': 3010.97
+            '2021-05-31': 2975.17
+            '2021-06-30': 3181.34
+            '2021-07-31': 3336.57
+            '2021-08-31': 3935.73
+            '2021-09-30': 4687.61
+            '2021-10-31': 5287.44
+            '2021-11-30': 6063.22
+            '2021-12-31': 6987.58
+            '2022-01-31': 6660.56
+            '2022-02-28': 3023.26
         twelveMonthStandardDeviationOfBalance:
           type: object
           description: Twelve month standard deviation of customer balance.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2799.08
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2947.63
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2863.37
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3065.62
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3224.32
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3479.49
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3846
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4149.2
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 4519.19
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
+            '2021-03-31': 2799.08
+            '2021-04-30': 2947.63
+            '2021-05-31': 2863.37
+            '2021-06-30': 3065.62
+            '2021-07-31': 3224.32
+            '2021-08-31': 3479.49
+            '2021-09-30': 3846
+            '2021-10-31': 4149.2
+            '2021-11-30': 4519.19
+            '2021-12-31': 5084.46
+            '2022-01-31': 4998.56
+            '2022-02-28': 2871.45
     ConsumerAttributesAssetsAccount:
       required:
         - monthlyClosingBalance
@@ -8347,213 +8334,226 @@ components:
           type: object
           description: Account closing balance by month.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20841.81
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16014.16
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16949.55
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 645.01
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 702.33
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -18.89
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1346.13
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1288.81
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1231.49
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1952.71
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 14614.31
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 19705.31
+            '5001861693':
+              '2021-03-31': 20841.81
+              '2021-04-30': 16014.16
+              '2021-05-31': 16949.55
+              '2021-06-30': 645.01
+              '2021-07-31': 702.33
+              '2021-08-31': -18.89
+              '2021-09-30': -1346.13
+              '2021-10-31': -1288.81
+              '2021-11-30': -1231.49
+              '2021-12-31': -1952.71
+              '2022-01-31': 14614.31
+              '2022-02-28': 19705.31
         monthlyMinimumBalance:
           type: object
           description: Account minimum balance by month.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20841.81
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16014.16
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 16949.55
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 645.01
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 702.33
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -18.89
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1346.13
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1288.81
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1231.49
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -1952.71
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 14614.31
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 19705.31
+            '5001861693':
+              '2021-03-31': 20841.81
+              '2021-04-30': 16014.16
+              '2021-05-31': 16949.55
+              '2021-06-30': 645.01
+              '2021-07-31': 702.33
+              '2021-08-31': -18.89
+              '2021-09-30': -1346.13
+              '2021-10-31': -1288.81
+              '2021-11-30': -1231.49
+              '2021-12-31': -1952.71
+              '2022-01-31': 14614.31
+              '2022-02-28': 19705.31
         monthlyMaximumBalance:
           type: object
           description: Account maximum balance by month.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26321.24
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26528.01
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 25110.12
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22676.89
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22889.45
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 24431.44
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26144.03
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 30679.71
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 29099.98
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 52998.24
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 28163.22
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 26827.62
+            '5001861693':
+              '2021-03-31': 26321.24
+              '2021-04-30': 26528.01
+              '2021-05-31': 25110.12
+              '2021-06-30': 22676.89
+              '2021-07-31': 22889.45
+              '2021-08-31': 24431.44
+              '2021-09-30': 26144.03
+              '2021-10-31': 30679.71
+              '2021-11-30': 29099.98
+              '2021-12-31': 52998.24
+              '2022-01-31': 28163.22
+              '2022-02-28': 26827.62
         monthlyAverageBalance:
           type: object
           description: Account maximum balance by month.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23166.96
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21500.16
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21079.24
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17207.09
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17680.23
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20177.06
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21624.44
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23147.34
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23024.08
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23156.56
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 20371.3
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 22523.83
+            '5001861693':
+              '2021-03-31': 23166.96
+              '2021-04-30': 21500.16
+              '2021-05-31': 21079.24
+              '2021-06-30': 17207.09
+              '2021-07-31': 17680.23
+              '2021-08-31': 20177.06
+              '2021-09-30': 21624.44
+              '2021-10-31': 23147.34
+              '2021-11-30': 23024.08
+              '2021-12-31': 23156.56
+              '2022-01-31': 20371.3
+              '2022-02-28': 22523.83
         monthlyStandardDeviationOfBalance:
           type: object
           description: Standard deviation of balance by account.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1581.38
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3880.2
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2324.47
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4828.27
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5078.26
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5921.8
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6092.64
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 7479.2
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6979.12
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 10374.49
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3116.12
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2326.82
+            '5001861693':
+              '2021-03-31': 1581.38
+              '2021-04-30': 3880.2
+              '2021-05-31': 2324.47
+              '2021-06-30': 4828.27
+              '2021-07-31': 5078.26
+              '2021-08-31': 5921.8
+              '2021-09-30': 6092.64
+              '2021-10-31': 7479.2
+              '2021-11-30': 6979.12
+              '2021-12-31': 10374.49
+              '2022-01-31': 3116.12
+              '2022-02-28': 2326.82
         monthlyDaysWithPositiveBalance:
           type: object
           description:
             Number of days in a month with a positive account balance.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 14
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 18
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 13
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 15
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 16
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 15
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 22
+            '5001861693':
+              '2021-03-31': 21
+              '2021-04-30': 21
+              '2021-05-31': 19
+              '2021-06-30': 17
+              '2021-07-31': 17
+              '2021-08-31': 14
+              '2021-09-30': 18
+              '2021-10-31': 13
+              '2021-11-30': 15
+              '2021-12-31': 16
+              '2022-01-31': 15
+              '2022-02-28': 22
         monthlyDaysWithNegativeBalance:
           type: object
           description:
             Number of days in a month with a negative account balance.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 0
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 1
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 0
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 0
+            '5001861693':
+              '2021-03-31': 0
+              '2021-04-30': 0
+              '2021-05-31': 0
+              '2021-06-30': 0
+              '2021-07-31': 0
+              '2021-08-31': 1
+              '2021-09-30': 1
+              '2021-10-31': 1
+              '2021-11-30': 1
+              '2021-12-31': 1
+              '2022-01-31': 0
+              '2022-02-28': 0
         monthlyTwoMonthAverageBalance:
           type: object
           description: Two month average balance by account.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22845.4
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22333.56
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 21289.7
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19143.17
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 17443.66
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 18928.64
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20900.75
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22385.89
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23085.71
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 23090.32
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21763.93
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 24573.46
+            '5001861693':
+              '2021-03-31': 22845.4
+              '2021-04-30': 22333.56
+              '2021-05-31': 21289.7
+              '2021-06-30': 19143.17
+              '2021-07-31': 17443.66
+              '2021-08-31': 18928.64
+              '2021-09-30': 20900.75
+              '2021-10-31': 22385.89
+              '2021-11-30': 23085.71
+              '2021-12-31': 23090.32
+              '2022-01-31': 21763.93
+              '2022-02-28': 24573.46
         monthlySixMonthAverageBalance:
           type: object
           description: Six month average balance by account.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 28794.93
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 25860.09
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23895.76
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 22016.73
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20526.25
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20135.12
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 19878.04
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 20152.57
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 20476.71
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 21468.29
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21916.8
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 32063.74
+            '5001861693':
+              '2021-03-31': 28794.93
+              '2021-04-30': 25860.09
+              '2021-05-31': 23895.76
+              '2021-06-30': 22016.73
+              '2021-07-31': 20526.25
+              '2021-08-31': 20135.12
+              '2021-09-30': 19878.04
+              '2021-10-31': 20152.57
+              '2021-11-30': 20476.71
+              '2021-12-31': 21468.29
+              '2022-01-31': 21916.8
+              '2022-02-28': 32063.74
         twelveMonthAverageBalance:
           type: object
           description: Twelve month average balance by account.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 33677.33
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 32656.57
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 31325.31
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 29758.99
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 27896.6
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 26099.43
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 24336.49
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 23006.33
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 22186.24
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 21742.51
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 21221.53
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 34637.95
+            '5001861693':
+              '2021-03-31': 33677.33
+              '2021-04-30': 32656.57
+              '2021-05-31': 31325.31
+              '2021-06-30': 29758.99
+              '2021-07-31': 27896.6
+              '2021-08-31': 26099.43
+              '2021-09-30': 24336.49
+              '2021-10-31': 23006.33
+              '2021-11-30': 22186.24
+              '2021-12-31': 21742.51
+              '2022-01-31': 21221.53
+              '2022-02-28': 34637.95
         twoMonthStandardDeviationOfBalance:
           type: object
           description: Standard deviation of account balance across two months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 1954.1
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2730.79
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3102.33
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3576.37
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4953.27
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5500.03
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6007.22
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 6785.92
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 7229.16
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 8676.8
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 6745.3
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3236.86
+            '5001861693':
+              '2021-03-31': 1954.1
+              '2021-04-30': 2730.79
+              '2021-05-31': 3102.33
+              '2021-06-30': 3576.37
+              '2021-07-31': 4953.27
+              '2021-08-31': 5500.03
+              '2021-09-30': 6007.22
+              '2021-10-31': 6785.92
+              '2021-11-30': 7229.16
+              '2021-12-31': 8676.8
+              '2022-01-31': 6745.3
+              '2022-02-28': 3236.86
         sixMonthStandardDeviationOfBalance:
           type: object
           description: Standard deviation of account balance across six months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3004.4
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3010.97
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2975.17
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3181.34
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3336.57
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3935.73
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4687.61
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 5287.44
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6063.22
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 6987.58
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 6660.56
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 3023.26
+            '5001861693':
+              '2021-03-31': 3004.4
+              '2021-04-30': 3010.97
+              '2021-05-31': 2975.17
+              '2021-06-30': 3181.34
+              '2021-07-31': 3336.57
+              '2021-08-31': 3935.73
+              '2021-09-30': 4687.61
+              '2021-10-31': 5287.44
+              '2021-11-30': 6063.22
+              '2021-12-31': 6987.58
+              '2022-01-31': 6660.56
+              '2022-02-28': 3023.26
         twelveMonthStandardDeviationOfBalance:
           type: object
           description:
             Standard deviation of account balance across twelve months.
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2799.08
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2947.63
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 2863.37
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3065.62
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3224.32
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3479.49
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': 3846
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': 4149.2
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 4519.19
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': 5084.46
-            'Mon Jan 31 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 4998.56
-            'Mon Feb 28 2022 00:00:00 GMT+0000 (Greenwich Mean Time)': 2871.45
+            '5001861693':
+              '2021-03-31': 2799.08
+              '2021-04-30': 2947.63
+              '2021-05-31': 2863.37
+              '2021-06-30': 3065.62
+              '2021-07-31': 3224.32
+              '2021-08-31': 3479.49
+              '2021-09-30': 3846
+              '2021-10-31': 4149.2
+              '2021-11-30': 4519.19
+              '2021-12-31': 5084.46
+              '2022-01-31': 4998.56
+              '2022-02-28': 2871.45
     ConsumerAttributesDataAssets:
       required:
         - customer
@@ -8591,18 +8591,18 @@ components:
           description: Net amount per month
           type: object
           example:
-            'Wed Mar 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -4333.85
-            'Fri Apr 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -3605.57
-            'Mon May 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -9374.7
-            'Wed Jun 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -10084.15
-            'Sat Jul 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -6318.96
-            'Tue Aug 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -1363.57
-            'Thu Sep 30 2021 01:00:00 GMT+0100 (Irish Standard Time)': -16997.87
-            'Sun Oct 31 2021 01:00:00 GMT+0100 (Irish Standard Time)': -6870.64
-            'Tue Nov 30 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -6244.79
-            'Fri Dec 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -35750.48
-            'Sun Jan 31 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -21232.13
-            'Sun Feb 28 2021 00:00:00 GMT+0000 (Greenwich Mean Time)': -6723.7
+            '2021-03-31': -4333.85
+            '2021-04-30': -3605.57
+            '2021-05-31': -9374.7
+            '2021-06-30': -10084.15
+            '2021-07-31': -6318.96
+            '2021-08-31': -1363.57
+            '2021-09-30': -16997.87
+            '2021-10-31': -6870.64
+            '2021-11-30': -6244.79
+            '2021-12-31': -35750.48
+            '2021-01-31': -21232.13
+            '2021-02-28': -6723.7
     ConsumerAttributeAccountIDs:
       description: A list of account IDs
       required:
