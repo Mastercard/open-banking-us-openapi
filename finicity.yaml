@@ -5,12 +5,12 @@ info:
     OpenAPI specification for Finicity APIs
 
 
-    ![](https://raw.githubusercontent.com/Finicity-Mastercard/finicity-openapi/main/res/logo.png)
+    ![](https://raw.githubusercontent.com/Mastercard/finicity-openapi/main/res/logo.png)
   contact:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.5.0
+  version: 1.5.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
