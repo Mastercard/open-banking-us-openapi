@@ -10,57 +10,57 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.5.1
+  version: 1.5.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
 tags:
+  - name: Accounts
+    description: Fetch or refresh customer accounts
+  - name: Analytics and Attributes
+    description: Generate and fetch consumer attributes (Beta)
+  - name: App Registration
+    description: Register and assign apps to customers
+  - name: Assets
+    description: Download asset files
   - name: Authentication
     description: Generate authentication tokens and manage credentials
-  - name: Customers
-    description: Enroll and manage customers
+  - name: Bank Statements
+    description: Fetch account statements and generate reports asynchronously
+  - name: Cash Flow
+    description: Generate cash flow reports asynchronously
   - name: Connect 🔗
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
-  - name: App Registration
-    description: Register and assign apps to customers
   - name: Consumers
     description:
       Create and manage consumers associated with customers in order to use
       report services
-  - name: Accounts
-    description: Fetch or refresh customer accounts
-  - name: Payments
-    description: Fetch ACH details and account balances
+  - name: Customers
+    description: Enroll and manage customers
   - name: Institutions
     description: Search and fetch financial institutions
+  - name: Liabilities
+    description: Fetch loan payment details
   - name: Pay Statements
     description: Upload pay statements
-  - name: Assets
-    description: Download asset files
-  - name: Verify Assets
-    description: Generate asset reports asynchronously
-  - name: Verify Income and Employment
-    description: Generate income and employment reports asynchronously
-  - name: Bank Statements
-    description: Fetch account statements and generate reports asynchronously
+  - name: Payments
+    description: Fetch ACH details and account balances
+  - name: Portfolios
+    description: Generate portfolios of the most recent reports
+  - name: Reports
+    description: Fetch generated reports when ready
   - name: Transactions
     description:
       Fetch customer and account transactions and generate reports
       asynchronously
-  - name: Cash Flow
-    description: Generate cash flow reports asynchronously
-  - name: Reports
-    description: Fetch generated reports when ready
-  - name: Liabilities
-    description: Fetch loan payment details
-  - name: Portfolios
-    description: Generate portfolios of the most recent reports
   - name: TxPush
     description: Manage TxPush subscriptions
-  - name: Analytics and Attributes
-    description: Generate and fetch consumer attributes (Beta)
+  - name: Verify Assets
+    description: Generate asset reports asynchronously
+  - name: Verify Income and Employment
+    description: Generate income and employment reports asynchronously
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -108,8 +108,8 @@ paths:
         Change the Partner Secret used to authenticate this partner.
 
 
-        The secret does not expire, but can be changed by calling this endpoint.
-        A valid Partner Secret may contain upper and lowercase characters,
+        The secret does not expire, but can be changed by calling this API. A
+        valid Partner Secret may contain upper and lowercase characters,
         numbers, and the characters !, @, #, $, %, &, *, _, -, +. It must
         include at least one number and at least one letter, and its length
         should be between 12 and 255 characters.
@@ -199,7 +199,7 @@ paths:
         - Connect 🔗
       summary: Generate Fix Connect URL
       description: >-
-        Use the Connect Fix endpoint when the following conditions occur:
+        Use the Connect Fix API when the following conditions occur:
 
         * The connection to the user's financial institution is lost
 
@@ -485,7 +485,7 @@ paths:
 
 
         A consumer must be created for the given customer before calling any of
-        the "Generate Report" services.
+        the Generate Report services.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -607,14 +607,14 @@ paths:
         given `institutionLoginId` with a connection to the institution.
 
 
-        Client apps are not permitted to automate calls to the "Refresh"
-        services. Active accounts are automatically refreshed by Finicity once
-        per day. Because many financial institutions only post transactions once
-        per day, calling Refresh repeatedly is usually a waste of resources and
-        is not recommended.
+        Client apps are not permitted to automate calls to the Refresh services.
+        Active accounts are automatically refreshed by Finicity once per day.
+        Because many financial institutions only post transactions once per day,
+        calling Refresh repeatedly is usually a waste of resources and is not
+        recommended.
 
 
-        Apps may call "Refresh" services for a specific customer when there is a
+        Apps may call Refresh services for a specific customer when there is a
         specific business case for the need of data that is up to date as of the
         moment. Please discuss with your account manager and systems engineer
         for further clarification.
@@ -745,14 +745,14 @@ paths:
         the  given `customerId` with a connection to the institution.
 
 
-        Client apps are not permitted to automate calls to the "Refresh"
-        services. Active accounts are automatically refreshed by Finicity once
-        per day. Because many financial institutions only post transactions once
-        per day, calling Refresh repeatedly is usually a waste of resources and
-        is not recommended.
+        Client apps are not permitted to automate calls to the Refresh services.
+        Active accounts are automatically refreshed by Finicity once per day.
+        Because many financial institutions only post transactions once per day,
+        calling Refresh repeatedly is usually a waste of resources and is not
+        recommended.
 
 
-        Apps may call "Refresh" services for a specific customer when there is a
+        Apps may call Refresh services for a specific customer when there is a
         specific business case for the need of data that is up to date as of the
         moment. Please discuss with your account manager and systems engineer
         for further clarification.
@@ -1169,7 +1169,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1215,7 +1215,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1256,7 +1256,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         If no account of type checking, savings, money market, or investment is
@@ -1368,9 +1368,9 @@ paths:
         source without any income information. 
 
 
-        To generate this report, pass the values from the customer `SSN`, `DOB`,
-        and the `reportId` from the first VOIE-Payroll report generated after
-        the Connect session.
+        To generate this report, pass the values from the customer SSN, DOB, and
+        the report ID from the first VOIE-Payroll report generated after the
+        Connect session.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1477,12 +1477,12 @@ paths:
         Statement API) to generate the VOIE - Paystub (with TXVerify) report.
 
 
-        Note: if you are using this endpoint to refresh the bank transactions,
-        use the same asset ID from the first report. A new paystub is not
-        required unless the paystub is too old for underwriting requirements.
-        Using the same asset ID that was on the original report and the
-        previously extracted details will be used to speed up report generation
-        response time.
+        Note: if you are using this API to refresh the bank transactions, use
+        the same asset ID from the first report. A new paystub is not required
+        unless the paystub is too old for underwriting requirements. Using the
+        same asset ID that was on the original report and the previously
+        extracted details will be used to speed up report generation response
+        time.
 
 
         This is a premium service. The billing rate is the variable rate for
@@ -1514,7 +1514,7 @@ paths:
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as asset IDs
-        (generated using the "Store Customer Pay Statement" API) to generate the
+        (generated using the Store Customer Pay Statement API) to generate the
         VOIE - Paystub report with digitized paystub details.
 
 
@@ -1548,7 +1548,7 @@ paths:
         The VOIE – Payroll report generates when the customer completes Connect.
         Lenders, who commonly use this report for pre-close verification
         employment check, can refresh this report by passing the consumer's SSN,
-        DOB, and the `reportId` from the first VOIE – Payroll report they
+        DOB, and the report ID from the first VOIE – Payroll report they
         received.
 
 
@@ -1650,7 +1650,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1786,7 +1786,7 @@ paths:
         Generate a Transaction Report for the given accounts under the given
         customer. This service retrieves up to 24 months of transaction history
         for the given customer. It then uses this information to generate the
-        Transaction Report. 
+        Transaction Report.
 
 
         This is a premium service. A billable event will be created upon the
@@ -1794,7 +1794,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         There cannot be more than 24 months between `fromDate` and `toDate`.
@@ -1876,7 +1876,7 @@ paths:
       description: >
         Return a portfolio of most recently generated reports for each report
         type for the given customer. If there are multiple reports that were
-        generated for a report type (VOA, VOI, etc), only the most recently
+        generated for a report type (VOA, VOI, etc.), only the most recently
         generated report for the type will be returned.
 
 
@@ -2042,7 +2042,7 @@ paths:
       description: >-
         Return a portfolio of most recently generated reports for each report
         type for a given consumer. If there are multiple reports that were
-        generated for a report type (VOA, VOI, etc), only the most recently
+        generated for a report type (VOA, VOI, etc.), only the most recently
         generated report for the type will be returned.
 
 
@@ -2094,12 +2094,12 @@ paths:
       summary: Get Report by Customer and ID
       description: >-
         Get a report that has been generated by a previous call to one of the
-        "Generate Report" services.
+        Generate Report services.
 
 
-        The report's status field will contain `inProgress`, `failure`, or
-        `success`. If the status shows `inProgress`, the client app should wait
-        20 seconds and then call this endpoint again.
+        The report's `status` field will contain "inProgress", "failure", or
+        "success". If the status shows "inProgress", the client app should wait
+        20 seconds and then call this API again.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2125,12 +2125,12 @@ paths:
       summary: Get Report by Consumer and ID
       description: >-
         Get a report that has been generated by a previous call to one of the
-        "Generate Report" services.
+        Generate Report services.
 
 
-        The report's status field will contain `inProgress`, `failure`, or
-        `success`. If the status shows `inProgress`, the client app should wait
-        20 seconds and then call this endpoint again.
+        The report's `status` field will contain "inProgress", "failure", or
+        "success". If the status shows "inProgress", the client app should wait
+        20 seconds and then call this API again.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2155,13 +2155,13 @@ paths:
         - Reports
       summary: Get Reports by Customer ID
       description: >-
-        Get all reports that have been generated by previous calls to "Generate
-        Report" services for the given customer.
+        Get all reports that have been generated by previous calls to Generate
+        Report services for the given customer.
 
 
-        The status fields in the returned list will contain `inProgress`,
-        `failure`, or `success`. If the status shows `inProgress`, the client
-        app should wait 20 seconds and then call this endpoint again.
+        The `status` fields in the returned list will contain "inProgress",
+        "failure", or "success". If the status shows "inProgress", the client
+        app should wait 20 seconds and then call this API again.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2186,13 +2186,13 @@ paths:
         - Reports
       summary: Get Reports by Consumer ID
       description: >-
-        Get all reports that have been generated by previous calls to "Generate
-        Report" services for the given consumer.
+        Get all reports that have been generated by previous calls to Generate
+        Report services for the given consumer.
 
 
-        The status fields in the returned list will contain `inProgress`,
-        `failure`, or `success`. If the status shows `inProgress`, the client
-        app should wait 20 seconds and then call this endpoint again.
+        The `status` fields in the returned list will contain "inProgress",
+        "failure", or "success". If the status shows "inProgress", the client
+        app should wait 20 seconds and then call this API again.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2354,7 +2354,7 @@ paths:
 
 
         Before calling this API, a consumer must be created for the given
-        customer ID (see "Consumers").
+        customer ID (see Consumers APIs).
 
 
         If no account type of checking or savings is found, the service will
@@ -2383,8 +2383,8 @@ paths:
         - Analytics and Attributes
       summary: Generate Consumer Attributes
       description: >-
-        Generate a Consumer Attributes report for the given customer. The "to"
-        and "from" date range is the last 12 months of consumer data, based on
+        Generate a Consumer Attributes report for the given customer. The `to`
+        and `from` date range is the last 12 months of consumer data, based on
         the date at which the report was generated.
 
 
@@ -2413,8 +2413,8 @@ paths:
         - Analytics and Attributes
       summary: List Consumer Attributes
       description: >-
-        Retrieve the list of all analytic IDs previously created for a customer
-        using the "Generate Consumer Attributes" APIs.
+        Retrieve a list of all analytic IDs previously created for a customer
+        using the Generate Consumer Attributes APIs.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2461,7 +2461,7 @@ paths:
 
 
         Use the analytic and customer IDs to retrieve 12 months of data
-        attributes according to the "To" and "From" date range of the report at
+        attributes according to the `To` and `From` date range of the report at
         the time it was created. 
 
 
@@ -2493,7 +2493,7 @@ paths:
 
 
         Use the analytic and customer IDs to retrieve 12 months of FCRA data
-        attributes according to the "To" and "From" date range of the report at
+        attributes according to the `To` and `From` date range of the report at
         the time it was created. 
 
 
@@ -2527,7 +2527,7 @@ components:
       name: Finicity-App-Token
       type: apiKey
       in: header
-      description: A token returned by the `/authentication` endpoint
+      description: A token returned by the `/authentication` API
   requestBodies:
     CreateTokenRequest:
       required: true
@@ -2726,7 +2726,7 @@ components:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
     SendConnectEmailResponse:
-      description: The URL link was successfully generated and the email sent.
+      description: The URL link was successfully generated and the email sent
       content:
         application/json:
           schema:
@@ -2804,7 +2804,7 @@ components:
     LoadHistoricTransactionsForCustomerAccountResponse:
       description:
         Historic transactions have been loaded successfully. The transactions
-        are now available by calling "Get Customer Account Transactions".
+        are now available by calling the Get Customer Account Transactions API.
     GetCustomerAccountResponse:
       description: The account was successfully retrieved
       content:
@@ -2876,10 +2876,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2888,10 +2888,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2900,10 +2900,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2956,10 +2956,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2968,10 +2968,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2980,10 +2980,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -2992,10 +2992,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -3004,10 +3004,10 @@ components:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
-        report can be fetched using 'Get Report' endpoints. If you don't use a
-        callback URL, 'Get Report' will return a minimal report with the
-        following status: `inProgress`. Repeat the call every 20 seconds until
-        'Get Report' returns a different status."
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status."
       content:
         application/json:
           schema:
@@ -3257,7 +3257,7 @@ components:
         message: 'A consumer already exists for customer 4025024821'
   parameters:
     AssetIdParameter:
-      description: The Finicity asset ID
+      description: The asset ID
       name: assetId
       in: path
       required: true
@@ -3265,7 +3265,7 @@ components:
         $ref: '#/components/schemas/AssetId'
       example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     CustomerIdParameter:
-      description: A Finicity customer ID
+      description: A customer ID
       name: customerId
       in: path
       required: true
@@ -3281,7 +3281,7 @@ components:
         $ref: '#/components/schemas/AccountStatus'
       example: pending
     AnalyticIdParameter:
-      description: The Finicity analytic ID
+      description: The analytic ID
       name: analyticsId
       in: path
       required: true
@@ -3289,7 +3289,7 @@ components:
         $ref: '#/components/schemas/AnalyticId'
       example: CA-5dfbaa3ac-5321
     TransactionIdParameter:
-      description: A Finicity transaction ID
+      description: A transaction ID
       name: transactionId
       in: path
       required: true
@@ -3377,7 +3377,7 @@ components:
       required: false
       description: >-
         The text you wish to match. Leave this empty if you wish to return all
-        customers. Must be URL-encoded (see also: [Handling Spaces in
+        customers. Must be URL-encoded (see: [Handling Spaces in
         Queries](https://docs.finicity.com/endpoint-syntax-and-format/)).
       schema:
         type: string
@@ -3396,7 +3396,7 @@ components:
       required: false
       description: >-
         "testing" or "active" to return only customers of that type, or leave
-        empty to return all customers.
+        empty to return all customers
       schema:
         $ref: '#/components/schemas/CustomerType'
       example: 'active'
@@ -3461,7 +3461,7 @@ components:
     ReportIdParameter:
       name: reportId
       in: path
-      description: Finicity's ID of the report
+      description: ID of the report
       required: true
       schema:
         $ref: '#/components/schemas/ReportId'
@@ -3565,7 +3565,7 @@ components:
         type: string
         example: finbank
     RequiredFromDateParameter:
-      description: A "from" date
+      description: A start date
       name: fromDate
       in: query
       required: true
@@ -3573,7 +3573,7 @@ components:
         $ref: '#/components/schemas/UnixDate'
       example: 1607450357
     RequiredToDateParameter:
-      description: A "to" date
+      description: A end date
       name: toDate
       in: query
       required: true
@@ -3586,7 +3586,7 @@ components:
       required: false
       description:
         A Report Listener URL to receive notifications. The webhook must respond
-        to the Finicity API with 2xx HTTP status code.
+        to the Finicity API with a 2xx HTTP status code.
       schema:
         type: string
         example: 'https://finicity-test/webhook'
@@ -3654,18 +3654,20 @@ components:
       example: 'fr-CA'
     ConsumerId:
       type: string
-      description: 'A Finicity consumer ID. See also: "Create Consumer".'
+      description:
+        'A consumer ID. See Create Consumer API for how to create a consumer ID.'
       example: '0bf46322c167b562e6cbed9d40e19a4c'
     CustomerId:
       type: string
-      description: 'A Finicity customer ID. See also: "Add Customer".'
+      description:
+        'A customer ID. See Add Customer API for how to create a customer ID.'
       example: '1005061234'
     NumericCustomerId:
       type: integer
       format: int64
       description:
-        'A Finicity customer ID represented as a number. See also: "Add
-        Customer".'
+        'A customer ID represented as a number. See Add Customer API for how to
+        create a customer ID.'
       example: 1005061234
     AccountStatus:
       description: An account status
@@ -3673,7 +3675,7 @@ components:
       example: pending
     ReportId:
       type: string
-      description: A Finicity report ID
+      description: A report ID
       example: u4hstnnak45g
     ReportCoveredDays:
       type: integer
@@ -3701,12 +3703,12 @@ components:
       example: y4zsgccj4xpw-6-port
     AccountId:
       type: string
-      description: A Finicity account ID
+      description: An account ID
       example: '5011648377'
     NumericAccountId:
       type: integer
       format: int64
-      description: A Finicity account ID represented as a number
+      description: An account ID represented as a number
       example: 5011648377
     AccountNumberLast4:
       type: string
@@ -3723,7 +3725,7 @@ components:
       example: 'account'
     TransactionId:
       type: integer
-      description: A Finicity transaction ID
+      description: A transaction ID
       format: int64
       example: 21284820852
     IncludePending:
@@ -3734,19 +3736,19 @@ components:
     AssetId:
       type: string
       description:
-        A Finicity asset ID. Generated by Connect or by using the "Store
-        Customer Pay Statement" API.
+        An asset ID. Generated by Connect or by using the Store Customer Pay
+        Statement API.
       example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     ReportAccountIdsString:
       type: string
       description:
-        A whitespace-separated list of Finicity account IDs to be included in
-        the report (all accounts will be included if not set)
+        A whitespace-separated list of account IDs to be included in the report
+        (all accounts will be included if not set)
       example: '5011648377 5011648378 5011648379'
     ReportAccountIds:
       description:
-        An array of Finicity account IDs to be included in the report (all
-        accounts will be included if not set)
+        An array of account IDs to be included in the report (all accounts will
+        be included if not set)
       type: array
       items:
         $ref: '#/components/schemas/AccountId'
@@ -3778,66 +3780,66 @@ components:
     InstitutionTransAgg:
       type: boolean
       description: >-
-        `true`: The institution is certified for the Transaction Aggregation
+        "true": The institution is certified for the Transaction Aggregation
         product
 
-        `false`: The institution is decertified for the Transaction Aggregation
+        "false": The institution is decertified for the Transaction Aggregation
         product
       example: true
     InstitutionAch:
       type: boolean
       description: >-
-        `true`: The institution is certified for the ACH product
+        "true": The institution is certified for the ACH product
 
-        `false`: The institution is decertified for the ACH product
+        "false": The institution is decertified for the ACH product
       example: true
     InstitutionStateAgg:
       type: boolean
       description: >-
-        `true`: The institution is certified for the Statement Aggregation
+        "true": The institution is certified for the Statement Aggregation
         product
 
-        `false`: The institution is decertified for the Statement Aggregation
+        "false": The institution is decertified for the Statement Aggregation
         product
       example: false
     InstitutionVoi:
       type: boolean
       description: >-
-        `true`: The institution is certified for the VOI product
+        "true": The institution is certified for the VOI product
 
-        `false`: The institution is decertified for the VOI product
+        "false": The institution is decertified for the VOI product
       example: true
     InstitutionVoa:
       type: boolean
       description: >-
-        `true`: The institution is certified for the VOA product
+        "true": The institution is certified for the VOA product
 
-        `false`: The institution is decertified for the VOA product
+        "false": The institution is decertified for the VOA product
       example: true
     InstitutionAha:
       type: boolean
       description: >-
-        `true`: The institution is certified for the Account History Aggregation
+        "true": The institution is certified for the Account History Aggregation
         product
 
-        `false`: The institution is decertified for the Account History
+        "false": The institution is decertified for the Account History
         Aggregation product
       example: false
     InstitutionAvailableBalance:
       type: boolean
       description: >-
-        `true`: The institution is certified for the Account Balance Check (ABC)
+        "true": The institution is certified for the Account Balance Check (ABC)
         product
 
-        `false`: The institution is decertified for the Account Balance Check
+        "false": The institution is decertified for the Account Balance Check
         (ABC) product
       example: false
     InstitutionAccountOwner:
       type: boolean
       description: >-
-        `true`: The institution is certified for the Account Owner product
+        "true": The institution is certified for the Account Owner product
 
-        `false`: The institution is decertified for the Account Owner product
+        "false": The institution is decertified for the Account Owner product
       example: true
     InstitutionLoginId:
       type: string
@@ -4173,20 +4175,20 @@ components:
       type: string
       description: >-
         The content type the webhook events will be sent in. Supported types:
-        `application/json` and `application/xml`.
+        "application/json" and "application/xml".
       default: application/json
       example: application/json
     WebhookData:
       type: object
       description: >-
         Allows additional identifiable information to be inserted into the
-        payload of connect webhook events. See also: [Custom
+        payload of connect webhook events. See: [Custom
         Webhooks](https://docs.finicity.com/custom-webhooks/).
     WebhookHeaders:
       type: object
       description: >-
         Allows additional identifiable information to be included as headers of
-        connect webhook event. See also: [Custom
+        connect webhook event. See: [Custom
         Webhooks](https://docs.finicity.com/custom-webhooks/).
     Experience:
       type: string
@@ -4224,7 +4226,7 @@ components:
     SingleUseUrl:
       type: boolean
       description: >-
-        `true`: The URL link expires after a Connect session successfully
+        "true": The URL link expires after a Connect session successfully
         completes.
 
 
@@ -4287,19 +4289,19 @@ components:
 
         Designate up to 5 custom fields that you'd like associated with the
         report when it's generated. Every custom field consists of three
-        variables: `label`, `value`, and `shown`. The `shown` variable is true
-        or false. 
+        variables: `label`, `value`, and `shown`. The `shown` variable is "true"
+        or "false".
 
-        * `true`: (default) display the custom field in the PDF report
+        * "true": (default) display the custom field in the PDF report
 
-        * `false`: don't display the custom field in the PDF report
+        * "false": don't display the custom field in the PDF report
 
 
         For an experience that generates multiple reports, the
         `reportCustomFields` parameter gets passed to all reports.
 
 
-        All custom fields display in the Reseller Billing endpoint.
+        All custom fields display in the Reseller Billing API.
     IncomeStreamConfidenceMinimum:
       type: integer
       description: >-
@@ -4477,25 +4479,25 @@ components:
     ApplicationId:
       type: string
       description:
-        '`applicationId` value returned from the "Get App Registration Status"
-        endpoint and the partner assign the customers to. This cannot be changed
-        once set. Only applicable in cases of partners with multiple registered
+        '`applicationId` value returned from the Get App Registration Status API
+        and the partner assign the customers to. This cannot be changed once
+        set. Only applicable in cases of partners with multiple registered
         applications. If the partner only has one app, this can usually be
         omitted. This field is populated after the app is in a status approved.'
       example: '123456789'
     PreAppId:
       type: string
       description:
-        Identifier to track the application registration from the "App
-        Registration" and "Get App Registration Status" endpoints
+        Identifier to track the application registration from the App
+        Registration and Get App Registration Status APIs
       example: '2581'
     NumericPreAppId:
       type: integer
       format: int64
       description:
-        Identifier to track the application registration from the "App
-        Registration" and "Get App Registration Status" endpoints, represented
-        as a number
+        Identifier to track the application registration from the App
+        Registration and Get App Registration Status APIs, represented as a
+        number
       example: 2581
     ApplicationName:
       type: string
@@ -4504,15 +4506,15 @@ components:
     UnixDate:
       type: integer
       description:
-        'A date in Unix epoch time (in seconds). See also: [Handling Epoch Dates
-        and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+        'A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
     StringUnixDate:
       type: string
       description:
-        'A date in Unix epoch time (in seconds). See also: [Handling Epoch Dates
-        and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+        'A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: '1607450357'
     NoZoneDateTime:
@@ -4533,7 +4535,7 @@ components:
     MoreResultsAvailable:
       type: boolean
       description:
-        'If the value of `moreAvailable` is `true`, you can retrieve the next
+        'If the value of `moreAvailable` is "true", you can retrieve the next
         page of results by increasing the value of the start parameter in your
         next request:"...&start=6&limit=5"'
       example: true
@@ -4552,8 +4554,7 @@ components:
     CustomerType:
       type: string
       description:
-        The type of Finicity customer ("active" or "testing" or "" for all
-        types)
+        The type of customer ("active" or "testing" or "" for all types)
       example: active
     NewCustomer:
       description: A new customer to be enrolled
@@ -4634,7 +4635,7 @@ components:
             applicationName:
               $ref: '#/components/schemas/ApplicationName'
     Customers:
-      description: A list of Finicity customers
+      description: A list of customers
       required:
         - found
         - displaying
@@ -5025,8 +5026,8 @@ components:
         securityIdType:
           type: string
           description:
-            'The security type: CUSIP, ISIN, SEDOL, SICC, VALOR, and WKN. This
-            field is related to the `securityId`.'
+            'The security type: "CUSIP", "ISIN", "SEDOL", "SICC", "VALOR", and
+            "WKN". This field is related to the `securityId` field.'
           example: CUSIP
         costBasisPerShare:
           type: number
@@ -5069,7 +5070,7 @@ components:
         availableBalanceAmount:
           type: number
           description: >-
-            (Checking/Savings/CD/MoneyMarket) and (Mortgage/Loan)  The available
+            (Checking/Savings/CD/MoneyMarket) and (Mortgage/Loan) The available
             balance (typically the current balance with adjustments for any
             pending transactions)
           example: 5678.78
@@ -5639,9 +5640,9 @@ components:
         status:
           $ref: '#/components/schemas/AppRegistrationStatus'
     AppStatuses:
-      description: >-
-        The response for the "Get App Registration Status" endpoint which
-        returns an array of status objects
+      description:
+        The response for the Get App Registration Status API which returns an
+        array of status objects
       required:
         - totalRecords
         - totalPages
@@ -5758,7 +5759,7 @@ components:
           $ref: '#/components/schemas/UnixDate'
         status:
           type: boolean
-          description: '`false` indicates registration is still pending'
+          description: '"false" indicates registration is still pending'
           example: true
     Branding:
       type: object
@@ -5824,8 +5825,7 @@ components:
           $ref: '#/components/schemas/AddressLine2'
     Institutions:
       description:
-        A list of Finicity financial institutions from the "Get Institutions"
-        API
+        A list of financial institutions from the Get Institutions API
       required:
         - found
         - displaying
@@ -5896,21 +5896,21 @@ components:
         studentLoanData:
           type: boolean
           description: >-
-            `true`: The institution is certified for the Student Loan Data
+            "true": The institution is certified for the Student Loan Data
             product
 
 
-            `false`: The institution is decertified for the Student Loan Data
+            "false": The institution is decertified for the Student Loan Data
             product
           example: true
         loanPaymentDetails:
           type: boolean
           description: >-
-            `true`: The institution is certified for the Loan Payment Detail
+            "true": The institution is certified for the Loan Payment Detail
             product
 
 
-            `false`: The institution is decertified for the Loan Payment Detail
+            "false": The institution is decertified for the Loan Payment Detail
             product
           example: true
         accountTypeDescription:
@@ -5932,10 +5932,10 @@ components:
         oauthEnabled:
           type: boolean
           description: >-
-            `true`: The institution is an OAuth connection
+            "true": The institution is an OAuth connection
 
 
-            `false`: The institution isn't an OAuth connection
+            "false": The institution isn't an OAuth connection
           example: true
         urlForgotPassword:
           type: string
@@ -5988,7 +5988,8 @@ components:
         status:
           type: string
           description:
-            "Institution's status: online, offline, maintenance, testing"
+            'Status for the institution: "online", "offline", "maintenance",
+            "testing"'
           example: online
         newInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
@@ -6001,8 +6002,7 @@ components:
           $ref: '#/components/schemas/NumericInstitutionId'
     CertifiedInstitutions:
       description:
-        A list of Finicity financial institutions from the "Get Certified
-        Institutions" API
+        A list of financial institutions from the Get Certified Institutions API
       required:
         - found
         - displaying
@@ -6097,23 +6097,23 @@ components:
           type: number
           description: >-
             Only available for investment accounts. Net interest earned after
-            deducting interest paid out
+            deducting interest paid out.
           example: -50000
         availableCashBalance:
           type: number
           description: >-
             Only available for investment accounts. Amount available for cash
-            withdrawal
+            withdrawal.
           example: 1500
         vestedBalance:
           type: number
           description:
-            Only available for investment accounts. Vested amount in account
+            Only available for investment accounts. Vested amount in account.
           example: 300000
         currentLoanBalance:
           type: number
           description:
-            Only available for investment accounts. Current loan balance
+            Only available for investment accounts. Current loan balance.
           example: 0
         availableBalanceAmount:
           type: number
@@ -6458,8 +6458,8 @@ components:
           example: dens28i3vsch-voi1
         name:
           type: string
-          description: >-
-            A human-readable name based on the normalizedPayee name of the
+          description:
+            A human-readable name based on the `normalizedPayee` name of the
             transactions for this income stream
           example: none
         status:
@@ -6485,25 +6485,25 @@ components:
         netAnnual:
           type: number
           description:
-            Sum of all values in netMonthlyIncome over the previous 12 months
+            Sum of all values in `netMonthlyIncome` over the previous 12 months
           example: 110475.7
         projectedNetAnnual:
           type: number
           description: >-
             Projected net income over the next 12 months, across all income
-            streams, based on netAnnualIncome
+            streams, based on `netAnnualIncome`
           example: 0
         estimatedGrossAnnual:
           type: number
           description: >-
-            Before-tax gross annual income (estimated from netAnnual) across all
-            income stream in the past 12 months
+            Before-tax gross annual income (estimated from `netAnnual`) across
+            all income stream in the past 12 months
           example: 100000
         projectedGrossAnnual:
           type: number
           description: >-
             Projected gross income over the next 12 months, across all active
-            income streams, based on projectedNetAnnual
+            income streams, based on `projectedNetAnnual`
           example: 151609
         averageMonthlyIncomeNet:
           type: number
@@ -6546,9 +6546,9 @@ components:
           example: Finicity amount credit
         normalizedPayee:
           type: string
-          description: >-
-            A normalized payee, derived from the transaction's description and
-            memo fields.
+          description:
+            A normalized payee, derived from the transaction's `description` and
+            `memo` fields.
           example: Finicity
         institutionTransactionId:
           type: string
@@ -6844,7 +6844,7 @@ components:
           $ref: '#/components/schemas/AggregationStatusCode'
         balance:
           type: number
-          description: The cleared balance of the account as-of balanceDate
+          description: The cleared balance of the account as-of `balanceDate`
           example: 501.24
         balanceDate:
           # Date for when the balance was captured
@@ -6903,7 +6903,7 @@ components:
       type: object
       properties:
         txVerifyInterview:
-          description: An array of 'TxVerifyInterview' objects
+          description: An array of `TxVerifyInterview` objects
           type: array
           items:
             $ref: '#/components/schemas/TxVerifyInterview'
@@ -6948,7 +6948,7 @@ components:
       type: string
       description: >-
         If provided by the institution, the following values may be returned in
-        the field of a record:
+        the field of a record
       example: atm
     ReportTransactionPayStatementMatchTypes:
       enum:
@@ -7049,7 +7049,7 @@ components:
         accountDetail:
           $ref: '#/components/schemas/LoanPaymentDetailsAccount'
     Asset:
-      description: A Finicity asset
+      description: An asset
       required:
         - assetId
       type: object
@@ -7211,79 +7211,79 @@ components:
       description: >-
         The list of supported account types.
 
-        * `checking`: Standard checking
+        * "checking": Standard checking
 
-        * `savings`: Standard savings
+        * "savings": Standard savings
 
-        * `cd`: Certificates of deposit
+        * "cd": Certificates of deposit
 
-        * `moneyMarket`: Money Market
+        * "moneyMarket": Money Market
 
-        * `creditCard`: Standard credit cards
+        * "creditCard": Standard credit cards
 
-        * `lineOfCredit`: Home equity, line of credit
+        * "lineOfCredit": Home equity, line of credit
 
-        * `investment`: Generic investment (no details)
+        * "investment": Generic investment (no details)
 
-        * `investmentTaxDeferred`: Generic tax-advantaged investment (no
+        * "investmentTaxDeferred": Generic tax-advantaged investment (no
         details)
 
-        * `employeeStockPurchasePlan`: ESPP, Employee Stock Ownership Plans
+        * "employeeStockPurchasePlan": ESPP, Employee Stock Ownership Plans
         (ESOP), Stock Purchase Plans
 
-        * `ira`: Individual Retirement Account (not Rollover or Roth)
+        * "ira": Individual Retirement Account (not Rollover or Roth)
 
-        * `401k`: 401K Plan
+        * "401k": 401K Plan
 
-        * `roth`: Roth IRA, Roth 401K
+        * "roth": Roth IRA, Roth 401K
 
-        * `403b`: 403B Plan
+        * "403b": 403B Plan
 
-        * `529plan`: 529 Plan (True value is 529)
+        * "529plan": 529 Plan (True value is 529)
 
-        * `rollover`: Rollover IRA
+        * "rollover": Rollover IRA
 
-        * `ugma`: Uniform Gifts to Minors Act
+        * "ugma": Uniform Gifts to Minors Act
 
-        * `utma`: Uniform Transfers to Minors Act
+        * "utma": Uniform Transfers to Minors Act
 
-        * `keogh`: Keogh Plan
+        * "keogh": Keogh Plan
 
-        * `457plan`: 457 Plan (True value is 457)
+        * "457plan": 457 Plan (True value is 457)
 
-        * `401a`: 401A Plan
+        * "401a": 401A Plan
 
-        * `brokerageAccount`: Brokerage Account
+        * "brokerageAccount": Brokerage Account
 
-        * `educationSavings`: Education Savings Account that is not a 529
+        * "educationSavings": Education Savings Account that is not a 529
 
-        * `healthSavingsAccount`: HSA (Health Savings Accounts)
+        * "healthSavingsAccount": HSA (Health Savings Accounts)
 
-        * `pension`: Pension
+        * "pension": Pension
 
-        * `profitSharingPlan`: Profit Sharing Plan
+        * "profitSharingPlan": Profit Sharing Plan
 
-        * `roth401k`: Roth 401K
+        * "roth401k": Roth 401K
 
-        * `sepIRA`: Simplified Employee Pension IRA
+        * "sepIRA": Simplified Employee Pension IRA
 
-        * `simpleIRA`: Simple IRA
+        * "simpleIRA": Simple IRA
 
-        * `thriftSavingsPlan`: Thrift Savings Plan
+        * "thriftSavingsPlan": Thrift Savings Plan
 
-        * `variableAnnuity`: Variable Annuity
+        * "variableAnnuity": Variable Annuity
 
-        * `cryptocurrency`: Cryptocurrency Wallet, Cryptocurrency Account
+        * "cryptocurrency": Cryptocurrency Wallet, Cryptocurrency Account
 
-        * `mortgage`: Standard Mortgages
+        * "mortgage": Standard Mortgages
 
-        * `loan`: Auto loans, equity loans, other loans
+        * "loan": Auto loans, equity loans, other loans
 
-        * `studentLoan`: Student Loan
+        * "studentLoan": Student Loan
 
-        * `studentLoanGroup`: Student Loan Group
+        * "studentLoanGroup": Student Loan Group
 
-        * `studentLoanAccount`: Student Loan Account
+        * "studentLoanAccount": Student Loan Account
       example: checking
     Transactions:
       description: A list of transactions
@@ -7335,7 +7335,7 @@ components:
           example: a testing transaction description
         status:
           type: string
-          description: active or pending (optional)
+          description: '"active" or "pending" (optional)'
           default: active
           example: pending
         postedDate:
@@ -7719,7 +7719,7 @@ components:
       type: object
       properties:
         accountId:
-          # Finicity's ID of the Student Loan Account
+          # ID of the Student Loan Account
           $ref: '#/components/schemas/AccountId'
         accountNumber:
           type: string
@@ -7766,7 +7766,7 @@ components:
       type: object
       properties:
         accountId:
-          # Finicity's ID of the Student Loan Group
+          # ID of the Student Loan Group
           $ref: '#/components/schemas/AccountId'
         groupNumber:
           type: string
@@ -7806,7 +7806,7 @@ components:
       type: object
       properties:
         accountId:
-          # Finicity's ID of the Student Loan
+          # ID of the Student Loan
           $ref: '#/components/schemas/AccountId'
         loanNumber:
           type: string
@@ -7907,17 +7907,17 @@ components:
         netAnnualIncome:
           type: number
           description:
-            Net annual of all income by customer for the last 12 months.
+            Net annual of all income by customer for the last 12 months
           example: 68068.25
         netAnnualIncomeByAccount:
           type: object
-          description: Net annual of income by account for the last 12 months.
+          description: Net annual of income by account for the last 12 months
           example:
             '5001861692': 229.28
             '5001861693': 67838.97
         monthlyNetIncome:
           type: object
-          description: Net monthly income by customer for the last 12 months.
+          description: Net monthly income by customer for the last 12 months
           example:
             '2021-03-31': 2925.73
             '2021-04-30': 2562.52
@@ -7933,7 +7933,7 @@ components:
             '2022-02-28': 2824.58
         monthlyNetIncomeByAccount:
           type: object
-          description: Net monthly income by account for the last 12 months.
+          description: Net monthly income by account for the last 12 months
           example:
             '5001861692':
               '2021-06-30': 57.32
@@ -8029,7 +8029,7 @@ components:
           type: object
           description: >-
             Total monthly debit amounts, excluding transfers and credit card
-            payments.
+            payments
           example:
             '2021-03-31': -7259.58
             '2021-04-30': -15368.09
@@ -8052,13 +8052,13 @@ components:
         monthlyNSFOccurrences:
           type: object
           description:
-            The number of non-sufficient funds occurrences per calendar month.
+            The number of non-sufficient funds occurrences per calendar month
           example:
             '2021-04-30': 1
             '2021-07-31': 1
         monthlyLateFeeOccurrences:
           type: object
-          description: The number of late fee occurrences.
+          description: The number of late fee occurrences
           example: {}
     ConsumerAttributesDataLiabilities:
       required:
@@ -8070,28 +8070,28 @@ components:
       properties:
         monthlyLoanDeposits:
           type: object
-          description: Monthly loan deposits amount by account.
+          description: Monthly loan deposits amount by account
           example:
             3-2021: 2799.08
             4-2021: 2947.63
             5-2021: 2863.37
         monthlyLoanWitdrawls:
           type: object
-          description: Monthly loan withdrawal amount by account.
+          description: Monthly loan withdrawal amount by account
           example:
             3-2021: -150.17
             4-2021: -95.03
             5-2021: -341.26
         monthlyNumberOfLoanDeposits:
           type: object
-          description: Monthly count of the number of loan deposits by account.
+          description: Monthly count of the number of loan deposits by account
           example:
             3-2021: 1
             4-2021: 1
             5-2021: 1
         monthlyNumberOfLoanWithdrawls:
           type: object
-          description: Monthly amount of the number of loan deposits by account.
+          description: Monthly amount of the number of loan deposits by account
           example:
             3-2021: 1
             4-2021: 1
@@ -8115,7 +8115,7 @@ components:
         monthlyMinimumBalance:
           type: object
           description:
-            The minimum balance for the month across all customer accounts.
+            The minimum balance for the month across all customer accounts
           example:
             '2021-03-31': 20841.81
             '2021-04-30': 16014.16
@@ -8132,7 +8132,7 @@ components:
         monthlyMaximumBalance:
           type: object
           description:
-            The maximum balance for the month across all customer accounts.
+            The maximum balance for the month across all customer accounts
           example:
             '2021-03-31': 26321.24
             '2021-04-30': 26528.01
@@ -8149,7 +8149,7 @@ components:
         monthlyAverageBalance:
           type: object
           description:
-            The average balance for the month across all customer accounts.
+            The average balance for the month across all customer accounts
           example:
             '2021-03-31': 23166.96
             '2021-04-30': 21500.16
@@ -8167,7 +8167,7 @@ components:
           type: object
           description: >-
             The standard deviation for the month across all customer account
-            balances.
+            balances
           example:
             '2021-03-31': 1581.38
             '2021-04-30': 3880.2
@@ -8185,7 +8185,7 @@ components:
           type: object
           description: >-
             The number of days in a month with a positive account balance across
-            all customer account balances.
+            all customer account balances
           example:
             '2021-03-31': 21
             '2021-04-30': 21
@@ -8203,7 +8203,7 @@ components:
           type: object
           description: >-
             The number of days in a month with a negative account balance across
-            all customer account balances.
+            all customer account balances
           example:
             '2021-03-31': 0
             '2021-04-30': 0
@@ -8219,7 +8219,7 @@ components:
             '2022-02-28': 0
         monthlyTwoMonthAverageBalance:
           type: object
-          description: Customer average balance for two months.
+          description: Customer average balance for two months
           example:
             '2021-03-31': 22845.4
             '2021-04-30': 22333.56
@@ -8235,7 +8235,7 @@ components:
             '2022-02-28': 24573.46
         monthlySixMonthAverageBalance:
           type: object
-          description: Customer average balance for six months.
+          description: Customer average balance for six months
           example:
             '2021-03-31': 28794.93
             '2021-04-30': 25860.09
@@ -8251,7 +8251,7 @@ components:
             '2022-02-28': 32063.74
         twelveMonthAverageBalance:
           type: object
-          description: Customer average balance for twelve months.
+          description: Customer average balance for twelve months
           example:
             '2021-03-31': 33677.33
             '2021-04-30': 32656.57
@@ -8267,7 +8267,7 @@ components:
             '2022-02-28': 34637.95
         twoMonthStandardDeviationOfBalance:
           type: object
-          description: Two month standard deviation of customer balance.
+          description: Two month standard deviation of customer balance
           example:
             '2021-03-31': 1954.1
             '2021-04-30': 2730.79
@@ -8283,7 +8283,7 @@ components:
             '2022-02-28': 3236.86
         sixMonthStandardDeviationOfBalance:
           type: object
-          description: Six month standard deviation of customer balance.
+          description: Six month standard deviation of customer balance
           example:
             '2021-03-31': 3004.4
             '2021-04-30': 3010.97
@@ -8299,7 +8299,7 @@ components:
             '2022-02-28': 3023.26
         twelveMonthStandardDeviationOfBalance:
           type: object
-          description: Twelve month standard deviation of customer balance.
+          description: Twelve month standard deviation of customer balance
           example:
             '2021-03-31': 2799.08
             '2021-04-30': 2947.63
@@ -8332,7 +8332,7 @@ components:
       properties:
         monthlyClosingBalance:
           type: object
-          description: Account closing balance by month.
+          description: Account closing balance by month
           example:
             '5001861693':
               '2021-03-31': 20841.81
@@ -8349,7 +8349,7 @@ components:
               '2022-02-28': 19705.31
         monthlyMinimumBalance:
           type: object
-          description: Account minimum balance by month.
+          description: Account minimum balance by month
           example:
             '5001861693':
               '2021-03-31': 20841.81
@@ -8366,7 +8366,7 @@ components:
               '2022-02-28': 19705.31
         monthlyMaximumBalance:
           type: object
-          description: Account maximum balance by month.
+          description: Account maximum balance by month
           example:
             '5001861693':
               '2021-03-31': 26321.24
@@ -8383,7 +8383,7 @@ components:
               '2022-02-28': 26827.62
         monthlyAverageBalance:
           type: object
-          description: Account maximum balance by month.
+          description: Account average balance by month
           example:
             '5001861693':
               '2021-03-31': 23166.96
@@ -8400,7 +8400,7 @@ components:
               '2022-02-28': 22523.83
         monthlyStandardDeviationOfBalance:
           type: object
-          description: Standard deviation of balance by account.
+          description: Standard deviation of balance by account
           example:
             '5001861693':
               '2021-03-31': 1581.38
@@ -8417,8 +8417,7 @@ components:
               '2022-02-28': 2326.82
         monthlyDaysWithPositiveBalance:
           type: object
-          description:
-            Number of days in a month with a positive account balance.
+          description: Number of days in a month with a positive account balance
           example:
             '5001861693':
               '2021-03-31': 21
@@ -8435,8 +8434,7 @@ components:
               '2022-02-28': 22
         monthlyDaysWithNegativeBalance:
           type: object
-          description:
-            Number of days in a month with a negative account balance.
+          description: Number of days in a month with a negative account balance
           example:
             '5001861693':
               '2021-03-31': 0
@@ -8453,7 +8451,7 @@ components:
               '2022-02-28': 0
         monthlyTwoMonthAverageBalance:
           type: object
-          description: Two month average balance by account.
+          description: Two month average balance by account
           example:
             '5001861693':
               '2021-03-31': 22845.4
@@ -8470,7 +8468,7 @@ components:
               '2022-02-28': 24573.46
         monthlySixMonthAverageBalance:
           type: object
-          description: Six month average balance by account.
+          description: Six month average balance by account
           example:
             '5001861693':
               '2021-03-31': 28794.93
@@ -8487,7 +8485,7 @@ components:
               '2022-02-28': 32063.74
         twelveMonthAverageBalance:
           type: object
-          description: Twelve month average balance by account.
+          description: Twelve month average balance by account
           example:
             '5001861693':
               '2021-03-31': 33677.33
@@ -8504,7 +8502,7 @@ components:
               '2022-02-28': 34637.95
         twoMonthStandardDeviationOfBalance:
           type: object
-          description: Standard deviation of account balance across two months.
+          description: Standard deviation of account balance across two months
           example:
             '5001861693':
               '2021-03-31': 1954.1
@@ -8521,7 +8519,7 @@ components:
               '2022-02-28': 3236.86
         sixMonthStandardDeviationOfBalance:
           type: object
-          description: Standard deviation of account balance across six months.
+          description: Standard deviation of account balance across six months
           example:
             '5001861693':
               '2021-03-31': 3004.4
@@ -8539,7 +8537,7 @@ components:
         twelveMonthStandardDeviationOfBalance:
           type: object
           description:
-            Standard deviation of account balance across twelve months.
+            Standard deviation of account balance across twelve months
           example:
             '5001861693':
               '2021-03-31': 2799.08
@@ -8654,7 +8652,7 @@ components:
       type: string
       description: >-
         Keywords in the `description` and `memo` fields were used to translate
-        investment transactions into these payStatementMatchTypes.
+        investment transactions into these types.
 
 
         Possible values: cancel, purchaseToClose, purchaseToCover, contribution,
