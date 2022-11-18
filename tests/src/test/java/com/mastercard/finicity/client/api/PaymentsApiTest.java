@@ -55,4 +55,16 @@ class PaymentsApiTest extends BaseTest {
             fail(e);
         }
     }
+
+    @Test
+    void getLoanPaymentDetailsTest() {
+        try {
+            var existingAccount = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID).get(0);
+            api.getLoanPaymentDetails(CUSTOMER_ID, existingAccount.getId());
+            fail();
+        } catch (ApiException e) {
+            // {"code":14020,"message":"Bad request. (Account type not supported)"}
+            logApiException(e);
+        }
+    }
 }

@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.5.2
+  version: 1.6.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -41,8 +41,6 @@ tags:
     description: Enroll and manage customers
   - name: Institutions
     description: Search and fetch financial institutions
-  - name: Liabilities
-    description: Fetch loan payment details
   - name: Pay Statements
     description: Upload pay statements
   - name: Payments
@@ -1088,7 +1086,7 @@ paths:
     get:
       tags:
         - Institutions
-      summary: 'Get Certified Institutions'
+      summary: Get Certified Institutions
       description: >-
         Search for financial institutions by certified product.
 
@@ -1845,7 +1843,7 @@ paths:
   '/aggregation/v2/customers/{customerId}/accounts/{accountId}/loanDetails':
     get:
       tags:
-        - Liabilities
+        - Payments
       summary: Get Loan Payment Details
       description: >-
         Return the loan payment details of the customer for a loan-type account.
@@ -1898,7 +1896,7 @@ paths:
     post:
       tags:
         - TxPush
-      summary: Subscribe to Txpush Notifications
+      summary: Subscribe to TxPush Notifications
       description: >-
         Register a client app's TxPush Listener to receive TxPush notifications
         related to the given account.
@@ -1914,7 +1912,7 @@ paths:
 
 
         The listener's URL must be secure (HTTPS) for any real-world account. In
-        addition, the client's TxPUSH Listener will need to be verified. HTTP
+        addition, the client's TxPush Listener will need to be verified. HTTP
         and HTTPS connections are only allowed on the standard ports 80 (HTTP)
         and 443 (HTTPS). The use of other ports will result with the call
         failing.
@@ -2097,7 +2095,7 @@ paths:
         Generate Report services.
 
 
-        The report's `status` field will contain "inProgress", "failure", or
+        The report's `status` field contains "inProgress", "failure", or
         "success". If the status shows "inProgress", the client app should wait
         20 seconds and then call this API again.
 
@@ -2128,7 +2126,7 @@ paths:
         Generate Report services.
 
 
-        The report's `status` field will contain "inProgress", "failure", or
+        The report's `status` field contains "inProgress", "failure", or
         "success". If the status shows "inProgress", the client app should wait
         20 seconds and then call this API again.
 
@@ -2159,7 +2157,7 @@ paths:
         Report services for the given customer.
 
 
-        The `status` fields in the returned list will contain "inProgress",
+        The `status` fields in the returned list contain "inProgress",
         "failure", or "success". If the status shows "inProgress", the client
         app should wait 20 seconds and then call this API again.
 
@@ -2190,7 +2188,7 @@ paths:
         Report services for the given consumer.
 
 
-        The `status` fields in the returned list will contain "inProgress",
+        The `status` fields in the returned list contain "inProgress",
         "failure", or "success". If the status shows "inProgress", the client
         app should wait 20 seconds and then call this API again.
 
@@ -2383,8 +2381,8 @@ paths:
         - Analytics and Attributes
       summary: Generate Consumer Attributes
       description: >-
-        Generate a Consumer Attributes report for the given customer. The `to`
-        and `from` date range is the last 12 months of consumer data, based on
+        Generate a Consumer Attributes report for the given customer. The "to"
+        and "from" date range is the last 12 months of consumer data, based on
         the date at which the report was generated.
 
 
@@ -2461,7 +2459,7 @@ paths:
 
 
         Use the analytic and customer IDs to retrieve 12 months of data
-        attributes according to the `To` and `From` date range of the report at
+        attributes according to the "to" and "from" date range of the report at
         the time it was created. 
 
 
@@ -4510,6 +4508,218 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    DateAsOf:
+      type: integer
+      description:
+        '(All Account Types) Most recent date of the following information. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    OpenDate:
+      type: integer
+      description:
+        '(Checking/Savings/CD/MoneyMarket) Date when account was opened. A date
+        in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    PeriodStartDate:
+      type: integer
+      description:
+        '(Checking/Savings/CD/MoneyMarket) Start date of period. A date in Unix
+        epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    PeriodEndDate:
+      type: integer
+      description:
+        'End date of period. A date in Unix epoch time (in seconds). See:
+        [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    MaturityDate:
+      type: integer
+      description:
+        '(Checking/Savings/CD/MoneyMarket) Maturity date of account type. A date
+        in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    PaymentDueDate:
+      type: integer
+      description:
+        '(Credit Card/Line Of Credit) Due date for the next payment. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    StatementStartDate:
+      type: integer
+      description:
+        '(Credit Card/Line Of Credit) Start date of statement period. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    StatementEndDate:
+      type: integer
+      description:
+        '(Credit Card/Line Of Credit) End date of statement period. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    LastPaymentDate:
+      type: integer
+      description:
+        '(Credit Card/Line Of Credit) The date of the last payment. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    PayoffAmountDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) Date of final payment. A date in Unix epoch time (in
+        seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    OriginalMaturityDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) Original date of loan maturity. A date in Unix epoch
+        time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    InitialMlDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) Original date of loan. A date in Unix epoch time (in
+        seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    NextPaymentDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) Due date for the next payment. A date in Unix epoch
+        time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    LastPaymentDueDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) Due date of last payment. A date in Unix epoch time (in
+        seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    LastPaymentReceiveDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) The date of the last payment. A date in Unix epoch time
+        (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    FirstPaymentDate:
+      type: integer
+      description:
+        '(Mortgage/Loan) First payment due date. A date in Unix epoch time (in
+        seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    LoanStatusStartDate:
+      type: integer
+      description:
+        '(Student Loan) The start date of the current status. A date in Unix
+        epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    LoanStatusEndDate:
+      type: integer
+      description:
+        '(Student Loan) The end date of the current status. A date in Unix epoch
+        time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    RepaymentPlanStartDate:
+      type: integer
+      description:
+        '(Student Loan) The start date of the current repayment plan. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    RepaymentPlanEndDate:
+      type: integer
+      description:
+        '(Student Loan) The end date of the current repayment plan. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    OutOfSchoolDate:
+      type: integer
+      description:
+        '(Student Loan) The date the borrower graduated or dropped below
+        half-time enrollment in school. A date in Unix epoch time (in seconds).
+        See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    ConvertToRepayment:
+      type: integer
+      description:
+        '(Student Loan) The date the loan enters into repayment. A date in Unix
+        epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    TransactionPostedDate:
+      type: integer
+      description:
+        "A date in Unix epoch time (in seconds). Represents the timestamp of the
+        transaction when it was posted or cleared by the institution. This value
+        isn't required for student loan transaction data. See: [Handling Epoch
+        Dates and Times](https://docs.finicity.com/endpoint-syntax-and-format/)."
+      format: int64
+      example: 1607450357
+    TransactionCreatedDate:
+      type: integer
+      description:
+        'A date in Unix epoch time (in seconds). Represents the timestamp of the
+        transaction when it was added to our platform. See: [Handling Epoch
+        Dates and Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    TransactionFirstEffectiveDate:
+      type: integer
+      description:
+        'A date in Unix epoch time (in seconds). Represents the first timestamp
+        of the transaction recorded in the `effectiveDate` field. See: [Handling
+        Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    TransactionEffectiveDate:
+      type: integer
+      description:
+        'A date in Unix epoch time (in seconds). Represents the timestamp of the
+        transaction when it became effective on an account by an institution.
+        See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
     StringUnixDate:
       type: string
       description:
@@ -5024,11 +5234,7 @@ components:
           description: The security ID of the transaction
           example: 25400W102
         securityIdType:
-          type: string
-          description:
-            'The security type: "CUSIP", "ISIN", "SEDOL", "SICC", "VALOR", and
-            "WKN". This field is related to the `securityId` field.'
-          example: CUSIP
+          $ref: '#/components/schemas/SecurityIdType'
         costBasisPerShare:
           type: number
           description: The per share cost of acquiring the security
@@ -5065,8 +5271,7 @@ components:
       type: object
       properties:
         dateAsOf:
-          # (All Account Types) Most recent date of the following information
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/DateAsOf'
         availableBalanceAmount:
           type: number
           description: >-
@@ -5075,13 +5280,11 @@ components:
             pending transactions)
           example: 5678.78
         openDate:
-          # Checking/Savings/CD/MoneyMarket
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/OpenDate'
         periodStartDate:
-          # Checking/Savings/CD/MoneyMarket
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/PeriodStartDate'
         periodEndDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/PeriodEndDate'
         periodInterestRate:
           type: number
           description: >-
@@ -5110,8 +5313,7 @@ components:
             (Checking/Savings/CD/MoneyMarket) Interest earned in prior year
           example: 3056.79
         maturityDate:
-          # Checking/Savings/CD/MoneyMarket
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/MaturityDate'
         interestRate:
           type: string
           description: >-
@@ -5158,19 +5360,16 @@ components:
             (Credit Card/Line Of Credit) and (Mortgage/Loan) Minimum payment due
           example: 456.78
         paymentDueDate:
-          # Credit Card/Line Of Credit
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/PaymentDueDate'
         previousBalance:
           type: number
           description:
             (Credit Card/Line Of Credit) Prior balance in last statement
           example: 1234.56
         statementStartDate:
-          # Credit Card/Line Of Credit
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/StatementStartDate'
         statementEndDate:
-          # Credit Card/Line Of Credit
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/StatementEndDate'
         statementPurchaseAmount:
           type: number
           description:
@@ -5203,8 +5402,7 @@ components:
             in the last payment
           example: 567.89
         lastPaymentDate:
-          # Credit Card/Line Of Credit
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/LastPaymentDate'
         statementCloseBalance:
           type: number
           description:
@@ -5231,11 +5429,9 @@ components:
           description: (Mortgage/Loan) The amount required to payoff the loan
           example: 45567.98
         payoffAmountDate:
-          # (Mortgage/Loan) Date of final payment
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/PayoffAmountDate'
         originalMaturityDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/OriginalMaturityDate'
         principalBalance:
           type: number
           description: (Mortgage/Loan) The principal balance
@@ -5253,8 +5449,7 @@ components:
           description: (Mortgage/Loan) Original loan amount
           example: 65000
         initialMlDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/InitialMlDate'
         nextPaymentPrincipalAmount:
           type: number
           description: (Mortgage/Loan) Amount towards principal in next payment
@@ -5268,14 +5463,11 @@ components:
           description: (Mortgage/Loan) Minimum payment due
           example: 1578
         nextPaymentDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/NextPaymentDate'
         lastPaymentDueDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/LastPaymentDueDate'
         lastPaymentReceiveDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/LastPaymentReceiveDate'
         lastPaymentPrincipalAmount:
           type: number
           description: (Mortgage/Loan) Amount towards principal in last payment
@@ -5325,8 +5517,7 @@ components:
           description: (Mortgage/Loan) Current school
           example: utah valley university
         firstPaymentDate:
-          # Mortgage/Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/FirstPaymentDate'
         firstMortgage:
           type: boolean
           description: (Mortgage/Loan) First mortgage (F/Y)
@@ -5517,11 +5708,9 @@ components:
             Repayment, Deferment, Forbearance)
           example: Deferment
         loanStatusStartDate:
-          # Student Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/LoanStatusStartDate'
         loanStatusEndDate:
-          # Student Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/LoanStatusEndDate'
         weightedInterestRate:
           type: number
           description: >-
@@ -5529,17 +5718,13 @@ components:
             balances at the group level, in APY
           example: 12
         repaymentPlanStartDate:
-          # Student Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/RepaymentPlanStartDate'
         repaymentPlanEndDate:
-          # Student Loan
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/RepaymentPlanEndDate'
         outOfSchoolDate:
-          # Student Loan. The date the borrower graduated or dropped below half-time enrollment in school
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/OutOfSchoolDate'
         convertToRepayment:
-          # Student Loan. The date the loan enters into repayment
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/ConvertToRepayment'
         daysDelinquent:
           type: integer
           description: >-
@@ -5894,25 +6079,9 @@ components:
         accountOwner:
           $ref: '#/components/schemas/InstitutionAccountOwner'
         studentLoanData:
-          type: boolean
-          description: >-
-            "true": The institution is certified for the Student Loan Data
-            product
-
-
-            "false": The institution is decertified for the Student Loan Data
-            product
-          example: true
+          $ref: '#/components/schemas/StudentLoanDataCertification'
         loanPaymentDetails:
-          type: boolean
-          description: >-
-            "true": The institution is certified for the Loan Payment Detail
-            product
-
-
-            "false": The institution is decertified for the Loan Payment Detail
-            product
-          example: true
+          $ref: '#/components/schemas/LoanPaymentDetailCertification'
         accountTypeDescription:
           type: string
           description: >-
@@ -6038,6 +6207,8 @@ components:
         - aha
         - availBalance
         - accountOwner
+        - loanPaymentDetails
+        - studentLoanData
       type: object
       properties:
         id:
@@ -6062,6 +6233,10 @@ components:
           $ref: '#/components/schemas/InstitutionAvailableBalance'
         accountOwner:
           $ref: '#/components/schemas/InstitutionAccountOwner'
+        studentLoanData:
+          $ref: '#/components/schemas/StudentLoanDataCertification'
+        loanPaymentDetails:
+          $ref: '#/components/schemas/LoanPaymentDetailCertification'
         childInstitutions:
           description: An array of child financial institutions
           minItems: 0
@@ -6249,21 +6424,16 @@ components:
           example: UWM HOLDINGS CORPORATION - CLASS A COMMON STOCK
         type:
           $ref: '#/components/schemas/TransactionType'
-        postedDate:
-          # The timestamp of the transaction when it was posted or cleared by the institution
-          # This value isn't required for student loan transaction data
-          $ref: '#/components/schemas/UnixDate'
         transactionDate:
           $ref: '#/components/schemas/UnixDate'
-        effectiveDate:
-          # A timestamp of the transaction when it became effective on an account by an institution
-          $ref: '#/components/schemas/UnixDate'
-        firstEffectiveDate:
-          # The first timestamp of a transaction recorded in the `effectiveDate` field
-          $ref: '#/components/schemas/UnixDate'
+        postedDate:
+          $ref: '#/components/schemas/TransactionPostedDate'
         createdDate:
-          # The timestamp of the transaction when it was added to our platform
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/TransactionCreatedDate'
+        firstEffectiveDate:
+          $ref: '#/components/schemas/TransactionFirstEffectiveDate'
+        effectiveDate:
+          $ref: '#/components/schemas/TransactionEffectiveDate'
         checkNum:
           type: integer
           description: The check number of the transaction
@@ -6299,6 +6469,10 @@ components:
           example: 5.53
         categorization:
           $ref: '#/components/schemas/Categorization'
+        runningBalanceAmount:
+          description: The ending balance after the transaction was posted
+          type: number
+          example: 1000
         subaccountSecurityType:
           type: string
           description: The type of sub account the funds came from
@@ -6353,11 +6527,7 @@ components:
           description: The security ID of the transaction
           example: '91823B109'
         securityIdType:
-          type: string
-          description:
-            'The security type: CUSIP, ISIN, SEDOL, SICC, VALOR, and WKN. This
-            field is related to the `securityId`'
-          example: CUSIP
+          $ref: '#/components/schemas/SecurityIdType'
     PortfolioSummary:
       required:
         - portfolioId
@@ -6430,10 +6600,6 @@ components:
             duplicated information and numbers and special characters
           type: string
           example: VERIZON WIRELESS PAYMENTS
-        runningBalanceAmount:
-          description: The ending balance after the transaction was posted
-          type: number
-          example: 1000
       description: Categorization Record
     ReportIncomeStream:
       required:
@@ -6526,8 +6692,7 @@ components:
             positive values, withdrawals and debits are negative values.
           example: 22.21
         postedDate:
-          # When the transaction was posted or cleared by the institution.
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/TransactionPostedDate'
         description:
           type: string
           description: >-
@@ -6927,28 +7092,60 @@ components:
       type: string
       example: ACTIVE
     TransactionType:
-      enum:
-        - atm
-        - cash
-        - check
-        - credit
-        - debit
-        - deposit
-        - directDebit
-        - directDeposit
-        - dividend
-        - fee
-        - interest
-        - other
-        - payment
-        - pointOfSale
-        - repeatPayment
-        - serviceCharge
-        - transfer
       type: string
       description: >-
         If provided by the institution, the following values may be returned in
-        the field of a record
+        the field of a record:
+
+        * "atm"
+
+
+        * "cash"
+
+
+        * "check"
+
+
+        * "credit"
+
+
+        * "debit"
+
+
+        * "deposit"
+
+
+        * "directDebit"
+
+
+        * "directDeposit"
+
+
+        * "dividend"
+
+
+        * "fee"
+
+
+        * "interest"
+
+
+        * "other"
+
+
+        * "payment"
+
+
+        * "pointOfSale"
+
+
+        * "repeatPayment"
+
+
+        * "serviceCharge"
+
+
+        * "transfer"
       example: atm
     ReportTransactionPayStatementMatchTypes:
       enum:
@@ -7860,10 +8057,10 @@ components:
       type: object
       properties:
         From:
-          # The `From` date of the date range for the report
+          # The "from" date of the date range for the report
           $ref: '#/components/schemas/Date'
         To:
-          # The `To` date of the date range for the report
+          # The "to" date of the date range for the report
           $ref: '#/components/schemas/Date'
     ConsumerAttributesData:
       required:
@@ -8621,32 +8818,369 @@ components:
     Categories:
       type: string
       description: >-
-        The different categories for transactions. 
+        The different categories for transactions.
+
+        * "ATM Fee"
 
 
-        Possible values: ATM Fee, Advertising, Air Travel, Alcohol & Bars,
-        Allowance, Amusement, Arts, Auto & Transport, Auto Insurance, Auto
-        Payment, Baby Supplies, Babysitter & Daycare, Bank Fee, Bills &
-        Utilities, Bonus, Books, Books & Supplies, Business Services, Buy, Cash
-        & ATM, Charity, Check, Child Support, Clothing, Coffee Shops, Credit
-        Card Payment, Dentist, Deposit, Dividend & Cap Gains, Doctor, Education,
-        Electronics & Software, Entertainment, Eyecare, Fast Food, Federal Tax,
-        Fees & Charges, Finance Charge, Financial, Financial Advisor, Food &
-        Dining, Furnishings, Gas & Fuel, Gift, Gifts & Donations, Groceries,
-        Gym, Hair, Health & Fitness, Health Insurance, Hobbies, Home, Home
-        Improvement, Home Insurance, Home Phone, Home Services, Home Supplies,
-        Hotel, Income, Interest Income, Internet, Investments, Kids, Kids
-        Activities, Late Fee, Laundry, Lawn & Garden, Legal, Life Insurance,
-        Loan Fees and Charges, Loan Insurance, Loan Interest, Loan Payment, Loan
-        Principal, Loans, Local Tax, Low Balance, Mobile Phone, Mortgage & Rent,
-        Movies & DVDs, Music, Newspapers & Magazines, Office Supplies, Parking,
-        Paycheck, Personal Care, Pet Food & Supplies, Pet Grooming, Pets,
-        Pharmacy, Printing, Property Tax, Public Transportation, Reimbursement,
-        Rental Car & Taxi, Restaurants, Sales Tax, Sell, Services & Parts,
-        Service Fee, Shipping, Shopping, Spa & Massage, Sporting Goods, Sports,
-        State Tax, Student Loan, Taxes, Television, Toys, Trade Commissions,
-        Transfer, Transfer for Cash Spending, Travel, Tuition, Uncategorized,
-        Utilities, Vacation, Veterinary, Internet / Broadband Charges
+        * "Advertising"
+
+
+        * "Air Travel"
+
+
+        * "Alcohol & Bars"
+
+
+        * "Allowance"
+
+
+        * "Amusement"
+
+
+        * "Arts"
+
+
+        * "Auto & Transport"
+
+
+        * "Auto Insurance"
+
+
+        * "Auto Payment"
+
+
+        * "Baby Supplies"
+
+
+        * "Babysitter & Daycare"
+
+
+        * "Bank Fee"
+
+
+        * "Bills & Utilities"
+
+
+        * "Bonus"
+
+
+        * "Books"
+
+
+        * "Books & Supplies"
+
+
+        * "Business Services"
+
+
+        * "Buy"
+
+
+        * "Cash & ATM"
+
+
+        * "Charity"
+
+
+        * "Check"
+
+
+        * "Child Support"
+
+
+        * "Clothing"
+
+
+        * "Coffee Shops"
+
+
+        * "Credit Card Payment"
+
+
+        * "Dentist"
+
+
+        * "Deposit"
+
+
+        * "Dividend & Cap Gains"
+
+
+        * "Doctor"
+
+
+        * "Education"
+
+
+        * "Electronics & Software"
+
+
+        * "Entertainment"
+
+
+        * "Eyecare"
+
+
+        * "Fast Food"
+
+
+        * "Federal Tax"
+
+
+        * "Fees & Charges"
+
+
+        * "Finance Charge"
+
+
+        * "Financial"
+
+
+        * "Financial Advisor"
+
+
+        * "Food & Dining"
+
+
+        * "Furnishings"
+
+
+        * "Gas & Fuel"
+
+
+        * "Gift"
+
+
+        * "Gifts & Donations"
+
+
+        * "Groceries"
+
+
+        * "Gym"
+
+
+        * "Hair"
+
+
+        * "Health & Fitness"
+
+
+        * "Health Insurance"
+
+
+        * "Hobbies"
+
+
+        * "Home"
+
+
+        * "Home Improvement"
+
+
+        * "Home Insurance"
+
+
+        * "Home Phone"
+
+
+        * "Home Services"
+
+
+        * "Home Supplies"
+
+
+        * "Hotel"
+
+
+        * "Income"
+
+
+        * "Interest Income"
+
+
+        * "Internet"
+
+
+        * "Investments"
+
+
+        * "Kids"
+
+
+        * "Kids Activities"
+
+
+        * "Late Fee"
+
+
+        * "Laundry"
+
+
+        * "Lawn & Garden"
+
+
+        * "Legal"
+
+
+        * "Life Insurance"
+
+
+        * "Loan Fees and Charges"
+
+
+        * "Loan Insurance"
+
+
+        * "Loan Interest"
+
+
+        * "Loan Payment"
+
+
+        * "Loan Principal"
+
+
+        * "Loans"
+
+
+        * "Local Tax"
+
+
+        * "Low Balance"
+
+
+        * "Mobile Phone"
+
+
+        * "Mortgage & Rent"
+
+
+        * "Movies & DVDs"
+
+
+        * "Music"
+
+
+        * "Newspapers & Magazines"
+
+
+        * "Office Supplies"
+
+
+        * "Parking"
+
+
+        * "Paycheck"
+
+
+        * "Personal Care"
+
+
+        * "Pet Food & Supplies"
+
+
+        * "Pet Grooming"
+
+
+        * "Pets"
+
+
+        * "Pharmacy"
+
+
+        * "Printing"
+
+
+        * "Property Tax"
+
+
+        * "Public Transportation"
+
+
+        * "Reimbursement"
+
+
+        * "Rental Car & Taxi"
+
+
+        * "Restaurants"
+
+
+        * "Sales Tax"
+
+
+        * "Sell"
+
+
+        * "Services & Parts"
+
+
+        * "Service Fee"
+
+
+        * "Shipping"
+
+
+        * "Shopping"
+
+
+        * "Spa & Massage"
+
+
+        * "Sporting Goods"
+
+
+        * "Sports"
+
+
+        * "State Tax"
+
+
+        * "Streaming Services"
+
+
+        * "Student Loan"
+
+
+        * "Taxes"
+
+
+        * "Television"
+
+
+        * "Toys"
+
+
+        * "Trade Commissions"
+
+
+        * "Transfer"
+
+
+        * "Transfer for Cash Spending"
+
+
+        * "Travel"
+
+
+        * "Tuition"
+
+
+        * "Uncategorized"
+
+
+        * "Utilities"
+
+
+        * "Vacation"
+
+
+        * "Veterinary"
+
+
+        * "Internet / Broadband Charges"
       example: 'ATM Fee'
     InvestmentTransactionTypes:
       type: string
@@ -8655,8 +9189,111 @@ components:
         investment transactions into these types.
 
 
-        Possible values: cancel, purchaseToClose, purchaseToCover, contribution,
-        optionExercise, optionExpiration, fee, soldToClose, soldToOpen, split,
-        transfer, returnOfCapital, income, purchased, sold, dividendreInvest,
-        tax, dividend, reinvestOfIncome, interest, deposit, otherInfo
+        Possible values: 
+
+        * "cancel"
+
+
+        * "purchaseToClose"
+
+
+        * "purchaseToCover"
+
+
+        * "contribution"
+
+
+        * "optionExercise"
+
+
+        * "optionExpiration"
+
+
+        * "fee"
+
+
+        * "soldToClose"
+
+
+        * "soldToOpen"
+
+
+        * "split"
+
+
+        * "transfer"
+
+
+        * "returnOfCapital"
+
+
+        * "income"
+
+
+        * "purchased"
+
+
+        * "sold"
+
+
+        * "dividendreInvest"
+
+
+        * "tax"
+
+
+        * "dividend"
+
+
+        * "reinvestOfIncome"
+
+
+        * "interest"
+
+
+        * "deposit"
+
+
+        * "otherInfo"
       example: 'transfer'
+    LoanPaymentDetailCertification:
+      type: boolean
+      description: >-
+        "true": The institution is certified for the Loan Payment Detail product
+
+
+        "false": The institution is decertified for the Loan Payment Detail
+        product
+      example: true
+    StudentLoanDataCertification:
+      type: boolean
+      description: >-
+        "true": The institution is certified for the Student Loan Data product
+
+
+        "false": The institution is decertified for the Student Loan Data
+        product
+      example: true
+    SecurityIdType:
+      type: string
+      description: >-
+        The security type. This field is related to the `securityId` field.
+        Possible values:
+
+        * "CUSIP"
+
+
+        * "ISIN"
+
+
+        * "SEDOL"
+
+
+        * "SICC"
+
+
+        * "VALOR"
+
+
+        * "WKN"
+      example: 'CUSIP'
