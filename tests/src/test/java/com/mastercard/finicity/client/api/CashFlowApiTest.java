@@ -1,8 +1,7 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.ReportConstraints;
-import com.mastercard.finicity.client.model.ReportType;
+import com.mastercard.finicity.client.model.CashFlowReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.utils.ConsumerUtils;
@@ -32,12 +31,12 @@ public class CashFlowApiTest extends BaseTest {
     @Test
     void generateCashFlowReportBusinessTest() {
         try {
-            var constraints = new ReportConstraints()
+            var constraints = new CashFlowReportConstraints()
                     .showNsf(true)
                     .accountIds(customerAccountList);
-            var reportData = api.generateCashFlowBusinessReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.CFRB, reportData.getType());
+            var reportAck = api.generateCashFlowBusinessReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("cfrb", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -47,12 +46,12 @@ public class CashFlowApiTest extends BaseTest {
     @Test
     void generateCashFlowReportPersonalTest() {
         try {
-            var constraints = new ReportConstraints()
+            var constraints = new CashFlowReportConstraints()
                     .showNsf(true)
                     .accountIds(customerAccountList);
-            var reportData = api.generateCashFlowPersonalReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.CFRP, reportData.getType());
+            var reportAck = api.generateCashFlowPersonalReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("cfrp", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);

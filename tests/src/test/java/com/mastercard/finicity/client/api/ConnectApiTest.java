@@ -7,8 +7,6 @@ import com.mastercard.finicity.client.test.ModelFactory;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
 import org.junit.jupiter.api.Test;
 
-import static com.mastercard.finicity.client.model.BorrowerType.JOINTBORROWER;
-import static com.mastercard.finicity.client.model.BorrowerType.PRIMARY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -151,8 +149,8 @@ class ConnectApiTest extends BaseTest {
         try {
             var params = new ConnectJointBorrowerParameters()
                     .partnerId(PARTNER_ID)
-                    .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
-                    .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID));
+                    .addBorrowersItem(ModelFactory.newBorrower("primary", CONSUMER_ID, CUSTOMER_ID))
+                    .addBorrowersItem(ModelFactory.newBorrower("jointBorrower", CONSUMER_ID, CUSTOMER_ID));
             var connectUrl = api.generateJointBorrowerConnectUrl(params);
             var link = connectUrl.getLink();
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
@@ -168,8 +166,8 @@ class ConnectApiTest extends BaseTest {
         try {
             var params = new ConnectJointBorrowerEmailParameters()
                     .partnerId(PARTNER_ID)
-                    .addBorrowersItem(ModelFactory.newBorrower(PRIMARY, CONSUMER_ID, CUSTOMER_ID))
-                    .addBorrowersItem(ModelFactory.newBorrower(JOINTBORROWER, CONSUMER_ID, CUSTOMER_ID))
+                    .addBorrowersItem(ModelFactory.newBorrower("primary", CONSUMER_ID, CUSTOMER_ID))
+                    .addBorrowersItem(ModelFactory.newBorrower("jointBorrower", CONSUMER_ID, CUSTOMER_ID))
                     .email(new EmailOptions().to("someone@company.com"));
             var connectEmailUrl = api.sendJointBorrowerConnectEmail(params);
             var link = connectEmailUrl.getLink();

@@ -38,10 +38,10 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     @Test
     void generateVOIReportTest() {
         try {
-            var constraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOIReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOI, reportData.getType());
+            var constraints = new VOIReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generateVOIReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voi", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -52,9 +52,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generateVOEPayrollReportTest() {
         try {
             var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
-            var reportData = api.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOEPAYROLL, reportData.getType());
+            var reportAck = api.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voePayroll", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -65,9 +65,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void refreshVOIEPayrollReportTest() {
         try {
             var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
-            var reportData = api.refreshVOIEPayrollReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOIEPAYROLL, reportData.getType());
+            var reportAck = api.refreshVOIEPayrollReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voiePayroll", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -79,9 +79,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
         try {
             var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
             // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            var reportData = api.generatePayStatementReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.PAYSTATEMENT, reportData.getType());
+            var reportAck = api.generatePayStatementReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("paystatement", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -104,10 +104,10 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generateVOIEPaystubReportTest() {
         try {
             var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
-            var constraints = new VOIEWithStatementReportConstraints().voieWithStatementData(voieWithStatementData);
-            var reportData = api.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOIETXVERIFY, reportData.getType());
+            var constraints = new VOIEReportConstraints().voieWithStatementData(voieWithStatementData);
+            var reportAck = api.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voieTxVerify", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -121,9 +121,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
             var constraints = new VOIEWithTXVerifyReportConstraints()
                     .voieWithInterviewData(voieWithInterviewData)
                     .accountIds(customerAccountList);
-            var reportData = api.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOIETXVERIFY, reportData.getType());
+            var reportAck = api.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voieTxVerify", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -134,9 +134,9 @@ class VerifyIncomeAndEmploymentApiTest extends BaseTest {
     void generateVOETransactionsReportTest() {
         try {
             var constraints = new VOETransactionsReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOETransactionsReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOETRANSACTIONS, reportData.getType());
+            var reportAck = api.generateVOETransactionsReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voeTransactions", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);

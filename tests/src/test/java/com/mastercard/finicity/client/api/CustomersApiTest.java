@@ -35,8 +35,11 @@ class CustomersApiTest extends BaseTest {
             var username = "customer_" + RandomStringUtils.randomAlphabetic(10);
             var newCustomer = new NewCustomer()
                     .username(username);
-            api.addCustomer(newCustomer);
-            fail();
+            var customer = api.addCustomer(newCustomer);
+            assertNotNull(customer.getId());
+            assertNotNull(customer.getCreatedDate());
+            assertEquals(newCustomer.getUsername(), customer.getUsername());
+            createdCustomerIds.add(customer.getId());
         } catch (ApiException e) {
             // HTTP 401: Not available from the Test Drive
             logApiException(e);

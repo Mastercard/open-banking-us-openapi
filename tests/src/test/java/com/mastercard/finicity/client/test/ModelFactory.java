@@ -5,11 +5,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public final class ModelFactory {
 
-    public static Borrower newBorrower(BorrowerType primary, String consumerId, String customerId) {
+    public static Borrower newBorrower(String borrower, String consumerId, String customerId) {
         return new Borrower()
             .consumerId(consumerId)
             .customerId(customerId)
-            .type(primary)
+            .type(borrower)
             .optionalConsumerInfo(new ConsumerInfo()
                     .ssn("999999999")
                     .dob(470275200L)

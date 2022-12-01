@@ -1,7 +1,7 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.ReportConstraints;
+import com.mastercard.finicity.client.model.VOAReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +24,7 @@ class PortfoliosApiTest extends BaseTest {
 
             // Create a report and get the portfolio ID
             var verifyAssetsApi = new VerifyAssetsApi(apiClient);
-            portfolioId = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new ReportConstraints(), null).getPortfolioId();
+            portfolioId = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new VOAReportConstraints(), null).getPortfolioId();
         } catch (ApiException e) {
             fail(e);
         }

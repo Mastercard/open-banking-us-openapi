@@ -32,7 +32,9 @@ class PaymentsApiTest extends BaseTest {
             assertNotNull(achDetails.getRealAccountNumber());
             assertNotNull(achDetails.getRoutingNumber());
         } catch (ApiException e) {
-            fail(e);
+            // {"code":20000,"message":"Routing number not found"}
+            assertErrorCodeEquals(20000, e);
+            logApiException(e);
         }
     }
 
@@ -64,6 +66,7 @@ class PaymentsApiTest extends BaseTest {
             fail();
         } catch (ApiException e) {
             // {"code":14020,"message":"Bad request. (Account type not supported)"}
+            assertErrorCodeEquals(14020, e);
             logApiException(e);
         }
     }

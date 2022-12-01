@@ -2,7 +2,6 @@ package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.model.CustomerAccount;
-import com.mastercard.finicity.client.model.ReportType;
 import com.mastercard.finicity.client.model.StatementData;
 import com.mastercard.finicity.client.model.StatementReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
@@ -44,9 +43,9 @@ class BankStatementsApiTest extends BaseTest {
                     .statementReportData(new StatementData()
                             .index(1)
                             .accountId(Long.valueOf(existingAccountId)));
-            var reportData = api.generateStatementReport(CUSTOMER_ID, constraints, null);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.STATEMENT, reportData.getType());
+            var reportAck = api.generateStatementReport(CUSTOMER_ID, constraints, null);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("statement", reportAck.getType());
         } catch (ApiException e) {
             fail(e);
         }

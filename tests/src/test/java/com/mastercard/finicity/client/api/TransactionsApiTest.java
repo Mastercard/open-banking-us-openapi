@@ -1,8 +1,7 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.ReportConstraints;
-import com.mastercard.finicity.client.model.ReportType;
+import com.mastercard.finicity.client.model.TransactionsReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,10 +51,10 @@ class TransactionsApiTest extends BaseTest {
     @Test
     void generateTransactionsReportTest() {
         try {
-            var constraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateTransactionsReport(CUSTOMER_ID, toDate, constraints, null, true);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.TRANSACTIONS, reportData.getType());
+            var constraints = new TransactionsReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generateTransactionsReport(CUSTOMER_ID, toDate, constraints, null, true);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("transactions", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);

@@ -1,8 +1,9 @@
 package com.mastercard.finicity.client.api;
 
 import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.model.ReportConstraints;
-import com.mastercard.finicity.client.model.ReportType;
+import com.mastercard.finicity.client.model.PrequalificationReportConstraints;
+import com.mastercard.finicity.client.model.VOAReportConstraints;
+import com.mastercard.finicity.client.model.VOAWithIncomeReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
 import com.mastercard.finicity.client.test.utils.ConsumerUtils;
@@ -33,11 +34,11 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generatePrequalificationNonCRAReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generatePrequalificationNonCRAReport(CUSTOMER_ID, reportConstraints, null);
-            assertNotNull(reportData);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.ASSETSUMMARY, reportData.getType());
+            var reportConstraints = new PrequalificationReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generatePrequalificationNonCRAReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportAck);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("assetSummary", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -45,13 +46,13 @@ class VerifyAssetsApiTest extends BaseTest {
     }
 
     @Test
-    void generatePrequalificationReportTest() {
+    void generatePrequalificationCRAReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generatePrequalificationReport(CUSTOMER_ID, reportConstraints, null);
-            assertNotNull(reportData);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.PREQUALVOA, reportData.getType());
+            var reportConstraints = new PrequalificationReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generatePrequalificationCRAReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportAck);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("preQualVoa", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -61,11 +62,11 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generateVOAReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null);
-            assertNotNull(reportData);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOA, reportData.getType());
+            var reportConstraints = new VOAReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generateVOAReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportAck);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voa", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
@@ -75,11 +76,11 @@ class VerifyAssetsApiTest extends BaseTest {
     @Test
     void generateVOAWithIncomeReportTest() {
         try {
-            var reportConstraints = new ReportConstraints().accountIds(customerAccountList);
-            var reportData = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null);
-            assertNotNull(reportData);
-            assertEquals("inProgress", reportData.getStatus());
-            assertEquals(ReportType.VOAHISTORY, reportData.getType());
+            var reportConstraints = new VOAWithIncomeReportConstraints().accountIds(customerAccountList);
+            var reportAck = api.generateVOAWithIncomeReport(CUSTOMER_ID, reportConstraints, null);
+            assertNotNull(reportAck);
+            assertEquals("inProgress", reportAck.getStatus());
+            assertEquals("voaHistory", reportAck.getType());
         } catch (ApiException e) {
             // Status code: 429, Reason: Too Many Requests
             logApiException(e);
