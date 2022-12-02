@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.0
+  version: 1.7.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1260,7 +1260,7 @@ paths:
         $ref: '#/components/requestBodies/GeneratePrequalificationReportRequest'
       responses:
         '202':
-          $ref: '#/components/responses/GenerateCRAPrequalificationReportResponse'
+          $ref: '#/components/responses/GeneratePrequalificationCRAReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1291,7 +1291,7 @@ paths:
         $ref: '#/components/requestBodies/GeneratePrequalificationReportRequest'
       responses:
         '202':
-          $ref: '#/components/responses/GenerateNonCRAPrequalificationReportResponse'
+          $ref: '#/components/responses/GeneratePrequalificationNonCRAReportResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -3007,7 +3007,7 @@ components:
           examples:
             GenerateVOAWithIncomeReportResponseExample:
               $ref: '#/components/examples/GenerateVOAWithIncomeReportResponseExample'
-    GenerateCRAPrequalificationReportResponse:
+    GeneratePrequalificationCRAReportResponse:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
@@ -3020,9 +3020,9 @@ components:
           schema:
             $ref: '#/components/schemas/PrequalificationReportAck'
           examples:
-            GenerateCRAPrequalificationReportResponseExample:
-              $ref: '#/components/examples/GenerateCRAPrequalificationReportResponseExample'
-    GenerateNonCRAPrequalificationReportResponse:
+            GeneratePrequalificationCRAReportResponseExample:
+              $ref: '#/components/examples/GeneratePrequalificationCRAReportResponseExample'
+    GeneratePrequalificationNonCRAReportResponse:
       description:
         "The report is being generated. When finished, a notification will be
         sent to the specified callback URL (Report Listener Service) and the
@@ -3035,8 +3035,8 @@ components:
           schema:
             $ref: '#/components/schemas/PrequalificationReportAck'
           examples:
-            GenerateNonCRAPrequalificationReportResponseExample:
-              $ref: '#/components/examples/GenerateNonCRAPrequalificationReportResponseExample'
+            GeneratePrequalificationNonCRAReportResponseExample:
+              $ref: '#/components/examples/GeneratePrequalificationNonCRAReportResponseExample'
     GenerateVOIReportResponse:
       description:
         "The report is being generated. When finished, a notification will be
@@ -3945,7 +3945,7 @@ components:
             value: PSC Finance
             shown: false
         showNsf: false
-    GenerateCRAPrequalificationReportResponseExample:
+    GeneratePrequalificationCRAReportResponseExample:
       value:
         id: 88w4fbssrbja-prequalvoa
         portfolioId: 0whcism47a34-5-port
@@ -3981,7 +3981,7 @@ components:
           showNsf: false
         type: preQualVoa
         status: inProgress
-    GenerateNonCRAPrequalificationReportResponseExample:
+    GeneratePrequalificationNonCRAReportResponseExample:
       value:
         id: rceiqx616awa-assetsummary
         portfolioId: 0whcism47ttt-5-port
@@ -7003,6 +7003,22 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    ReportStartDate:
+      type: integer
+      description:
+        'The `postedDate` of the earliest transaction analyzed for the report. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    ReportEndDate:
+      type: integer
+      description:
+        'The `postedDate` of the latest transaction analyzed for the report. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
     DateAsOf:
       type: integer
       description:
@@ -7160,6 +7176,14 @@ components:
       description:
         '(Student Loan) The end date of the current repayment plan. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    ExpectedPayoffDate:
+      type: integer
+      description:
+        '(Student Loan) The expected date of the payoff date. A date in Unix
+        epoch time (in seconds). See: [Handling Epoch Dates and
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
@@ -8182,6 +8206,11 @@ components:
             (Student Loan) The financial institution guarantor of the loan (who
             will pay the loan amount to the owner if the borrower defaults)
           example: 'FinBank'
+        owner:
+          type: string
+          description: >-
+            (Student Loan) Owner of the loan
+          example: 'FinBank'
         interestSubsidyType:
           type: string
           description: >-
@@ -8192,10 +8221,32 @@ components:
           type: number
           description: (Student Loan) The total outstanding interest balance
           example: 2000
+        remainingTermOfMl:
+          type: number
+          description:
+            (Student Loan) The number of months still outstanding on a loan
+          example: 2
+        initialInterestRate:
+          type: number
+          description: >-
+            (Student Loan) Initial interest rate of loan
+          example: 34567.89
         feesBalance:
           type: number
           description: (Student Loan) The total outstanding fees balance
           example: 150
+        loanYtdInterestPaid:
+          type: number
+          description: (Student Loan) Loan interest paid year-to-date
+          example: 5623.23
+        loanYtdFeesPaid:
+          type: number
+          description: (Student Loan) Loan fees paid year-to-date
+          example: 5621.23
+        loanYtdPrincipalPaid:
+          type: number
+          description: (Student Loan) Loan principal paid year-to-date
+          example: 5621.23
         loanStatus:
           type: string
           description: >-
@@ -8216,6 +8267,8 @@ components:
           $ref: '#/components/schemas/RepaymentPlanStartDate'
         repaymentPlanEndDate:
           $ref: '#/components/schemas/RepaymentPlanEndDate'
+        expectedPayoffDate:
+          $ref: '#/components/schemas/ExpectedPayoffDate'
         outOfSchoolDate:
           $ref: '#/components/schemas/OutOfSchoolDate'
         convertToRepayment:
@@ -8966,6 +9019,12 @@ components:
           description:
             The portion of the overall transaction amount applied to fees
           example: 0.51
+        suspenseAmount:
+          type: number
+          description:
+            Temporarily hold funds if you overpay or underpay your monthly
+            payment
+          example: 0.25
         interestAmount:
           type: number
           description: The portion of the transaction allocated to interest
@@ -10302,19 +10361,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1512594823
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1575666823
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: Number of days covered by the report
@@ -10997,19 +11046,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1512594823
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1575666823
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: The number of days covered by the report
@@ -11192,19 +11231,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1572625469
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1588350269
+              $ref: '#/components/schemas/ReportEndDate'
             reportStyle:
               type: string
               example: paystatement
@@ -11455,19 +11484,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1579348800
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1594382400
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: Number of days covered by the report
@@ -11490,19 +11509,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1512594823
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1575666823
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: Number of days covered by the report
@@ -11780,19 +11789,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The `postedDate` of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1512594823
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The `postedDate` of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1575666823
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: Number of days covered by the report
@@ -11816,19 +11815,9 @@ components:
         - type: object
           properties:
             startDate:
-              type: integer
-              description:
-                The postedDate of the earliest transaction analyzed for this
-                report
-              format: int64
-              example: 1572625469
+              $ref: '#/components/schemas/ReportStartDate'
             endDate:
-              type: integer
-              description:
-                The postedDate of the latest transaction analyzed for this
-                report
-              format: int64
-              example: 1588350269
+              $ref: '#/components/schemas/ReportEndDate'
             days:
               type: integer
               description: Number of days covered by the report
