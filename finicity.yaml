@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.1
+  version: 1.7.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -873,7 +873,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
-        - Accounts
+        - Payments
       summary: Get Account Owner
       description: >-
         Retrieve the names and addresses of the account owner from a financial

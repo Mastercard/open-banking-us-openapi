@@ -50,16 +50,6 @@ class AccountsApiTest extends BaseTest {
     }
 
     @Test
-    void getAccountOwnerTest() {
-        try {
-            var owner = api.getAccountOwner(CUSTOMER_ID, existingAccountId);
-            assertNotNull(owner);
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
-
-    @Test
     void getCustomerAccountTest() {
         try {
             var account = api.getCustomerAccount(CUSTOMER_ID, existingAccountId);
