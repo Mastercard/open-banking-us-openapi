@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.2
+  version: 1.7.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -6135,6 +6135,12 @@ components:
       format: int64
       description: An account ID represented as a number
       example: 5011648377
+    CustomerAccountParentAccountId:
+      type: string
+      description:
+        The assigned account ID for the account one level higher in the student
+        loan account hierarchy
+      example: '5011648377'
     AccountNumberLast4:
       type: string
       description: The last 4 digits of the ACH account number
@@ -7003,6 +7009,59 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    CustomerAccountAggregationSuccessDate:
+      type: integer
+      description:
+        'A timestamp showing the last successful aggregation of the account.
+        This will not be present until you have run your first aggregation for
+        the account. A date in Unix epoch time (in seconds). See: [Handling
+        Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    CustomerAccountAggregationAttemptDate:
+      type: integer
+      description:
+        'A timestamp showing the last aggregation attempt, whether successful or
+        not. This will not be present until you have run your first aggregation
+        for the account. A date in Unix epoch time (in seconds). See: [Handling
+        Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    CustomerAccountLastTransactionDate:
+      type: integer
+      description:
+        'The date of the latest transaction on the account. This will not be
+        present until you have run your first aggregation for the account. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    CustomerAccountCreatedDate:
+      type: integer
+      description:
+        'A timestamp showing when the account was added to the system. A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    CustomerAccountOldestTransactionDate:
+      type: integer
+      description:
+        'The date of the oldest transaction in the transactions for the account.
+        A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    CustomerAccountBalanceDate:
+      type: integer
+      description:
+        'A timestamp showing when the balance was captured. A date in Unix epoch
+        time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
     ReportStartDate:
       type: integer
       description:
@@ -7201,6 +7260,26 @@ components:
       description:
         '(Student Loan) The date the loan enters into repayment. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
+    TransactionsFromDate:
+      type: integer
+      description:
+        'Value of the `fromDate` request parameter that generated this response'
+      format: int64
+      example: 1607450357
+    TransactionsToDate:
+      type: integer
+      description:
+        'Value of the `toDate` request parameter that generated this response'
+      format: int64
+      example: 1607450357
+    TransactionDate:
+      type: integer
+      description:
+        'A date in Unix epoch time (in seconds). Represents the timestamp of the
+        transaction when it occurred. See: [Handling Epoch Dates and
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
@@ -7596,27 +7675,19 @@ components:
         institutionId:
           $ref: '#/components/schemas/InstitutionId'
         balanceDate:
-          # A timestamp showing when the balance was captured
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountBalanceDate'
         aggregationSuccessDate:
-          # A timestamp showing the last successful aggregation of the account.
-          # This will not be present until you have run your first aggregation for the account.
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountAggregationSuccessDate'
         aggregationAttemptDate:
-          #  A timestamp showing the last aggregation attempt
-          # This will not be present until you have run your first aggregation for the account.
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountAggregationAttemptDate'
         createdDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountCreatedDate'
         currency:
           $ref: '#/components/schemas/Currency'
         lastTransactionDate:
-          # The date of the latest transaction on the account.
-          # This will not be present until you have run your first aggregation for the account.
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountLastTransactionDate'
         oldestTransactionDate:
-          # The date of the oldest transaction in the transactions for the account.
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/CustomerAccountOldestTransactionDate'
         institutionLoginId:
           $ref: '#/components/schemas/NumericInstitutionLoginId'
         detail:
@@ -7634,8 +7705,7 @@ components:
           format: int32
           example: 2
         parentAccount:
-          # The assigned `accountId` for the account one level higher in the student loan account hierarchy.
-          $ref: '#/components/schemas/AccountId'
+          $ref: '#/components/schemas/CustomerAccountParentAccountId'
     CustomerAccountPosition:
       description: Details for investment account holdings
       type: object
@@ -8996,7 +9066,7 @@ components:
         type:
           $ref: '#/components/schemas/TransactionType'
         transactionDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/TransactionDate'
         postedDate:
           $ref: '#/components/schemas/TransactionPostedDate'
         createdDate:
@@ -12635,9 +12705,9 @@ components:
         moreAvailable:
           $ref: '#/components/schemas/MoreResultsAvailable'
         fromDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/TransactionsFromDate'
         toDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/TransactionsToDate'
         sort:
           type: string
           description:
