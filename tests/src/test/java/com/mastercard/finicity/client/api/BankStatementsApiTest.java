@@ -54,7 +54,7 @@ class BankStatementsApiTest extends BaseTest {
     @Test
     void getCustomerAccountStatementTest() {
         try {
-            var pdf = api.getCustomerAccountStatement(CUSTOMER_ID, existingAccountId, 1);
+            var pdf = api.getCustomerAccountStatement(CUSTOMER_ID, existingAccountId, 1, null);
             assertNotNull(pdf);
         } catch (ApiException e) {
             fail(e);

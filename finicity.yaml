@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.3
+  version: 1.7.4
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1609,6 +1609,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
         - $ref: '#/components/parameters/StatementIndexParameter'
+        - $ref: '#/components/parameters/StatementTypeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountStatementResponse'
@@ -6024,6 +6025,13 @@ components:
       schema:
         type: string
         example: 'https://finicity-test/webhook'
+    StatementTypeParameter:
+      name: type
+      in: query
+      required: false
+      description: The type of statement to retrieve
+      schema:
+        $ref: '#/components/schemas/StatementType'
   schemas:
     ErrorMessage:
       required:
@@ -6072,6 +6080,10 @@ components:
       type: string
       description: Name of a Finicity partner
       example: Finicity Test API
+    StatementType:
+      type: string
+      description: Account statement types
+      example: taxStatement
     ConnectLanguage:
       description: >
         Generate a translated Connect URL link. 
