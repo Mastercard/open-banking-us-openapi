@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.4
+  version: 1.7.5
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2450,7 +2450,7 @@ paths:
     get:
       tags:
         - Analytics and Attributes
-      summary: Get Consumer Attributes By ID
+      summary: Get Consumer Attributes by ID
       description: >-
         Retrieve a Consumer Attributes report for a customer.
 
@@ -2482,7 +2482,7 @@ paths:
     get:
       tags:
         - Analytics and Attributes
-      summary: Get FCRA Consumer Attributes By ID
+      summary: Get FCRA Consumer Attributes by ID
       description: >-
         Retrieve a FCRA Consumer Attributes report for a customer.
 
@@ -7628,6 +7628,8 @@ components:
         - id
         - accountNumberDisplay
         - name
+        - accountNickname
+        - number
         - balance
         - type
         - status
@@ -7638,7 +7640,6 @@ components:
         - currency
         - oldestTransactionDate
         - institutionLoginId
-        - displayPosition
       type: object
       properties:
         id:
