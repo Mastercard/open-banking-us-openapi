@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.5
+  version: 1.7.6
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -7330,6 +7330,15 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    TransactionOptionExpireDate:
+      type: integer
+      description:
+        'A date in Unix epoch time (in seconds). Represents the timestamp of the
+        transaction expiration date when it became expires on an account by an
+        institution. See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
+      format: int64
+      example: 1607450357
     StringUnixDate:
       type: string
       description:
@@ -9088,6 +9097,8 @@ components:
           $ref: '#/components/schemas/TransactionFirstEffectiveDate'
         effectiveDate:
           $ref: '#/components/schemas/TransactionEffectiveDate'
+        optionExpireDate:
+          $ref: '#/components/schemas/TransactionOptionExpireDate'
         checkNum:
           type: integer
           description: The check number of the transaction
@@ -9115,6 +9126,10 @@ components:
         principalAmount:
           type: number
           description: The portion of the transaction allocated to principal
+          example: 32560
+        optionStrikePrice:
+          type: number
+          description: The strike price of the option contract
           example: 32560
         unitQuantity:
           type: integer
