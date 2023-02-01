@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.7.6
+  version: 1.8.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -25,10 +25,14 @@ tags:
     description: Download asset files
   - name: Authentication
     description: Generate authentication tokens and manage credentials
+  - name: Balance Analytics
+    description: Balance Analytics for businesses
   - name: Bank Statements
     description: Fetch account statements and generate reports asynchronously
   - name: Cash Flow
     description: Generate cash flow reports asynchronously
+  - name: Cash Flow Analytics
+    description: Cash Flow Analytics for business
   - name: Connect 🔗
     description:
       Allow customers to log into their financial institutions and grant
@@ -2511,6 +2515,303 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /analytics/balance/v1/customer/{customerId}:
+    post:
+      tags:
+        - Balance Analytics
+      summary: Generate Balance Analytics
+      operationId: GenerateBalanceAnalytics
+      description: >-
+        Balance Analytics for Business analyzes bank balances over time to
+        report metrics and identify behavior that may indicate risk.
+
+
+        Calculated metrics include:
+
+        * Current/available account balances
+
+        * Minimum/maximum/average account balances over the requested time
+          period and broken down by month
+
+        * Daily ending balance of accounts for each day in the requested time
+          period
+
+        * Propensity of the customer's account balances to increase week over
+          week
+
+        * Number of days in the requested time period ending with a negative
+          balance
+
+
+        This version of the API is intended for piloting and integration testing
+        your application with the Balance Analytics product. It does not adhere
+        to FCRA requirements, and should not be used for production/lending
+        purposes. See _Generate Balance Analytics - FCRA_ for the FCRA compliant
+        version of this API.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get Balance Analytics
+        Report_ (operation: _GetObbAnalyticsReport_).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateBalanceAnalyticsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateBalanceAnalyticsResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+        '409':
+          $ref: '#/components/responses/ObbResourceConflictResponse'
+  /analytics/balance/v1/customer/{customerId}/fcra:
+    post:
+      tags:
+        - Balance Analytics
+      summary: Generate Balance Analytics - FCRA
+      operationId: GenerateBalanceAnalyticsFcra
+      description: >-
+        Balance Analytics for Business analyzes bank balances over time to
+        report metrics and identify behavior that may indicate risk.
+
+
+        Calculated metrics include:
+
+        * Current/available account balances
+
+        * Minimum/maximum/average account balances over the requested time
+          period and broken down by month
+
+        * Daily ending balance of accounts for each day in the requested time
+          period
+
+        * Propensity of the customer's account balances to increase week over
+          week
+
+        * Number of days in the requested time period ending with a negative
+          balance
+
+
+        This version of the API is intended for production use. It maintains and
+        enforces all compliance with FCRA rules and requirements.
+
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get Balance Analytics
+        Report - FCRA_ (operation: _GetObbAnalyticsReportFCRA_).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateBalanceAnalyticsFcraRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateBalanceAnalyticsFcraResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+        '409':
+          $ref: '#/components/responses/ObbResourceConflictResponse'
+  /analytics/cashflow/v1/customer/{customerId}:
+    post:
+      tags:
+        - Cash Flow Analytics
+      summary: Generate Cash Flow Analytics
+      operationId: GenerateCashFlowAnalytics
+      description: >-
+        Cash Flow Analytics for Business analyzes cash flow over time to report
+        metrics and identify behavior that may indicate risk.
+
+
+        Calculated metrics include:
+
+        * Average transaction value by month over the requested time period
+
+        * Net cash flow over the requested time period and broken down by month
+
+        * Count and report of weeks in the requested time period where there
+          were zero transactions posted to the customer's accounts
+
+        * Minimum/maximum/average/sum/count of deposits by month
+
+        * Minimum/maximum/average/sum/count of withdrawals by month
+
+        * Estimated amount of deposits that can be classified as business
+          revenue
+
+        * Number of transactions posted incurring a non-sufficient funds (NSF)
+          fee, and net amount charged in NSF fees
+
+
+        This version of the API is intended for piloting and integration testing
+        your application with the Cash Flow Analytics product. It does not
+        adhere to FCRA requirements, and should not be used for
+        production/lending purposes. See _Generate Cash Flow Analytics - FCRA_
+        for the FCRA compliant version of this API.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get Cash Flow
+        Analytics Report_ (operation: _GetCashFlowAnalyticsReport_).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateCashFlowAnalyticsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateCashFlowAnalyticsResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+        '409':
+          $ref: '#/components/responses/ObbResourceConflictResponse'
+  /analytics/cashflow/v1/customer/{customerId}/fcra:
+    post:
+      tags:
+        - Cash Flow Analytics
+      summary: Generate Cash Flow Analytics - FCRA
+      operationId: GenerateCashFlowAnalyticsFcra
+      description: >-
+        Cash Flow Analytics for Business analyzes cash flow over time to report
+        metrics and identify behavior that may indicate risk.
+
+
+        Calculated metrics include:
+
+        * Average transaction value by month over the requested time period
+
+        * Net cash flow over the requested time period and broken down by month
+
+        * Count and report of weeks in the requested time period where there
+          were zero transactions posted to the customer's accounts
+
+        * Minimum/maximum/average/sum/count of deposits by month
+
+        * Minimum/maximum/average/sum/count of withdrawals by month
+
+        * Estimated amount of deposits that can be classified as business
+          revenue
+
+        * Number of transactions posted incurring a non-sufficient funds (NSF)
+          fee, and net amount charged in NSF fees
+
+
+        This version of the API is intended for production use. It maintains and
+        enforces all compliance with FCRA rules and requirements.
+
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get Cash Flow
+        Analytics Report - FCRA_ (operation: _GetCashFlowAnalyticsReportFCRA_).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateCashFlowAnalyticsFcraRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateCashFlowAnalyticsFcraResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+        '409':
+          $ref: '#/components/responses/ObbResourceConflictResponse'
+  /analytics/data/v1/{obb_report_id}:
+    get:
+      tags:
+        - Balance Analytics
+        - Cash Flow Analytics
+      summary: Get OBB Analytics Report
+      operationId: GetObbAnalyticsReport
+      description: >-
+        Retrieve the report saved by _Generate Balance Analytics_ or _Generate
+        Cash Flow Analytics_. Requires the report ID generated by the previous
+        call.
+
+
+        Report data can either be retrieved as a JSON document or PDF file.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/ObbReportIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetObbAnalyticsReportResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /analytics/data/v1/{obb_report_id}/fcra:
+    get:
+      tags:
+        - Balance Analytics
+        - Cash Flow Analytics
+      summary: Get OBB Analytics Report - FCRA
+      operationId: GetObbAnalyticsReportFcra
+      description: >-
+        Retrieve the report saved by _Generate Balance Analytics - FCRA_ or
+        _Generate Cash Flow Analytics - FCRA_. Requires the report ID generated
+        by the previous call.
+
+
+        Report data can either be retrieved as a JSON document or PDF file.
+
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/ObbReportIdParameter'
+        - $ref: '#/components/parameters/RequiredPurposeParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetObbAnalyticsReportFcraResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -2760,6 +3061,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerAttributeAccountIDs'
+    GenerateBalanceAnalyticsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
+    GenerateBalanceAnalyticsFcraRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
+    GenerateCashFlowAnalyticsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
+    GenerateCashFlowAnalyticsFcraRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3423,6 +3748,133 @@ components:
               $ref: '#/components/examples/GenericBadRequestExample'
             AccountTypeNotSupportedExample:
               $ref: '#/components/examples/AccountTypeNotSupportedExample'
+    GenerateBalanceAnalyticsResponse:
+      description: >-
+        Response given when balance analytics were generated successfully,
+        providing the caller with a report ID which can be used to retrieve the
+        report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+          examples:
+            GenerateBalanceAnalyticsResponseExample:
+              $ref: '#/components/examples/GenerateBalanceAnalyticsResponseExample'
+    GenerateBalanceAnalyticsFcraResponse:
+      description: >-
+        Response given when balance analytics (FCRA) were generated
+        successfully, providing the caller with a report ID which can be used to
+        retrieve the report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+          examples:
+            GenerateBalanceAnalyticsFcraResponseExample:
+              $ref: '#/components/examples/GenerateBalanceAnalyticsResponseExample'
+    GenerateCashFlowAnalyticsResponse:
+      description: >-
+        Response given when cash flow analytics were generated successfully,
+        providing the caller with a report ID which can be used to retrieve the
+        report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+          examples:
+            GenerateCashFlowAnalyticsResponseExample:
+              $ref: '#/components/examples/GenerateCashFlowAnalyticsResponseExample'
+    GenerateCashFlowAnalyticsFcraResponse:
+      description: >-
+        Response given when cash flow analytics (FCRA) were generated
+        successfully, providing the caller with a report ID which can be used to
+        retrieve the report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+          examples:
+            GenerateCashFlowAnalyticsFcraResponseExample:
+              $ref: '#/components/examples/GenerateCashFlowAnalyticsResponseExample'
+    GetObbAnalyticsReportResponse:
+      description: OBB Analytics report data as JSON or PDF
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/CashFlowAnalyticsReport'
+              - $ref: '#/components/schemas/BalanceAnalyticsReport'
+          examples:
+            BalanceAnalyticsReportExample:
+              $ref: '#/components/examples/BalanceAnalyticsReportExample'
+            CashFlowAnalyticsReportExample:
+              $ref: '#/components/examples/CashFlowAnalyticsReportExample'
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+    GetObbAnalyticsReportFcraResponse:
+      description: OBB Analytics FCRA report data as JSON or PDF
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BalanceAnalyticsReport'
+              - $ref: '#/components/schemas/CashFlowAnalyticsReport'
+          examples:
+            BalanceAnalyticsFcraReportExample:
+              $ref: '#/components/examples/BalanceAnalyticsReportExample'
+            CashFlowAnalyticsFcraReportExample:
+              $ref: '#/components/examples/CashFlowAnalyticsReportExample'
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+    ObbBadRequestResponse:
+      description: A bad request was provided
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbErrorMessage'
+          examples:
+            ObbBadRequestResponseExample:
+              $ref: '#/components/examples/ObbBadRequestResponseExample'
+    ObbUnauthorizedResponse:
+      description: Unauthorized request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbErrorMessage'
+          examples:
+            ObbUnauthorizedResponseExample:
+              $ref: '#/components/examples/ObbUnauthorizedResponseExample'
+    ObbAccessForbiddenResponse:
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbErrorMessage'
+          examples:
+            ObbAccessForbiddenResponseExample:
+              $ref: '#/components/examples/ObbAccessForbiddenResponseExample'
+    ObbResourceNotFoundResponse:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbErrorMessage'
+          examples:
+            ObbResourceNotFoundResponseExample:
+              $ref: '#/components/examples/ObbResourceNotFoundResponseExample'
+    ObbResourceConflictResponse:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbErrorMessage'
+          examples:
+            ObbResourceConflictResponseExample:
+              $ref: '#/components/examples/ObbResourceConflictResponseExample'
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -3526,6 +3978,9 @@ components:
             value: '12345'
             shown: true
         payStatementsFromDate: 1580558400
+        marketSegment: Mortgage
+        excludeEmpInfo: true
+        purpose: 99
     GenerateVOEPayrollReportResponseExample:
       value:
         id: 41h4nzppn47u-voepayroll
@@ -5690,6 +6145,566 @@ components:
               averageMonthlyBalance: 301.45
               transactions: []
               availableBalance: 123.45
+    ObbBadRequestResponseExample:
+      value:
+        errorCode: 400
+        message: "Missing required parameter 'customerId'"
+    ObbUnauthorizedResponseExample:
+      value:
+        errorCode: 401
+        message: 'Invalid Finicity-App-Key'
+    ObbAccessForbiddenResponseExample:
+      value:
+        errorCode: 403
+        message: 'Partner does not have access to this resource'
+    ObbResourceNotFoundResponseExample:
+      value:
+        errorCode: 404
+        message: 'Customer not found'
+    ObbResourceConflictResponseExample:
+      value:
+        errorCode: 409
+        message: 'Customer is not registered as a business'
+    GenerateBalanceAnalyticsResponseExample:
+      value:
+        accountIds: [10001, 10002, 10003]
+        businessId: 123
+        createdDate: '2022-02-10T05:00:00-07:00'
+        customerId: 10001
+        reportId: '145cabe0-2b38-4175-9b7e-115431359839'
+        reportPin: 'qert'
+        requesterName: 'Mortage ABC LLC'
+        title: 'Finicity Balance Analytics'
+    GenerateCashFlowAnalyticsResponseExample:
+      value:
+        accountIds: [10001, 10002, 10003]
+        businessId: 123
+        createdDate: '2022-02-10T05:00:00-07:00'
+        customerId: 10001
+        reportId: '145cabe0-2b38-4175-9b7e-115431359839'
+        reportPin: 'qert'
+        requesterName: 'Mortage ABC LLC'
+        title: 'Finicity Cashflow Analytics'
+    BalanceAnalyticsReportExample:
+      value:
+        accountResults:
+          - accountDetails:
+              accountNumberDisplay: '8888'
+              accountOwner:
+                address: 123 Main St, Portland, OR 12345
+                name: Johnny Appleseed
+              aggregationAttemptDate: '2022-03-30T14:47:19-07:00'
+              aggregationStatusCode: 0
+              aggregationSuccessDate: '2022-03-30T14:47:19-07:00'
+              currency: USD
+              currentBalance: 2239.22
+              id: 1234902309er
+              institution:
+                institutionIconUrl: https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
+                institutionId: 12345
+                institutionName: Wells Fargo
+                institutionPrimaryColor: '#1B3E4A'
+              institutionLoginId: 1007302745
+              name: Super Checking
+              realAccountNumberLast4: 5678
+              status: active
+              type: checking
+            accountId: 5001127492
+            balanceAnalyticsMetrics:
+              availableBalance:
+                description: Available Balance
+                example: 1000.01
+                type: number
+              availableBalanceDate:
+                description: Available Balance date
+                example: '2022-02-18T02:34:00-07:00'
+                type: string
+                minLength: 25
+                maxLength: 25
+              averageDailyBalanceByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              averageDailyBalanceForTheReportTimePeriod:
+                description: Average Daily Balance
+                example: -10442.53
+                type: number
+              averageWeekdayBalanceForTheReportTimePeriod:
+                description: Average Weekday Balance
+                example: -10442.53
+                type: number
+              countDailyNegativeBalancesByMonthForTheReportTimePeriod:
+                - count: 5
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              currentRunningBalance:
+                description: Current Running Balance Date
+                example: 1000.01
+                type: number
+              currentRunningBalanceDate:
+                description: Current Running Balance date
+                example: '2022-02-10T05:00:00-07:00'
+                type: string
+                minLength: 25
+                maxLength: 25
+              dailyBalancesByWeekdayForTheReportTimePeriod:
+                - date: '2021-10-11'
+                  dayOfWeek: Monday
+                  endingBalance: 21527.3
+              dailyBalancesForTheReportTimePeriod:
+                - date: '2021-10-11'
+                  dayOfWeek: Monday
+                  endingBalance: 21527.3
+              historicNumberOfWeeksAverageBalanceIncreasing:
+                historicAverageWeeklyBalances:
+                  - amount: 679.07
+                    fromDate: '2020-01-01'
+                    toDate: '2020-01-07'
+                    week: 1
+                historicNumberOfWeeksAverageBalanceIncreasing: 3
+                historicNumberOfWeeksWithDataAvailable: 4
+              maximumDailyBalanceByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              maximumRunningBalanceForTheReportTimePeriod: -28749.44
+              minimumDailyBalanceByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              minimumRunningBalanceForTheReportTimePeriod: -28749.44
+            currentReportRequest:
+              reportBeginDate: '2022-03-01'
+              reportEndDate: '2022-03-30'
+              reportRequestDate: '2022-03-30T14:47:19-07:00'
+              requestedDaysForReport: 90
+              requestedReportBeginDate: '2022-01-01'
+            historicDataAvailability:
+              historicAvailabilityBeginDate: '2022-03-01'
+              historicAvailabilityEndDate: '2022-03-30'
+              historicAvailableDays: 30
+              historicDataAvailability:
+                Data is available from 2022-03-01 to 2022-03-30
+        businessId: 4444
+        businessSummary:
+          balanceAnalyticsMetrics:
+            availableBalance:
+              description: Available Balance
+              example: 1000.01
+              type: number
+            availableBalanceDate:
+              description: Available Balance date
+              example: '2022-02-18T02:34:00-07:00'
+              type: string
+              minLength: 25
+              maxLength: 25
+            averageDailyBalanceByMonthForTheReportTimePeriod:
+              - amount: 890.99
+                period: last30to1
+                periodBeginDate: '2022-03-01'
+                periodEndDate: '2022-03-30'
+            averageDailyBalanceForTheReportTimePeriod:
+              description: Average Daily Balance
+              example: -10442.53
+              type: number
+            averageWeekdayBalanceForTheReportTimePeriod:
+              description: Average Weekday Balance
+              example: -10442.53
+              type: number
+            countDailyNegativeBalancesByMonthForTheReportTimePeriod:
+              - count: 5
+                period: last30to1
+                periodBeginDate: '2022-03-01'
+                periodEndDate: '2022-03-30'
+            currentRunningBalance:
+              description: Current Running Balance Date
+              example: 1000.01
+              type: number
+            currentRunningBalanceDate:
+              description: Current Running Balance date
+              example: '2022-02-10T05:00:00-07:00'
+              type: string
+              minLength: 25
+              maxLength: 25
+            dailyBalancesByWeekdayForTheReportTimePeriod:
+              - date: '2021-10-11'
+                dayOfWeek: Monday
+                endingBalance: 21527.3
+            dailyBalancesForTheReportTimePeriod:
+              - date: '2021-10-11'
+                dayOfWeek: Monday
+                endingBalance: 21527.3
+            historicNumberOfWeeksAverageBalanceIncreasing:
+              historicAverageWeeklyBalances:
+                - amount: 679.07
+                  fromDate: '2020-01-01'
+                  toDate: '2020-01-07'
+                  week: 1
+              historicNumberOfWeeksAverageBalanceIncreasing: 3
+              historicNumberOfWeeksWithDataAvailable: 4
+            maximumDailyBalanceByMonthForTheReportTimePeriod:
+              - amount: 890.99
+                period: last30to1
+                periodBeginDate: '2022-03-01'
+                periodEndDate: '2022-03-30'
+            maximumRunningBalanceForTheReportTimePeriod: -28749.44
+            minimumDailyBalanceByMonthForTheReportTimePeriod:
+              - amount: 890.99
+                period: last30to1
+                periodBeginDate: '2022-03-01'
+                periodEndDate: '2022-03-30'
+            minimumRunningBalanceForTheReportTimePeriod: -28749.44
+          currentReportRequest:
+            reportBeginDate: '2022-03-01'
+            reportEndDate: '2022-03-30'
+            reportRequestDate: '2022-03-30T14:47:19-07:00'
+            requestedDaysForReport: 90
+            requestedReportBeginDate: '2022-01-01'
+          historicDataAvailability:
+            historicAvailabilityBeginDate: '2022-03-01'
+            historicAvailabilityEndDate: '2022-03-30'
+            historicAvailableDays: 30
+            historicDataAvailability:
+              Data is available from 2022-03-01 to 2022-03-30
+        customerId: 10001
+        reportHeader:
+          businessAddress: 123 Main St
+          businessCity: Portland
+          businessName: B&G Construction
+          businessState: OR
+          businessZip: '12345'
+          referenceNumber: 32asdfaasd0823
+          reportDate: '2022-03-16T21:28:38-07:00'
+          reportId: 8ff8b4b2-706f-45c3-8d66-857bdb516214
+        requesterName: 'Mortgage ABC LLC'
+        title: 'Fincity Balance Analytics'
+    CashFlowAnalyticsReportExample:
+      value:
+        accountResults:
+          - accountDetails:
+              accountNumberDisplay: '8888'
+              accountOwner:
+                address: 123 Main St, Portland, OR 12345
+                name: Johnny Appleseed
+              aggregationAttemptDate: '2022-03-30T14:47:19-07:00'
+              aggregationStatusCode: 0
+              aggregationSuccessDate: '2022-03-30T14:47:19-07:00'
+              currency: USD
+              currentBalance: 2239.22
+              id: 1234902309er
+              institution:
+                institutionIconUrl: https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
+                institutionId: 12345
+                institutionName: Wells Fargo
+                institutionPrimaryColor: '#1B3E4A'
+              institutionLoginId: 1007302745
+              name: Super Checking
+              realAccountNumberLast4: 5678
+              status: active
+              type: checking
+            accountId: 10000001
+            cashflowAnalyticsMetrics:
+              inflow:
+                averageDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                countDepositsByMonthForTheReportTimePeriod:
+                  - count: 5
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                historicCountOfDepositTransactions: 20
+                historicSumOfDeposits: 389.22
+                maximumDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                minimumDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                sumDepositsByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+              negativeTriggers:
+                insufficientFundFees:
+                  countOfTransactionsForTheReportTimePeriod: 1
+                  sumOfTransactionsForTheReportTimePeriod: -1.65
+                  transactions:
+                    - amount: -1.65
+                      description: OVERDRAFT FEE
+                      memo: NSF
+                      postedDate: '2022-12-19'
+                      transactionId: 23092384290
+              outflow:
+                averageDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                countDepositsByMonthForTheReportTimePeriod:
+                  - count: 5
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                historicCountOfDepositTransactions: 20
+                historicSumOfDeposits: 389.22
+                maximumDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                minimumDepositByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                sumDepositsByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+              revenueByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              revenueForTheReportTimePeriod: 43893.44
+              transactionAnalytics:
+                activityDepositsCreditsForTheReportTimePeriod:
+                  - date: '2020-03-25'
+                    depositsCredits: 500.0
+                    transactionDescription: VENMO CASHOUT
+                activityWithdrawalsDebitsForTheReportTimePeriod:
+                  - date: '2020-03-25'
+                    transactionDescription: Payment to Chase card ending in
+                    withdrawalsDebits: 15.69
+                averageTransactionValueByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                historicWeeksWithZeroTransactions:
+                  historicNumberOfWeeksWithDataAvailable: 10
+                  historicNumberOfWeeksZeroTransactions: 5
+                  historicWeeksWithZeroTransactions:
+                    - fromDate: '2020-01-01'
+                      toDate: '2020-01-07'
+                      week: 1
+                lastTransactionDate:
+                  items:
+                    properties:
+                      date:
+                        description: Date the deposit transaction was posted
+                        example: '2020-03-25'
+                        type: string
+                      depositsCredits:
+                        description:
+                          Amount of transaction if deposit, otherwise null
+                        example: 500.0
+                        type: number
+                      withdrawalsDebits:
+                        description:
+                          Amount of transaction if withdrawal, otherwise null
+                        example: 500.0
+                        type: number
+                      zeroAmountTransaction:
+                        description:
+                          Amount of transaction if zero, otherwise null
+                        example: 0.0
+                        type: number
+                      transactionDescription:
+                        description: Description of transaction
+                        example: VENMO CASHOUT
+                        type: string
+                    required:
+                      - date
+                    type: object
+                  type: array
+                netCashFlowByMonthForTheReportTimePeriod:
+                  - amount: 890.99
+                    period: last30to1
+                    periodBeginDate: '2022-03-01'
+                    periodEndDate: '2022-03-30'
+                netCashFlowForTheReportTimePeriod: 1544.94
+            currentReportRequest:
+              reportBeginDate: '2022-03-01'
+              reportEndDate: '2022-03-30'
+              reportRequestDate: '2022-03-30T14:47:19-07:00'
+              requestedDaysForReport: 90
+              requestedReportBeginDate: '2022-01-01'
+            historicDataAvailability:
+              historicAvailabilityBeginDate: '2022-03-01'
+              historicAvailabilityEndDate: '2022-03-30'
+              historicAvailableDays: 30
+              historicDataAvailability:
+                Data is available from 2022-03-01 to 2022-03-30
+        businessId: 4444
+        businessSummary:
+          cashflowAnalyticsMetrics:
+            inflow:
+              averageDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              countDepositsByMonthForTheReportTimePeriod:
+                - count: 5
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              historicCountOfDepositTransactions: 20
+              historicSumOfDeposits: 389.22
+              maximumDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              minimumDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              sumDepositsByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+            negativeTriggers:
+              insufficientFundFees:
+                countOfTransactionsForTheReportTimePeriod: 1
+                sumOfTransactionsForTheReportTimePeriod: -1.65
+                transactions:
+                  - amount: -1.65
+                    description: OVERDRAFT FEE
+                    memo: NSF
+                    postedDate: '2022-12-19'
+                    transactionId: 23092384290
+            outflow:
+              averageDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              countDepositsByMonthForTheReportTimePeriod:
+                - count: 5
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              historicCountOfDepositTransactions: 20
+              historicSumOfDeposits: 389.22
+              maximumDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              minimumDepositByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              sumDepositsByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+            revenueByMonthForTheReportTimePeriod:
+              - amount: 890.99
+                period: last30to1
+                periodBeginDate: '2022-03-01'
+                periodEndDate: '2022-03-30'
+            revenueForTheReportTimePeriod: 43893.44
+            transactionAnalytics:
+              activityDepositsCreditsForTheReportTimePeriod:
+                - date: '2020-03-25'
+                  depositsCredits: 500.0
+                  transactionDescription: VENMO CASHOUT
+              activityWithdrawalsDebitsForTheReportTimePeriod:
+                - date: '2020-03-25'
+                  transactionDescription: Payment to Chase card ending in
+                  withdrawalsDebits: 15.69
+              averageTransactionValueByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              historicWeeksWithZeroTransactions:
+                historicNumberOfWeeksWithDataAvailable: 10
+                historicNumberOfWeeksZeroTransactions: 5
+                historicWeeksWithZeroTransactions:
+                  - fromDate: '2020-01-01'
+                    toDate: '2020-01-07'
+                    week: 1
+              lastTransactionDate:
+                items:
+                  properties:
+                    date:
+                      description: Date the deposit transaction was posted
+                      example: '2020-03-25'
+                      type: string
+                    depositsCredits:
+                      description:
+                        Amount of transaction if deposit, otherwise null
+                      example: 500.0
+                      type: number
+                    withdrawalsDebits:
+                      description:
+                        Amount of transaction if withdrawal, otherwise null
+                      example: 500.0
+                      type: number
+                    zeroAmountTransaction:
+                      description: Amount of transaction if zero, otherwise null
+                      example: 0.0
+                      type: number
+                    transactionDescription:
+                      description: Description of transaction
+                      example: VENMO CASHOUT
+                      type: string
+                  required:
+                    - date
+                  type: object
+                type: array
+              netCashFlowByMonthForTheReportTimePeriod:
+                - amount: 890.99
+                  period: last30to1
+                  periodBeginDate: '2022-03-01'
+                  periodEndDate: '2022-03-30'
+              netCashFlowForTheReportTimePeriod: 1544.94
+          currentReportRequest:
+            reportBeginDate: '2022-03-01'
+            reportEndDate: '2022-03-30'
+            reportRequestDate: '2022-03-30T14:47:19-07:00'
+            requestedDaysForReport: 90
+            requestedReportBeginDate: '2022-01-01'
+          historicDataAvailability:
+            historicAvailabilityBeginDate: '2022-03-01'
+            historicAvailabilityEndDate: '2022-03-30'
+            historicAvailableDays: 30
+            historicDataAvailability:
+              Data is available from 2022-03-01 to 2022-03-30
+        customerId: 10001
+        reportHeader:
+          businessAddress: 123 Main St
+          businessCity: Portland
+          businessName: B&G Construction
+          businessState: OR
+          businessZip: '12345'
+          referenceNumber: 32asdfaasd0823
+          reportDate: '2022-03-16T21:28:38-07:00'
+          reportId: 8ff8b4b2-706f-45c3-8d66-857bdb516214
+        requesterName: 'Mortgage ABC LLC'
+        title: 'Finicity Cash Flow Analytics'
+        totalRevenue: 904909.33
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -5881,6 +6896,17 @@ components:
       schema:
         $ref: '#/components/schemas/NumericInstitutionId'
       example: 4222
+    RequiredPurposeParameter:
+      name: purpose
+      in: query
+      required: true
+      description: >-
+        2-digit code from [Permissible Purpose
+        Codes](https://docs.finicity.com/permissible-purpose-codes/), specifying
+        the reason for retrieving this report. Required for retrieving some
+        reports.
+      schema:
+        type: string
     PurposeParameter:
       name: purpose
       in: query
@@ -5891,8 +6917,7 @@ components:
         the reason for retrieving this report. Required for retrieving some
         reports.
       schema:
-        type: string
-      example: '99'
+        $ref: '#/components/schemas/PurposeCode'
     ReportIdParameter:
       name: reportId
       in: path
@@ -6032,6 +7057,23 @@ components:
       description: The type of statement to retrieve
       schema:
         $ref: '#/components/schemas/StatementType'
+    ReferenceNumberParameter:
+      name: reference-number
+      in: query
+      required: false
+      description: Partner-provided reference number to correlate reports.
+      schema:
+        type: string
+        example: abc123
+    ObbReportIdParameter:
+      description: Report ID generated and returned by OBB products
+      example: bcab9592-e032-4e7b-b737-0380619a0573
+      in: path
+      name: obb_report_id
+      required: true
+      schema:
+        description: Report ID generated and returned by OBB products
+        type: string
   schemas:
     ErrorMessage:
       required:
@@ -7021,6 +8063,25 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).'
       format: int64
       example: 1607450357
+    MarketSegment:
+      type: string
+      description:
+        Filter consumer’s data based on the market segment. Currently supported
+        values are; "Mortgage", "KYC", and "Identity".
+      example: 'Mortgage'
+    ExcludeEmpInfo:
+      type: boolean
+      description:
+        If true is passed, Employment information data will not be searched or
+        returned.
+      example: true
+    PurposeCode:
+      type: string
+      description:
+        2-digit code from [Permissible Purpose Codes]
+        (https://docs.finicity.com/permissible-purpose-codes/), specifying the
+        reason for retrieving this report.
+      example: '99'
     CustomerAccountAggregationSuccessDate:
       type: integer
       description:
@@ -12976,6 +14037,12 @@ components:
           # Pay statements are included if the `payDate` of the statement
           # is equal to or greater than the start date
           $ref: '#/components/schemas/UnixDate'
+        marketSegment:
+          $ref: '#/components/schemas/MarketSegment'
+        excludeEmpInfo:
+          $ref: '#/components/schemas/ExcludeEmpInfo'
+        purpose:
+          $ref: '#/components/schemas/PurposeCode'
     AvailableBalance:
       required:
         - id
@@ -14513,3 +15580,1086 @@ components:
 
         * "WKN"
       example: 'CUSIP'
+    BalanceAndCashFlowAnalyticsReportConstraints:
+      description: >-
+        Request parameters from the partner to control the customer accounts
+        included in the report, and the length of time to report on.
+      type: object
+      properties:
+        accountIds:
+          description: >-
+            The list of account IDs to include in the report. If omitted, all
+            accounts on record for the customer will be used.
+          type: array
+          items:
+            $ref: '#/components/schemas/NumericAccountId'
+        lengthOfReport:
+          description: >-
+            Number of days to search for transactions. Must be one of 30, 90,
+            180, 270, 365, or 730. If omitted, defaults to 2 years from current
+            time at which the request was received (730 days).
+          type: integer
+          example: 730
+    BalanceAnalyticsAccountResult:
+      properties:
+        accountDetails:
+          allOf:
+            - $ref: '#/components/schemas/ObbAccountDetails'
+          description: Details of the account and financial institution
+        accountId:
+          $ref: '#/components/schemas/NumericAccountId'
+        balanceAnalyticsMetrics:
+          allOf:
+            - $ref: '#/components/schemas/BalanceAnalyticsMetrics'
+          description: Balance analytics metrics and calculations
+        currentReportRequest:
+          allOf:
+            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
+          description: Describes the requested attributes of the report
+        historicDataAvailability:
+          allOf:
+            - $ref: '#/components/schemas/ObbDataAvailability'
+          description: >-
+            Describes the availability of historical data for the account
+      required:
+        - accountId
+        - accountDetails
+        - historicDataAvailability
+        - currentReportRequest
+      type: object
+    ObbAccountDetails:
+      properties:
+        accountNumberDisplay:
+          description: >-
+            The account number from a financial institution in truncated format
+          example: '8888'
+          type: string
+          minLength: 0
+          maxLength: 50
+        accountOwner:
+          allOf:
+            - $ref: '#/components/schemas/ObbAccountOwner'
+          description: >-
+            Details about who is on record as the owner of the account. May be
+            the business name, the business owner name, or otherwise
+        aggregationAttemptDate:
+          description: >-
+            A timestamp showing the last aggregation attempt. This will not be
+            present until you have run your first aggregation for the account.
+          example: '2022-03-30T14:47:19-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        aggregationStatusCode:
+          description: >-
+            The status of the most recent aggregation attempt. This will not be
+            present until you have run your first aggregation for the account
+          example: 0
+          type: integer
+        aggregationSuccessDate:
+          description: >-
+            A timestamp showing the last successful aggregation of the account.
+            This will not be present until you have run your first aggregation
+            for the account.
+          example: '2022-03-30T14:47:19-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        currency:
+          description: The currency of the account
+          example: USD
+          type: string
+          minLength: 0
+          maxLength: 5
+        currentBalance:
+          description: Current reported balance of the account
+          example: 2239.22
+          type: number
+        id:
+          $ref: '#/components/schemas/NumericAccountId'
+        institution:
+          allOf:
+            - $ref: '#/components/schemas/ObbInstitution'
+          description: >-
+            Details of the financial institution this account is home to
+        institutionLoginId:
+          $ref: '#/components/schemas/NumericInstitutionLoginId'
+        name:
+          description: The account name from the institution
+          example: Super Checking
+          type: string
+          minLength: 0
+          maxLength: 50
+        realAccountNumberLast4:
+          description: The last 4 digits of the ACH account number
+          example: 5678
+          type: integer
+        status:
+          description: >-
+            pending during account discovery, always active following successful
+            account activation
+          example: active
+          type: string
+          minLength: 0
+          maxLength: 50
+        type:
+          description: Account type, e.g. checking/saving
+          example: checking
+          type: string
+          minLength: 0
+          maxLength: 50
+      required:
+        - id
+        - institution
+        - accountOwner
+      type: object
+    ObbAccountOwner:
+      properties:
+        address:
+          description: Address of the owner on record for the account
+          example: 123 Main St, Portland, OR 12345
+          type: string
+          minLength: 0
+          maxLength: 255
+        name:
+          description: Name of the owner on record for the account
+          example: Johnny Appleseed
+          type: string
+          minLength: 0
+          maxLength: 255
+      required:
+        - name
+        - address
+      type: object
+    ObbInstitution:
+      properties:
+        institutionIconUrl:
+          description: URL of the institution logo icon for reporting
+          example: https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/101732/icon.svg
+          type: string
+          minLength: 0
+          maxLength: 255
+        institutionId:
+          description: ID of the financial institution
+          example: 12345
+          type: integer
+        institutionName:
+          description: Name of the financial institution
+          example: Wells Fargo
+          type: string
+          minLength: 0
+          maxLength: 255
+        institutionPrimaryColor:
+          description: >-
+            Primary branding color of the institution, in hex color format
+          example: '#1B3E4A'
+          type: string
+          minLength: 7
+          maxLength: 7
+      required:
+        - institutionId
+      type: object
+    BalanceAnalyticsMetrics:
+      properties:
+        availableBalance:
+          description: Available Balance
+          example: 1000.01
+          type: number
+        availableBalanceDate:
+          description: Available Balance date
+          example: '2022-02-18T02:34:00-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        averageDailyBalanceByMonthForTheReportTimePeriod:
+          description: >-
+            Average daily ending balance each month over the report time period
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        averageDailyBalanceForTheReportTimePeriod:
+          description: Average Daily Balance
+          example: -10442.53
+          type: number
+        averageWeekdayBalanceForTheReportTimePeriod:
+          description: Average Weekday Balance
+          example: -10442.53
+          type: number
+        countDailyNegativeBalancesByMonthForTheReportTimePeriod:
+          description: >-
+            Number of negative daily ending balances each month over the report
+            time period
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndCount'
+          type: array
+        currentRunningBalance:
+          description: Current Running Balance Date
+          example: 1000.01
+          type: number
+        currentRunningBalanceDate:
+          description: Current Running Balance date
+          example: '2022-02-10T05:00:00-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        dailyBalancesByWeekdayForTheReportTimePeriod:
+          default: []
+          description: >-
+            Daily balance of the account during weekdays over the length of the
+            report
+          example:
+            - date: '2022-03-23'
+              dayOfWeek: Monday
+              endingBalance: 21527.3
+          items:
+            $ref: '#/components/schemas/ObbDailyBalance'
+          type: array
+        dailyBalancesForTheReportTimePeriod:
+          default: []
+          description: >-
+            Daily balance of the account over the length of the report
+          example:
+            - date: '2022-03-22'
+              dayOfWeek: Sunday
+              endingBalance: 21527.3
+          items:
+            $ref: '#/components/schemas/ObbDailyBalance'
+          type: array
+        historicNumberOfWeeksAverageBalanceIncreasing:
+          allOf:
+            - $ref: '#/components/schemas/ObbNumWeeksAverageBalanceIncreasing'
+          description: >-
+            Report of average account balance week over week and count of weeks
+            where the average balance increased
+        maximumDailyBalanceByMonthForTheReportTimePeriod:
+          description: >-
+            Maximum daily ending balance each month over the report time period
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        maximumRunningBalanceForTheReportTimePeriod:
+          description: Maximum Running Balance
+          example: -28749.44
+          type: number
+        minimumDailyBalanceByMonthForTheReportTimePeriod:
+          description: >-
+            Minimum daily ending balance each month over the report time period
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        minimumRunningBalanceForTheReportTimePeriod:
+          description: Minimum Running Balance
+          example: -28749.44
+          type: number
+      type: object
+    ObbDateRangeAndAmount:
+      properties:
+        amount:
+          description: Metric value for the given period
+          example: 890.99
+          type: number
+        period:
+          description: Period represented by this metric
+          example: last30to1
+          type: string
+          minLength: 8
+          maxLength: 12
+        periodBeginDate:
+          description: Begin date of the period being reported
+          example: '2022-03-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        periodEndDate:
+          description: End date of the period being reported
+          example: '2022-03-30'
+          type: string
+          minLength: 10
+          maxLength: 10
+      required:
+        - period
+        - periodBeginDate
+        - periodEndDate
+      type: object
+    ObbDateRangeAndCount:
+      properties:
+        count:
+          description: Count of occurrences for the given period
+          example: 5
+          type: integer
+        period:
+          description: Period represented by this metric
+          example: last30to1
+          type: string
+          minLength: 8
+          maxLength: 12
+        periodBeginDate:
+          description: Begin date of the period being reported
+          example: '2022-03-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        periodEndDate:
+          description: End date of the period being reported
+          example: '2022-03-30'
+          type: string
+          minLength: 10
+          maxLength: 10
+      required:
+        - period
+        - periodBeginDate
+        - periodEndDate
+        - count
+      type: object
+    ObbDailyBalance:
+      properties:
+        date:
+          description: Date of balance information
+          example: '2021-10-11'
+          type: string
+          minLength: 10
+          maxLength: 10
+        dayOfWeek:
+          description: Day of the week for which balance information available
+          example: Monday
+          type: string
+          minLength: 6
+          maxLength: 9
+        endingBalance:
+          description: End of day balance
+          example: 21527.3
+          type: number
+      required:
+        - date
+        - endingBalance
+        - dayOfWeek
+      type: object
+    ObbNumWeeksAverageBalanceIncreasing:
+      properties:
+        historicAverageWeeklyBalances:
+          description: Average weekly balances over the known history
+          items:
+            $ref: '#/components/schemas/ObbAverageWeeklyBalance'
+          type: array
+        historicNumberOfWeeksAverageBalanceIncreasing:
+          description: >-
+            Number of weeks during the known history where the average balance
+            of the account increased week over week
+          example: 3
+          type: integer
+        historicNumberOfWeeksWithDataAvailable:
+          description: >-
+            Number of weeks during the history in which data was available
+          example: 4
+          type: integer
+      required:
+        - historicNumberOfWeeksAverageBalanceIncreasing
+        - historicNumberOfWeeksWithDataAvailable
+        - historicAverageWeeklyBalances
+      type: object
+    ObbAverageWeeklyBalance:
+      properties:
+        amount:
+          description: Average daily ending balance during the week
+          example: 679.07
+          type: number
+        fromDate:
+          description: Begin date of the week
+          example: '2020-01-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        toDate:
+          description: End date of the week
+          example: '2020-01-07'
+          type: string
+          minLength: 10
+          maxLength: 10
+        week:
+          description: >-
+            Week number, where the first week of each year begins on January 1st
+            and ends on January 7th. May be in the range [1, 53]
+          example: 1
+          type: integer
+      required:
+        - week
+        - fromDate
+        - toDate
+        - amount
+      type: object
+    ObbCurrentReportRequestDetails:
+      properties:
+        reportBeginDate:
+          description: Date from when the requested data is available
+          example: '2022-03-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        reportEndDate:
+          description: Date to which the requested data is available
+          example: '2022-03-30'
+          type: string
+          minLength: 10
+          maxLength: 10
+        reportRequestDate:
+          description: The date and time the report was requested
+          example: '2022-03-30T14:47:19-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        requestedDaysForReport:
+          description: Number of days requested for the report
+          example: 90
+          type: integer
+        requestedReportBeginDate:
+          description: >-
+            Date the report would have began on if enough data was available for
+            which the partner requested
+          example: '2022-01-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+      required:
+        - reportRequestDate
+        - requestedDaysForReport
+        - requestedReportBeginDate
+        - reportBeginDate
+        - reportEndDate
+      type: object
+    ObbDataAvailability:
+      properties:
+        historicAvailabilityBeginDate:
+          description: Begin date for data availability
+          example: '2022-03-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        historicAvailabilityEndDate:
+          description: End date for data availability
+          example: '2022-03-30'
+          type: string
+          minLength: 10
+          maxLength: 10
+        historicAvailableDays:
+          description: Days for which transaction details are available
+          example: 30
+          type: integer
+        historicDataAvailability:
+          description: Description of historic data availability
+          example: Data is available from 2022-03-01 to 2022-03-30
+          type: string
+          minLength: 0
+          maxLength: 255
+      required:
+        - historicAvailableDays
+        - historicAvailabilityBeginDate
+        - historicAvailabilityEndDate
+        - historicDataAvailability
+      type: object
+    BalanceAnalyticsBusinessSummary:
+      properties:
+        balanceAnalyticsMetrics:
+          allOf:
+            - $ref: '#/components/schemas/BalanceAnalyticsMetrics'
+          description: >-
+            Balance analytics metrics and calculations across all accounts in
+            the report
+        currentReportRequest:
+          allOf:
+            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
+          description: Describes the requested attributes of the report
+        historicDataAvailability:
+          allOf:
+            - $ref: '#/components/schemas/ObbDataAvailability'
+          description: >-
+            Describes the availability of historical data for all accounts owned
+            by the business
+      type: object
+    ObbReportHeader:
+      description: >-
+        Includes details about the business the report is generated for and
+        metadata about the report
+      properties:
+        businessAddress:
+          description: Business address line 1
+          example: 123 Main St
+          type: string
+          minLength: 0
+          maxLength: 255
+        businessCity:
+          description: Business address city
+          example: Portland
+          type: string
+          minLength: 0
+          maxLength: 255
+        businessName:
+          description: Name of the business
+          example: B&G Construction
+          type: string
+          minLength: 0
+          maxLength: 255
+        businessState:
+          description: Business address state
+          example: OR
+          type: string
+          minLength: 0
+          maxLength: 255
+        businessZip:
+          description: Business address zip
+          example: '12345'
+          type: string
+          minLength: 0
+          maxLength: 255
+        referenceNumber:
+          description: Partner-provided reference number
+          example: 32asdfaasd0823
+          type: string
+          minLength: 0
+          maxLength: 255
+        reportDate:
+          description: Date the report was requested
+          example: '2022-03-16T21:28:38-07:00'
+          type: string
+          minLength: 25
+          maxLength: 25
+        reportId:
+          description: Generated unique report ID
+          example: 8ff8b4b2-706f-45c3-8d66-857bdb516214
+          type: string
+          minLength: 0
+          maxLength: 255
+      required:
+        - reportId
+        - reportDate
+      type: object
+    CashFlowAnalyticsAccountResult:
+      properties:
+        accountDetails:
+          allOf:
+            - $ref: '#/components/schemas/ObbAccountDetails'
+          description: Details of the account and financial institution
+        accountId:
+          $ref: '#/components/schemas/NumericAccountId'
+        cashflowAnalyticsMetrics:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
+          description: Generated cashflow calculations/metrics
+        currentReportRequest:
+          allOf:
+            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
+          description: Describes the requested attributes of the report
+        historicDataAvailability:
+          allOf:
+            - $ref: '#/components/schemas/ObbDataAvailability'
+          description: >-
+            Describes the availability of data at the time the report was
+            requested
+      required:
+        - accountId
+        - accountDetails
+        - historicDataAvailability
+        - currentReportRequest
+      type: object
+    CashFlowAnalyticsMetrics:
+      properties:
+        inflow:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowInflowAttributes'
+          description: Inflow Attributes
+        negativeTriggers:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowNegativeTriggers'
+          description: >-
+            Details of transactions that may be warning signs of bad
+            creditworthiness
+        outflow:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowOutflowAttributes'
+          description: Outflow attributes
+        revenueByMonthForTheReportTimePeriod:
+          description: >-
+            Sum of all transactions categorized as revenue, split by months
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        revenueForTheReportTimePeriod:
+          description: Sum of all transactions categorized as revenue
+          example: 43893.44
+          type: number
+        transactionAnalytics:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowTransactionAnalyticsAttributes'
+          description: Transaction Analytics Attributes
+      type: object
+    CashFlowInflowAttributes:
+      properties:
+        averageDepositByMonthForTheReportTimePeriod:
+          description: Average value of deposits during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        countDepositsByMonthForTheReportTimePeriod:
+          description: Count of all deposits during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndCount'
+          type: array
+        historicCountOfDepositTransactions:
+          description: >-
+            Count of ALL deposits over entire known history of the account (may
+            exceed requested length of report)
+          example: 20
+          type: integer
+        historicSumOfDeposits:
+          description: >-
+            Sum of ALL deposits over entire known history of the account (may
+            exceed requested length of report)
+          example: 389.22
+          type: number
+        maximumDepositByMonthForTheReportTimePeriod:
+          description: Maximum deposit value for different periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        minimumDepositByMonthForTheReportTimePeriod:
+          description: Minimum deposit value for different periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        sumDepositsByMonthForTheReportTimePeriod:
+          description: Sum of all deposits during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+      required:
+        - minimumDepositByMonthForTheReportTimePeriod
+        - maximumDepositByMonthForTheReportTimePeriod
+        - sumDepositsByMonthForTheReportTimePeriod
+        - countDepositsByMonthForTheReportTimePeriod
+        - historicCountOfDepositTransactions
+      type: object
+    CashFlowNegativeTriggers:
+      properties:
+        insufficientFundFees:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowInsufficientFundsFees'
+          description: Non Sufficient Fund Fees
+      type: object
+    CashFlowInsufficientFundsFees:
+      properties:
+        countOfTransactionsForTheReportTimePeriod:
+          description: Count of all NSF transactions during the report
+          example: 1
+          type: integer
+        sumOfTransactionsForTheReportTimePeriod:
+          description: Sum of all NSF transactions during the report
+          example: -1.65
+          type: number
+        transactions:
+          description: Transactions categorized as NSF
+          items:
+            $ref: '#/components/schemas/InsufficientFundsTransaction'
+          type: array
+      type: object
+    InsufficientFundsTransaction:
+      properties:
+        amount:
+          description: Amount of the NSF transaction
+          example: -1.65
+          type: number
+        description:
+          description: Description of the transaction
+          example: OVERDRAFT FEE
+          type: string
+          minLength: 0
+          maxLength: 255
+        memo:
+          description: Transaction memo
+          example: NSF
+          type: string
+          minLength: 0
+          maxLength: 255
+        postedDate:
+          description: Posted date of the NSF transaction
+          example: '2022-12-19'
+          type: string
+          minLength: 10
+          maxLength: 10
+        transactionId:
+          description: Finicity transaction ID
+          example: 23092384290
+          type: integer
+      required:
+        - postedDate
+        - amount
+        - transactionId
+      type: object
+    CashFlowOutflowAttributes:
+      properties:
+        averageWithdrawalByMonthForTheReportTimePeriod:
+          description: Average value of withdrawals during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        countWithdrawalsByMonthForTheReportTimePeriod:
+          description: Count of all withdrawals during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndCount'
+          type: array
+        historicCountOfWithdrawalTransactions:
+          description: >-
+            Count of ALL withdrawals over entire known history of the account
+            (may exceed requested length of report)
+          example: 20
+          type: integer
+        historicSumOfWithdrawals:
+          description: >-
+            Sum of ALL withdrawals over entire known history of the account (may
+            exceed requested length of report)
+          example: 925.66
+          type: number
+        maximumWithdrawalByMonthForTheReportTimePeriod:
+          description: >-
+            Maximum withdrawal value for different periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        minimumWithdrawalByMonthForTheReportTimePeriod:
+          description: >-
+            Minimum withdrawal value for different periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        sumWithdrawalsByMonthForTheReportTimePeriod:
+          description: Sum of all withdrawals during periods in the report
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+      required:
+        - minimumWithdrawalByMonthForTheReportTimePeriod
+        - maximumWithdrawalByMonthForTheReportTimePeriod
+        - sumWithdrawalsByMonthForTheReportTimePeriod
+        - countWithdrawalsByMonthForTheReportTimePeriod
+        - historicCountOfWithdrawalTransactions
+      type: object
+    CashFlowTransactionAnalyticsAttributes:
+      properties:
+        activityDepositsCreditsForTheReportTimePeriod:
+          description: >-
+            List of all deposit transactions posted to the account during the
+            report period
+          items:
+            $ref: '#/components/schemas/CashFlowActivityDepositsCredits'
+          type: array
+        activityWithdrawalsDebitsForTheReportTimePeriod:
+          description: >-
+            List of all withdrawal transactions posted to the account during the
+            report period
+          items:
+            $ref: '#/components/schemas/CashFlowActivityWithdrawalsDebits'
+          type: array
+        averageTransactionValueByMonthForTheReportTimePeriod:
+          description: >-
+            Average value of transactions during periods in the report. Values
+            may be positive or negative
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        historicWeeksWithZeroTransactions:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowNumWeeksZeros'
+          description: >-
+            Details of weeks with zero transactions during the known history of
+            the account
+        lastTransactionDate:
+          description: >-
+            Latest posted transaction(s) to the account. May be more than one if
+            they share the same timestamp
+          items:
+            properties:
+              date:
+                description: Date the deposit transaction was posted
+                example: '2020-03-25'
+                type: string
+              depositsCredits:
+                description: Amount of transaction if deposit, otherwise null
+                example: 500.0
+                type: number
+              withdrawalsDebits:
+                description: Amount of transaction if withdrawal, otherwise null
+                example: 500.0
+                type: number
+              zeroAmountTransaction:
+                description: Amount of transaction if zero, otherwise null
+                example: 0.0
+                type: number
+              transactionDescription:
+                description: Description of transaction
+                example: VENMO            CASHOUT
+                type: string
+            required:
+              - date
+            type: object
+          type: array
+        netCashFlowByMonthForTheReportTimePeriod:
+          description: Net cash flow for each month during the report period
+          items:
+            $ref: '#/components/schemas/ObbDateRangeAndAmount'
+          type: array
+        netCashFlowForTheReportTimePeriod:
+          description: >-
+            Net cash flow during the report period (may be positive or negative)
+          example: 1544.94
+          type: number
+      required:
+        - averageTransactionValueByMonthForTheReportTimePeriod
+        - activityWithdrawalsDebitsForTheReportTimePeriod
+        - activityDepositsCreditsForTheReportTimePeriod
+      type: object
+    CashFlowActivityDepositsCredits:
+      properties:
+        date:
+          description: Date the deposit transaction was posted
+          example: '2020-03-25'
+          type: string
+          minLength: 10
+          maxLength: 10
+        depositsCredits:
+          description: Amount of the deposit
+          example: 500.0
+          type: number
+        transactionDescription:
+          description: Description of transaction
+          example: VENMO            CASHOUT
+          type: string
+          minLength: 0
+          maxLength: 255
+      required:
+        - date
+        - depositsCredits
+      type: object
+    CashFlowActivityWithdrawalsDebits:
+      properties:
+        date:
+          description: Date the withdrawal transaction was posted
+          example: '2020-03-25'
+          type: string
+          minLength: 10
+          maxLength: 10
+        transactionDescription:
+          description: Description of transaction
+          example: Payment to Chase card ending in
+          type: string
+          minLength: 0
+          maxLength: 255
+        withdrawalsDebits:
+          description: Amount of the withdrawal
+          example: 15.69
+          type: number
+      required:
+        - date
+        - withdrawalsDebits
+      type: object
+    CashFlowNumWeeksZeros:
+      properties:
+        historicNumberOfWeeksWithDataAvailable:
+          description: >-
+            Number of weeks during known history of account in which data was
+            available
+          example: 10
+          type: integer
+        historicNumberOfWeeksZeroTransactions:
+          description: >-
+            Number of weeks during known history of account where zero
+            transactions were posted
+          example: 5
+          type: integer
+        historicWeeksWithZeroTransactions:
+          description: List of weeks with zero reported transactions
+          items:
+            $ref: '#/components/schemas/ObbWeekOfYear'
+          type: array
+      required:
+        - historicNumberOfWeeksZeroTransactions
+        - historicNumberOfWeeksWithDataAvailable
+        - historicWeeksWithZeroTransactions
+      type: object
+    ObbWeekOfYear:
+      properties:
+        fromDate:
+          description: Begin date of the week
+          example: '2020-01-01'
+          type: string
+          minLength: 10
+          maxLength: 10
+        toDate:
+          description: End date of the week
+          example: '2020-01-07'
+          type: string
+          minLength: 10
+          maxLength: 10
+        week:
+          description: >-
+            Week number, where the first week of each year begins on January 1st
+            and ends on January 7th. May be in the range [1, 53]
+          example: 1
+          type: integer
+      required:
+        - week
+        - fromDate
+        - toDate
+      type: object
+    CashFlowAnalyticsBusinessSummary:
+      properties:
+        cashflowAnalyticsMetrics:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
+          description: >-
+            Cash flow analytics metrics and calculations across all accounts in
+            the report
+        currentReportRequest:
+          allOf:
+            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
+          description: Describes the requested attributes of the report
+        historicDataAvailability:
+          allOf:
+            - $ref: '#/components/schemas/ObbDataAvailability'
+          description: >-
+            Describes the availability of historical data for all accounts owned
+            by the business
+      required:
+        - historicDataAvailability
+        - currentReportRequest
+      type: object
+    ObbErrorMessage:
+      description: OBB Error response message
+      properties:
+        errorCode:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Detailed reason about the source of the error
+          minLength: 0
+          maxLength: 255
+      required:
+        - errorCode
+        - message
+      type: object
+    BalanceAndCashFlowAnalyticsReportAck:
+      description:
+        Response given when analtyics were generated successfully, providing the
+        caller with a report ID which can be used to retrieve the report as JSON
+        or a PDF.
+      properties:
+        accountIds:
+          description: List of account IDs included in the report
+          type: array
+          items:
+            $ref: '#/components/schemas/NumericAccountId'
+        businessId:
+          description: Business ID associated with the requested customer
+          type: integer
+        createdDate:
+          description: Created date of balance analytics request
+          type: string
+          minLength: 25
+          maxLength: 25
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        reportId:
+          $ref: '#/components/schemas/ReportId'
+        reportPin:
+          description: PIN that may be used to access the report
+          type: string
+          minLength: 0
+          maxLength: 50
+        requesterName:
+          description: Name of requester
+          type: string
+          minLength: 0
+          maxLength: 255
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+      required:
+        - reportId
+        - reportPin
+        - customerId
+        - accountIds
+        - title
+        - createdDate
+      type: object
+    BalanceAnalyticsReport:
+      description: Balance analytics report data as JSON
+      properties:
+        accountResults:
+          description: Balance results per account
+          items:
+            $ref: '#/components/schemas/BalanceAnalyticsAccountResult'
+          type: array
+        businessId:
+          description: Business ID
+          example: 4444
+          type: integer
+        businessSummary:
+          allOf:
+            - $ref: '#/components/schemas/BalanceAnalyticsBusinessSummary'
+          description: >-
+            Balance analytics summarized across all accounts in the report
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        reportHeader:
+          allOf:
+            - $ref: '#/components/schemas/ObbReportHeader'
+          description: Customer and report metadata
+        requesterName:
+          description: Name of requester
+          example: 'Mortgage ABC LLC'
+          type: string
+          minLength: 0
+          maxLength: 255
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+      required:
+        - customerId
+        - title
+        - reportHeader
+      type: object
+    CashFlowAnalyticsReport:
+      description: Cash Flow Analytics report data as JSON
+      properties:
+        accountResults:
+          description: Cash flow results per account
+          items:
+            $ref: '#/components/schemas/CashFlowAnalyticsAccountResult'
+          type: array
+        businessId:
+          description: Business ID
+          example: 4444
+          type: integer
+        businessSummary:
+          allOf:
+            - $ref: '#/components/schemas/CashFlowAnalyticsBusinessSummary'
+          description: >-
+            Cash flow analytics summarized across all accounts in the report
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        reportHeader:
+          allOf:
+            - $ref: '#/components/schemas/ObbReportHeader'
+          description: Customer and report metadata
+        requesterName:
+          description: Name of requester
+          example: Mortgage ABC LLC
+          type: string
+          minLength: 0
+          maxLength: 255
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+        totalRevenue:
+          description: The total revenue
+          type: number
+      required:
+        - customerId
+        - title
+        - reportHeader
+      type: object
