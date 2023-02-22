@@ -2,6 +2,9 @@ package com.mastercard.finicity.client.test;
 
 import com.mastercard.finicity.client.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.temporal.ChronoUnit;
 
 public final class ModelFactory {
 
@@ -68,5 +71,26 @@ public final class ModelFactory {
 
     public static String randomStr() {
         return RandomStringUtils.randomAlphabetic(10);
+    }
+
+    public static ThirdPartyAccessKeyData newThirdPartyAccessKeyData(String type, String accountId, String customerId, String partnerId) {
+        var data = new ThirdPartyAccessKeyData();
+        var product = new ThirdPartyAccessProduct();
+        var accessPeriod = new ThirdPartyAccessPeriod();
+
+        accessPeriod.setType(type);
+        accessPeriod.setStartTime(Instant.now().atOffset(ZoneOffset.UTC));
+        accessPeriod.setEndTime(Instant.now().plus(1, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC));
+
+        product.setProduct("moneyTransferDetails");
+        product.setMaxCalls(100);
+        product.setAccountId(accountId);
+        product.setAccessPeriod(accessPeriod);
+
+        data.setPartnerId(partnerId);
+        data.setThirdPartyPartnerId(partnerId);
+        data.setCustomerId(customerId);
+        data.addProductsItem(product);
+        return data;
     }
 }

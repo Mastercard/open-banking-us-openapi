@@ -161,4 +161,31 @@ class AccountsApiTest extends BaseTest {
             assertErrorMessageEquals("customer does not have given account (customerId = " + CUSTOMER_ID + ", accountId = [1234])", e);
         }
     }
+
+    @Test
+    void refreshCustomerAccountsByInstitutionLoginV2Test() throws ApiException {
+       String customerId = CUSTOMER_ID;
+       String institutionLoginId = existingInstitutionLoginId;
+       Object body = null;
+       try {
+    	   api.refreshCustomerAccountsByInstitutionLoginV2(customerId, institutionLoginId, body);  
+       } catch (ApiException e) {
+    	   // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
+    	   logApiException(e);
+    	   assertErrorCodeEquals(38007, e);
+    	   assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId = (1234)", e);
+       }     
+    }
+
+    @Test
+    void refreshCustomerAccountsV2Test() throws ApiException {
+        String customerId = CUSTOMER_ID;
+        Object body = null;
+        try {
+        	api.refreshCustomerAccountsV2(customerId, body);
+        } catch (ApiException e) {
+        	fail(e);
+        }        
+    }
 }
+

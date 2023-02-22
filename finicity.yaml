@@ -10,13 +10,15 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.8.0
+  version: 1.9.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
 tags:
   - name: Accounts
     description: Fetch or refresh customer accounts
+  - name: 'Accounts (Simple)'
+    description: Fetch simple customer accounts
   - name: Analytics and Attributes
     description: Generate and fetch consumer attributes (Beta)
   - name: App Registration
@@ -53,6 +55,8 @@ tags:
     description: Generate portfolios of the most recent reports
   - name: Reports
     description: Fetch generated reports when ready
+  - name: Third Party Access
+    description: Generate and manage access keys for other partners
   - name: Transactions
     description:
       Fetch customer and account transactions and generate reports
@@ -629,6 +633,9 @@ paths:
         know when the refresh is complete.
 
 
+        Note: This service is not available for all tiers of dynamic billing.
+
+
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RefreshCustomerAccountsByInstitutionLogin
       parameters:
@@ -645,6 +652,46 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v2/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts':
+    post:
+      tags:
+        - Accounts
+      summary:
+        Refresh Customer Accounts by Institution Login ID for Dynamic Billing
+      description: >-
+        Refresh account and transaction data for all accounts associated with a
+        given 'institutionLoginId` with a connection to the institution. Client
+        apps are not permitted to automate calls to the Refresh services. Active
+        accounts are automatically refreshed by Finicity once per day.
+
+
+        Apps may call Refresh services for a specific customer when there is a
+        specific business case for the need of data that is up to date as of the
+        moment. Please discuss with your account manager and systems engineer
+        for further clarification.
+
+
+        Note: This service will be used for dynamic billing tiers ASD, AFD and
+        ATD.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: RefreshCustomerAccountsByInstitutionLoginV2
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+
   '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}':
     delete:
       tags:
@@ -767,6 +814,9 @@ paths:
         know when the refresh is complete.
 
 
+        Note: This service is not available for all tiers of dynamic billing.
+
+
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: RefreshCustomerAccounts
       parameters:
@@ -776,6 +826,44 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v2/customers/{customerId}/accounts':
+    post:
+      tags:
+        - Accounts
+      summary: Refresh Customer Accounts For Dynamic Billing
+      description: >-
+        Refresh account and transaction data for all accounts associated with
+        the  given `customerId` with a connection to the institution.
+
+
+        Client apps are not permitted to automate calls to the Refresh services.
+        Active accounts are automatically refreshed by Finicity once per day.
+
+        Apps may call Refresh services for a specific customer when there is a
+        specific business case for the need of data that is up to date as of the
+        moment. Please discuss with your account manager and systems engineer
+        for further clarification.
+
+
+        Note: This service will be used for dynamic billing tiers ASD, AFD and
+        ATD.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: RefreshCustomerAccountsV2
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -806,6 +894,104 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/institutions/{institutionId}/accounts/simple':
+    get:
+      tags:
+        - 'Accounts (Simple)'
+      summary: Get Customer Accounts by Institution ID (Simple)
+      description: >-
+        This API is a lighter version of Get Customer Accounts by Institution
+        ID, returning only basic information of active accounts owned by the
+        given customer at the given institution.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetCustomerAccountsByInstitutionSimple
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountsSimpleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/institutionLogins/{institutionLoginId}/accounts/simple':
+    get:
+      tags:
+        - 'Accounts (Simple)'
+      summary: Get Customer Accounts by Institution Login ID (Simple)
+      description: >-
+        This API is a lighter version of Get Customer Accounts by Institution
+        Login ID, returning only basic information of all active accounts owned
+        by the given customer at the given institution login ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetCustomerAccountsByInstitutionLoginSimple
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountsSimpleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/simple':
+    get:
+      tags:
+        - 'Accounts (Simple)'
+      summary: Get Customer Account by ID (Simple)
+      description: >-
+        This API is a lighter version of Get Customer Accounts by ID, returning
+        only basic information of a customer account.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetCustomerAccountSimple
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountSimpleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/simple':
+    get:
+      tags:
+        - 'Accounts (Simple)'
+      summary: Get Customer Accounts (Simple)
+      description: >-
+        This API is a lighter version of Get Customer Accounts, returning only
+        basic information of all active customer accounts.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetCustomerAccountsSimple
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerAccountsSimpleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/transactions/historic':
     post:
       tags:
@@ -2812,6 +2998,68 @@ paths:
           $ref: '#/components/responses/GetObbAnalyticsReportFcraResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+
+  '/aggregation/v1/partners/accessKey':
+    post:
+      tags:
+        - Third Party Access
+      summary: Generate Third Party Access Key
+      description: >-
+        Generate access key for third party partners.
+           
+        A partner can provide access to third party partners with this access
+        key.
+      operationId: GenerateThirdPartyAccessKey
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateThirdPartyAccessKeyRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateThirdPartyAccessKeyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v1/partners/accessKey/{consentReceiptId}':
+    put:
+      tags:
+        - Third Party Access
+      summary: Update Third Party Access
+      description: >-
+        Update access for third party partners
+      operationId: UpdateThirdPartyAccessKey
+      parameters:
+        - $ref: '#/components/parameters/ConsentReceiptIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateThirdPartyAccessKeyRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateThirdPartyAccessKeyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+    delete:
+      tags:
+        - Third Party Access
+      summary: Revoke Third Party Access
+      description: >-
+        Revoke access of third party partners
+      operationId: RevokeThirdPartyAccessKey
+      parameters:
+        - $ref: '#/components/parameters/ConsentReceiptIdParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/RevokeThirdPartyAccessKeyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -3085,6 +3333,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
+    GenerateThirdPartyAccessKeyRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ThirdPartyAccessKeyData'
+    UpdateThirdPartyAccessKeyRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ThirdPartyAccessKeyData'
   responses:
     CreateTokenResponse:
       description: The access token was successfully created
@@ -3169,6 +3429,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Consumer'
+    GetCustomerAccountsSimpleResponse:
+      description: The account list was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccountsSimple'
+    GetCustomerAccountSimpleResponse:
+      description: The account was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAccountSimple'
     ModifyConsumerResponse:
       description: The consumer was successfully updated
     GetCustomerAccountsResponse:
@@ -3183,6 +3455,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CustomerAccounts'
+    RefreshCustomerV2AccountsResponse:
+      description: The account list was successfully refreshed
     DeleteCustomerAccountsByInstitutionLoginResponse:
       description: The customer accounts were successfully deleted
     DeleteCustomerAccountResponse:
@@ -3875,6 +4149,20 @@ components:
           examples:
             ObbResourceConflictResponseExample:
               $ref: '#/components/examples/ObbResourceConflictResponseExample'
+    GenerateThirdPartyAccessKeyResponse:
+      description: The third party access key was successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ThirdPartyAccessKeyReceiptData'
+    UpdateThirdPartyAccessKeyResponse:
+      description: The third party access key was successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ThirdPartyAccessKeyReceiptData'
+    RevokeThirdPartyAccessKeyResponse:
+      description: The third party access key was successfully revoked
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -7050,6 +7338,14 @@ components:
       schema:
         type: string
         example: 'https://finicity-test/webhook'
+    ConsentReceiptIdParameter:
+      description: Third party access key receipt id
+      name: consentReceiptId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ConsentReceiptId'
+      example: cr_4pfI3r1X8aOHrDDwrwC01NHFxOXlT1
     StatementTypeParameter:
       name: type
       in: query
@@ -8690,6 +8986,98 @@ components:
           items:
             $ref: '#/components/schemas/CustomerAccount'
           description: List of customer accounts
+    CustomerAccountsSimple:
+      description: A list of accounts with basic information of a customer
+      required:
+        - accounts
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerAccountSimple'
+          description: A list of accounts with basic information of a customer
+    AccountNumberDisplay:
+      type: string
+      description: >-
+        The account number from a financial institution in truncated format:
+
+          * Last four digits: "1234"
+
+           * Last four digits with suffix: "1234-9"
+
+           * Full value for string accounts: "john@gmail.com"
+        example: '1234-9'
+    Name:
+      type: string
+      description: The account name from the institution
+      example: Super Checking
+    AggregationStatus:
+      type: string
+      description: >-
+        "pending" during account discovery, always "active" following
+          successful account activation
+      example: active
+    DisplayPosition:
+      type: integer
+      description: >-
+        Display position of the account at the financial institution, "1"
+            being the top listed account
+      format: int32
+      example: 2
+    CustomerAccountSimple:
+      description:
+        An account represents a bank account such as a checking or savings that
+        the customer has added via the Connect interface.
+      required:
+        - id
+        - accountNumberDisplay
+        - name
+        - type
+        - status
+        - customerId
+        - institutionId
+        - createdDate
+        - currency
+        - institutionLoginId
+        - displayPosition
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/AccountId'
+        accountNumberDisplay:
+          $ref: '#/components/schemas/AccountNumberDisplay'
+        name:
+          $ref: '#/components/schemas/Name'
+        type:
+          $ref: '#/components/schemas/AccountType'
+        aggregationStatusCode:
+          $ref: '#/components/schemas/AggregationStatusCode'
+        status:
+          $ref: '#/components/schemas/AggregationStatus'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        institutionId:
+          $ref: '#/components/schemas/InstitutionId'
+        aggregationSuccessDate:
+          # A timestamp showing the last successful aggregation of the account.
+          # This will not be present until you have run your first aggregation for the account.
+          $ref: '#/components/schemas/UnixDate'
+        aggregationAttemptDate:
+          #  A timestamp showing the last aggregation attempt
+          # This will not be present until you have run your first aggregation for the account.
+          $ref: '#/components/schemas/UnixDate'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        institutionLoginId:
+          $ref: '#/components/schemas/NumericInstitutionLoginId'
+        displayPosition:
+          $ref: '#/components/schemas/DisplayPosition'
+        parentAccount:
+          # The Finicity assigned account ID for the account one level higher in the student loan account hierarchy
+          $ref: '#/components/schemas/AccountId'
     CustomerAccount:
       description:
         An account represents a bank account such as a checking or savings that
@@ -8723,22 +9111,11 @@ components:
             at which time it will be deprecated (no longer available).
           example: '2000004444'
         accountNumberDisplay:
-          type: string
-          description: >-
-            The account number from a financial institution in truncated format:
-
-            * Last four digits: "1234"
-
-            * Last four digits with suffix: "1234-9"
-
-            * Full value for string accounts: "john@gmail.com"
-          example: '1234-9'
+          $ref: '#/components/schemas/AccountNumberDisplay'
         realAccountNumberLast4:
           $ref: '#/components/schemas/AccountNumberLast4'
         name:
-          type: string
-          description: The account name from the institution
-          example: Super Checking
+          $ref: '#/components/schemas/Name'
         balance:
           type: number
           description: The cleared balance of the account as of `balanceDate`
@@ -8748,11 +9125,7 @@ components:
         aggregationStatusCode:
           $ref: '#/components/schemas/AggregationStatusCode'
         status:
-          type: string
-          description: >-
-            "pending" during account discovery, always "active" following
-            successful account activation
-          example: active
+          $ref: '#/components/schemas/AggregationStatus'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         institutionId:
@@ -8781,12 +9154,7 @@ components:
             $ref: '#/components/schemas/CustomerAccountPosition'
           description: Investment holdings
         displayPosition:
-          type: integer
-          description: >-
-            Display position of the account at the financial institution, "1"
-            being the top listed account
-          format: int32
-          example: 2
+          $ref: '#/components/schemas/DisplayPosition'
         parentAccount:
           $ref: '#/components/schemas/CustomerAccountParentAccountId'
     CustomerAccountPosition:
@@ -15539,6 +15907,209 @@ components:
 
         * "otherInfo"
       example: 'transfer'
+    ThirdPartyAccessKeyData:
+      description: >-
+        An object representing the third party access key request
+
+         * `customerId`: This is recipient's customer identifier
+         * `partnerId`: This is recipient partner identifier
+         * `thirdPartyPartnerId`: This is requester's partner identifier
+         * `products`: Array of values representing the Finicity APIs for
+        which access needs to be generated.
+      type: object
+      required:
+        - customerId
+        - partnerId
+        - thirdPartyPartnerId
+        - products
+      properties:
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        thirdPartyPartnerId:
+          $ref: '#/components/schemas/PartnerId'
+        provenance:
+          $ref: '#/components/schemas/ThirdPartyAccessProvenance'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThirdPartyAccessProduct'
+    ThirdPartyAccessKeyReceiptData:
+      description: >-
+        An object representing the third party access key receipt
+         
+          * `customerId`: This is recipient's customerId represented as a
+          pseudoidentifier. 
+          * `accountId`: This is the value provided to recipient
+          represented as a pseudoidentifier for the accountId.
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThirdPartyAccessReceiptData'
+    ThirdPartyAccessProvenance:
+      description: >-
+        Provenance regarding the calling client like `clientFingerprint`,
+        `ipAddress` and `token`.
+      type: object
+      properties:
+        clientFingerprint:
+          type: string
+          description: Calling client identifier
+          example: LU9ZYxcDNQCwEmAxH52XFzaRiGMAAAAABclSKxW5S9P8pUMDV4fbpg
+        ipAddress:
+          type: string
+          description: Calling client IP address
+          example: 8.8.8.8
+        token:
+          type: string
+          description: Calling client cookie
+          example: P9YbR+srNVyQI35893d+BzPrhGMAAAAAuacVUt+3m4svbaFjVSbHEA==
+    ThirdPartyAccessProduct:
+      description: Product for which access token to be generated
+      type: object
+      required:
+        - product
+        - maxCalls
+        - accountId
+        - accessPeriod
+      properties:
+        product:
+          $ref: '#/components/schemas/ThirdPartyAccessProductTypes'
+        payorId:
+          type: string
+          description: >-
+            The Finicity Partner id who should be billed when the Requester
+            requests data from Finicity. If no value specified, then the
+            Recipient will be billed.
+          example: '2445581559892'
+        maxCalls:
+          type: integer
+          description:
+            Max number of calls to the consented product (consented api)
+          example: 200
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        accessPeriod:
+          $ref: '#/components/schemas/ThirdPartyAccessPeriod'
+    ThirdPartyAccessProductTypes:
+      description: >-
+        Third party access token can be generated for the following product
+        types:
+
+
+         * "moneyTransferDetails": Retrieve account details for money transfer 
+         * "availableBalance": Retrieves the latest cached available and cleared
+            account balances for an account. 
+         * "availableBalanceLive": Retrieves the available and cleared account
+        balances live from the financial institution 
+         * "accountOwner": Retrieves names and addresses of the account owner
+        from a financial institution. 
+         * "paymentIndicator": Get the Payment Success Indicator response,
+        scoring the likelihood of payment settlement 
+         * "paymentFeedback": Create feedback loop for Payment Success Indicator
+        (PSI) and/or Payment Routing Optimizer (PRO) 
+         * "paymentRouting": Product recommends the best rail to use as well as
+        the best time to initiate the payment
+      type: string
+      example: moneyTransferDetails
+    ThirdPartyAccessPeriod:
+      type: object
+      description: Object which describes access validity
+      required:
+        - type
+        - startTime
+        - endTime
+      properties:
+        type:
+          $ref: '#/components/schemas/ThirdPartyAccessPeriodTypes'
+        startTime:
+          $ref: '#/components/schemas/DateTimeWithZone'
+        endTime:
+          $ref: '#/components/schemas/DateTimeWithZone'
+    ThirdPartyAccessPeriodTypes:
+      description: >-
+        Multiple types will be supported. Presently below types are supported.
+
+        * "timeframe": Specifies a timeframe bounded by a startTime and
+        endTime.  
+           The startTime is the time at which the access was granted and the
+        access key generated, 
+           and the endTime is the time at which the access was revoked. Times
+        are represented in ISO 8601 format("2022-03-10T06:06:20Z")
+      type: string
+      example: timeframe
+    DateTimeWithZone:
+      type: string
+      format: date-time
+      description: A date-time with time zone
+      example: '2022-03-10T06:06:20.042584549Z'
+    ThirdPartyAccessProof:
+      type: object
+      description: An object representing a digital signature of the access key
+      properties:
+        signature:
+          type: string
+          description:
+            The digital signature for the "receipt" portion of the access key
+          example: JTdCyTIyY3VzdG9tZXJJZCUyMiUzQSUyMjU0NTQ1MTQwMDI5NTU2MjkzNDMlMjIlMkMlMjJwYXJ0bmVySWQlMjIlM0ElMjIyNDQ1NTgzOTIyNTM2JTIyJTJDJTIycHJvZHVjdHMlMjIlM0ElNUIlN0IlMjJhY2Nlc3NQZXJpb2QlMjIlM0ElN0IlMjJlbmRUaW1lJTIyJTNBJTIyMjAyMy0xMS0yOVQwNiUzQTA2JTNBMjBaJTIyJTJDJTIyc3RhcnRUaW1lJTIyJTNBJTIyMjAyMi0xMS0yOVQwNiUzQTA2JTNBMjBaJTIyJTJDJTIydHlwZSUyMiUzQSUyMnRpbWVmcmFtZSUyMiU3RCUyQyUyMmFjY291bnRJZCUyMiUzQSUyMjQ2MzM0MTU3NDM5NjAzNzQwMjQlMjIlMkMlMjJwcm9kdWN0JTIyJTNBJTIybW9uZXlUcmFuc2ZlckRldGFpbHMlMjIlN0QlMkMlN0IlMjJhY2Nlc3NQZXJpb2QlMjIlM0ElN0IlMjJlbmRUaW1lJTIyJTNBJTIyMjAyMy0xMC0yOVQwNiUzQTA2JTNBMjBaJTIyJTJDJTIyc3RhcnRUaW1lJTIyJTNBJTIyMjAyMi0xMS0yOVQwNiUzQTA2JTNBMjBaJTIyJTJDJTIydHlwZSUyMiUzQSUyMnRpbWVmcmFtZSUyMiU3RCUyQyUyMmFjY291bnRJZCUyMiUzQSUyMjQ2MzM0MTU3NDM5NjAzNzQwMjQlMjIlMkMlMjJwcm9kdWN0JTIyJTNBJTIybW9uZXlUcmFuc2ZlckRldGFpbHMlMjIlN0QlNUQlMkMlMjJwcm9maWxlJTIyJTNBMyUyQyUyMnByb3ZlbmFuY2UlMjIlM0FudWxsJTJDJTIycmVjZWlwdElkJTIyJTNBJTIyY3JfNHBmSTNyMVg4YU9IckREd3J3QzAxTkhDeE9YbFcxJTIyJTJDJTIycmVjZWlwdFZlcnNpb24lMjIlM0ExJTJDJTIydGltZXN0YW1wJTIyJTNBJTIyMjAyMi0xMS0yOVQxOCUzQTM1JTNBMDhaJTIyJTJDJTIydmVyc2lvbiUyMiUzQSUyMjElRjYlN9U=
+        keyId:
+          type: string
+          description:
+            The Finicity key identifier is used to sign the access key
+          example: '867-530-900'
+        timestamp:
+          $ref: '#/components/schemas/DateTimeWithZone'
+    ThirdPartyAccessReceipt:
+      type: object
+      description: An object representing consent receipt
+      properties:
+        profile:
+          type: integer
+          description: Representation of the type of consent receipt
+          example: 3
+        version:
+          type: string
+          description: A schema version of receipt
+          example: '1'
+        receiptId:
+          type: string
+          description: >-
+            This is officially the Consent Receipt id, but is aliased as the
+            Access Key id. This is a unique identifier managed by Finicity that
+            points to the contents of this JSON document.
+          example: cr_4pfI2r1X8aOHrDDwrwC01NHTxOXlT1
+        customerId:
+          type: string
+          description:
+            This is recipient's customerId represented as a pseudoidentifier
+          example: '3465230025077724000'
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThirdPartyAccessProduct'
+        provenance:
+          $ref: '#/components/schemas/ThirdPartyAccessProvenance'
+        timestamp:
+          $ref: '#/components/schemas/DateTimeWithZone'
+    ThirdPartyAccessReceiptData:
+      type: object
+      description: An object representing consent access data
+      properties:
+        receipt:
+          $ref: '#/components/schemas/ThirdPartyAccessReceipt'
+        proof:
+          $ref: '#/components/schemas/ThirdPartyAccessProof'
+    ConsentReceiptId:
+      type: string
+      description: >-
+        Third party access key receipt id. Generated by generate third party
+        access key API.
+      example: cr_dcfvygbhunjimk
     LoanPaymentDetailCertification:
       type: boolean
       description: >-
