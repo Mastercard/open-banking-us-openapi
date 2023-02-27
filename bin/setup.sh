@@ -84,8 +84,17 @@ echo "PARTNER_ID: "$1
 echo "PARTNER_SECRET: "$2
 echo ""
 
+echo "To run the API client tests:"
+echo ""
+echo "git clone https://github.com/Mastercard/finicity-openapi"
+echo "cd finicity-openapi/tests"
 echo "mvn clean test -DpartnerId="$1" -DpartnerSecret="$2" -DappKey="$3" -DcustomerId="$customer_id""
 echo ""
 
-echo "npx newman run finicity.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id""
+echo "To run the Postman Collection:"
+echo ""
+echo "git clone https://github.com/Mastercard/finicity-postman"
+echo "cd finicity-postman"
+echo "npx newman run finicity.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id" --folder 'All APIs'"
+echo ""
 enter_to_exit
