@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CashFlowApiTest extends BaseTest {
+class CashFlowApiTest extends BaseTest {
 
     private static String customerAccountList;
     private final CashFlowApi api = new CashFlowApi(apiClient);

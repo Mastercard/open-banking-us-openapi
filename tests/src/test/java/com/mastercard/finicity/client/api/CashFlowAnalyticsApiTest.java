@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CashFlowAnalyticsApiTest extends BaseTest {
+class CashFlowAnalyticsApiTest extends BaseTest {
 
     private final CustomCashFlowAnalyticsApi api = new CustomCashFlowAnalyticsApi(apiClient);
 
     @Test
-    public void generateCashFlowAnalyticsTest() {
+    void generateCashFlowAnalyticsTest() {
         try {
             // Generate the report
             var reportConstraints = new BalanceAndCashFlowAnalyticsReportConstraints();

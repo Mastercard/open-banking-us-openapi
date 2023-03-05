@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.10.0
+  version: 1.11.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -639,8 +639,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
@@ -678,8 +676,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '204':
           $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
@@ -819,8 +815,6 @@ paths:
       operationId: RefreshCustomerAccounts
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
@@ -857,8 +851,6 @@ paths:
       operationId: RefreshCustomerAccountsV2
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/RefreshCustomerAccountsRequest'
       responses:
         '204':
           $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
@@ -1045,8 +1037,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/LoadHistoricTransactionsForCustomerAccountRequest'
       responses:
         '203':
           $ref: '#/components/responses/MFAChallengeNeededResponse'
@@ -1183,8 +1173,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/ApplicationIdPathParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/SetCustomerAppIDRequest'
       responses:
         '200':
           $ref: '#/components/responses/SetCustomerAppIDResponse'
@@ -1213,8 +1201,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
-      requestBody:
-        $ref: '#/components/requestBodies/MigrateInstitutionLoginAccountsRequest'
       responses:
         '200':
           $ref: '#/components/responses/MigrateInstitutionLoginAccountsResponse'
@@ -2920,6 +2906,43 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v3/customers/{customerId}/accounts/{accountId}/owner':
+    get:
+      tags:
+        - Payments
+      summary: Get Account Owner Details
+      description: >-
+        This service retrieves the account details for an account holder from an
+        institution. The following data objects are available.
+
+        * Account holders
+
+        * Addresses
+
+        * Emails
+
+        * Phones
+
+        * Documentations
+
+
+        Note: the data returned varies from institution to institution as not
+        all of them make the same data available.  This is a premium service,
+        billable per each successful API call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetAccountOwnerDetails
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAccountOwnerDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -3005,16 +3028,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerUpdate'
-    RefreshCustomerAccountsRequest:
-      description: No payload expected
-      content:
-        application/json:
-          schema: {}
-    LoadHistoricTransactionsForCustomerAccountRequest:
-      description: No payload expected
-      content:
-        application/json:
-          schema: {}
     RegisterAppRequest:
       required: true
       content:
@@ -3027,17 +3040,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Application'
-    MigrateInstitutionLoginAccountsRequest:
-      required: true
-      description: No payload expected
-      content:
-        application/json:
-          schema: {}
-    SetCustomerAppIDRequest:
-      description: No payload expected
-      content:
-        application/json:
-          schema: {}
     GeneratePayrollReportRequest:
       required: true
       content:
@@ -4000,6 +4002,12 @@ components:
             $ref: '#/components/schemas/ThirdPartyAccessKeyReceiptData'
     RevokeThirdPartyAccessKeyResponse:
       description: The third party access key was successfully revoked
+    GetAccountOwnerDetailsResponse:
+      description: The account owner was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountOwnerHolders'
   examples:
     MissingFinicityAppKeyExample:
       value:
@@ -7389,11 +7397,11 @@ components:
       example: 434 W Ascension Way
     AddressLine1:
       type: string
-      description: An address line 1
+      description: Address line 1
       example: 434 W Ascension Way
     AddressLine2:
       type: string
-      description: An address line 2
+      description: Address line 2
       example: 'Suite #200'
     AggregationStatus:
       type: string
@@ -8222,7 +8230,6 @@ components:
         - twelveMonthStandardDeviationOfDailyBalance
         - sixMonthStandardDeviationOfDailyBalance
         - twoMonthStandardDeviationOfDailyBalance
-        - numberDaysNegativeBalance
         - numberOfDaysPositiveBalance
       type: object
       properties:
@@ -8359,12 +8366,6 @@ components:
         - monthlyCashFlowCharacteristics
         - averageMonthlyNet
         - averageMonthlyNetLessTransfers
-        - twelveMonthTotalNet
-        - twelveMonthTotalNetLessTransfers
-        - sixMonthAverageTotalCreditsLessTotalDebits
-        - sixMonthAverageTotalCreditsLessTotalDebitsLessTransfers
-        - twoMonthAverageTotalCreditsLessTotalDebits
-        - twoMonthAverageTotalCreditsLessTotalDebitsLessTransfers
       type: object
       properties:
         monthlyCashFlowCharacteristics:
@@ -8414,7 +8415,6 @@ components:
           example: 55555
     CashFlowCashFlowCharacteristicsSummary:
       required:
-        - monthlyCashFlowCharacteristicSummaries
         - averageMonthlyNet
         - averageMonthlyNetLessTransfers
         - twelveMonthTotalNet
@@ -8422,13 +8422,12 @@ components:
         - sixMonthAverageTotalCreditsLessTotalDebits
         - sixMonthAverageTotalCreditsLessTotalDebitsLessTransfers
         - twoMonthAverageTotalCreditsLessTotalDebits
-        - twoMonthAverageTotalCreditsLessTotalDebitsLessTransfers
       type: object
       properties:
-        monthlyCashFlowCharacteristicSummaries:
+        monthlyCashFlowCharacteristicsSummaries:
           type: array
           items:
-            $ref: '#/components/schemas/CashFlowMonthlyCashFlowCharacteristicSummaries'
+            $ref: '#/components/schemas/CashFlowMonthlyCashFlowCharacteristicsSummaries'
           description: List of attributes for each month
         averageMonthlyNet:
           type: number
@@ -8475,12 +8474,6 @@ components:
     CashFlowCashFlowCredit:
       required:
         - monthlyCashFlowCredits
-        - twelveMonthCreditTotal
-        - twelveMonthCreditTotalLessTransfers
-        - sixMonthCreditTotal
-        - sixMonthCreditTotalLessTransfers
-        - twoMonthCreditTotal
-        - twoMonthCreditTotalLessTransfers
       type: object
       properties:
         monthlyCashFlowCredits:
@@ -8564,12 +8557,6 @@ components:
     CashFlowCashFlowDebit:
       required:
         - monthlyCashFlowDebits
-        - twelveMonthDebitTotal
-        - twelveMonthDebitTotalLessTransfers
-        - sixMonthDebitTotal
-        - sixMonthDebitTotalLessTransfers
-        - twoMonthDebitTotal
-        - twoMonthDebitTotalLessTransfers
       type: object
       properties:
         monthlyCashFlowDebits:
@@ -8802,7 +8789,7 @@ components:
           type: string
           description: Number of Days positive balance for each month
           example: '0'
-    CashFlowMonthlyCashFlowCharacteristicSummaries:
+    CashFlowMonthlyCashFlowCharacteristicsSummaries:
       required:
         - month
         - totalCreditsLessTotalDebits
@@ -9123,6 +9110,15 @@ components:
         - historicCountOfWithdrawalTransactions
       type: object
     CashFlowPossibleLoanDeposits:
+      required:
+        - institutions
+      type: object
+      properties:
+        institutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowPossibleLoanDepositsInstitutions'
+    CashFlowPossibleLoanDepositsInstitutions:
       required:
         - id
         - name
@@ -9811,7 +9807,7 @@ components:
           $ref: '#/components/schemas/NumericInstitutionId'
     City:
       type: string
-      description: A city
+      description: City
       example: Murray
     ConnectEmailParameters:
       required:
@@ -10125,8 +10121,10 @@ components:
       example: 1607450357
     Country:
       type: string
-      description: A country code
-      example: USA
+      description:
+        Country code is Iso3166-1 Alpha-2 code and Alpha 3 standard (max length
+        3).
+      example: 'USA'
     CreatedConsumer:
       description: A consumer that was just created
       type: object
@@ -10199,12 +10197,10 @@ components:
         - name
         - accountNickname
         - number
-        - balance
         - type
         - status
         - customerId
         - institutionId
-        - balanceDate
         - createdDate
         - currency
         - oldestTransactionDate
@@ -10309,8 +10305,6 @@ components:
         each account type. You can see the account type that each data point
         will return for in descriptions. The data point are also subject to
         availability by the institution.
-      required:
-        - availableBalanceAmount
       type: object
       properties:
         dateAsOf:
@@ -11188,7 +11182,7 @@ components:
     EmailAddress:
       type: string
       description: An email address
-      example: finicity@test.com
+      example: myname@mycompany.com
     EmailOptions:
       description: Configuration for the Connect email's sent to customers
       required:
@@ -11362,7 +11356,7 @@ components:
       example: true
     FirstName:
       type: string
-      description: First name(s) / given name(s)
+      description: The first name of the account holder
       example: John
     FirstPaymentDate:
       type: integer
@@ -11787,7 +11781,7 @@ components:
       example: transfer
     LastName:
       type: string
-      description: Last name(s) / surname(s)
+      description: The last name of the account holder
       example: Smith
     LastPaymentDate:
       type: integer
@@ -12099,6 +12093,11 @@ components:
           $ref: '#/components/schemas/LastName'
         applicationId:
           $ref: '#/components/schemas/ApplicationId'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+
     NextPaymentDate:
       type: integer
       description: >-
@@ -13182,8 +13181,8 @@ components:
       example: 1607450357
     PhoneNumber:
       type: string
-      description: A phone number
-      example: 1-800-986-3343
+      description: A phone number (max length 15).
+      example: '1-801-984-4200'
     PortfolioConsumer:
       required:
         - id
@@ -13513,8 +13512,6 @@ components:
         - requesterName
         - createdDate
         - title
-        - consumerId
-        - consumerSsn
         - type
         - status
       allOf:
@@ -13705,8 +13702,6 @@ components:
         - requestId
         - requesterName
         - createdDate
-        - consumerId
-        - consumerSsn
         - type
         - status
       properties:
@@ -13735,9 +13730,6 @@ components:
         - id
         - postedDate
         - description
-        - normalizedPayee
-        - institutionTransactionId
-        - category
       type: object
       properties:
         id:
@@ -13927,7 +13919,7 @@ components:
       example: '999999999'
     State:
       type: string
-      description: A state
+      description: State
       example: UT
     StatementData:
       required:
@@ -14050,8 +14042,8 @@ components:
       example: account
     Suffix:
       type: string
-      description: A person suffix
-      example: Mr
+      description: A generational or academic suffix
+      example: 'PhD'
     TestTxPushTransaction:
       description: A fake transaction for TxPush testing
       required:
@@ -14148,7 +14140,6 @@ components:
       type: object
       required:
         - product
-        - maxCalls
         - accountId
         - accessPeriod
       properties:
@@ -14276,7 +14267,6 @@ components:
         - status
         - description
         - createdDate
-        - categorization
       type: object
       properties:
         id:
@@ -14741,13 +14731,6 @@ components:
         - estimateInclusion
         - confidence
         - cadence
-        - netMonthly
-        - netAnnual
-        - projectedNetAnnual
-        - estimatedGrossAnnual
-        - projectedGrossAnnual
-        - averageMonthlyIncomeNet
-        - incomeStreamMonths
         - transactions
       type: object
       properties:
@@ -15190,7 +15173,6 @@ components:
         - cadence
         - daysSinceLastTransaction
         - nextExpectedTransactionDate
-        - incomeStreamMonths
         - transactions
       properties:
         id:
@@ -15561,17 +15543,11 @@ components:
     VOIETXVerifyReportAccount:
       required:
         - id
-        - ownerName
-        - ownerAddress
         - name
         - number
         - type
         - aggregationStatusCode
-        - incomeStreams
-        - balance
-        - averageMonthlyBalance
         - transactions
-        - availableBalance
       type: object
       properties:
         id:
@@ -15640,13 +15616,6 @@ components:
         - status
         - confidence
         - cadence
-        - netMonthly
-        - netAnnual
-        - projectedNetAnnual
-        - estimatedGrossAnnual
-        - projectedGrossAnnual
-        - averageMonthlyIncomeNet
-        - incomeStreamMonths
         - transactions
       type: object
       properties:
@@ -15937,13 +15906,6 @@ components:
         - estimateInclusion
         - confidence
         - cadence
-        - netMonthly
-        - netAnnual
-        - projectedNetAnnual
-        - estimatedGrossAnnual
-        - projectedGrossAnnual
-        - averageMonthlyIncomeNet
-        - incomeStreamMonths
         - transactions
       properties:
         id:
@@ -16043,3 +16005,265 @@ components:
       type: string
       description: A ZIP code
       example: '84123'
+    AccountOwnerHolders:
+      required:
+        - holders
+      type: object
+      properties:
+        holders:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountOwnerDetails'
+          description: List of account owners
+    AccountOwnerDetails:
+      required:
+        - ownerName
+        - addresses
+      type: object
+      properties:
+        relationship:
+          $ref: '#/components/schemas/AccountOwnerRelationshipType'
+        ownerName:
+          $ref: '#/components/schemas/AccountOwnerName'
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        middleName:
+          $ref: '#/components/schemas/MiddleName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        suffix:
+          $ref: '#/components/schemas/Suffix'
+        nameClassification:
+          $ref: '#/components/schemas/NameClassificationType'
+        nameClassificationconfidencescore:
+          $ref: '#/components/schemas/ClassificationConfidenceScore'
+        addresses:
+          $ref: '#/components/schemas/AccountOwnerAddresses'
+        emails:
+          $ref: '#/components/schemas/AccountOwnerEmails'
+        phones:
+          $ref: '#/components/schemas/AccountOwnerPhones'
+        documentations:
+          $ref: '#/components/schemas/AccountOwnerDocumentations'
+      description: Owner of a customer account
+    AccountOwnerDocumentation:
+      description: Account owner documentation
+      type: object
+      properties:
+        taxId:
+          $ref: '#/components/schemas/TaxId'
+        taxIdCountry:
+          $ref: '#/components/schemas/Country'
+        governmentId:
+          $ref: '#/components/schemas/GovernmentId'
+    AccountOwnerDocumentations:
+      description: List of account owner documentation
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountOwnerDocumentation'
+    AccountOwnerPhone:
+      description: Consumer phone
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AccountOwnerPhoneType'
+        country:
+          $ref: '#/components/schemas/PhoneCountry'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+    AccountOwnerPhones:
+      description: List of phones
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountOwnerPhone'
+    AccountOwnerEmail:
+      description: Account owner email
+      type: object
+      properties:
+        isPrimary:
+          $ref: '#/components/schemas/AccountOwnerEmailPrimary'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        emailType:
+          $ref: '#/components/schemas/AccountOwnerEmailType'
+    AccountOwnerEmails:
+      description: List of emails
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountOwnerEmail'
+    AccountOwnerAddress:
+      description: Account owner address
+      type: object
+      properties:
+        ownerAddress:
+          $ref: '#/components/schemas/Address'
+        type:
+          $ref: '#/components/schemas/AddressType'
+        line1:
+          $ref: '#/components/schemas/AddressLine1'
+        line2:
+          $ref: '#/components/schemas/AddressLine2'
+        line3:
+          $ref: '#/components/schemas/AddressLine3'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        postalCode:
+          $ref: '#/components/schemas/ZipCode'
+        country:
+          $ref: '#/components/schemas/Country'
+    AccountOwnerAddresses:
+      description: List of addresses
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountOwnerAddress'
+    AddressType:
+      type: string
+      description: >-
+        The type of address location:
+
+        * "Business"
+
+        * "Home"
+
+        * "Mailing"
+      example: Home
+    NameClassificationType:
+      type: string
+      description: >-
+        The classification of the account holder:
+
+        * "person / personal / home"
+
+        * "business"
+
+        * "other"
+      example: person
+    AccountOwnerName:
+      type: string
+      description: >-
+        The full name of the account owner. Multiple account owners are returned
+        in one string per the source data from the institution.
+      example: John Smith, PhD
+    ClassificationConfidenceScore:
+      type: number
+      description: The confidence score 0-100 of the name classification.
+      example: 100
+    TaxId:
+      type: string
+      description: >-
+        Country specific tax ID associated with the customer. 
+
+        * **United Stated**: Social Security number (SSN) or Taxpayer
+        Identification Number (TIN)
+
+          * Format: 123-45-7890
+         
+        * **Canada**: Social Insurance Number (SIM) or Numero d'assurance
+        sociale (NAS)
+
+          * Format: 123-456-789
+      example: 123-45-7890
+    GovernmentId:
+      type: string
+      description: >-
+        A federal or state issued identification number in alphanumeric
+        characters.
+
+        * **United States**:
+
+          * Passport: 6-9 digits.
+
+          * US Visa: 8 digits.
+          
+          * Driver’s license: 1-19 digits
+        * **Canada**:
+
+          * Passport: 8 digits 
+
+          * Driver: 6-9 digits
+      example: '123456789'
+    AccountOwnerPhoneType:
+      type: string
+      description: >-
+        The account owner's phone type:   
+         
+        * "HOME"
+         
+        * "BUSINESS"
+         
+        * "CELL"
+         
+        * "FAX"
+      example: HOME
+    AccountOwnerEmailPrimary:
+      type: boolean
+      description: The email is primary.
+      example: true
+    AccountOwnerEmailType:
+      type: string
+      description: >-
+        The account owner's email type.   
+         
+        * "Personal" 
+         
+        * "Business"
+      example: Personal
+    MiddleName:
+      type: string
+      description: The middle name of the account holder
+      example: L
+    AddressLine3:
+      type: string
+      description: Address line 3
+      example: UT 84123
+    AccountOwnerRelationshipType:
+      type: string
+      description: >-
+        The type of relationship to the account:  
+
+        * "AUTHORIZED_USER"  
+          
+        * "BUSINESS"   
+          
+        * "FOR_BENEFIT_OF_PRIMARY"  
+          
+        * "FOR_BENEFIT_OF_PRIMARY_JOINT_RESTRICTED"  
+          
+        * "FOR_BENEFIT_OF_SECONDARY"
+          
+        * "FOR_BENEFIT_OF_SECONDARY_JOINT_RESTRICTED"
+          
+        * "FOR_BENEFIT_OF_SOLE_OWNER_RESTRICTED"
+          
+        * "POWER_OF_ATTORNEY"
+          
+        * "PRIMARY_JOINT_TENANTS"
+          
+        * "PRIMARY"
+          
+        * "PRIMARY_BORROWER"
+          
+        * "PRIMARY_JOINT"
+          
+        * "SECONDARY"
+          
+        * "SECONDARY_JOINT_TENANTS"
+          
+        * "SECONDARY_BORROWER"
+          
+        * "SECONDARY_JOINT"
+          
+        * "SOLE_OWNER"
+          
+        * "TRUSTEE"
+          
+        * "UNIFORM_TRANSFER_TO_MINOR"
+      example: AUTHORIZED_USER
+    PhoneCountry:
+      type: string
+      description:
+        Country calling code of the phone number as defined by ITU-T E.123 and
+        E.164 international standards (max length 3)".
+      example: '61'

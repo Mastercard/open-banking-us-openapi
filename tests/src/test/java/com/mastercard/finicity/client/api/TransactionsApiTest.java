@@ -94,7 +94,7 @@ class TransactionsApiTest extends BaseTest {
     @Test
     void loadHistoricTransactionsForCustomerAccountTest() {
         try {
-            api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId, new Object());
+            api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId);
         } catch (ApiException e) {
             fail(e);
         }

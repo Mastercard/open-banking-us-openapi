@@ -80,4 +80,14 @@ class PaymentsApiTest extends BaseTest {
             fail(e);
         }
     }
+    
+    @Test
+    public void getAccountOwnerDetailsTest() {
+        try {
+            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId());
+            assertNotNull(ownerDetails);
+        } catch (ApiException e) {
+            fail(e);
+        }
+    }
 }

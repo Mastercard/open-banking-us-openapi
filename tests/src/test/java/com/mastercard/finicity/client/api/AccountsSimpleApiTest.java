@@ -11,7 +11,7 @@ import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountSimpleUtils;
 
-public class AccountsSimpleApiTest extends BaseTest {
+class AccountsSimpleApiTest extends BaseTest {
 
     private final static AccountsSimpleApi api = new AccountsSimpleApi(apiClient);
     private static String existingInstitutionLoginId;
@@ -32,7 +32,7 @@ public class AccountsSimpleApiTest extends BaseTest {
     }
     
     @Test
-    void getCustomerAccountsByInstitutionLoginSimpleTest() throws ApiException {
+    void getCustomerAccountsByInstitutionLoginSimpleTest() {
       try {
             var accounts = api.getCustomerAccountsByInstitutionLoginSimple(CUSTOMER_ID, existingInstitutionLoginId);
             assertTrue(accounts.getAccounts().size() > 0);
@@ -42,7 +42,7 @@ public class AccountsSimpleApiTest extends BaseTest {
     }
     
     @Test
-    void getCustomerAccountsByInstitutionSimpleTest() throws ApiException {
+    void getCustomerAccountsByInstitutionSimpleTest() {
         try  {
             var accounts = api.getCustomerAccountsByInstitutionSimple(CUSTOMER_ID, existingInstitutionId);
             var firstAccount = accounts.getAccounts().get(0);
@@ -53,7 +53,7 @@ public class AccountsSimpleApiTest extends BaseTest {
     }
     
     @Test
-    void getCustomerAccountsSimpleTest() throws ApiException {
+    void getCustomerAccountsSimpleTest() {
         try  {
             var customerAccounts = api.getCustomerAccountsSimple(CUSTOMER_ID);
             var accounts = customerAccounts.getAccounts();

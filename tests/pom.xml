@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spotless.version>2.17.3</spotless.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <javax.ws.rs-api-version>2.1.1</javax.ws.rs-api-version>
     </properties>
 
     <dependencies>
@@ -78,6 +79,11 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>${jackson-databind-nullable-version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${javax.ws.rs-api-version}</version>
+        </dependency>
         <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -97,7 +103,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>5.4.0</version>
+                <version>6.2.0</version>
                 <executions>
                     <execution>
                         <id>finicity-client-generation</id>
@@ -112,6 +118,9 @@
                             <modelPackage>com.mastercard.finicity.client.model</modelPackage>
                             <generateModelTests>false</generateModelTests>
                             <generateApiTests>false</generateApiTests>
+                            <configOptions>
+                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>

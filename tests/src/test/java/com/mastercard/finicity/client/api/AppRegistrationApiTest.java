@@ -58,7 +58,7 @@ class AppRegistrationApiTest extends BaseTest {
             var existingAccount = AccountUtils.getCustomerAccounts(accountApi, CUSTOMER_ID).get(0);
             var existingInstitutionLoginId = existingAccount.getInstitutionLoginId();
             // Enable this to actually migrate accounts
-            // var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, String.valueOf(existingInstitutionLoginId), new Object());
+            // var accounts = api.migrateInstitutionLoginAccounts(CUSTOMER_ID, String.valueOf(existingInstitutionLoginId));
             // assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
             fail(e);
@@ -68,7 +68,7 @@ class AppRegistrationApiTest extends BaseTest {
     @Test
     void setCustomerAppIDTest() {
         try {
-            api.setCustomerAppID(CUSTOMER_ID, "1234", new Object());
+            api.setCustomerAppID(CUSTOMER_ID, "1234");
         } catch (ApiException e) {
             // {"code":10007,"message":"invalid application id"}
             logApiException(e);

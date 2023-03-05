@@ -2,9 +2,7 @@ package com.mastercard.finicity.client.test;
 
 import com.mastercard.finicity.client.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.threeten.bp.Instant;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.temporal.ChronoUnit;
+import java.time.OffsetDateTime;
 
 public final class ModelFactory {
 
@@ -79,8 +77,8 @@ public final class ModelFactory {
         var accessPeriod = new ThirdPartyAccessPeriod();
 
         accessPeriod.setType(type);
-        accessPeriod.setStartTime(Instant.now().atOffset(ZoneOffset.UTC));
-        accessPeriod.setEndTime(Instant.now().plus(1, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC));
+        accessPeriod.setStartTime(OffsetDateTime.now());
+        accessPeriod.setEndTime(OffsetDateTime.now().plusDays(1));
 
         product.setProduct("moneyTransferDetails");
         product.setMaxCalls(100);

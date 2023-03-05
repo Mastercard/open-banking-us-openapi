@@ -42,7 +42,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void refreshCustomerAccountsByInstitutionLoginTest() {
         try {
-            CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId, new Object());
+            CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId);
             assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
             fail(e);
@@ -88,7 +88,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void refreshCustomerAccountsTest() {
         try {
-            var response = api.refreshCustomerAccounts(CUSTOMER_ID, new Object());
+            var response = api.refreshCustomerAccounts(CUSTOMER_ID);
             assertNotNull(response.getAccounts());
             assertTrue(response.getAccounts().size() > 0);
         } catch (ApiException e) {
@@ -163,12 +163,10 @@ class AccountsApiTest extends BaseTest {
     }
 
     @Test
-    void refreshCustomerAccountsByInstitutionLoginV2Test() throws ApiException {
-       String customerId = CUSTOMER_ID;
-       String institutionLoginId = existingInstitutionLoginId;
-       Object body = null;
+    void refreshCustomerAccountsByInstitutionLoginV2Test() {
+        String institutionLoginId = existingInstitutionLoginId;
        try {
-    	   api.refreshCustomerAccountsByInstitutionLoginV2(customerId, institutionLoginId, body);  
+    	   api.refreshCustomerAccountsByInstitutionLoginV2(CUSTOMER_ID, institutionLoginId);
        } catch (ApiException e) {
     	   // {"code":38007,"message":"Customer does not have any accounts associated with institutionLoginId = (1234)"}
     	   logApiException(e);
@@ -178,11 +176,9 @@ class AccountsApiTest extends BaseTest {
     }
 
     @Test
-    void refreshCustomerAccountsV2Test() throws ApiException {
-        String customerId = CUSTOMER_ID;
-        Object body = null;
+    void refreshCustomerAccountsV2Test() {
         try {
-        	api.refreshCustomerAccountsV2(customerId, body);
+        	api.refreshCustomerAccountsV2(CUSTOMER_ID);
         } catch (ApiException e) {
         	fail(e);
         }        
