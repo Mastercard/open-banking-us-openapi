@@ -1,12 +1,12 @@
 function ApiError($Res) {
    Write-Host "API call failed! Check {partnerId}, {partnerSecret} and {appKey} and make sure you are located in the US, UK or Canada." -ForegroundColor Red
-   Write-Output $Res  
+   Write-Output $Res
    EnterToExit
 }
 
 function EnterToExit() {
    Read-Host "`r`nPress Enter to exit..."
-   Exit   
+   Exit
 }
 
 If ($Args.Count -ne "3") {
@@ -30,10 +30,9 @@ $Body = @{
    "partnerSecret" = "$PartnerSecret"
 } | ConvertTo-Json
 $Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v2/partners/authentication `
-						 -Method POST `
-						 -Headers $Headers `
-						 -Body $Body `
-						 -SkipHttpErrorCheck
+                         -Method POST `
+                         -Headers $Headers `
+                         -Body $Body
 If ($Res.StatusCode -ne "200") {
    ApiError($Res)
 }
@@ -49,13 +48,12 @@ $Body = @{
     "username" = "customerusername_$Random$Random"
 } | ConvertTo-Json
 $Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v2/customers/testing `
-						 -Method POST `
-						 -Headers $Headers `
-						 -Body $Body `
-						 -SkipHttpErrorCheck
+                         -Method POST `
+                         -Headers $Headers `
+                         -Body $Body
 If ($Res.StatusCode -ne "201") {
    ApiError($Res)
-}					
+}
 
 # {"id":"5026948632","username":"customerusername1","createdDate":"1649244189"}
 $CustomerId = ($Res.Content | ConvertFrom-Json).id
@@ -67,13 +65,12 @@ $Body = @{
    "customerId" = "$CustomerId"
 } | ConvertTo-Json
 $Res = Invoke-WebRequest -Uri https://api.finicity.com/connect/v2/generate `
-						 -Method POST `
-						 -Headers $Headers `
-						 -Body $Body `
-						 -SkipHttpErrorCheck
+                         -Method POST `
+                         -Headers $Headers `
+                         -Body $Body
 If ($Res.StatusCode -ne "200") {
    ApiError($Res)
-}							 
+}
 # {"link":"https://..."}
 $Link = ($Res.Content | ConvertFrom-Json).link
 Write-Host "URL created" -ForegroundColor Green
@@ -84,11 +81,13 @@ Write-Host "`r`nAfter you see 'Your submission was successful. Thank you!', pres
 Pause
 
 Write-Output "`r`nStep 5  - Refreshing accounts ..."
-$Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v1/customers/'$CustomerId'/accounts `
-						 -Method POST `
-						 -Headers $Headers `
-						 -Body $Body `
-						 -SkipHttpErrorCheck
+$Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v1/customers/$CustomerId/accounts `
+                         -Method POST `
+                         -Headers $Headers `
+                         -Body $Body
+If ($Res.StatusCode -ne "200") {
+   ApiError($Res)
+}
 # { "accounts": [...]}
 Write-Host "Accounts refreshed" -ForegroundColor Green
 
