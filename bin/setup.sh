@@ -18,7 +18,7 @@ if [ "$#" -ne 3 ]; then
     enter_to_exit
 fi
 
-echo "Creating access token ..."
+echo "Step 1 - Creating access token ..."
 token_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v2/partners/authentication' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
@@ -32,8 +32,9 @@ fi;
 
 token=$(echo $token_response | sed -E 's/\{"token":"(.*)"\}/\1/')
 echo "Access token: "$token
+echo ""
 
-echo "Creating test customer ..."
+echo "Step 2 - Creating test customer ..."
 customer_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v2/customers/testing' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
@@ -48,8 +49,9 @@ fi;
 
 customer_id=$(echo $customer_response | sed -E 's/\{"id":"([0-9]*).*/\1/')
 echo "Customer ID: "$customer_id
+echo ""
 
-echo "Generating connect URL ..."
+echo "Step 3 - Generating connect URL ..."
 connect_url_response=$(curl -s --location --request POST 'https://api.finicity.com/connect/v2/generate' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
@@ -59,15 +61,17 @@ connect_url_response=$(curl -s --location --request POST 'https://api.finicity.c
 
 # {"link":"https://..."}
 link=$(echo $connect_url_response | sed -E 's/\{"link":"(.*)"\}/\1/')
+echo "URL created"
 
 echo ""
-echo "Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"
+echo "Step 4 - Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"
 echo ""
 echo $link
 echo ""
 read -p "After you see 'Your submission was successful. Thank you!', press [Enter] to continue ..."
 
-echo "Refreshing accounts ..."
+echo ""
+echo "Step 5 - Refreshing accounts ..."
 accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v1/customers/'$customer_id'/accounts' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
@@ -76,6 +80,7 @@ accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/
 --data-raw '{}')
 
 # { "accounts": [...]}
+echo "Accounts refreshed"
 
 echo ""
 echo "APP_KEY: "$3
