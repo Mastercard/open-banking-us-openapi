@@ -5,7 +5,7 @@ import com.mastercard.finicity.client.ApiClient;
 import com.mastercard.finicity.client.ApiException;
 import com.mastercard.finicity.client.ApiResponse;
 import com.mastercard.finicity.client.api.CashFlowAnalyticsApi;
-import com.mastercard.finicity.client.model.GetObbAnalyticsReport200Response;
+import com.mastercard.finicity.client.model.ObbAnalyticsReport;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -27,7 +27,7 @@ public class CustomCashFlowAnalyticsApi  extends CashFlowAnalyticsApi {
     /**
      * Get a JSON report.
      */
-    public GetObbAnalyticsReport200Response getObbAnalyticsJsonReport(String obbReportId) throws ApiException {
+    public ObbAnalyticsReport getObbAnalyticsJsonReport(String obbReportId) throws ApiException {
         return this.getObbAnalyticsReport(obbReportId);
     }
 
