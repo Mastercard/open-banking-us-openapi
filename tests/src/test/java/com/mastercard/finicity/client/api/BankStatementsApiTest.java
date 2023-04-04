@@ -41,7 +41,7 @@ class BankStatementsApiTest extends BaseTest {
         try {
             var constraints = new StatementReportConstraints()
                     .statementReportData(new StatementData()
-                            .index(1)
+                            .statementIndex(1)
                             .accountId(Long.valueOf(existingAccountId)));
             var reportAck = api.generateStatementReport(CUSTOMER_ID, constraints, null);
             assertEquals("inProgress", reportAck.getStatus());

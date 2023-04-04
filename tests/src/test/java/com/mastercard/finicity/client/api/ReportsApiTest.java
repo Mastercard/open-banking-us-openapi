@@ -208,7 +208,7 @@ class ReportsApiTest extends BaseTest {
                 // Create a report the first time
                 var constraints = new StatementReportConstraints()
                         .statementReportData(new StatementData()
-                            .index(1)
+                            .statementIndex(1)
                             .accountId(Long.valueOf(existingAccountId)));
                 var reportAck = bankStatementsApi.generateStatementReport(CUSTOMER_ID, constraints, null);
                 reportId = reportAck.getId();

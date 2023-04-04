@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.11.1
+  version: 1.11.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -10411,10 +10411,7 @@ components:
         number:
           type: string
           deprecated: true
-          description: >-
-            Use the `accountNumberDisplay` field. Starting July 1, 2021 the
-            `number` field will sunset with limited support until April 1, 2022,
-            at which time it will be deprecated (no longer available).
+          description: The account number from the institution
           example: '2000004444'
         accountNumberDisplay:
           $ref: '#/components/schemas/AccountNumberDisplay'
@@ -11392,7 +11389,7 @@ components:
           type: string
           description:
             The email address for the customer receiving the Connect email
-          example: alex.salido@finicity.com
+          example: bob@example.com
         from:
           type: string
           description:
@@ -14166,7 +14163,7 @@ components:
       properties:
         accountId:
           $ref: '#/components/schemas/NumericAccountId'
-        index:
+        statementIndex:
           type: integer
           description: Index of the statement to retrieve
           format: int32
