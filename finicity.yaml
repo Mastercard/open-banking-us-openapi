@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.11.2
+  version: 1.11.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -10208,6 +10208,8 @@ components:
           $ref: '#/components/schemas/ConnectFromDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        isWebView:
+          $ref: '#/components/schemas/IsWebView'
     ConnectUrl:
       description: A Connect URL object
       required:
@@ -11591,6 +11593,8 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
+        isWebView:
+          $ref: '#/components/schemas/IsWebView'
     FoundResults:
       type: integer
       description: The total number of results matching search criteria
@@ -12049,6 +12053,8 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
+        isWebView:
+          $ref: '#/components/schemas/IsWebView'
     LoanPaymentDetailCertification:
       type: boolean
       description: |-
@@ -14139,6 +14145,15 @@ components:
         Note: when the `singleUseUrl` and the `experience` parameters are passed
         in the same call, the `singleUseUrl` value overrides the `singleUseUrl`
         value configured in the `experience` parameter.
+      example: true
+    IsWebView:
+      type: boolean
+      description: >-
+        "true": Indicates that the Connect Session will be displayed within a
+        WebView.
+
+        Note: when the `isWebView` parameter is `true` the `redirectUri`
+        parameter is required.
       example: true
     SocialSecurityNumber:
       type: string
