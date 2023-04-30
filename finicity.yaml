@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.11.3
+  version: 1.12.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -791,8 +791,8 @@ paths:
         Client apps are not permitted to automate calls to the Refresh services.
         Active accounts are automatically refreshed by Finicity once per day.
         Because many financial institutions only post transactions once per day,
-        calling Refresh repeatedly is usually a waste of resources and is not
-        recommended.
+        calling Refresh services repeatedly is usually a waste of resources and
+        is not recommended.
 
 
         Apps may call Refresh services for a specific customer when there is a
@@ -1515,21 +1515,15 @@ paths:
         - Verify Income and Employment
       summary: Generate VOE - Payroll Report
       description: >-
-        Premium Service: A billable event when the API response is successful. 
+        Generate or refresh a VOE – Payroll report. Often used as a
+        complementary report to the VOIE-Payroll report to fulfill the pre-close
+        VOE requirements. It retrieves the customer's employment details and
+        employment status through the payroll source without any income
+        information.
 
 
-        MVS Implementation Options: Direct API Integration.
-
-
-        Used as a complementary report to the VOIE-Payroll report. This report
-        is used to fulfill the pre-close VOE requirements. It retrieves the
-        customer's employment details and employment status through the payroll
-        source without any income information. 
-
-
-        To generate this report, pass the values from the customer SSN, DOB, and
-        the report ID from the first VOIE-Payroll report generated after the
-        Connect session.
+        This is a premium service. The billable event is the successful
+        generation of a VOE - Payroll report.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1702,23 +1696,17 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Refresh VOIE - Payroll Report
+      summary: Generate VOIE - Payroll Report
       description: >-
-        The VOIE – Payroll report generates when the customer completes Connect.
-        Lenders, who commonly use this report for pre-close verification
-        employment check, can refresh this report by passing the consumer's SSN,
-        DOB, and the report ID from the first VOIE – Payroll report they
-        received.
+        Generate or refresh a VOIE – Payroll report. For clients using the
+        product via a consumer permissioning experience via Connect, the
+        original VOIE – Payroll report generates when the consumer completes the
+        Connect experience, and this API is only used for future report
+        refreshes without reengaging the consumer.
 
 
-        We'll refresh this report and update any new pay histories since the
-        first report generated, including borrower's employment status as active
-        or not.
-
-
-        Note: lenders can only refresh this report one time in a 60-day period
-        starting from the date of the first report. Any further report refreshes
-        will incur additional charges.
+        This is a premium service. The billable event is the successful
+        generation of a VOIE - Payroll report.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4108,8 +4096,8 @@ components:
             shown: true
         payStatementsFromDate: 1580558400
         marketSegment: Mortgage
-        excludeEmpInfo: true
-        purpose: 99
+        excludeEmpInfo: false
+        purpose: 31
     GenerateVOEPayrollReportResponseExample:
       value:
         id: 41h4nzppn47u-voepayroll
@@ -5708,6 +5696,7 @@ components:
       value:
         id: 41h4nzppn47u-voepayroll
         portfolioId: 9qud7dtuzbew-3-port
+        gseEnabled: true
         createdDate: 1579819592
         requesterName: Decisioning API
         requestId: 7a7qyps2iy
@@ -5908,6 +5897,7 @@ components:
       value:
         id: 41h4nzppn37u-voiepayroll
         portfolioId: 9qud7dtuzbew-13-port
+        gseEnabled: true
         customerType: active
         customerId: 1275320
         requestId: 7a7qyps2iy
@@ -7172,7 +7162,7 @@ components:
         type: string
         example: 'https://finicity-test/webhook'
     ConsentReceiptIdParameter:
-      description: Third party access key receipt id
+      description: Third party access key receipt ID
       name: consentReceiptId
       in: path
       required: true
@@ -9359,12 +9349,12 @@ components:
             card` / `CD` / `MM` / `investment`...)
           example: checking
         aggregationStatusCode:
-          type: string
+          type: integer
           description: >-
             The status of the most recent aggregation attempt for this account
             (non-zero means the account was not accessed successfully for this
             report, and additional fields for this account may not be reliable)
-          example: '0'
+          example: 0
         currentBalance:
           type: number
           description: The cleared balance of the account as-of `balanceDate`
@@ -9451,9 +9441,9 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
           description: Finicity account ID
-          example: '6681984'
+          example: 6681984
         ownerName:
           type: string
           description:
@@ -9481,12 +9471,12 @@ components:
             card` / `CD` / `MM` / `investment`...)
           example: checking
         aggregationStatusCode:
-          type: string
+          type: integer
           description: >-
             The status of the most recent aggregation attempt for this account
             (non-zero means the account was not accessed successfully for this
             report, and additional fields for this account may not be reliable)
-          example: '0'
+          example: 0
         currentBalance:
           type: number
           description: The cleared balance of the account as-of `balanceDate`
@@ -10221,7 +10211,7 @@ components:
     ConsentReceiptId:
       type: string
       description: >-
-        Third party access key receipt id. Generated by generate third party
+        Third party access key receipt ID. Generated by generate third party
         access key API.
       example: cr_dcfvygbhunjimk
     Consumer:
@@ -10271,7 +10261,13 @@ components:
         suffix:
           $ref: '#/components/schemas/Suffix'
     ConsumerDateOfBirth:
-      $ref: '#/components/schemas/UnixDate'
+      type: integer
+      description: >-
+        The consumer's date of birth in Unix epoch time (in seconds). See:
+        Handling Epoch Dates and Times. The timestamp should be set at the start
+        of day of birth.
+      format: int64
+      example: 1607450357
     ConsumerId:
       type: string
       description:
@@ -11036,7 +11032,7 @@ components:
       properties:
         id:
           type: integer
-          description: The id of the investment position
+          description: The ID of the investment position
           format: int64
           example: 454678080
         description:
@@ -11488,9 +11484,10 @@ components:
     ExcludeEmpInfo:
       type: boolean
       description: >-
-        If true is passed, Employment information data will not be searched or
-        returned.
-      example: true
+        Only used on an exception basis for clients that need to exclude EmpInfo
+        data from the VOE–Payroll or VOIE–Payroll report. If true is passed
+        EmpInfo payroll provider's data will not be searched or returned.
+      example: false
     ExpectedPayoffDate:
       type: integer
       description: >-
@@ -11609,7 +11606,7 @@ components:
 
           * US Visa: 8 digits.
           
-          * Driver’s license: 1-19 digits
+          * Driver's license: 1-19 digits
         * **Canada**:
 
           * Passport: 8 digits 
@@ -12224,8 +12221,9 @@ components:
     MarketSegment:
       type: string
       description: >-
-        Filter consumer’s data based on the market segment. Currently supported
-        values are; "Mortgage", "KYC", and "Identity".
+        Use case for requesting the consumer's data. Current supported
+        enumerations are "Mortgage" and "KYC". If your use case doesn't match
+        one of these please reach out to your technical point of contact.
       example: Mortgage
     MaturityDate:
       type: integer
@@ -13070,7 +13068,7 @@ components:
         dob:
           $ref: '#/components/schemas/ConsumerDateOfBirth'
         reportId:
-          $ref: '#/components/schemas/ReportId'
+          $ref: '#/components/schemas/OriginalPayrollReportId'
     PayrollDataOut:
       required:
         - payrollDataRetrievalId
@@ -13080,7 +13078,7 @@ components:
         payrollDataRetrievalId:
           type: string
           description: >-
-            An id to identify the data retrieved from the payroll providers for
+            An ID to identify the data retrieved from the payroll providers for
             the report.
           example: hahvhe2k0000
         employerNames:
@@ -13168,7 +13166,7 @@ components:
           description:
             Employer zip code as stated by the employer in the payroll system
           example: '99999'
-    PayrollEmploymentHistory:
+    PayrollEmploymentHistoryVOE:
       required:
         - asOfDate
         - employerName
@@ -13179,17 +13177,9 @@ components:
       type: object
       properties:
         asOfDate:
-          type: integer
-          description: >-
-            The last time the payroll data was updated in the payroll provider's
-            system
-          format: int64
-          example: 1596175200
+          $ref: '#/components/schemas/AsOfDate'
         employerName:
-          type: string
-          description:
-            Name of the employer as stated by the employer in the payroll system
-          example: ACME INC
+          $ref: '#/components/schemas/EmployerName'
         payrollSource:
           type: string
           description:
@@ -13201,22 +13191,53 @@ components:
           $ref: '#/components/schemas/PayrollEmploymentRecord'
         income:
           $ref: '#/components/schemas/PayrollVOEIncomeRecord'
+    EmployerName:
+      type: string
+      description:
+        Name of the employer as stated by the employer in the payroll system
+      example: ACME INC
+    AsOfDate:
+      type: integer
+      description: >-
+        The last time the payroll data was updated in the payroll provider's
+        system
+      format: int64
+      example: 1596175200
+    PayrollEmploymentHistoryVOIE:
+      required:
+        - asOfDate
+        - employerName
+        - payrollSource
+        - employee
+        - employment
+        - income
+      type: object
+      properties:
+        asOfDate:
+          $ref: '#/components/schemas/AsOfDate'
+        employerName:
+          $ref: '#/components/schemas/EmployerName'
+        payrollSource:
+          type: string
+          description:
+            The name of the payroll source where the data was retrieved
+          example: finPayroll
+        employee:
+          $ref: '#/components/schemas/PayrollEmployeeRecord'
+        employment:
+          $ref: '#/components/schemas/PayrollEmploymentRecord'
+        income:
+          $ref: '#/components/schemas/PayrollVOIEIncomeRecord'
     PayrollEmploymentRecord:
       required:
         - employerName
-        - latestPayDate
-        - daysSinceLastPay
-        - numberPayCadenceWithoutPay
         - employmentStatusCode
         - employmentStatusName
         - workLevelStatus
       type: object
       properties:
         employerName:
-          type: string
-          description:
-            Name of the employer as stated by the employer in the payroll system
-          example: ACME INC
+          $ref: '#/components/schemas/EmployerName'
         legalEntityId:
           type: string
           description: Employer identification number (EIN)
@@ -13269,12 +13290,14 @@ components:
           description: Array of addresses
         employmentStatusCode:
           type: string
-          description:
-            'Status codes: `A` - Active, `NLE` - No Longer Employed, `L` - Leave'
+          description: >-
+            'Status codes: `A` - Active, `NLE` - No Longer Employed, `L` -
+            Leave, `O` – Other'
           example: A
         employmentStatusName:
           type: string
-          description: 'Status name: `Active`, `No Longer Employed`, or `Leave`'
+          description: >-
+            'Status name: `Active`, `No Longer Employed`, `Leave` or `Other`'
           example: Active
         workLevelCode:
           type: string
@@ -13290,12 +13313,24 @@ components:
           example: Full Time-Regular
         workLevelStatus:
           type: string
-          description: >-
-            The categorized work level status. Enumerations are: <br> *
-            `Temporary` <br> * `Seasonal` <br> * `Retired` <br> * `Student` <br>
-            * `Full Time` <br> * `Part Time` <br> * `Unspecified` <br> This is a
-            new field, currently enabled only for testing reports. It will be
-            added for all reports in August 2021.
+          description: |
+            The categorized work level status. Enumerations are:
+
+            * `Temporary`
+
+            * `Seasonal`
+
+            * `Retired`
+
+            * `Student`
+
+            * `Full Time`
+
+            * `Part Time`
+
+            * `Unspecified`
+
+            This is a new field, currently enabled only for testing reports. It will be added for all reports in August 2021.
           example: Full Time
         positionTitle:
           type: string
@@ -13338,7 +13373,7 @@ components:
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
         payStatementsFromDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/PayStatementsFromDate'
         marketSegment:
           $ref: '#/components/schemas/MarketSegment'
         excludeEmpInfo:
@@ -13357,20 +13392,418 @@ components:
         payStatementsFromDate:
           $ref: '#/components/schemas/UnixDate'
     PayrollVOEIncomeRecord:
-      required:
-        - payFrequency
       type: object
       properties:
         payFrequency:
+          $ref: '#/components/schemas/PayFrequency'
+    PayFrequency:
+      type: string
+      description: |
+        The current pay frequency or or how often a regular pay check is:
+
+        * `Daily` 
+
+        * `Weekly` 
+
+        * `Bi-Weekly` 
+
+        * `Semi-Monthly` 
+
+        * `Monthly` 
+
+        * `Quarterly` 
+
+        * `Semi-Annual` 
+
+        * `Annual` 
+
+        * `Every 2.6 wks` 
+
+        * `Every 4 wks` 
+
+        * `Every 5.2 wks` 
+
+        * `Other`
+      example: Weekly
+    PayrollVOIEIncomeRecord:
+      type: object
+      properties:
+        payFrequency:
+          $ref: '#/components/schemas/PayFrequency'
+        payType:
+          type: string
+          description: |
+            The current pay type:
+
+            * `Salary`
+
+            * `Hourly`
+
+            * `Daily`
+          example: Daily
+        basePayRate:
+          type: number
+          description: >-
+            The current base or regular pay rate. Please use in conjunction with
+            the `basePayRateUnit` field.
+          example: 1234.56
+        basePayRateUnit:
+          type: string
+          description: |
+            Unit for the base pay rate:
+
+            * `Hourly`
+
+            * `Daily`
+
+            * `Weekly`
+
+            * `Bi-Weekly`
+
+            * `Semi-Monthly`
+
+            * `Monthly`
+
+            * `Quarterly`
+
+            * `Semi-Annual`
+
+            * `Annual`
+
+            * `Every 2.6 wks`
+
+            * `Every 5.2 wks`
+
+            * `Other`
+          example: Annual
+        oldestPayStatementAvailable:
           type: string
           description: >-
-            The current pay frequency: <br> * `Daily` <br> * `Weekly` <br> *
-            `Bi-Weekly` <br> * `Bi-Weekly Odd` (Bi-Weekly pay on odd weeks) <br>
-            * `Bi-Weekly Even` (Bi-Weekly pay on even weeks) <br> *
-            `Semi-Monthly` <br> * `Monthly` <br> * `Quarterly` <br>*
-            `Semi-Annual` <br> * `Annual` <br>  * `Every 2.6 wks` <br> * `Every
-            4 wks` <br> * `Every 5.2 wks`
+            The date of the oldest direct pay statement available from the
+            payroll source, as measured by the oldest `payDate` from all the pay
+            statements delivered.
+          example: 1527832900
+        annualIncome:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnualIncome'
+          description: >-
+            The annual pay for the current year, through prior year 2 (as
+            available)
+
+
+            This is a mandatory field only for VOIE-payroll report type.
+        monthlyIncome:
+          $ref: '#/components/schemas/MonthlyIncome'
+        directPayStatements:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectPayStatements'
+          description: An array of payment histories for each available paycheck
+    AnnualIncome:
+      required:
+        - year
+        - grossPayAmountYTD
+      type: object
+      properties:
+        year:
+          type: string
+          description: >-
+            The year for the amounts given in YTD totals for an employer
+          example: 2022
+        grossPayAmountYTD:
+          type: number
+          description: >-
+            Year to date (YTD) gross pay amount for the indicated year
+          example: 123.45
+        netPayAmountYTD:
+          type: number
+          description: Year to date (YTD) net pay amount for the indicated year
+          example: 123.45
+        basePayAmountYTD:
+          type: number
+          description: Year to date (YTD) base pay amount for the year indicated
+          example: 123.45
+        overtimePayAmountYTD:
+          type: number
+          description: >-
+            Year to date (YTD) overtime pay amount for the year indicated
+          example: 123.45
+        otherPayAmountYTD:
+          type: number
+          description: >-
+            Year to date (YTD) other pay amount for the indicated year. Other
+            pay is pay that is not categorized into one of the other categories.
+          example: 123.45
+        commissionPayAmount:
+          type: number
+          description: >-
+            Year to date (YTD) commission pay amount for the indicated year
+          example: 123.45
+    MonthlyIncome:
+      required:
+        - estimatedMonthlyTotalPay
+      type: object
+      description: >-
+        Current estimated monthly pay for the employment.
+
+
+        This is a mandatory field only for VOIE-payroll report type.
+      properties:
+        estimatedMonthlyBasePay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly base pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyOvertimePay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly overtime pay amount for
+            the employment
+          example: 123.45
+        estimatedMonthlyBonusPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly bonus pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyOtherPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly other pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyTotalPay:
+          type: number
+          description: >-
+            Sum of all Mastercard Open Banking estimated monthly pay amounts
+          example: 123.45
+        estimatedMonthlyCommissionPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly commission pay amount for
+            the employment
+          example: 123.45
+    DirectPayStatements:
+      required:
+        - payrollPayHistoryId
+        - lastPayPeriodIndicator
+        - mainPayStatementFields
+        - earnings
+      type: object
+      properties:
+        payrollPayHistoryId:
+          type: string
+          description: >-
+            An ID for the income and employment details for the given pay period
+          example: qsrt2hmjnf
+        lastPayPeriodIndicator:
+          type: boolean
+          description: Most recent available pay check
+          example: true
+        mainPayStatementFields:
+          $ref: '#/components/schemas/MainPayStatementFields'
+        earnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Earnings'
+          description: Categorization of pay, for the pay period
+        deductions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deductions'
+          description: Deductions from the pay check
+        directDeposits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDeposits'
+          description: Direct deposit information for the paycheck
+    MainPayStatementFields:
+      required:
+        - payDate
+        - grossPayAmount
+      type: object
+      properties:
+        payDate:
+          type: integer
+          description: Pay date for the pay period
+          format: int64
+          example: 1607450357
+        startDate:
+          type: integer
+          description: Start date for the pay period
+          format: int64
+          example: 1607450357
+        endDate:
+          type: integer
+          description: End date for the pay period
+          format: int64
+          example: 1607450357
+        payPeriodHours:
+          type: number
+          description: Sum of all hours worked each week for the pay period
+          example: 39.75
+        payFrequency:
+          type: string
+          description: |
+            The current pay frequency, or how often a regular pay check is  
+            distributed:
+
+            * `Daily`
+
+            * `Weekly`
+
+            * `Bi-Weekly`
+
+            * `Semi-Monthly`
+
+            * `Monthly`
+
+            * `Quarterly`
+
+            * `Semi-Annual`
+
+            * `Annual`
+
+            * `Every 2.6 wks`
+
+            * `Every 4 wks`
+
+            * `Every 5.2 wks`
+
+            * `Other`
           example: Weekly
+        payType:
+          type: string
+          description: |
+            Current pay type:
+
+            * `Salary`
+
+            * `Hourly`
+
+            * `Daily`
+          example: Hourly
+        grossPayAmount:
+          type: number
+          description: Gross pay amount for the pay period
+          example: 755.25
+        grossPayAmountYTD:
+          type: number
+          description: >-
+            Year to date (YTD) gross pay amount at the time of payment
+          example: 4256.00
+        netPayAmount:
+          type: number
+          description: Net pay amount for a pay period
+          example: 608.77
+        netPayAmountYTD:
+          type: number
+          description: Year to date (YTD) net pay amount at the time of payment
+          example: 2345.99
+    Earnings:
+      required:
+        - type
+        - amount
+      type: object
+      properties:
+        name:
+          type: string
+          description: >-
+            Where available, the employer description of earnings on the
+            paycheck
+          example: bonusPayAmount
+        type:
+          type: string
+          description: |
+            Categorization of the earnings:
+
+            * `base`
+
+            * `bonus`
+
+            * `overtime`
+
+            * `commission`
+
+            * `tips`
+
+            * `other`
+          example: bonus
+        rate:
+          type: number
+          description: Rate of pay
+          example: 19.0
+        amount:
+          type: number
+          description: Earnings amount for each earning type
+          example: 589.00
+        amountYTD:
+          type: number
+          description: Earnings YTD amount if available
+          example: 14301.25
+    Deductions:
+      required:
+        - type
+        - amount
+      type: object
+      properties:
+        type:
+          type: string
+          description: |
+            Deduction types:
+
+            * `Federal tax`: Federal tax withholdings 
+
+            * `State tax`: State tax withholdings 
+
+            * `Local tax`: Local tax withholdings 
+
+            * `Social security tax`: Social security tax withholdings 
+
+            * `Medicare tax`: Medicare withholdings 
+
+            * `SUI SDI VPDI tax`: SUI SDI VPDI tax 
+
+            * Retirement deductions: Retirement withholdings 
+
+            * `Benefit deductions`: Medical/Health benefits withholdings (i.e. medical, dental, vision, insurance) 
+
+            * `Garnishment deductions`: Garnishment withholdings, (i.e. bankruptcy, student loan, state garnishments, tax levy garnishments, child support) 
+
+            * `Other deductions`: Other withholdings, includes any other uncommon withholdings, pension plan, stock plans, etc.
+          example: State tax
+        amount:
+          type: number
+          description: Amount associated with deduction
+          example: 4.28
+    DirectDeposits:
+      type: object
+      properties:
+        accountTypeCode:
+          type: string
+          description: |
+            Bank account type:
+
+            * `Checking`
+
+            * `Savings`
+
+            * `Loan`: Loan account employee choose to direct a portion of their net pay to help pay off a loan
+          example: Savings
+        amount:
+          type: number
+          description: Direct deposit amount
+          example: 12.34
+        accountLastFour:
+          type: string
+          description: Last four digits of the deposit account number
+          example: 3337
+        routingNumber:
+          type: string
+          description: Routing number for the deposit account
+          example: 30207583
     PaystubMonthlyIncomeRecord:
       type: object
       properties:
@@ -13705,10 +14138,9 @@ components:
     PurposeCode:
       type: string
       description: >-
-        2-digit code from [Permissible Purpose Codes]
-        (https://docs.finicity.com/permissible-purpose-codes/), specifying the
-        reason for retrieving this report.
-      example: '99'
+        FCRA required 2-digit Permissible Purpose Code, specifying the reason
+        for retrieving this report.
+      example: '31'
     RedirectUri:
       type: string
       description: >-
@@ -13837,6 +14269,13 @@ components:
       type: string
       description: A report ID
       example: u4hstnnak45g
+    OriginalPayrollReportId:
+      type: string
+      description: >-
+        The report ID of the original payroll report for refresh use cases. If
+        used, only the employment records from the original report will be
+        included in the refreshed report response.
+      example: u4hstnnak45g-voiepayroll
     ReportIncomeEstimate:
       required:
         - netAnnual
@@ -13878,7 +14317,6 @@ components:
         - id
         - name
         - urlHomeApp
-        - accounts
       type: object
       properties:
         id:
@@ -13923,9 +14361,14 @@ components:
       example: 1607450357
     ReportStatus:
       type: string
-      description: >-
-        A report generation status. Possible values: "inProgress", "success",
-        "failure".
+      description: |
+        A report generation status. Possible values:
+
+        * `inProgress`
+
+        * `success`
+
+        * `failure`
       example: inProgress
     ReportSummaries:
       required:
@@ -14033,61 +14476,44 @@ components:
         commission:
           type: number
     ReportType:
-      description: |-
+      description: |
         A report type. Possible values:
 
-          * "voi"
+        * `voi` 
 
+        * `voa` 
 
-          * "voa"
+        * `voaHistory` 
 
+        * `history` 
 
-          * "voaHistory"
+        * `voieTxVerify` 
 
+        * `voieWithReport` 
 
-          * "history"
+        * `voieWithInterview` 
 
+        * `paystatement` 
 
-          * "voieTxVerify"
+        * `preQualVoa` 
 
+        * `assetSummary` 
 
-          * "voieWithReport"
+        * `voie` 
 
+        * `transactions` 
 
-          * "voieWithInterview"
+        * `statement` 
 
+        * `voiePayroll` 
 
-          * "paystatement"
+        * `voeTransactions` 
 
+        * `voePayroll` 
 
-          * "preQualVoa"
+        * `cfrp` 
 
-
-          * "assetSummary"
-
-
-          * "voie"
-
-
-          * "transactions"
-
-
-          * "statement"
-
-
-          * "voiePayroll"
-
-
-          * "voeTransactions"
-
-
-          * "voePayroll"
-
-
-          * "cfrp"
-
-
-          * "cfrb"
+        * `cfrb`
       type: string
       example: voi
     Rssd:
@@ -14165,7 +14591,7 @@ components:
       example: '9999'
     SocialSecurityNumberNoHyphens:
       type: string
-      description: A full SSN without hyphens
+      description: The consumer's full SSN without hyphens
       example: '999999999'
     State:
       type: string
@@ -14413,7 +14839,7 @@ components:
         payorId:
           type: string
           description: >-
-            The Finicity Partner id who should be billed when the Requester
+            The Finicity Partner ID who should be billed when the Requester
             requests data from Finicity. If no value specified, then the
             Recipient will be billed.
           example: '2445581559892'
@@ -14496,8 +14922,8 @@ components:
         receiptId:
           type: string
           description: >-
-            This is officially the Consent Receipt id, but is aliased as the
-            Access Key id. This is a unique identifier managed by Finicity that
+            This is officially the Consent Receipt ID, but is aliased as the
+            Access Key ID. This is a unique identifier managed by Finicity that
             points to the contents of this JSON document.
           example: cr_4pfI2r1X8aOHrDDwrwC01NHTxOXlT1
         customerId:
@@ -14980,6 +15406,15 @@ components:
           $ref: '#/components/schemas/AssetId'
         accounts:
           $ref: '#/components/schemas/ReportAccountIds'
+    PayStatementsFromDate:
+      type: integer
+      description: >-
+        Limits the pay statement history in the VOIE – Payroll report income
+        record. Pay statements are only included if the payDate of the statement
+        is equal to or greater than the start date requested. Date should be in
+        Unix epoch time (in seconds). See: Handling Epoch Dates and Times.
+      format: int64
+      example: 1607450357
     UnixDate:
       type: integer
       description: >-
@@ -15235,7 +15670,34 @@ components:
       description: A VOA with income report
       type: object
       allOf:
-        - $ref: '#/components/schemas/VOAReport'
+        - $ref: '#/components/schemas/BaseReportAckWithPortfolioId'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 180
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 180 days'
+              example: true
+            consolidatedAvailableBalance:
+              type: number
+              description: >-
+                The sum of available balance for all of the accounts included in
+                the report
+              example: 1929.57
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: A list of institution records
+            assets:
+              $ref: '#/components/schemas/PrequalificationReportAssetSummary'
     VOAWithIncomeReportAccount:
       type: object
       allOf:
@@ -15294,6 +15756,15 @@ components:
           $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
+    GseEnabled:
+      type: boolean
+      description: >-
+        Mastercard Open Banking internal use only to flag reports that should
+        not be retrieved by the GSE's (Government-Sponsored Enterprise).
+
+
+        This is a mandatory field for VOE-payroll and VOIE-payroll report types.
+      example: true
     VOEPayrollReport:
       description: A VOE Payroll report
       type: object
@@ -15304,10 +15775,12 @@ components:
             employmentHistory:
               type: array
               items:
-                $ref: '#/components/schemas/PayrollEmploymentHistory'
+                $ref: '#/components/schemas/PayrollEmploymentHistoryVOE'
               description: >-
                 An array of employment histories, one for each of the consumer's
                 verified employers
+            gseEnabled:
+              $ref: '#/components/schemas/GseEnabled'
     VOETransactionsReport:
       description: A VOE Transactions report
       type: object
@@ -15576,10 +16049,12 @@ components:
             employmentHistory:
               type: array
               items:
-                $ref: '#/components/schemas/PayrollEmploymentHistory'
+                $ref: '#/components/schemas/PayrollEmploymentHistoryVOIE'
               description: >-
                 An array of employment histories, one for each of the consumer's
                 verified employers
+            gseEnabled:
+              $ref: '#/components/schemas/GseEnabled'
     VOIEPaystubReport:
       description: A VOIE Paystub report
       type: object
@@ -15886,7 +16361,7 @@ components:
       properties:
         id:
           type: string
-          description: Finicity’s income stream ID
+          description: Finicity's income stream ID
           example: dens28i3vsch-voietxverify
         name:
           type: string
