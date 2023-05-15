@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.12.0
+  version: 1.12.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2840,7 +2840,7 @@ paths:
       summary: Generate Third Party Access Key
       description: >-
         Generate access key for third party partners.
-           
+
         A partner can provide access to third party partners with this access
         key.
       operationId: GenerateThirdPartyAccessKey
@@ -2903,19 +2903,28 @@ paths:
         This service retrieves the account details for an account holder from an
         institution. The following data objects are available.
 
+
         * Account holders
+
 
         * Addresses
 
+
         * Emails
 
+
         * Phones
+
 
         * Documentations
 
 
-        Note: the data returned varies from institution to institution as not
-        all of them make the same data available.  This is a premium service,
+        * Identity Insights
+
+
+
+        Note: The data returned varies from institution to institution as not
+        all of them make the same data available. This is a premium service,
         billable per each successful API call.
 
 
@@ -2924,6 +2933,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/WithInsightsParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetAccountOwnerDetailsResponse'
@@ -6849,6 +6859,15 @@ components:
       schema:
         $ref: '#/components/schemas/AccountStatus'
       example: pending
+    WithInsightsParameter:
+      description: >-
+        If this parameter is true, Identity Insights data will be returned along
+        with the account owner information
+      name: withInsights
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/WithInsights'
     TransactionIdParameter:
       description: A transaction ID
       name: transactionId
@@ -7348,6 +7367,8 @@ components:
           $ref: '#/components/schemas/AccountOwnerPhones'
         documentations:
           $ref: '#/components/schemas/AccountOwnerDocumentations'
+        identityInsights:
+          $ref: '#/components/schemas/AccountOwnerIdentityInsights'
       description: Owner of a customer account
     AccountOwnerDocumentation:
       description: Account owner documentation
@@ -7364,6 +7385,60 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/AccountOwnerDocumentation'
+    AccountOwnerIdentityInsights:
+      description: List of account owner Identity Insights
+      type: object
+      properties:
+        isEmailValids:
+          $ref: '#/components/schemas/EmailValid'
+        emailFirstSeenDays:
+          $ref: '#/components/schemas/EmailFirstSeenDays'
+        emailDomainCreationDate:
+          $ref: '#/components/schemas/EmailDomainCreationDate'
+        emailToName:
+          $ref: '#/components/schemas/EmailToName'
+        ipRisk:
+          $ref: '#/components/schemas/IpRisk'
+        ipRiskScore:
+          $ref: '#/components/schemas/IpRiskScore'
+        ipLastSeenDays:
+          $ref: '#/components/schemas/IpLastSeenDays'
+        ipGeolocationCountryCode:
+          $ref: '#/components/schemas/IpGeolocationCountryCode'
+        ipGeolocationSubdivision:
+          $ref: '#/components/schemas/IpGeolocationSubdivision'
+        ipPhoneDistance:
+          $ref: '#/components/schemas/IpPhoneDistance'
+        ipAddressDistance:
+          $ref: '#/components/schemas/IpAddressDistance'
+        isPhoneValid:
+          $ref: '#/components/schemas/PhoneValid'
+        phoneLineType:
+          $ref: '#/components/schemas/PhoneLineType'
+        phoneCarrier:
+          $ref: '#/components/schemas/PhoneCarrier'
+        phoneCountryCode:
+          $ref: '#/components/schemas/PhoneCountryCode'
+        phoneLastSeenDays:
+          $ref: '#/components/schemas/PhoneLastSeenDays'
+        phoneEmailFirstSeenDays:
+          $ref: '#/components/schemas/PhoneEmailFirstSeenDays'
+        phoneToName:
+          $ref: '#/components/schemas/PhoneToName'
+        phoneToAddress:
+          $ref: '#/components/schemas/PhoneToAddress'
+        addressValidityLevel:
+          $ref: '#/components/schemas/AddressValidityLevel'
+        addressToName:
+          $ref: '#/components/schemas/AddressToName'
+        identityNetworkScore:
+          $ref: '#/components/schemas/IdentityNetworkScore'
+        addressIdentityRiskScore:
+          $ref: '#/components/schemas/IdentityRiskScore'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warnings'
     AccountOwnerEmail:
       description: Account owner email
       type: object
@@ -7392,6 +7467,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/AccountOwnerEmail'
+    WithInsights:
+      type: boolean
+      description: If Identity Insights data must be returned or not
+      example: true
     AccountOwnerHolders:
       required:
         - holders
@@ -7441,41 +7520,41 @@ components:
       description: |-
         The type of relationship to the account:  
         * "AUTHORIZED_USER"  
-          
+
         * "BUSINESS"   
-          
+
         * "FOR_BENEFIT_OF_PRIMARY"  
-          
+
         * "FOR_BENEFIT_OF_PRIMARY_JOINT_RESTRICTED"  
-          
+
         * "FOR_BENEFIT_OF_SECONDARY"
-          
+
         * "FOR_BENEFIT_OF_SECONDARY_JOINT_RESTRICTED"
-          
+
         * "FOR_BENEFIT_OF_SOLE_OWNER_RESTRICTED"
-          
+
         * "POWER_OF_ATTORNEY"
-          
+
         * "PRIMARY_JOINT_TENANTS"
-          
+
         * "PRIMARY"
-          
+
         * "PRIMARY_BORROWER"
-          
+
         * "PRIMARY_JOINT"
-          
+
         * "SECONDARY"
-          
+
         * "SECONDARY_JOINT_TENANTS"
-          
+
         * "SECONDARY_BORROWER"
-          
+
         * "SECONDARY_JOINT"
-          
+
         * "SOLE_OWNER"
-          
+
         * "TRUSTEE"
-          
+
         * "UNIFORM_TRANSFER_TO_MINOR"
       example: AUTHORIZED_USER
     AccountStatus:
@@ -10400,7 +10479,6 @@ components:
         - institutionId
         - createdDate
         - currency
-        - oldestTransactionDate
         - institutionLoginId
       type: object
       properties:
@@ -11605,7 +11683,7 @@ components:
           * Passport: 6-9 digits.
 
           * US Visa: 8 digits.
-          
+
           * Driver's license: 1-19 digits
         * **Canada**:
 
@@ -13853,6 +13931,226 @@ components:
         Country calling code of the phone number as defined by ITU-T E.123 and
         E.164 international standards (max length 3)".
       example: '61'
+    EmailValid:
+      type: boolean
+      description: True if the email address is valid.
+      example: true
+    EmailFirstSeenDays:
+      type: number
+      description: >-
+        Count of days since the email was first observed in Ekata's Identity
+        Network. If the email has not been observed before, first_seen_days will
+        be 0.
+      example: 453
+    EmailDomainCreationDate:
+      type: string
+      description: Returns a date that the email domain was created.
+      example: 2011-06-29T00:00:00.000Z
+    EmailToName:
+      type: string
+      description: |-
+        The match status between the input name and the queried entity.
+        * not found
+        * match
+        * no-match
+      example: not found
+    IpRisk:
+      type: number
+      description: >-
+        True if the IP address is considered risky, based on multiple IP data
+        points and velocity calculations.
+      example: true
+    IpRiskScore:
+      type: number
+      description: >-
+        Comprehensive risk score associated with an IP address, with a higher
+        score indicating a riskier IP address. A number between 0 and 1 rounded
+        to three decimal places.
+      example: 0.123
+    IpLastSeenDays:
+      type: number
+      description: >-
+        Count of days since the IP address was last observed in Ekata’s Identity
+        Network. If the IP address has not been observed before, IpLastSeenDays
+        will be 0.
+      example: 15
+    IpGeolocationCountryCode:
+      type: string
+      description: >-
+        The ISO-3166 alpha-2 country code associated with the geolocation of the
+        IP address.
+      example: US
+    IpGeolocationSubdivision:
+      type: string
+      description: More granular detail about the IP address location.
+      example: Oregon
+    IpPhoneDistance:
+      type: number
+      description: >-
+        The distance (in miles) between the IP address and the closest physical
+        address associated with the phone number.
+      example: 200
+    IpAddressDistance:
+      type: number
+      description:
+        The distance (in miles) between the IP address and the physical address.
+      example: 210
+    PhoneValid:
+      type: boolean
+      description: True if the phone number is valid.
+      example: true
+    PhoneLineType:
+      type: string
+      description: >-
+        The line type of the phone number.
+
+        * landline - traditional wired phone line.
+
+        * fixed-voip - VoIP-based fixed line phones.
+
+        * mobile - wireless phone line.
+
+        * voicemail - voicemail-only service.
+
+        * toll-free - callee pays for call.
+
+        * premium - caller pays a premium for the call–e.g., 976 area code .
+
+        * non-fixed-voip - Skype, for example * other - anything that does not
+        match the previous categories.
+      example: mobile
+    PhoneCarrier:
+      type: string
+      description: >-
+        The company that provides voice and/or data services for the phone
+        number. Carriers are returned at the MVNO level.
+      example: Vodafone UK ltd.
+    PhoneCountryCode:
+      type: string
+      description:
+        The ISO-3166 alpha-2 country code associated with the phone number.
+      example: UK
+    PhoneLastSeenDays:
+      type: number
+      description: >-
+        Count of days since the phone was last observed in Ekata’s Identity
+        Network. If the phone has not been observed before, phoneLastSeenDays
+        will be 0.
+      example: 42
+    PhoneEmailFirstSeenDays:
+      type: number
+      description: >-
+        Count of days since the combination of phone and email was first
+        observed in Ekata’s Identity Network. If that combination has not been
+        observed before, phoneEmailFirstSeenDays will be 0.
+      example: 54
+    PhoneToName:
+      type: string
+      description: |-
+        The match status between the input name and the queried entity.
+
+         * not-found
+
+         * match
+
+         * no-match
+      example: match
+    PhoneToAddress:
+      type: string
+      description: >-
+        The match status between the input phone and the queried entity.
+
+        * match – Phone location matches input address line 1, address line 2,
+        city, state, and postal code. 
+
+
+        * postal-match – Phone location postal code matches input address postal
+        code. 
+
+
+        * zip4-match – Phone location postal code zip+4 matches input address
+        postal code zip+4. 
+
+
+        * city-state-match – Phone location city and state matches input address
+        city and state. 
+
+        * metro-match – Phone location is in the same metro area as input
+        address. 
+
+
+        * country-match – Phone location country matches input address country. 
+
+
+        * no-match – Phone location does not match input address.
+      example: match
+    AddressValidityLevel:
+      type: number
+      description: >-
+        The most granular level to which the address could be validated. Ex. If
+        the address was only valid to the city level (but not to the house
+        level), it would return “valid_to_city”.
+          *  missing_address – An input address was not provided.
+
+          *  invalid – The input address is not valid.
+
+          *  valid – The input address is valid.
+
+          *  valid_to_country – The input address could only be validated to the
+        country level. This means the country of the input address is valid, but
+        the other elements of the input address were unable to be confirmed as
+        valid or invalid.
+
+          *  valid_to_city – The input address was validated to the city level.
+        This means the country, state, city, and postal code of the input
+        address are valid, but the street, house number, and subpremise of the
+        input address were unable to be confirmed as valid or invalid.
+
+          *  valid_to_street – The input address was validated to the street
+        level. This means the country, state, city, postal code, and street of
+        the input address are valid, but the house number and subpremise of the
+        input address were unable to be confirmed as valid or invalid.
+
+            *  valid_to_house_number – The input address was validated to the
+        street and house number level. This means the country, state,
+        city,postal code, street, and house number of the input address are
+        valid, but the subpremise of the input address was unable to be
+        confirmed as valid or invalid. 
+
+            *  valid_to_house_number_missing_apt – The input address was
+        validated to the street and house number level. This means the country,
+        state, city, postal code, street, and house number of the input address
+        are valid, but the subpremise of the input address was missing and thus
+        unable to be confirmed as valid or invalid.
+      example: valid
+    AddressToName:
+      type: string
+      description: |-
+        The match status between the input name and the queried entity.
+         * not-found
+         * match
+         * no-match
+      example: match
+    IdentityNetworkScore:
+      type: number
+      description: >-
+        Comprehensive network score built on behavioral insights such as
+        velocity, popularity, volatility, and age of an attribute, with a higher
+        score indicating a riskier account sign-up. A number between 0 and 1
+        rounded to three decimal places.
+      example: 0.574
+    IdentityRiskScore:
+      type: number
+      description: >-
+        Comprehensive identity risk score with a higher score indicating a
+        riskier account sign-up.
+      example: 275
+    Warnings:
+      type: string
+      description: >-
+        Array of warnings. [Generalsyntaxerror,Invalidusernamesyntax,Missing
+        country_code,Input postal code was corrected]
+      example: Test warnings
     PhoneNumber:
       type: string
       description: A phone number (max length 15).

@@ -328,14 +328,14 @@ class ReportsApiTest extends BaseTest {
         do {
             System.out.println("Fetching report " + reportId + " by consumer ID ...");
             Thread.sleep(5000);
-            var report = api.getReportByConsumer(consumerId, reportId, ON_BEHALF_OF, PURPOSE);
+            var report = api.getReportByConsumer(consumerId, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
             status = report.getStatus();
         } while (IN_PROGRESS.equals(status));
         do {
             System.out.println("Waiting for report " + reportId + " by customer ID ...");
             Thread.sleep(5000);
-            var report = api.getReportByCustomer(CUSTOMER_ID, reportId, ON_BEHALF_OF, PURPOSE);
+            var report = api.getReportByCustomer(CUSTOMER_ID, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
             status = report.getStatus();
         } while (IN_PROGRESS.equals(status));
