@@ -71,6 +71,15 @@ public final class ModelFactory {
         return RandomStringUtils.randomAlphabetic(10);
     }
 
+    public static MicroDepositInitiation newMicroDepositInitiation() {
+        return new MicroDepositInitiation()
+                .receiver(new Receiver()
+                        .accountNumber("5111111111")
+                        .routingNumber("011000138")
+                        .accountType("Checking")
+                        .name("API client test"));
+    }
+
     public static ThirdPartyAccessKeyData newThirdPartyAccessKeyData(String type, String accountId, String customerId, String partnerId) {
         var data = new ThirdPartyAccessKeyData();
         var product = new ThirdPartyAccessProduct();

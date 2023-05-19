@@ -16,7 +16,7 @@ public class AccountUtils {
      * Return all active accounts for the given customer.
      */
     public static List<CustomerAccount> getCustomerAccounts(AccountsApi api, String customerId) throws ApiException {
-        var customerAccounts = api.getCustomerAccounts(customerId, "active");
+        var customerAccounts = api.getCustomerAccounts(customerId, "active", null);
         var accounts = customerAccounts.getAccounts();
         assertTrue(accounts.size() > 0, "No account found for customerId " + customerId + "!");
         var firstAccount = accounts.get(0);

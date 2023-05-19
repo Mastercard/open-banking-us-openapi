@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.12.1
+  version: 1.13.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -19,6 +19,8 @@ tags:
     description: Fetch or refresh customer accounts
   - name: 'Accounts (Simple)'
     description: Fetch simple customer accounts
+  - name: Account Validation Assistance
+    description: Micro entries and account verification
   - name: App Registration
     description: Register and assign apps to customers
   - name: Assets
@@ -271,6 +273,28 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/v2/generate/microentry/verify:
+    post:
+      tags:
+        - Connect 🔗
+      summary: 'Account Validation Assistant User verification of microdeposits'
+      description: >-
+        The UI re-engages the consumer to enter two microdeposit amounts found
+        in their account and validates them.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: VerifyMicroEntryMicrodeposit
+      requestBody:
+        $ref: '#/components/requestBodies/MicroEntryVerifyRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/MicroEntryVerifyUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+
   /connect/v2/send/email/jointBorrower:
     post:
       tags:
@@ -770,6 +794,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountStatusParameter'
+        - $ref: '#/components/parameters/AccountTypeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountsResponse'
@@ -2534,7 +2559,90 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/microentry/v1/customers/{customerId}':
+    post:
+      tags:
+        - Account Validation Assistance
+      summary: Initiate Micro Entries
+      description: >-
+        Initiate the micro entries to customer's account.
 
+
+        Two random micro amounts less than a dollar each will be deposited to
+        provided customer's account.
+
+          _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: InitiateMicroAmountDeposits
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/InitiateMicroAmountDepositsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/InitiateMicroAmountDepositsResponse'
+        '400':
+          $ref: '#/components/responses/InitiateMicroEntriesBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '409':
+          $ref: '#/components/responses/ConflictErrorResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsErrorResponse'
+  '/microentry/v1/customers/{customerId}/accounts/{accountId}/amounts':
+    post:
+      tags:
+        - Account Validation Assistance
+      summary: Verify Micro Entries
+      description: >-
+        Verify the micro entries as received by customer in customer's account.
+
+        Customer needs to verify the micro amounts received in customer's
+        account. `customerId` and `accountId` are the identifiers of the
+        customer and account  receiving the micro entries.
+
+          _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: VerifyMicroAmountDeposits
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/VerifyMicroAmountDepositsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/VerifyMicroAmountDepositsResponse'
+        '400':
+          $ref: '#/components/responses/VerifyMicroAmountDepositsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/microentry/v1/customers/{customerId}/accounts/{accountId}':
+    get:
+      tags:
+        - Account Validation Assistance
+      summary: Get Micro Entries Details
+      description: >-
+        Fetch the micro entries details.
+
+        `customerId` and `accountId` are the identifiers of the customer and
+        account receiving the micro entries.
+
+          _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetMicroDepositsDetails
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetMicroDepositsDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /analytics/balance/v1/customer/{customerId}:
     post:
       tags:
@@ -2996,6 +3104,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectJointBorrowerParameters'
+    MicroEntryVerifyRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MicroEntryVerifyRequestParameter'
     SendJointBorrowerConnectEmailRequest:
       required: true
       content:
@@ -3188,6 +3302,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportConstraints'
+    InitiateMicroAmountDepositsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MicroDepositInitiation'
+    VerifyMicroAmountDepositsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MicroDepositVerification'
     GenerateThirdPartyAccessKeyRequest:
       required: true
       content:
@@ -3232,6 +3358,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectEmailUrl'
+    MicroEntryVerifyUrlResponse:
+      description: The URL link was successfully generated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectUrl'
     GenerateJointBorrowerConnectUrlResponse:
       description: The URL link was successfully generated
       content:
@@ -3782,6 +3914,29 @@ components:
               $ref: '#/components/examples/GenericBadRequestExample'
             AccountTypeNotSupportedExample:
               $ref: '#/components/examples/AccountTypeNotSupportedExample'
+    InitiateMicroEntriesBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InvalidMemoExample:
+              $ref: '#/components/examples/InvalidMemoExample'
+            InvalidRoutingNumberExample:
+              $ref: '#/components/examples/InvalidRoutingNumberExample'
+            InvalidAccountNameExample:
+              $ref: '#/components/examples/InvalidAccountNameExample'
+            InvalidAccountNumberExample:
+              $ref: '#/components/examples/InvalidAccountNumberExample'
+            AccountAlreadyExistsExample:
+              $ref: '#/components/examples/AccountAlreadyExistsExample'
+            MicrodepositsInitiationFailedExample:
+              $ref: '#/components/examples/MicrodepositsInitiationFailedExample'
+            MicrodepositsProcessingFailedExample:
+              $ref: '#/components/examples/MicrodepositsProcessingFailedExample'
+            TooManyRequestsExample:
+              $ref: '#/components/examples/TooManyRequestsExample'
     TooManyRequestsErrorResponse:
       description:
         The service can't accept more requests or is not available from the
@@ -3814,6 +3969,41 @@ components:
           examples:
             ConsumerExistsConflictExample:
               $ref: '#/components/examples/ConsumerExistsConflictExample'
+    InitiateMicroAmountDepositsResponse:
+      description: Micro entries were successfully initiated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InitiatedMicroDeposit'
+    VerifyMicroAmountDepositsResponse:
+      description: Micro entries were successfully verified
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VerifiedMicroDeposit'
+    VerifyMicroAmountDepositsBadRequestErrorResponse:
+      description:
+        Micro entries verification failed. status field could be any except
+        "Verified" and "Completed".
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MicroDepositVerificationError'
+          examples:
+            InvalidAmountFormatExample:
+              $ref: '#/components/examples/InvalidAmountFormatExample'
+            MicrodepositStatusErrorExample:
+              $ref: '#/components/examples/MicrodepositStatusErrorExample'
+            MicrodepositVerificationAttemptsExample:
+              $ref: '#/components/examples/MicrodepositVerificationAttemptsExample'
+            MicrodepositAmountsDidNotMatchExample:
+              $ref: '#/components/examples/MicrodepositAmountsDidNotMatchExample'
+    GetMicroDepositsDetailsResponse:
+      description: Micro entries were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MicroDepositDetails'
     GetAccountACHDetailsBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -4019,6 +4209,56 @@ components:
       value:
         code: 14020
         message: 'Bad request. (Account type not supported).'
+    InvalidMemoExample:
+      value:
+        code: 3000003
+        message: 'Invalid memo'
+    InvalidRoutingNumberExample:
+      value:
+        code: 20024
+        message: 'Invalid routing number'
+    InvalidAccountNumberExample:
+      value:
+        code: 3000001
+        message: 'Invalid account number'
+    AccountAlreadyExistsExample:
+      value:
+        code: 3100001
+        message: 'Account already exist'
+    MicrodepositsInitiationFailedExample:
+      value:
+        code: 3200001
+        message: 'Microdeposits initiation failed'
+    MicrodepositsProcessingFailedExample:
+      value:
+        code: 3000000
+        message:
+          'Microdeposit initiation can’t be processed at this time due to
+          technical difficulties. Please try after some time'
+    InvalidAccountNameExample:
+      value:
+        code: 3100001
+        message: 'Account already exist'
+    InvalidAmountFormatExample:
+      value:
+        code: 3000003
+        message: 'Invalid amount format'
+    MicrodepositStatusErrorExample:
+      value:
+        code: 3200002
+        message: 'Microdeposit is in <status> status'
+    MicrodepositVerificationAttemptsExample:
+      value:
+        code: 3200003
+        message: 'Microdeposit verification attempts exceeded'
+    MicrodepositAmountsDidNotMatchExample:
+      value:
+        code: 3200004
+        message: 'Microdeposit amounts didn’t match'
+    TooManyRequestsExample:
+      value:
+        code: 3300001
+        message: 'Too many request. Please try after some time'
     MissingFieldExample:
       value:
         code: '10010'
@@ -7195,6 +7435,16 @@ components:
       description: The type of statement to retrieve
       schema:
         $ref: '#/components/schemas/StatementType'
+    AccountTypeParameter:
+      description: >-
+        A filter to fetch accounts for the given type. Currently supported
+        types: "ava"
+      name: account_type
+      in: query
+      required: false
+      schema:
+        type: string
+      example: ava
     ReferenceNumberParameter:
       name: reference-number
       in: query
@@ -7213,6 +7463,149 @@ components:
         description: Report ID generated and returned by OBB products
         type: string
   schemas:
+    MicroDepositInitiation:
+      required:
+        - receiver
+      type: object
+      properties:
+        institutionLoginId:
+          $ref: '#/components/schemas/InstitutionLoginId'
+        receiver:
+          '$ref': '#/components/schemas/Receiver'
+        callbackUrl:
+          $ref: '#/components/schemas/MicroDepositCallbackUrl'
+    MicroDepositVerification:
+      description: A list of amounts
+      required:
+        - amounts
+      type: object
+      properties:
+        amounts:
+          description: The list of amounts to be verified
+          type: array
+          items:
+            $ref: '#/components/schemas/DecimalNumber'
+          example:
+            - 0.12
+            - 0.15
+    InitiatedMicroDeposit:
+      type: object
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        status:
+          type: string
+          example: Pending
+          description: Micro entries successful initiation status
+        depositCount:
+          $ref: '#/components/schemas/MicroDepositCount'
+        statusDescription:
+          type: string
+          example: Micro entries successfully initiated
+          description: Micro entries successful initiation description
+    VerifiedMicroDeposit:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Verified
+          description: Micro entries successful verification status
+        statusDescription:
+          type: string
+          example: Micro entries are successfully verified
+          description: Micro entries successful verification description
+    MicroDepositVerificationError:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/MicroDepositStatus'
+        statusDescription:
+          $ref: '#/components/schemas/MicroDepositStatusDescription'
+    MicroDepositDetails:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/MicroDepositStatus'
+        statusDescription:
+          $ref: '#/components/schemas/MicroDepositStatusDescription'
+        creationDate:
+          $ref: '#/components/schemas/NoZoneDateTime'
+        routingNumber:
+          $ref: '#/components/schemas/RoutingNumber'
+        accountNumberLast4:
+          $ref: '#/components/schemas/AccountNumberLast4'
+    Receiver:
+      required:
+        - routingNumber
+        - accountNumber
+        - accountType
+        - name
+      type: object
+      properties:
+        routingNumber:
+          $ref: '#/components/schemas/RoutingNumber'
+        accountNumber:
+          type: string
+          example: '123456'
+          description: Micro entries receiving account number of bank
+        accountType:
+          type: string
+          example: checking
+          description: >-
+            The list of supported account types.
+
+            * "checking": Standard checking
+
+            * "savings": Standard savings
+        name:
+          type: string
+          example: Bob Smith
+          description: Name of the customer
+        memo:
+          type: string
+          example: micro deposit transfer
+          description: Transaction memo to be displayed for transactions
+    MicroDepositCallbackUrl:
+      type: string
+      format: uri
+      description: A callback URL where to receive micro deposit notifications
+      example: 'https://www.mydomain.com/listener'
+    DecimalNumber:
+      type: number
+      format: float
+      description: Decimal number
+      example: 0.12
+    MicroDepositCount:
+      type: integer
+      format: int32
+      example: 2
+      description: Count of micro entries
+    MicroDepositStatus:
+      type: string
+      description: >-
+        The following values may be returned in the field of a status:
+
+         * "Pending" : Micro entries not yet deposited to customer's account
+         * "Completed": Micro entries deposited to customer's account
+         * "Verified": Micro entries got successfully verified
+         * "Rejected": Micro entries got rejected due to some reason
+         * "Returned": Micro entries got returned back
+         * "Failed": Micro entries got failed due to some reason
+         * "Expired": Micro entries got expired as they remains unverified for
+        certain defined days
+      example: Pending
+    MicroDepositStatusDescription:
+      type: string
+      example: Micro entries are in pending status
+      description: Micro entries status description
+    NoZoneDateTime:
+      type: string
+      description: A date-time without time zone
+      example: '2022-04-12T11:51:23'
+    RoutingNumber:
+      type: string
+      example: '123456789'
+      description: Routing number of receiving bank
     ACHDetails:
       required:
         - routingNumber
@@ -10117,6 +10510,27 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         optionalConsumerInfo:
           $ref: '#/components/schemas/ConsumerInfo'
+    MicroEntryVerifyRequestParameter:
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
     ConnectEmailUrl:
       required:
         - link

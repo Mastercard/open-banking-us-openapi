@@ -64,7 +64,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void getCustomerAccountsTest() {
         try  {
-            var customerAccounts = api.getCustomerAccounts(CUSTOMER_ID, null);
+            var customerAccounts = api.getCustomerAccounts(CUSTOMER_ID, null, null);
             var accounts = customerAccounts.getAccounts();
             assertTrue(accounts.size() > 0);
             var firstAccount = accounts.get(0);

@@ -13,10 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
-
     private final static Long FINBANK_A = 102105L;
     private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
-
+    private final static String ACCOUNT_ID = "6025959239";
     @Test
     void generateConnectUrlTest() {
         try {
@@ -180,5 +179,38 @@ class ConnectApiTest extends BaseTest {
         } catch (ApiException e) {
             fail(e);
         }
+    }
+
+    @Test
+    void verifyMicroDepositEntryTest() {
+        try {
+            String customerId = createTestCustomer();
+            AccountValidationAssistanceApi accountApi = new AccountValidationAssistanceApi(apiClient);
+            var response = accountApi.initiateMicroAmountDeposits(customerId, ModelFactory.newMicroDepositInitiation());
+            var accountId = response.getAccountId();
+            String status;
+            do {
+                var details = accountApi.getMicroDepositsDetails(customerId, accountId);
+                status = details.getStatus();
+            } while (!"Completed".equals(status));
+
+            var params = new MicroEntryVerifyRequestParameter()
+                    .partnerId(PARTNER_ID)
+                    .customerId(customerId)
+                    .accountId(accountId);
+            var connectVerifyUrl = api.verifyMicroEntryMicrodeposit(params);
+            var link = connectVerifyUrl.getLink();
+            assertTrue(link.contains("accountId=" + accountId));
+            assertTrue(link.contains("customerId=" + customerId));
+            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+        } catch (ApiException e) {
+            fail(e);
+        }
+    }
+    private static String createTestCustomer() throws ApiException {
+        var customer = customersApi.addTestingCustomer(ModelFactory.newCustomer());
+        var customerId = customer.getId();
+        createdCustomerIds.add(customerId);
+        return customerId;
     }
 }
