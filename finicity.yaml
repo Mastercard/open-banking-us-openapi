@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.13.0
+  version: 1.13.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1107,6 +1107,53 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/v3/customers/{customerId}/accounts/{accountId}/owner':
+    get:
+      tags:
+        - Payments
+      summary: Get Account Owner Details
+      description: >-
+        This service retrieves the account details for an account holder from an
+        institution. The following data objects are available.
+
+
+        * Account holders
+
+
+        * Addresses
+
+
+        * Emails
+
+
+        * Phones
+
+
+        * Documentations
+
+
+        * Identity Insights
+
+
+
+        Note: The data returned varies from institution to institution as not
+        all of them make the same data available. This is a premium service,
+        billable per each successful API call.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetAccountOwnerDetails
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/WithInsightsParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAccountOwnerDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v1/partners/applications:
     post:
       tags:
@@ -1540,7 +1587,7 @@ paths:
         - Verify Income and Employment
       summary: Generate VOE - Payroll Report
       description: >-
-        Generate or refresh a VOE – Payroll report. Often used as a
+        Generate or refresh a VOE - Payroll report. Often used as a
         complementary report to the VOIE-Payroll report to fulfill the pre-close
         VOE requirements. It retrieves the customer's employment details and
         employment status through the payroll source without any income
@@ -1723,9 +1770,9 @@ paths:
         - Verify Income and Employment
       summary: Generate VOIE - Payroll Report
       description: >-
-        Generate or refresh a VOIE – Payroll report. For clients using the
+        Generate or refresh a VOIE - Payroll report. For clients using the
         product via a consumer permissioning experience via Connect, the
-        original VOIE – Payroll report generates when the consumer completes the
+        original VOIE - Payroll report generates when the consumer completes the
         Connect experience, and this API is only used for future report
         refreshes without reengaging the consumer.
 
@@ -2455,7 +2502,7 @@ paths:
 
 
         Note: this is a premium service, billable per every successful API call.
-        Enrollment is required.        
+        Enrollment is required.
 
 
         _Supported account types_: "checking", "savings", "moneyMarket", "cd"
@@ -3002,53 +3049,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/aggregation/v3/customers/{customerId}/accounts/{accountId}/owner':
-    get:
-      tags:
-        - Payments
-      summary: Get Account Owner Details
-      description: >-
-        This service retrieves the account details for an account holder from an
-        institution. The following data objects are available.
-
-
-        * Account holders
-
-
-        * Addresses
-
-
-        * Emails
-
-
-        * Phones
-
-
-        * Documentations
-
-
-        * Identity Insights
-
-
-
-        Note: The data returned varies from institution to institution as not
-        all of them make the same data available. This is a premium service,
-        billable per each successful API call.
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetAccountOwnerDetails
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/AccountIdParameter'
-        - $ref: '#/components/parameters/WithInsightsParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/GetAccountOwnerDetailsResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -7463,149 +7463,6 @@ components:
         description: Report ID generated and returned by OBB products
         type: string
   schemas:
-    MicroDepositInitiation:
-      required:
-        - receiver
-      type: object
-      properties:
-        institutionLoginId:
-          $ref: '#/components/schemas/InstitutionLoginId'
-        receiver:
-          '$ref': '#/components/schemas/Receiver'
-        callbackUrl:
-          $ref: '#/components/schemas/MicroDepositCallbackUrl'
-    MicroDepositVerification:
-      description: A list of amounts
-      required:
-        - amounts
-      type: object
-      properties:
-        amounts:
-          description: The list of amounts to be verified
-          type: array
-          items:
-            $ref: '#/components/schemas/DecimalNumber'
-          example:
-            - 0.12
-            - 0.15
-    InitiatedMicroDeposit:
-      type: object
-      properties:
-        accountId:
-          $ref: '#/components/schemas/AccountId'
-        status:
-          type: string
-          example: Pending
-          description: Micro entries successful initiation status
-        depositCount:
-          $ref: '#/components/schemas/MicroDepositCount'
-        statusDescription:
-          type: string
-          example: Micro entries successfully initiated
-          description: Micro entries successful initiation description
-    VerifiedMicroDeposit:
-      type: object
-      properties:
-        status:
-          type: string
-          example: Verified
-          description: Micro entries successful verification status
-        statusDescription:
-          type: string
-          example: Micro entries are successfully verified
-          description: Micro entries successful verification description
-    MicroDepositVerificationError:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/MicroDepositStatus'
-        statusDescription:
-          $ref: '#/components/schemas/MicroDepositStatusDescription'
-    MicroDepositDetails:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/MicroDepositStatus'
-        statusDescription:
-          $ref: '#/components/schemas/MicroDepositStatusDescription'
-        creationDate:
-          $ref: '#/components/schemas/NoZoneDateTime'
-        routingNumber:
-          $ref: '#/components/schemas/RoutingNumber'
-        accountNumberLast4:
-          $ref: '#/components/schemas/AccountNumberLast4'
-    Receiver:
-      required:
-        - routingNumber
-        - accountNumber
-        - accountType
-        - name
-      type: object
-      properties:
-        routingNumber:
-          $ref: '#/components/schemas/RoutingNumber'
-        accountNumber:
-          type: string
-          example: '123456'
-          description: Micro entries receiving account number of bank
-        accountType:
-          type: string
-          example: checking
-          description: >-
-            The list of supported account types.
-
-            * "checking": Standard checking
-
-            * "savings": Standard savings
-        name:
-          type: string
-          example: Bob Smith
-          description: Name of the customer
-        memo:
-          type: string
-          example: micro deposit transfer
-          description: Transaction memo to be displayed for transactions
-    MicroDepositCallbackUrl:
-      type: string
-      format: uri
-      description: A callback URL where to receive micro deposit notifications
-      example: 'https://www.mydomain.com/listener'
-    DecimalNumber:
-      type: number
-      format: float
-      description: Decimal number
-      example: 0.12
-    MicroDepositCount:
-      type: integer
-      format: int32
-      example: 2
-      description: Count of micro entries
-    MicroDepositStatus:
-      type: string
-      description: >-
-        The following values may be returned in the field of a status:
-
-         * "Pending" : Micro entries not yet deposited to customer's account
-         * "Completed": Micro entries deposited to customer's account
-         * "Verified": Micro entries got successfully verified
-         * "Rejected": Micro entries got rejected due to some reason
-         * "Returned": Micro entries got returned back
-         * "Failed": Micro entries got failed due to some reason
-         * "Expired": Micro entries got expired as they remains unverified for
-        certain defined days
-      example: Pending
-    MicroDepositStatusDescription:
-      type: string
-      example: Micro entries are in pending status
-      description: Micro entries status description
-    NoZoneDateTime:
-      type: string
-      description: A date-time without time zone
-      example: '2022-04-12T11:51:23'
-    RoutingNumber:
-      type: string
-      example: '123456789'
-      description: Routing number of receiving bank
     ACHDetails:
       required:
         - routingNumber
@@ -7778,6 +7635,44 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/AccountOwnerDocumentation'
+    AccountOwnerEmail:
+      description: Account owner email
+      type: object
+      properties:
+        isPrimary:
+          $ref: '#/components/schemas/AccountOwnerEmailPrimary'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        emailType:
+          $ref: '#/components/schemas/AccountOwnerEmailType'
+    AccountOwnerEmailPrimary:
+      type: boolean
+      description: The email is primary.
+      example: true
+    AccountOwnerEmailType:
+      type: string
+      description: |-
+        The account owner's email type.
+
+        * "Personal" 
+
+        * "Business"
+      example: Personal
+    AccountOwnerEmails:
+      description: List of emails
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountOwnerEmail'
+    AccountOwnerHolders:
+      required:
+        - holders
+      type: object
+      properties:
+        holders:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountOwnerDetails'
+          description: List of account owners
     AccountOwnerIdentityInsights:
       description: List of account owner Identity Insights
       type: object
@@ -7832,48 +7727,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Warnings'
-    AccountOwnerEmail:
-      description: Account owner email
-      type: object
-      properties:
-        isPrimary:
-          $ref: '#/components/schemas/AccountOwnerEmailPrimary'
-        email:
-          $ref: '#/components/schemas/EmailAddress'
-        emailType:
-          $ref: '#/components/schemas/AccountOwnerEmailType'
-    AccountOwnerEmailPrimary:
-      type: boolean
-      description: The email is primary.
-      example: true
-    AccountOwnerEmailType:
-      type: string
-      description: |-
-        The account owner's email type.   
-
-        * "Personal" 
-
-        * "Business"
-      example: Personal
-    AccountOwnerEmails:
-      description: List of emails
-      type: array
-      items:
-        $ref: '#/components/schemas/AccountOwnerEmail'
-    WithInsights:
-      type: boolean
-      description: If Identity Insights data must be returned or not
-      example: true
-    AccountOwnerHolders:
-      required:
-        - holders
-      type: object
-      properties:
-        holders:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountOwnerDetails'
-          description: List of account owners
     AccountOwnerName:
       type: string
       description: >-
@@ -8052,6 +7905,14 @@ components:
       type: string
       description: Address line 3
       example: UT 84123
+    AddressToName:
+      type: string
+      description: |-
+        The match status between the input name and the queried entity.
+        * not-found
+        * match
+        * no-match
+      example: match
     AddressType:
       type: string
       description: |-
@@ -8060,6 +7921,45 @@ components:
         * "Home"
         * "Mailing"
       example: Home
+    AddressValidityLevel:
+      type: number
+      description: >-
+        The most granular level to which the address could be validated. Ex. If
+        the address was only valid to the city level (but not to the house
+        level), it would return “valid_to_city”.
+          * missing_address - An input address was not provided.
+
+          * invalid - The input address is not valid.
+
+          * valid - The input address is valid.
+
+          * valid_to_country - The input address could only be validated to the
+        country level. This means the country of the input address is valid, but
+        the other elements of the input address were unable to be confirmed as
+        valid or invalid.
+
+          * valid_to_city - The input address was validated to the city level.
+        This means the country, state, city, and postal code of the input
+        address are valid, but the street, house number, and subpremise of the
+        input address were unable to be confirmed as valid or invalid.
+
+          * valid_to_street - The input address was validated to the street
+        level. This means the country, state, city, postal code, and street of
+        the input address are valid, but the house number and subpremise of the
+        input address were unable to be confirmed as valid or invalid.
+
+            * valid_to_house_number - The input address was validated to the
+        street and house number level. This means the country, state,
+        city,postal code, street, and house number of the input address are
+        valid, but the subpremise of the input address was unable to be
+        confirmed as valid or invalid. 
+
+            * valid_to_house_number_missing_apt - The input address was
+        validated to the street and house number level. This means the country,
+        state, city, postal code, street, and house number of the input address
+        are valid, but the subpremise of the input address was missing and thus
+        unable to be confirmed as valid or invalid.
+      example: valid
     AggregationStatus:
       type: string
       description: |-
@@ -8073,6 +7973,46 @@ components:
         Status Codes](https://docs.finicity.com/aggregation-status-codes/)).
         Won't be present until you have run your first aggregation for the
         account.
+    AnnualIncome:
+      required:
+        - year
+        - grossPayAmountYTD
+      type: object
+      properties:
+        year:
+          type: string
+          description:
+            The year for the amounts given in YTD totals for an employer
+          example: 2022
+        grossPayAmountYTD:
+          type: number
+          description:
+            Year to date (YTD) gross pay amount for the indicated year
+          example: 123.45
+        netPayAmountYTD:
+          type: number
+          description: Year to date (YTD) net pay amount for the indicated year
+          example: 123.45
+        basePayAmountYTD:
+          type: number
+          description: Year to date (YTD) base pay amount for the year indicated
+          example: 123.45
+        overtimePayAmountYTD:
+          type: number
+          description:
+            Year to date (YTD) overtime pay amount for the year indicated
+          example: 123.45
+        otherPayAmountYTD:
+          type: number
+          description: >-
+            Year to date (YTD) other pay amount for the indicated year. Other
+            pay is pay that is not categorized into one of the other categories.
+          example: 123.45
+        commissionPayAmount:
+          type: number
+          description:
+            Year to date (YTD) commission pay amount for the indicated year
+          example: 123.45
     AppFinancialInstitutionStatus:
       description:
         The registration status fields for each specific OAuth financial
@@ -8278,6 +8218,13 @@ components:
       type: string
       description: The name of the application assigned to the customer
       example: Awesome Budget App
+    AsOfDate:
+      type: integer
+      description:
+        The last time the payroll data was updated in the payroll provider's
+        system
+      format: int64
+      example: 1596175200
     Asset:
       description: An asset
       required:
@@ -10510,27 +10457,6 @@ components:
           $ref: '#/components/schemas/ReportCustomFields'
         optionalConsumerInfo:
           $ref: '#/components/schemas/ConsumerInfo'
-    MicroEntryVerifyRequestParameter:
-      type: object
-      properties:
-        partnerId:
-          $ref: '#/components/schemas/PartnerId'
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        redirectUri:
-          $ref: '#/components/schemas/RedirectUri'
-        webhook:
-          $ref: '#/components/schemas/Webhook'
-        webhookContentType:
-          $ref: '#/components/schemas/WebhookContentType'
-        webhookData:
-          $ref: '#/components/schemas/WebhookData'
-        webhookHeaders:
-          $ref: '#/components/schemas/WebhookHeaders'
-        experience:
-          $ref: '#/components/schemas/Experience'
-        accountId:
-          $ref: '#/components/schemas/AccountId'
     ConnectEmailUrl:
       required:
         - link
@@ -11754,7 +11680,7 @@ components:
         The customer's username, assigned by the partner (a unique identifier),
         following these rules: minimum 6 characters maximum 255 characters any
         mix of uppercase, lowercase, numeric, and non-alphabet special
-        characters ! @ . # $ % & * _ – + the use of email in this field is
+        characters ! @ . # $ % & * _ - + the use of email in this field is
         discouraged it is recommended to use a unique non-email identifier. Use
         of special characters may result in an error (e.g. í, ü, etc.).
         Usernames are unique. A username used in [Test
@@ -11782,7 +11708,6 @@ components:
     Customers:
       description: A list of customers
       required:
-        - found
         - displaying
         - moreAvailable
         - customers
@@ -11812,6 +11737,11 @@ components:
       format: date-time
       description: A date-time with time zone
       example: '2022-03-10T06:06:20.042584549Z'
+    DecimalNumber:
+      type: number
+      format: float
+      description: Decimal number
+      example: 0.12
     Deduction:
       type: object
       properties:
@@ -11842,6 +11772,55 @@ components:
           type: string
           description: Categorization based on the deduction line's description
           example: 401 Deductions
+    Deductions:
+      required:
+        - type
+        - amount
+      type: object
+      properties:
+        type:
+          type: string
+          description: >
+            Deduction types:
+
+
+            * `Federal tax`: Federal tax withholdings 
+
+
+            * `State tax`: State tax withholdings 
+
+
+            * `Local tax`: Local tax withholdings 
+
+
+            * `Social security tax`: Social security tax withholdings 
+
+
+            * `Medicare tax`: Medicare withholdings 
+
+
+            * `SUI SDI VPDI tax`: SUI SDI VPDI tax 
+
+
+            * Retirement deductions: Retirement withholdings 
+
+
+            * `Benefit deductions`: Medical/Health benefits withholdings (i.e.
+            medical, dental, vision, insurance) 
+
+
+            * `Garnishment deductions`: Garnishment withholdings, (i.e.
+            bankruptcy, student loan, state garnishments, tax levy garnishments,
+            child support) 
+
+
+            * `Other deductions`: Other withholdings, includes any other
+            uncommon withholdings, pension plan, stock plans, etc.
+          example: State tax
+        amount:
+          type: number
+          description: Amount associated with deduction
+          example: 4.28
     DirectDeposit:
       type: object
       properties:
@@ -11854,6 +11833,70 @@ components:
           description:
             The last four numbers of the account the deposit went into
           example: '1234'
+    DirectDeposits:
+      type: object
+      properties:
+        accountTypeCode:
+          type: string
+          description: >
+            Bank account type:
+
+
+            * `Checking`
+
+
+            * `Savings`
+
+
+            * `Loan`: Loan account employee choose to direct a portion of their
+            net pay to help pay off a loan
+          example: Savings
+        amount:
+          type: number
+          description: Direct deposit amount
+          example: 12.34
+        accountLastFour:
+          type: string
+          description: Last four digits of the deposit account number
+          example: 3337
+        routingNumber:
+          type: string
+          description: Routing number for the deposit account
+          example: 30207583
+    DirectPayStatements:
+      required:
+        - payrollPayHistoryId
+        - lastPayPeriodIndicator
+        - mainPayStatementFields
+        - earnings
+      type: object
+      properties:
+        payrollPayHistoryId:
+          type: string
+          description:
+            An ID for the income and employment details for the given pay period
+          example: qsrt2hmjnf
+        lastPayPeriodIndicator:
+          type: boolean
+          description: Most recent available pay check
+          example: true
+        mainPayStatementFields:
+          $ref: '#/components/schemas/MainPayStatementFields'
+        earnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Earnings'
+          description: 'Categorization of pay, for the pay period'
+        deductions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deductions'
+          description: Deductions from the pay check
+        directDeposits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDeposits'
+          description: Direct deposit information for the paycheck
     DisplayPosition:
       type: integer
       description: |-
@@ -11865,10 +11908,62 @@ components:
       type: integer
       description: The number of results returned
       example: 1
+    Earnings:
+      required:
+        - type
+        - amount
+      type: object
+      properties:
+        name:
+          type: string
+          description:
+            'Where available, the employer description of earnings on the
+            paycheck'
+          example: bonusPayAmount
+        type:
+          type: string
+          description: |
+            Categorization of the earnings:
+
+            * `base`
+
+            * `bonus`
+
+            * `overtime`
+
+            * `commission`
+
+            * `tips`
+
+            * `other`
+          example: bonus
+        rate:
+          type: number
+          description: Rate of pay
+          example: 19
+        amount:
+          type: number
+          description: Earnings amount for each earning type
+          example: 589
+        amountYTD:
+          type: number
+          description: Earnings YTD amount if available
+          example: 14301.25
     EmailAddress:
       type: string
       description: An email address
       example: myname@mycompany.com
+    EmailDomainCreationDate:
+      type: string
+      description: Returns a date that the email domain was created.
+      example: '2011-06-29T00:00:00.000Z'
+    EmailFirstSeenDays:
+      type: number
+      description: >-
+        Count of days since the email was first observed in Ekata's Identity
+        Network. If the email has not been observed before, first_seen_days will
+        be 0.
+      example: 453
     EmailOptions:
       description: Configuration for the Connect email's sent to customers
       required:
@@ -11919,6 +12014,18 @@ components:
             - Cindy Mayfield
             - Senior Loan Officer
             - Direct 123-456-7890
+    EmailToName:
+      type: string
+      description: |-
+        The match status between the input name and the queried entity.
+        * not found
+        * match
+        * no-match
+      example: not found
+    EmailValid:
+      type: boolean
+      description: True if the email address is valid.
+      example: true
     Employee:
       type: object
       properties:
@@ -11933,6 +12040,11 @@ components:
           type: string
           description: The name of the employer
           example: Rocket Surgery
+    EmployerName:
+      type: string
+      description:
+        Name of the employer as stated by the employer in the payroll system
+      example: ACME INC
     ErrorMessage:
       required:
         - code
@@ -11977,7 +12089,7 @@ components:
       type: boolean
       description: >-
         Only used on an exception basis for clients that need to exclude EmpInfo
-        data from the VOE–Payroll or VOIE–Payroll report. If true is passed
+        data from the VOE-Payroll or VOIE-Payroll report. If true is passed
         EmpInfo payroll provider's data will not be searched or returned.
       example: false
     ExpectedPayoffDate:
@@ -12105,6 +12217,29 @@ components:
 
           * Driver: 6-9 digits
       example: '123456789'
+    GseEnabled:
+      type: boolean
+      description: >-
+        Mastercard Open Banking internal use only to flag reports that should
+        not be retrieved by the GSE's (Government-Sponsored Enterprise).
+
+
+        This is a mandatory field for VOE-payroll and VOIE-payroll report types.
+      example: true
+    IdentityNetworkScore:
+      type: number
+      description: >-
+        Comprehensive network score built on behavioral insights such as
+        velocity, popularity, volatility, and age of an attribute, with a higher
+        score indicating a riskier account sign-up. A number between 0 and 1
+        rounded to three decimal places.
+      example: 0.574
+    IdentityRiskScore:
+      type: number
+      description: >-
+        Comprehensive identity risk score with a higher score indicating a
+        riskier account sign-up.
+      example: 275
     IncludePending:
       type: boolean
       description: If pending transactions must be included
@@ -12126,6 +12261,21 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    InitiatedMicroDeposit:
+      type: object
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        status:
+          type: string
+          example: Pending
+          description: Micro entries successful initiation status
+        depositCount:
+          $ref: '#/components/schemas/MicroDepositCount'
+        statusDescription:
+          type: string
+          example: Micro entries successfully initiated
+          description: Micro entries successful initiation description
     Institution:
       description: A financial institution
       required:
@@ -12485,6 +12635,56 @@ components:
 
         * "otherInfo"
       example: transfer
+    IpAddressDistance:
+      type: number
+      description:
+        The distance (in miles) between the IP address and the physical address.
+      example: 210
+    IpGeolocationCountryCode:
+      type: string
+      description: >-
+        The ISO-3166 alpha-2 country code associated with the geolocation of the
+        IP address.
+      example: US
+    IpGeolocationSubdivision:
+      type: string
+      description: More granular detail about the IP address location.
+      example: Oregon
+    IpLastSeenDays:
+      type: number
+      description: >-
+        Count of days since the IP address was last observed in Ekata’s Identity
+        Network. If the IP address has not been observed before, IpLastSeenDays
+        will be 0.
+      example: 15
+    IpPhoneDistance:
+      type: number
+      description: >-
+        The distance (in miles) between the IP address and the closest physical
+        address associated with the phone number.
+      example: 200
+    IpRisk:
+      type: number
+      description: >-
+        True if the IP address is considered risky, based on multiple IP data
+        points and velocity calculations.
+      example: true
+    IpRiskScore:
+      type: number
+      description: >-
+        Comprehensive risk score associated with an IP address, with a higher
+        score indicating a riskier IP address. A number between 0 and 1 rounded
+        to three decimal places.
+      example: 0.123
+    IsWebView:
+      type: boolean
+      description: >-
+        "true": Indicates that the Connect Session will be displayed within a
+        WebView.
+
+        Note: when the `isWebView` parameter is `true` the `redirectUri`
+        parameter is required.
+      example: true
     LastName:
       type: string
       description: The last name of the account holder
@@ -12710,6 +12910,89 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    MainPayStatementFields:
+      required:
+        - payDate
+        - grossPayAmount
+      type: object
+      properties:
+        payDate:
+          type: integer
+          description: Pay date for the pay period
+          format: int64
+          example: 1607450357
+        startDate:
+          type: integer
+          description: Start date for the pay period
+          format: int64
+          example: 1607450357
+        endDate:
+          type: integer
+          description: End date for the pay period
+          format: int64
+          example: 1607450357
+        payPeriodHours:
+          type: number
+          description: Sum of all hours worked each week for the pay period
+          example: 39.75
+        payFrequency:
+          type: string
+          description: |
+            The current pay frequency, or how often a regular pay check is  
+            distributed:
+
+            * `Daily`
+
+            * `Weekly`
+
+            * `Bi-Weekly`
+
+            * `Semi-Monthly`
+
+            * `Monthly`
+
+            * `Quarterly`
+
+            * `Semi-Annual`
+
+            * `Annual`
+
+            * `Every 2.6 wks`
+
+            * `Every 4 wks`
+
+            * `Every 5.2 wks`
+
+            * `Other`
+          example: Weekly
+        payType:
+          type: string
+          description: |
+            Current pay type:
+
+            * `Salary`
+
+            * `Hourly`
+
+            * `Daily`
+          example: Hourly
+        grossPayAmount:
+          type: number
+          description: Gross pay amount for the pay period
+          example: 755.25
+        grossPayAmountYTD:
+          type: number
+          description:
+            Year to date (YTD) gross pay amount at the time of payment
+          example: 4256
+        netPayAmount:
+          type: number
+          description: Net pay amount for a pay period
+          example: 608.77
+        netPayAmountYTD:
+          type: number
+          description: Year to date (YTD) net pay amount at the time of payment
+          example: 2345.99
     MarketSegment:
       type: string
       description: >-
@@ -12725,10 +13008,148 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    MicroDepositCallbackUrl:
+      type: string
+      format: uri
+      description: A callback URL where to receive micro deposit notifications
+      example: 'https://www.mydomain.com/listener'
+    MicroDepositCount:
+      type: integer
+      format: int32
+      example: 2
+      description: Count of micro entries
+    MicroDepositDetails:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/MicroDepositStatus'
+        statusDescription:
+          $ref: '#/components/schemas/MicroDepositStatusDescription'
+        creationDate:
+          $ref: '#/components/schemas/NoZoneDateTime'
+        routingNumber:
+          $ref: '#/components/schemas/RoutingNumber'
+        accountNumberLast4:
+          $ref: '#/components/schemas/AccountNumberLast4'
+    MicroDepositInitiation:
+      required:
+        - receiver
+      type: object
+      properties:
+        institutionLoginId:
+          $ref: '#/components/schemas/InstitutionLoginId'
+        receiver:
+          $ref: '#/components/schemas/Receiver'
+        callbackUrl:
+          $ref: '#/components/schemas/MicroDepositCallbackUrl'
+    MicroDepositStatus:
+      type: string
+      description: |-
+        The following values may be returned in the field of a status:
+
+        * "Pending" : Micro entries not yet deposited to customer's account
+        * "Completed": Micro entries deposited to customer's account
+        * "Verified": Micro entries got successfully verified
+        * "Rejected": Micro entries got rejected due to some reason
+        * "Returned": Micro entries got returned back
+        * "Failed": Micro entries got failed due to some reason
+        * "Expired": Micro entries got expired as they remains unverified for
+        certain defined days
+      example: Pending
+    MicroDepositStatusDescription:
+      type: string
+      example: Micro entries are in pending status
+      description: Micro entries status description
+    MicroDepositVerification:
+      description: A list of amounts
+      required:
+        - amounts
+      type: object
+      properties:
+        amounts:
+          description: The list of amounts to be verified
+          type: array
+          items:
+            $ref: '#/components/schemas/DecimalNumber'
+          example:
+            - 0.12
+            - 0.15
+    MicroDepositVerificationError:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/MicroDepositStatus'
+        statusDescription:
+          $ref: '#/components/schemas/MicroDepositStatusDescription'
+    MicroEntryVerifyRequestParameter:
+      type: object
+      properties:
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        experience:
+          $ref: '#/components/schemas/Experience'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
     MiddleName:
       type: string
       description: The middle name of the account holder
       example: L
+    MonthlyIncome:
+      required:
+        - estimatedMonthlyTotalPay
+      type: object
+      description: |-
+        Current estimated monthly pay for the employment.
+
+        This is a mandatory field only for VOIE-payroll report type.
+      properties:
+        estimatedMonthlyBasePay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly base pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyOvertimePay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly overtime pay amount for
+            the employment
+          example: 123.45
+        estimatedMonthlyBonusPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly bonus pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyOtherPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly other pay amount for the
+            employment
+          example: 123.45
+        estimatedMonthlyTotalPay:
+          type: number
+          description:
+            Sum of all Mastercard Open Banking estimated monthly pay amounts
+          example: 123.45
+        estimatedMonthlyCommissionPay:
+          type: number
+          description: >-
+            Mastercard Open Banking estimated monthly commission pay amount for
+            the employment
+          example: 123.45
     MoreResultsAvailable:
       type: boolean
       description: >-
@@ -12826,6 +13247,10 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    NoZoneDateTime:
+      type: string
+      description: A date-time without time zone
+      example: '2022-04-12T11:51:23'
     NumericAccountId:
       type: integer
       format: int64
@@ -13313,6 +13738,13 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    OriginalPayrollReportId:
+      type: string
+      description: >-
+        The report ID of the original payroll report for refresh use cases. If
+        used, only the employment records from the original report will be
+        included in the refreshed report response.
+      example: u4hstnnak45g-voiepayroll
     OutOfSchoolDate:
       type: integer
       description: >-
@@ -13360,6 +13792,35 @@ components:
       type: string
       description: Name of a Finicity partner
       example: Finicity Test API
+    PayFrequency:
+      type: string
+      description: |
+        The current pay frequency or or how often a regular pay check is:
+
+        * `Daily` 
+
+        * `Weekly` 
+
+        * `Bi-Weekly` 
+
+        * `Semi-Monthly` 
+
+        * `Monthly` 
+
+        * `Quarterly` 
+
+        * `Semi-Annual` 
+
+        * `Annual` 
+
+        * `Every 2.6 wks` 
+
+        * `Every 4 wks` 
+
+        * `Every 5.2 wks` 
+
+        * `Other`
+      example: Weekly
     PayStat:
       type: object
       properties:
@@ -13533,6 +13994,15 @@ components:
           $ref: '#/components/schemas/PayStatementData'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+    PayStatementsFromDate:
+      type: integer
+      description: >-
+        Limits the pay statement history in the VOIE - Payroll report income
+        record. Pay statements are only included if the payDate of the statement
+        is equal to or greater than the start date requested. Date should be in
+        Unix epoch time (in seconds). See: Handling Epoch Dates and Times.
+      format: int64
+      example: 1607450357
     PaymentDueDate:
       type: integer
       description: >-
@@ -13683,18 +14153,6 @@ components:
           $ref: '#/components/schemas/PayrollEmploymentRecord'
         income:
           $ref: '#/components/schemas/PayrollVOEIncomeRecord'
-    EmployerName:
-      type: string
-      description:
-        Name of the employer as stated by the employer in the payroll system
-      example: ACME INC
-    AsOfDate:
-      type: integer
-      description: >-
-        The last time the payroll data was updated in the payroll provider's
-        system
-      format: int64
-      example: 1596175200
     PayrollEmploymentHistoryVOIE:
       required:
         - asOfDate
@@ -13784,12 +14242,12 @@ components:
           type: string
           description: >-
             'Status codes: `A` - Active, `NLE` - No Longer Employed, `L` -
-            Leave, `O` – Other'
+            Leave, `O` - Other'
           example: A
         employmentStatusName:
           type: string
-          description: >-
-            'Status name: `Active`, `No Longer Employed`, `Leave` or `Other`'
+          description:
+            "'Status name: `Active`, `No Longer Employed`, `Leave` or `Other`'"
           example: Active
         workLevelCode:
           type: string
@@ -13805,24 +14263,33 @@ components:
           example: Full Time-Regular
         workLevelStatus:
           type: string
-          description: |
+          description: >
             The categorized work level status. Enumerations are:
+
 
             * `Temporary`
 
+
             * `Seasonal`
+
 
             * `Retired`
 
+
             * `Student`
+
 
             * `Full Time`
 
+
             * `Part Time`
+
 
             * `Unspecified`
 
-            This is a new field, currently enabled only for testing reports. It will be added for all reports in August 2021.
+
+            This is a new field, currently enabled only for testing reports. It
+            will be added for all reports in August 2021.
           example: Full Time
         positionTitle:
           type: string
@@ -13888,35 +14355,6 @@ components:
       properties:
         payFrequency:
           $ref: '#/components/schemas/PayFrequency'
-    PayFrequency:
-      type: string
-      description: |
-        The current pay frequency or or how often a regular pay check is:
-
-        * `Daily` 
-
-        * `Weekly` 
-
-        * `Bi-Weekly` 
-
-        * `Semi-Monthly` 
-
-        * `Monthly` 
-
-        * `Quarterly` 
-
-        * `Semi-Annual` 
-
-        * `Annual` 
-
-        * `Every 2.6 wks` 
-
-        * `Every 4 wks` 
-
-        * `Every 5.2 wks` 
-
-        * `Other`
-      example: Weekly
     PayrollVOIEIncomeRecord:
       type: object
       properties:
@@ -13979,10 +14417,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AnnualIncome'
-          description: >-
-            The annual pay for the current year, through prior year 2 (as
-            available)
-
+          description: |-
+            The annual pay for the current year, through prior year 2 (as available)
 
             This is a mandatory field only for VOIE-payroll report type.
         monthlyIncome:
@@ -13992,310 +14428,6 @@ components:
           items:
             $ref: '#/components/schemas/DirectPayStatements'
           description: An array of payment histories for each available paycheck
-    AnnualIncome:
-      required:
-        - year
-        - grossPayAmountYTD
-      type: object
-      properties:
-        year:
-          type: string
-          description: >-
-            The year for the amounts given in YTD totals for an employer
-          example: 2022
-        grossPayAmountYTD:
-          type: number
-          description: >-
-            Year to date (YTD) gross pay amount for the indicated year
-          example: 123.45
-        netPayAmountYTD:
-          type: number
-          description: Year to date (YTD) net pay amount for the indicated year
-          example: 123.45
-        basePayAmountYTD:
-          type: number
-          description: Year to date (YTD) base pay amount for the year indicated
-          example: 123.45
-        overtimePayAmountYTD:
-          type: number
-          description: >-
-            Year to date (YTD) overtime pay amount for the year indicated
-          example: 123.45
-        otherPayAmountYTD:
-          type: number
-          description: >-
-            Year to date (YTD) other pay amount for the indicated year. Other
-            pay is pay that is not categorized into one of the other categories.
-          example: 123.45
-        commissionPayAmount:
-          type: number
-          description: >-
-            Year to date (YTD) commission pay amount for the indicated year
-          example: 123.45
-    MonthlyIncome:
-      required:
-        - estimatedMonthlyTotalPay
-      type: object
-      description: >-
-        Current estimated monthly pay for the employment.
-
-
-        This is a mandatory field only for VOIE-payroll report type.
-      properties:
-        estimatedMonthlyBasePay:
-          type: number
-          description: >-
-            Mastercard Open Banking estimated monthly base pay amount for the
-            employment
-          example: 123.45
-        estimatedMonthlyOvertimePay:
-          type: number
-          description: >-
-            Mastercard Open Banking estimated monthly overtime pay amount for
-            the employment
-          example: 123.45
-        estimatedMonthlyBonusPay:
-          type: number
-          description: >-
-            Mastercard Open Banking estimated monthly bonus pay amount for the
-            employment
-          example: 123.45
-        estimatedMonthlyOtherPay:
-          type: number
-          description: >-
-            Mastercard Open Banking estimated monthly other pay amount for the
-            employment
-          example: 123.45
-        estimatedMonthlyTotalPay:
-          type: number
-          description: >-
-            Sum of all Mastercard Open Banking estimated monthly pay amounts
-          example: 123.45
-        estimatedMonthlyCommissionPay:
-          type: number
-          description: >-
-            Mastercard Open Banking estimated monthly commission pay amount for
-            the employment
-          example: 123.45
-    DirectPayStatements:
-      required:
-        - payrollPayHistoryId
-        - lastPayPeriodIndicator
-        - mainPayStatementFields
-        - earnings
-      type: object
-      properties:
-        payrollPayHistoryId:
-          type: string
-          description: >-
-            An ID for the income and employment details for the given pay period
-          example: qsrt2hmjnf
-        lastPayPeriodIndicator:
-          type: boolean
-          description: Most recent available pay check
-          example: true
-        mainPayStatementFields:
-          $ref: '#/components/schemas/MainPayStatementFields'
-        earnings:
-          type: array
-          items:
-            $ref: '#/components/schemas/Earnings'
-          description: Categorization of pay, for the pay period
-        deductions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Deductions'
-          description: Deductions from the pay check
-        directDeposits:
-          type: array
-          items:
-            $ref: '#/components/schemas/DirectDeposits'
-          description: Direct deposit information for the paycheck
-    MainPayStatementFields:
-      required:
-        - payDate
-        - grossPayAmount
-      type: object
-      properties:
-        payDate:
-          type: integer
-          description: Pay date for the pay period
-          format: int64
-          example: 1607450357
-        startDate:
-          type: integer
-          description: Start date for the pay period
-          format: int64
-          example: 1607450357
-        endDate:
-          type: integer
-          description: End date for the pay period
-          format: int64
-          example: 1607450357
-        payPeriodHours:
-          type: number
-          description: Sum of all hours worked each week for the pay period
-          example: 39.75
-        payFrequency:
-          type: string
-          description: |
-            The current pay frequency, or how often a regular pay check is  
-            distributed:
-
-            * `Daily`
-
-            * `Weekly`
-
-            * `Bi-Weekly`
-
-            * `Semi-Monthly`
-
-            * `Monthly`
-
-            * `Quarterly`
-
-            * `Semi-Annual`
-
-            * `Annual`
-
-            * `Every 2.6 wks`
-
-            * `Every 4 wks`
-
-            * `Every 5.2 wks`
-
-            * `Other`
-          example: Weekly
-        payType:
-          type: string
-          description: |
-            Current pay type:
-
-            * `Salary`
-
-            * `Hourly`
-
-            * `Daily`
-          example: Hourly
-        grossPayAmount:
-          type: number
-          description: Gross pay amount for the pay period
-          example: 755.25
-        grossPayAmountYTD:
-          type: number
-          description: >-
-            Year to date (YTD) gross pay amount at the time of payment
-          example: 4256.00
-        netPayAmount:
-          type: number
-          description: Net pay amount for a pay period
-          example: 608.77
-        netPayAmountYTD:
-          type: number
-          description: Year to date (YTD) net pay amount at the time of payment
-          example: 2345.99
-    Earnings:
-      required:
-        - type
-        - amount
-      type: object
-      properties:
-        name:
-          type: string
-          description: >-
-            Where available, the employer description of earnings on the
-            paycheck
-          example: bonusPayAmount
-        type:
-          type: string
-          description: |
-            Categorization of the earnings:
-
-            * `base`
-
-            * `bonus`
-
-            * `overtime`
-
-            * `commission`
-
-            * `tips`
-
-            * `other`
-          example: bonus
-        rate:
-          type: number
-          description: Rate of pay
-          example: 19.0
-        amount:
-          type: number
-          description: Earnings amount for each earning type
-          example: 589.00
-        amountYTD:
-          type: number
-          description: Earnings YTD amount if available
-          example: 14301.25
-    Deductions:
-      required:
-        - type
-        - amount
-      type: object
-      properties:
-        type:
-          type: string
-          description: |
-            Deduction types:
-
-            * `Federal tax`: Federal tax withholdings 
-
-            * `State tax`: State tax withholdings 
-
-            * `Local tax`: Local tax withholdings 
-
-            * `Social security tax`: Social security tax withholdings 
-
-            * `Medicare tax`: Medicare withholdings 
-
-            * `SUI SDI VPDI tax`: SUI SDI VPDI tax 
-
-            * Retirement deductions: Retirement withholdings 
-
-            * `Benefit deductions`: Medical/Health benefits withholdings (i.e. medical, dental, vision, insurance) 
-
-            * `Garnishment deductions`: Garnishment withholdings, (i.e. bankruptcy, student loan, state garnishments, tax levy garnishments, child support) 
-
-            * `Other deductions`: Other withholdings, includes any other uncommon withholdings, pension plan, stock plans, etc.
-          example: State tax
-        amount:
-          type: number
-          description: Amount associated with deduction
-          example: 4.28
-    DirectDeposits:
-      type: object
-      properties:
-        accountTypeCode:
-          type: string
-          description: |
-            Bank account type:
-
-            * `Checking`
-
-            * `Savings`
-
-            * `Loan`: Loan account employee choose to direct a portion of their net pay to help pay off a loan
-          example: Savings
-        amount:
-          type: number
-          description: Direct deposit amount
-          example: 12.34
-        accountLastFour:
-          type: string
-          description: Last four digits of the deposit account number
-          example: 3337
-        routingNumber:
-          type: string
-          description: Routing number for the deposit account
-          example: 30207583
     PaystubMonthlyIncomeRecord:
       type: object
       properties:
@@ -14339,80 +14471,37 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    PhoneCarrier:
+      type: string
+      description: >-
+        The company that provides voice and/or data services for the phone
+        number. Carriers are returned at the MVNO level.
+      example: Vodafone UK ltd.
     PhoneCountry:
       type: string
       description: >-
         Country calling code of the phone number as defined by ITU-T E.123 and
         E.164 international standards (max length 3)".
       example: '61'
-    EmailValid:
-      type: boolean
-      description: True if the email address is valid.
-      example: true
-    EmailFirstSeenDays:
-      type: number
-      description: >-
-        Count of days since the email was first observed in Ekata's Identity
-        Network. If the email has not been observed before, first_seen_days will
-        be 0.
-      example: 453
-    EmailDomainCreationDate:
+    PhoneCountryCode:
       type: string
-      description: Returns a date that the email domain was created.
-      example: 2011-06-29T00:00:00.000Z
-    EmailToName:
-      type: string
-      description: |-
-        The match status between the input name and the queried entity.
-        * not found
-        * match
-        * no-match
-      example: not found
-    IpRisk:
-      type: number
-      description: >-
-        True if the IP address is considered risky, based on multiple IP data
-        points and velocity calculations.
-      example: true
-    IpRiskScore:
-      type: number
-      description: >-
-        Comprehensive risk score associated with an IP address, with a higher
-        score indicating a riskier IP address. A number between 0 and 1 rounded
-        to three decimal places.
-      example: 0.123
-    IpLastSeenDays:
-      type: number
-      description: >-
-        Count of days since the IP address was last observed in Ekata’s Identity
-        Network. If the IP address has not been observed before, IpLastSeenDays
-        will be 0.
-      example: 15
-    IpGeolocationCountryCode:
-      type: string
-      description: >-
-        The ISO-3166 alpha-2 country code associated with the geolocation of the
-        IP address.
-      example: US
-    IpGeolocationSubdivision:
-      type: string
-      description: More granular detail about the IP address location.
-      example: Oregon
-    IpPhoneDistance:
-      type: number
-      description: >-
-        The distance (in miles) between the IP address and the closest physical
-        address associated with the phone number.
-      example: 200
-    IpAddressDistance:
-      type: number
       description:
-        The distance (in miles) between the IP address and the physical address.
-      example: 210
-    PhoneValid:
-      type: boolean
-      description: True if the phone number is valid.
-      example: true
+        The ISO-3166 alpha-2 country code associated with the phone number.
+      example: UK
+    PhoneEmailFirstSeenDays:
+      type: number
+      description: >-
+        Count of days since the combination of phone and email was first
+        observed in Ekata’s Identity Network. If that combination has not been
+        observed before, phoneEmailFirstSeenDays will be 0.
+      example: 54
+    PhoneLastSeenDays:
+      type: number
+      description: >-
+        Count of days since the phone was last observed in Ekata’s Identity
+        Network. If the phone has not been observed before, phoneLastSeenDays
+        will be 0.
+      example: 42
     PhoneLineType:
       type: string
       description: >-
@@ -14428,147 +14517,59 @@ components:
 
         * toll-free - callee pays for call.
 
-        * premium - caller pays a premium for the call–e.g., 976 area code .
+        * premium - caller pays a premium for the call-e.g., 976 area code .
 
         * non-fixed-voip - Skype, for example * other - anything that does not
         match the previous categories.
       example: mobile
-    PhoneCarrier:
+    PhoneNumber:
       type: string
-      description: >-
-        The company that provides voice and/or data services for the phone
-        number. Carriers are returned at the MVNO level.
-      example: Vodafone UK ltd.
-    PhoneCountryCode:
-      type: string
-      description:
-        The ISO-3166 alpha-2 country code associated with the phone number.
-      example: UK
-    PhoneLastSeenDays:
-      type: number
-      description: >-
-        Count of days since the phone was last observed in Ekata’s Identity
-        Network. If the phone has not been observed before, phoneLastSeenDays
-        will be 0.
-      example: 42
-    PhoneEmailFirstSeenDays:
-      type: number
-      description: >-
-        Count of days since the combination of phone and email was first
-        observed in Ekata’s Identity Network. If that combination has not been
-        observed before, phoneEmailFirstSeenDays will be 0.
-      example: 54
-    PhoneToName:
-      type: string
-      description: |-
-        The match status between the input name and the queried entity.
-
-         * not-found
-
-         * match
-
-         * no-match
-      example: match
+      description: A phone number (max length 15).
+      example: 1-801-984-4200
     PhoneToAddress:
       type: string
       description: >-
         The match status between the input phone and the queried entity.
 
-        * match – Phone location matches input address line 1, address line 2,
+        * match - Phone location matches input address line 1, address line 2,
         city, state, and postal code. 
 
 
-        * postal-match – Phone location postal code matches input address postal
+        * postal-match - Phone location postal code matches input address postal
         code. 
 
 
-        * zip4-match – Phone location postal code zip+4 matches input address
+        * zip4-match - Phone location postal code zip+4 matches input address
         postal code zip+4. 
 
 
-        * city-state-match – Phone location city and state matches input address
+        * city-state-match - Phone location city and state matches input address
         city and state. 
 
-        * metro-match – Phone location is in the same metro area as input
+        * metro-match - Phone location is in the same metro area as input
         address. 
 
 
-        * country-match – Phone location country matches input address country. 
+        * country-match - Phone location country matches input address country. 
 
 
-        * no-match – Phone location does not match input address.
+        * no-match - Phone location does not match input address.
       example: match
-    AddressValidityLevel:
-      type: number
-      description: >-
-        The most granular level to which the address could be validated. Ex. If
-        the address was only valid to the city level (but not to the house
-        level), it would return “valid_to_city”.
-          *  missing_address – An input address was not provided.
-
-          *  invalid – The input address is not valid.
-
-          *  valid – The input address is valid.
-
-          *  valid_to_country – The input address could only be validated to the
-        country level. This means the country of the input address is valid, but
-        the other elements of the input address were unable to be confirmed as
-        valid or invalid.
-
-          *  valid_to_city – The input address was validated to the city level.
-        This means the country, state, city, and postal code of the input
-        address are valid, but the street, house number, and subpremise of the
-        input address were unable to be confirmed as valid or invalid.
-
-          *  valid_to_street – The input address was validated to the street
-        level. This means the country, state, city, postal code, and street of
-        the input address are valid, but the house number and subpremise of the
-        input address were unable to be confirmed as valid or invalid.
-
-            *  valid_to_house_number – The input address was validated to the
-        street and house number level. This means the country, state,
-        city,postal code, street, and house number of the input address are
-        valid, but the subpremise of the input address was unable to be
-        confirmed as valid or invalid. 
-
-            *  valid_to_house_number_missing_apt – The input address was
-        validated to the street and house number level. This means the country,
-        state, city, postal code, street, and house number of the input address
-        are valid, but the subpremise of the input address was missing and thus
-        unable to be confirmed as valid or invalid.
-      example: valid
-    AddressToName:
+    PhoneToName:
       type: string
       description: |-
         The match status between the input name and the queried entity.
-         * not-found
-         * match
-         * no-match
+
+        * not-found
+
+        * match
+
+        * no-match
       example: match
-    IdentityNetworkScore:
-      type: number
-      description: >-
-        Comprehensive network score built on behavioral insights such as
-        velocity, popularity, volatility, and age of an attribute, with a higher
-        score indicating a riskier account sign-up. A number between 0 and 1
-        rounded to three decimal places.
-      example: 0.574
-    IdentityRiskScore:
-      type: number
-      description: >-
-        Comprehensive identity risk score with a higher score indicating a
-        riskier account sign-up.
-      example: 275
-    Warnings:
-      type: string
-      description: >-
-        Array of warnings. [Generalsyntaxerror,Invalidusernamesyntax,Missing
-        country_code,Input postal code was corrected]
-      example: Test warnings
-    PhoneNumber:
-      type: string
-      description: A phone number (max length 15).
-      example: 1-801-984-4200
+    PhoneValid:
+      type: boolean
+      description: True if the phone number is valid.
+      example: true
     PortfolioConsumer:
       required:
         - id
@@ -14793,7 +14794,6 @@ components:
       required:
         - currentBalance
         - twoMonthAverage
-        - sixMonthAverage
         - beginningBalance
       type: object
       properties:
@@ -14853,6 +14853,35 @@ components:
         FCRA required 2-digit Permissible Purpose Code, specifying the reason
         for retrieving this report.
       example: '31'
+    Receiver:
+      required:
+        - routingNumber
+        - accountNumber
+        - accountType
+        - name
+      type: object
+      properties:
+        routingNumber:
+          $ref: '#/components/schemas/RoutingNumber'
+        accountNumber:
+          type: string
+          example: '123456'
+          description: Micro entries receiving account number of bank
+        accountType:
+          type: string
+          example: checking
+          description: |-
+            The list of supported account types.
+            * "checking": Standard checking
+            * "savings": Standard savings
+        name:
+          type: string
+          example: Bob Smith
+          description: Name of the customer
+        memo:
+          type: string
+          example: micro deposit transfer
+          description: Transaction memo to be displayed for transactions
     RedirectUri:
       type: string
       description: >-
@@ -14981,13 +15010,6 @@ components:
       type: string
       description: A report ID
       example: u4hstnnak45g
-    OriginalPayrollReportId:
-      type: string
-      description: >-
-        The report ID of the original payroll report for refresh use cases. If
-        used, only the employment records from the original report will be
-        included in the refreshed report response.
-      example: u4hstnnak45g-voiepayroll
     ReportIncomeEstimate:
       required:
         - netAnnual
@@ -15228,6 +15250,10 @@ components:
         * `cfrb`
       type: string
       example: voi
+    RoutingNumber:
+      type: string
+      example: '123456789'
+      description: Routing number of receiving bank
     Rssd:
       type: integer
       description: >-
@@ -15283,15 +15309,6 @@ components:
         Note: when the `singleUseUrl` and the `experience` parameters are passed
         in the same call, the `singleUseUrl` value overrides the `singleUseUrl`
         value configured in the `experience` parameter.
-      example: true
-    IsWebView:
-      type: boolean
-      description: >-
-        "true": Indicates that the Connect Session will be displayed within a
-        WebView.
-
-        Note: when the `isWebView` parameter is `true` the `redirectUri`
-        parameter is required.
       example: true
     SocialSecurityNumber:
       type: string
@@ -16118,15 +16135,6 @@ components:
           $ref: '#/components/schemas/AssetId'
         accounts:
           $ref: '#/components/schemas/ReportAccountIds'
-    PayStatementsFromDate:
-      type: integer
-      description: >-
-        Limits the pay statement history in the VOIE – Payroll report income
-        record. Pay statements are only included if the payDate of the statement
-        is equal to or greater than the start date requested. Date should be in
-        Unix epoch time (in seconds). See: Handling Epoch Dates and Times.
-      format: int64
-      example: 1607450357
     UnixDate:
       type: integer
       description: >-
@@ -16468,15 +16476,6 @@ components:
           $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
-    GseEnabled:
-      type: boolean
-      description: >-
-        Mastercard Open Banking internal use only to flag reports that should
-        not be retrieved by the GSE's (Government-Sponsored Enterprise).
-
-
-        This is a mandatory field for VOE-payroll and VOIE-payroll report types.
-      example: true
     VOEPayrollReport:
       description: A VOE Payroll report
       type: object
@@ -16816,20 +16815,11 @@ components:
               $ref: '#/components/schemas/VOIEReportConstraints'
     VOIEPaystubWithStatementPayStatement:
       required:
-        - payPeriod
         - billable
         - assetId
-        - payDate
-        - startDate
-        - endDate
-        - netPayCurrent
-        - netPayYTD
-        - grossPayCurrent
-        - grossPayYTD
         - employer
         - employee
         - payStat
-        - directDeposits
         - monthlyIncome
         - institutions
       type: object
@@ -17426,6 +17416,23 @@ components:
           items:
             $ref: '#/components/schemas/ReportTransaction'
           description: A list of transaction records
+    VerifiedMicroDeposit:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Verified
+          description: Micro entries successful verification status
+        statusDescription:
+          type: string
+          example: Micro entries are successfully verified
+          description: Micro entries successful verification description
+    Warnings:
+      type: string
+      description: >-
+        Array of warnings. [Generalsyntaxerror,Invalidusernamesyntax,Missing
+        country_code,Input postal code was corrected]
+      example: Test warnings
     Webhook:
       type: string
       description: >-
@@ -17453,6 +17460,10 @@ components:
         Allows additional identifiable information to be included as headers of
         connect webhook event. See: [Custom
         Webhooks](https://docs.finicity.com/custom-webhooks/).
+    WithInsights:
+      type: boolean
+      description: If Identity Insights data must be returned or not
+      example: true
     ZipCode:
       type: string
       description: A ZIP code

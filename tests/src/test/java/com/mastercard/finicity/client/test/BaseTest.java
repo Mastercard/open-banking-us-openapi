@@ -1,6 +1,6 @@
 package com.mastercard.finicity.client.test;
 
-import client.interceptor.NullResponseRemoverInterceptor;
+import client.interceptor.NullRemoverResponseInterceptor;
 import com.google.gson.Gson;
 import com.mastercard.finicity.client.ApiClient;
 import com.mastercard.finicity.client.ApiException;
@@ -48,7 +48,7 @@ public abstract class BaseTest {
                 apiClient.getHttpClient()
                         .newBuilder()
                         .addInterceptor(authInterceptor)  // Handle Finicity authentication
-                        .addInterceptor(new NullResponseRemoverInterceptor()) // OpenAPI Generator 6.6.0 bug. See: https://github.com/OpenAPITools/openapi-generator/issues/12549
+                        .addInterceptor(new NullRemoverResponseInterceptor()) // OpenAPI Generator 6.6.0 bug. See: https://github.com/OpenAPITools/openapi-generator/issues/12549
                         .build()
         );
     }

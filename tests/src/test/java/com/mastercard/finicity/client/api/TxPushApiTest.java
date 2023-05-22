@@ -23,7 +23,7 @@ class TxPushApiTest extends BaseTest {
     private final static TxPushApi api = new TxPushApi(apiClient);
 
     private static CustomerAccount existingAccount;
-    private final static String WEB_HOOK_URL = "https://eo309tmtekubcq.m.pipedream.net/"; // Simply returns the "txpush_verification_code" value
+    private final static String WEB_HOOK_URL = "https://eo6g646tekhusnp.m.pipedream.net"; // Simply returns the "txpush_verification_code" value
 
 
     @BeforeAll
