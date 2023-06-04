@@ -9,14 +9,15 @@ function EnterToExit() {
    Exit
 }
 
-If ($Args.Count -ne "3") {
-   Write-Host "Usage: .\setup.ps1 {partnerId} {partnerSecret} {appKey}"  -ForegroundColor Red
+If ($Args.Count -lt "3" -or $Args.Count -gt "4") {
+   Write-Host "Usage: .\setup.ps1 {partnerId} {partnerSecret} {appKey} [--no-interaction]" -ForegroundColor Red
    EnterToExit
 }
 
 $PartnerId = $Args[0]
 $PartnerSecret = $Args[1]
 $AppKey = $Args[2]
+$Interactive = ($Args[3] -ne "--no-interaction")
 
 $Headers = @{
    "Content-Type" = "application/json"
@@ -59,26 +60,42 @@ If ($Res.StatusCode -ne "201") {
 $CustomerId = ($Res.Content | ConvertFrom-Json).id
 Write-Host "Customer ID: $CustomerId" -ForegroundColor Green
 
-Write-Output "`r`nStep 3 - Generating connect URL ..."
-$Body = @{
-   "partnerId" = "$PartnerId";
-   "customerId" = "$CustomerId"
-} | ConvertTo-Json
-$Res = Invoke-WebRequest -Uri https://api.finicity.com/connect/v2/generate `
-                         -Method POST `
-                         -Headers $Headers `
-                         -Body $Body
-If ($Res.StatusCode -ne "200") {
-   ApiError($Res)
+If (!$Interactive) {
+   Write-Output "`r`nSteps 3 and 4 - Skipping Connect, adding customer accounts ..."
+   $Body = '{"credentials":[{"name":"Banking Userid","value":"profile_03","id":"102105001"},{"name":"Banking Password","value":"profile_03","id":"102105002"}]}'
+   $Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v1/customers/$CustomerId/institutions/102105/accounts/addall `
+                           -Method POST `
+                           -Headers $Headers `
+                           -Body $Body
+   If ($Res.StatusCode -ne "200") {
+      ApiError($Res)
+   }
+   # { "accounts": [...]}
+   Write-Host "Accounts added" -ForegroundColor Green
 }
-# {"link":"https://..."}
-$Link = ($Res.Content | ConvertFrom-Json).link
-Write-Host "URL created" -ForegroundColor Green
 
-Write-Host "`r`nStep 4 - Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"  -ForegroundColor Yellow
-Write-Host "`r`n$Link"
-Write-Host "`r`nAfter you see 'Your submission was successful. Thank you!', press Enter to continue ..." -ForegroundColor Yellow
-Pause
+If ($Interactive) {
+   Write-Output "`r`nStep 3 - Generating connect URL ..."
+   $Body = @{
+      "partnerId" = "$PartnerId";
+      "customerId" = "$CustomerId"
+   } | ConvertTo-Json
+   $Res = Invoke-WebRequest -Uri https://api.finicity.com/connect/v2/generate `
+                           -Method POST `
+                           -Headers $Headers `
+                           -Body $Body
+   If ($Res.StatusCode -ne "200") {
+      ApiError($Res)
+   }
+   # {"link":"https://..."}
+   $Link = ($Res.Content | ConvertFrom-Json).link
+   Write-Host "URL created" -ForegroundColor Green
+
+   Write-Host "`r`nStep 4 - Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"  -ForegroundColor Yellow
+   Write-Host "`r`n$Link"
+   Write-Host "`r`nAfter you see 'Your submission was successful. Thank you!', press Enter to continue ..." -ForegroundColor Yellow
+   Pause
+}
 
 Write-Output "`r`nStep 5  - Refreshing accounts ..."
 $Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v1/customers/$CustomerId/accounts `

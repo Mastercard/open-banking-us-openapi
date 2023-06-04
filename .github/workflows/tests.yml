@@ -29,5 +29,6 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Run Tests
         run: |
+          customer_id=$(./bin/setup.sh ${{ secrets.PARTNER_ID }} ${{ secrets.PARTNER_SECRET }} ${{ secrets.APP_KEY }} --no-interaction | grep -oP '(?<=CUSTOMER_ID: )\d+')
           cd tests
-          mvn clean test -DpartnerId=${{ secrets.PARTNER_ID }} -DpartnerSecret=${{ secrets.PARTNER_SECRET }} -DappKey=${{ secrets.APP_KEY }} -DcustomerId=${{ secrets.CUSTOMER_ID }}
+          mvn clean test -DpartnerId=${{ secrets.PARTNER_ID }} -DpartnerSecret=${{ secrets.PARTNER_SECRET }} -DappKey=${{ secrets.APP_KEY }} -DcustomerId=$customer_id

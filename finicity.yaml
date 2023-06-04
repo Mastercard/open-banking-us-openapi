@@ -13458,8 +13458,6 @@ components:
         - reportRequestDate
         - requestedDaysForReport
         - requestedReportBeginDate
-        - reportBeginDate
-        - reportEndDate
       type: object
     ObbDailyBalance:
       properties:
@@ -13510,8 +13508,6 @@ components:
           maxLength: 255
       required:
         - historicAvailableDays
-        - historicAvailabilityBeginDate
-        - historicAvailabilityEndDate
         - historicDataAvailability
       type: object
     ObbDateRangeAndAmount:

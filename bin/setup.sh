@@ -13,8 +13,8 @@ enter_to_exit() {
   exit
 }
 
-if [ "$#" -ne 3 ]; then
-    echo "Usage: ./setup.sh {partnerId} {partnerSecret} {appKey}"
+if [ "$#" -lt 3 ] || [ "$#" -gt 4 ]; then
+    echo "Usage: ./setup.sh {partnerId} {partnerSecret} {appKey} [--no-interaction]"
     enter_to_exit
 fi
 
@@ -51,26 +51,45 @@ customer_id=$(echo $customer_response | sed -E 's/\{"id":"([0-9]*).*/\1/')
 echo "Customer ID: "$customer_id
 echo ""
 
-echo "Step 3 - Generating connect URL ..."
-connect_url_response=$(curl -s --location --request POST 'https://api.finicity.com/connect/v2/generate' \
---header 'Content-Type: application/json' \
---header 'Accept: application/json' \
---header 'Finicity-App-Key:'$3 \
---header 'Finicity-App-Token:'$token \
---data-raw '{ "partnerId": "'$1'", "customerId": "'$customer_id'" }')
+if [ "$4" == "--no-interaction" ]; then
+  echo "Steps 3 and 4 - Skipping Connect, adding customer accounts ..."
+  add_accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v1/customers/'$customer_id'/institutions/102105/accounts/addall' \
+  --header 'Content-Type: application/json' \
+  --header 'Accept: application/json' \
+  --header 'Finicity-App-Key:'$3 \
+  --header 'Finicity-App-Token:'$token \
+  --data-raw '{"credentials":[{"name":"Banking Userid","value":"profile_03","id":"102105001"},{"name":"Banking Password","value":"profile_03","id":"102105002"}]}')
 
-# {"link":"https://..."}
-link=$(echo $connect_url_response | sed -E 's/\{"link":"(.*)"\}/\1/')
-echo "URL created"
+  # { "accounts": [...]}
+  if [[ "$add_accounts_response" != *"accounts"* ]]; then 
+    api_error "$add_accounts_response"
+  fi;
+  echo "Accounts added"
+  echo ""
+fi
 
-echo ""
-echo "Step 4 - Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"
-echo ""
-echo $link
-echo ""
-read -p "After you see 'Your submission was successful. Thank you!', press [Enter] to continue ..."
+if [ "$4" != "--no-interaction" ]; then
+  echo "Step 3 - Generating connect URL ..."
+  connect_url_response=$(curl -s --location --request POST 'https://api.finicity.com/connect/v2/generate' \
+  --header 'Content-Type: application/json' \
+  --header 'Accept: application/json' \
+  --header 'Finicity-App-Key:'$3 \
+  --header 'Finicity-App-Token:'$token \
+  --data-raw '{ "partnerId": "'$1'", "customerId": "'$customer_id'" }')
 
-echo ""
+  # {"link":"https://..."}
+  link=$(echo $connect_url_response | sed -E 's/\{"link":"(.*)"\}/\1/')
+  echo "URL created"
+  echo ""
+
+  echo "Step 4 - Ctrl+click on the URL below, search for 'FinBank Profiles - A', then sign in with 'profile_03'/'profile_03' and add all available accounts"
+  echo ""
+  echo $link
+  echo ""
+  read -p 'After you see "Your submission was successful. Thank you!", press [Enter] to continue ...'
+  echo ""
+fi
+
 echo "Step 5 - Refreshing accounts ..."
 accounts_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v1/customers/'$customer_id'/accounts' \
 --header 'Content-Type: application/json' \
@@ -102,4 +121,5 @@ echo "git clone https://github.com/Mastercard/finicity-postman"
 echo "cd finicity-postman"
 echo "npx newman run finicity.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id" --folder 'All APIs'"
 echo ""
+
 enter_to_exit

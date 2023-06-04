@@ -47,7 +47,7 @@ The following workflows ensure the API specification stays in good shape and can
 
 1. [Fork this repository](https://github.com/Mastercard/finicity-openapi/fork)
 2. Go to _Settings_ > _Secrets_ > _Actions_
-3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET`, `APP_KEY` and `CUSTOMER_ID`
+3. Create new repository secrets: `PARTNER_ID`, `PARTNER_SECRET` and `APP_KEY`
 4. Enable workflows in the _Actions_ tab
 5. Click _Run workflow_ under _API Client Tests_. Expected result: :heavy_check_mark:
 
