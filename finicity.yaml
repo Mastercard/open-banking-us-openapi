@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.13.1
+  version: 1.13.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -4233,8 +4233,8 @@ components:
       value:
         code: 3000000
         message:
-          'Microdeposit initiation can’t be processed at this time due to
-          technical difficulties. Please try after some time'
+          Microdeposit initiation can't be processed at this time due to
+          technical difficulties. Please try after some time
     InvalidAccountNameExample:
       value:
         code: 3100001
@@ -4254,7 +4254,7 @@ components:
     MicrodepositAmountsDidNotMatchExample:
       value:
         code: 3200004
-        message: 'Microdeposit amounts didn’t match'
+        message: Microdeposit amounts didn't match
     TooManyRequestsExample:
       value:
         code: 3300001
@@ -7472,8 +7472,8 @@ components:
         routingNumber:
           type: string
           description: >-
-            The routing number of the financial institution for this specific
-            customers account
+            The routing number of the financial institution for specific
+            customer account
           example: '123456789'
         realAccountNumber:
           type: string
@@ -9314,7 +9314,6 @@ components:
         - minDailyBalance
         - maxDailyBalance
         - averageDailyBalance
-        - standardDeviationOfDailyBalance
         - numberOfDaysNegativeBalance
         - numberOfDaysPositiveBalance
       type: object
@@ -9358,7 +9357,6 @@ components:
         - minDailyBalance
         - maxDailyBalance
         - averageDailyBalance
-        - standardDeviationOfDailyBalance
         - numberOfDaysNegativeBalance
         - numberOfDaysPositiveBalance
       type: object
@@ -12653,7 +12651,7 @@ components:
     IpLastSeenDays:
       type: number
       description: >-
-        Count of days since the IP address was last observed in Ekata’s Identity
+        Count of days since the IP address was last observed in Ekata's Identity
         Network. If the IP address has not been observed before, IpLastSeenDays
         will be 0.
       example: 15
@@ -14488,14 +14486,14 @@ components:
       type: number
       description: >-
         Count of days since the combination of phone and email was first
-        observed in Ekata’s Identity Network. If that combination has not been
-        observed before, phoneEmailFirstSeenDays will be 0.
+        observed in Ekata's Identity Network. If that combination has not been
+        observed before, `phoneEmailFirstSeenDays` will be 0.
       example: 54
     PhoneLastSeenDays:
       type: number
       description: >-
-        Count of days since the phone was last observed in Ekata’s Identity
-        Network. If the phone has not been observed before, phoneLastSeenDays
+        Count of days since the phone was last observed in Ekata's Identity
+        Network. If the phone has not been observed before, `phoneLastSeenDays`
         will be 0.
       example: 42
     PhoneLineType:
@@ -14513,7 +14511,7 @@ components:
 
         * toll-free - callee pays for call.
 
-        * premium - caller pays a premium for the call-e.g., 976 area code .
+        * premium - caller pays a premium for the call-e.g., 976 area code.
 
         * non-fixed-voip - Skype, for example * other - anything that does not
         match the previous categories.
