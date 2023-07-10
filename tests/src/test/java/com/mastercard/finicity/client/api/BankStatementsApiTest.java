@@ -6,6 +6,7 @@ import com.mastercard.finicity.client.model.StatementData;
 import com.mastercard.finicity.client.model.StatementReportConstraints;
 import com.mastercard.finicity.client.test.BaseTest;
 import com.mastercard.finicity.client.test.utils.AccountUtils;
+import com.mastercard.finicity.client.test.utils.ConsumerUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,9 @@ class BankStatementsApiTest extends BaseTest {
     @BeforeAll
     protected static void beforeAll() {
         try {
+            // A consumer is required to generate reports
+            ConsumerUtils.getOrCreateDefaultConsumer(new ConsumersApi(apiClient), CUSTOMER_ID);
+
             // Find an existing account ID
             Optional<CustomerAccount> account = AccountUtils.getCustomerAccounts(new AccountsApi(apiClient), CUSTOMER_ID)
                     .stream()
