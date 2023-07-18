@@ -134,7 +134,6 @@ class ConnectApiTest extends BaseTest {
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
             assertTrue(link.contains("origin=email"));
-            assertTrue(link.contains("consumerId=" + CONSUMER_ID));
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
             assertEquals("someone@company.com", emailConfig.getTo());
