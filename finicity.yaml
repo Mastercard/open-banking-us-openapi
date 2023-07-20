@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.13.2
+  version: 1.13.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -7677,7 +7677,7 @@ components:
       description: List of account owner Identity Insights
       type: object
       properties:
-        isEmailValids:
+        isEmailValid:
           $ref: '#/components/schemas/EmailValid'
         emailFirstSeenDays:
           $ref: '#/components/schemas/EmailFirstSeenDays'
@@ -7721,7 +7721,7 @@ components:
           $ref: '#/components/schemas/AddressToName'
         identityNetworkScore:
           $ref: '#/components/schemas/IdentityNetworkScore'
-        addressIdentityRiskScore:
+        identityRiskScore:
           $ref: '#/components/schemas/IdentityRiskScore'
         warnings:
           type: array
