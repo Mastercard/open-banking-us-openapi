@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.13.3
+  version: 1.13.4
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -4347,7 +4347,7 @@ components:
         payStatementsFromDate: 1580558400
         marketSegment: Mortgage
         excludeEmpInfo: false
-        purpose: 31
+        purpose: '31'
     GenerateVOEPayrollReportResponseExample:
       value:
         id: 41h4nzppn47u-voepayroll
@@ -5034,7 +5034,7 @@ components:
         id: sd1j45yn37wr-cfrp
         portfolioId: igi5kj6hh58y-1-port
         customerType: testing
-        customerId: '5555'
+        customerId: 5555
         requestId: xtw6tjemt6
         title: Finicity Cash Flow Report - Personal
         consumerId: 555595ec74c8ec57adf44dadddb6a35
@@ -5045,7 +5045,7 @@ components:
         createdDate: 1575666823
         startDate: 1512594823
         endDate: 1575666823
-        days: '730'
+        days: 730
         seasoned: true
         institutions:
           - id: '102105'
@@ -5228,7 +5228,7 @@ components:
       value:
         id: sd1j45yn37wr-cfrb
         customerType: testing
-        customerId: '5555'
+        customerId: 5555
         requestId: xtw6tjemt6
         title: Finicity Cash Flow Report - Business
         requesterName: Decisioning API Tests
@@ -5237,7 +5237,7 @@ components:
         createdDate: 1575666823
         startDate: 1512594823
         endDate: 1575666823
-        days: '730'
+        days: 730
         seasoned: true
         institutions:
           - id: '102105'
@@ -5923,7 +5923,7 @@ components:
                   net: 2004.77
               netAnnual: 110475.7
               projectedNetAnnual: 0
-              estimatedGrossAnnual:
+              estimatedGrossAnnual: 0
               projectedGrossAnnual: 151609
               averageMonthlyIncomeNet: 9206.31
               incomeStreamMonths: 18
@@ -6106,7 +6106,7 @@ components:
                   net: 2004.77
               netAnnual: 110475.7
               projectedNetAnnual: 0
-              estimatedGrossAnnual:
+              estimatedGrossAnnual: 0
               projectedGrossAnnual: 151609
               averageMonthlyIncomeNet: 9206.31
               incomeStreamMonths: 18
@@ -6498,7 +6498,7 @@ components:
                       net: 2004.77
                   netAnnual: 110475.7
                   projectedNetAnnual: 0
-                  estimatedGrossAnnual: 12392.1
+                  estimatedGrossAnnual: 0
                   projectedGrossAnnual: 151609
                   averageMonthlyIncomeNet: 9206.31
                   incomeStreamMonths: 24
@@ -7108,6 +7108,7 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/WithInsights'
+      example: false
     TransactionIdParameter:
       description: A transaction ID
       name: transactionId
@@ -7277,6 +7278,7 @@ components:
         reports.
       schema:
         type: string
+      example: '3F'
     PurposeParameter:
       name: purpose
       in: query
@@ -7288,6 +7290,7 @@ components:
         reports.
       schema:
         $ref: '#/components/schemas/PurposeCode'
+      example: '3F'
     ReportIdParameter:
       name: reportId
       in: path
@@ -7435,6 +7438,7 @@ components:
       description: The type of statement to retrieve
       schema:
         $ref: '#/components/schemas/StatementType'
+      example: taxStatement
     AccountTypeParameter:
       description: >-
         A filter to fetch accounts for the given type. Currently supported
@@ -7479,7 +7483,7 @@ components:
           type: string
           description:
             The account number for initiating ACH transfers for this account
-          example: 002345678901
+          example: '002345678901'
       description:
         The routing and account number information to initiate ACH transfers
     AccessToken:
@@ -8462,11 +8466,13 @@ components:
         businessId:
           description: Business ID associated with the requested customer
           type: integer
+          example: 1234
         createdDate:
           description: Created date of balance analytics request
           type: string
           minLength: 25
           maxLength: 25
+          example: '2022-02-10T05:00:00-07:00'
         customerId:
           $ref: '#/components/schemas/NumericCustomerId'
         reportId:
@@ -8476,11 +8482,13 @@ components:
           type: string
           minLength: 0
           maxLength: 50
+          example: 'qert'
         requesterName:
           description: Name of requester
           type: string
           minLength: 0
           maxLength: 255
+          example: 'Mortgage ABC LLC'
         title:
           $ref: '#/components/schemas/ReportTitle'
       required:
@@ -8526,7 +8534,7 @@ components:
         requesterName:
           $ref: '#/components/schemas/PartnerName'
         createdDate:
-          $ref: '#/components/schemas/UnixDate'
+          $ref: '#/components/schemas/ReportCreatedDate'
         title:
           $ref: '#/components/schemas/ReportTitle'
         consumerId:
@@ -8818,6 +8826,7 @@ components:
         totalRevenue:
           description: The total revenue
           type: number
+          example: 904909.33
       required:
         - customerId
         - title
@@ -8832,7 +8841,6 @@ components:
         - sixMonthAverageDailyBalance
         - twoMonthAverageDailyBalance
         - twelveMonthStandardDeviationOfDailyBalance
-        - sixMonthStandardDeviationOfDailyBalance
         - twoMonthStandardDeviationOfDailyBalance
         - numberOfDaysPositiveBalance
       type: object
@@ -8900,7 +8908,6 @@ components:
         - sixMonthAverageDailyBalance
         - twoMonthAverageDailyBalance
         - twelveMonthStandardDeviationOfDailyBalance
-        - sixMonthStandardDeviationOfDailyBalance
         - twoMonthStandardDeviationOfDailyBalance
         - numberOfDaysNegativeBalance
         - numberOfDaysPositiveBalance
@@ -9717,6 +9724,7 @@ components:
       type: object
       properties:
         institutions:
+          description: 'A list of loan deposit institutions'
           type: array
           items:
             $ref: '#/components/schemas/CashFlowPossibleLoanDepositsInstitutions'
@@ -13573,11 +13581,13 @@ components:
         errorCode:
           type: integer
           description: Error code
+          example: 0
         message:
           type: string
           description: Detailed reason about the source of the error
           minLength: 0
           maxLength: 255
+          example: 'Some error message'
       required:
         - errorCode
         - message
@@ -13941,6 +13951,7 @@ components:
             endDate:
               $ref: '#/components/schemas/ReportEndDate'
             reportStyle:
+              description: A type of report
               type: string
               example: paystatement
             numberOfBillableAssets:
@@ -15013,15 +15024,26 @@ components:
       type: object
       properties:
         netAnnual:
+          description:
+            Sum of all values in `netMonthlyIncome` over the previous 12 months
           type: number
           example: 1000.12
         projectedNetAnnual:
+          description: >-
+            Projected net income over the next 12 months, across all income
+            streams, based on `netAnnualIncome`
           type: number
           example: 1500.23
         estimatedGrossAnnual:
+          description: >-
+            Before-tax gross annual income (estimated from `netAnnual`) across
+            all income stream in the past 12 months
           type: number
           example: 2000.12
         projectedGrossAnnual:
+          description: >-
+            Projected gross income over the next 12 months, across all active
+            income streams, based on `projectedNetAnnual`
           type: number
           example: 2500.23
     ReportIncomeStreamSummary:
@@ -15037,7 +15059,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NetMonthly'
-          description: ''
+          description: >-
+            A list of net monthly records. One instance for each complete
+            calendar month in the report.
         incomeEstimate:
           $ref: '#/components/schemas/ReportIncomeEstimate'
     ReportInstitution:
@@ -15198,11 +15222,15 @@ components:
         securityType:
           type: string
           description: The type of investment security (VOA only)
+          example: 'Stock'
         symbol:
           type: string
           description: Investment symbol (VOA only)
+          example: 'DAL'
         commission:
+          description: A commission amount
           type: number
+          example: 0
     ReportType:
       description: |
         A report type. Possible values:
@@ -16136,6 +16164,16 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
+    ReportCreatedDate:
+      type: integer
+      description: >-
+        A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://docs.finicity.com/endpoint-syntax-and-format/). Note: If
+        the report is retrieved on a day other than the day it was generated, on
+        the header of the PDF version of the report there will be a "Retrieved
+        Date" populated.
+      format: int64
+      example: 1607450357
     VOAIReportIncomeStream:
       description: A report income stream record
       required:
@@ -16197,6 +16235,7 @@ components:
           description: >-
             Before-tax gross annual income (estimated from `netAnnual`) across
             all income stream in the past 12 months
+          example: 2000.12
         projectedGrossAnnual:
           type: number
           description: >-
@@ -16908,9 +16947,11 @@ components:
           type: integer
           description: Error code for the asset
           format: int32
+          example: 0
         errorMessage:
           type: string
           description: Error message for the asset
+          example: 'Some error message'
     VOIEPaystubWithTXVerifyReport:
       description: A VOIE Paystub With TXVerify report
       type: object
@@ -17023,6 +17064,7 @@ components:
           type: integer
           description: The status of the most recent aggregation attempt
           format: int32
+          example: 0
         incomeStreams:
           type: array
           items:
@@ -17208,6 +17250,7 @@ components:
                 $ref: '#/components/schemas/ReportInstitution'
               description: A list of institution records
             income:
+              description: 'Income details'
               type: array
               items:
                 $ref: '#/components/schemas/ReportIncomeStreamSummary'
@@ -17390,6 +17433,7 @@ components:
           description: >-
             Before-tax gross annual income (estimated from `netAnnual`) across
             all income stream in the past 12 months
+          example: 12321.1
         projectedGrossAnnual:
           type: number
           description: >-
