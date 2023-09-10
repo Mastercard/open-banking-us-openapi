@@ -17,7 +17,7 @@ The following workflows ensure the API specification stays in good shape and can
 [![](https://github.com/Mastercard/finicity-openapi/actions/workflows/tests.yml/badge.svg)](https://github.com/Mastercard/finicity-openapi/actions/workflows/tests.yml)
 
 ## Specification
-[YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FFY-Dev-Relations%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Mastercard/finicity-openapi/main/finicity.yaml&nocors)
+[YAML ⤓](./finicity.yaml) | [Swagger Editor ⬈](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FMastercard%2Ffinicity-openapi%2Fmain%2Ffinicity.yaml) | [Redoc ⬈](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Mastercard/finicity-openapi/main/finicity.yaml&nocors)
 
 ## Tests
 ### Things to Know :point_down:
