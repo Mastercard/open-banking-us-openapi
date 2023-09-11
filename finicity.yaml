@@ -10,7 +10,7 @@ info:
     name: Finicity
     email: business.development@finicity.com
     url: 'https://www.finicity.com/contact/'
-  version: 1.13.4
+  version: 1.13.5
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1298,6 +1298,7 @@ paths:
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/ProductTypeParameter'
+        - $ref: '#/components/parameters/SupportedCountriesParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCertifiedInstitutionsResponse'
@@ -1321,6 +1322,7 @@ paths:
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/ProductTypeParameter'
+        - $ref: '#/components/parameters/SupportedCountriesParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetInstitutionsResponse'
@@ -1344,6 +1346,7 @@ paths:
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/ProductTypeParameter'
+        - $ref: '#/components/parameters/SupportedCountriesParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCertifiedInstitutionsResponse'
@@ -6391,6 +6394,8 @@ components:
             estimatedMonthlyOvertimePay: 50
             estimatedMonthlyBonusPay: 20
             estimatedMonthlyCommissionPay: 50
+            estimatedMonthlyOtherPay: 150
+            estimatedMonthlyTotalPay: 2120
           institutions:
             id: 101732
             name: FinBank
@@ -7387,6 +7392,19 @@ components:
       schema:
         type: string
         example: voa
+    SupportedCountriesParameter:
+      name: supportedCountries
+      in: query
+      description: A list of country codes, '*' for all countries.
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: ^(\*|[a-z]{2})$
+        example: us
+      style: form
+      explode: false
     InstitutionSearchParameter:
       name: search
       in: query
@@ -7893,6 +7911,7 @@ components:
     ActiveStatus:
       description: 'Possible values: "ACTIVE", "INACTIVE"'
       type: string
+      example: ACTIVE
     Address:
       type: string
       description: A street address
@@ -12091,6 +12110,7 @@ components:
     EstimateInclusion:
       description: 'Possible values: "HIGH", "MODERATE", "LOW", "NO"'
       type: string
+      example: HIGH
     ExcludeEmpInfo:
       type: boolean
       description: >-
@@ -14460,6 +14480,45 @@ components:
             The estimated commission bonus pay amount for the employment from
             the paystub, calculated by Finicity
           example: 50
+    PaystubTxVerifyMonthlyIncomeRecord:
+      type: object
+      properties:
+        estimatedMonthlyBasePay:
+          type: number
+          description: >-
+            The estimated monthly base pay amount for the employment from the
+            paystub, calculated by Finicity
+          example: 2000
+        estimatedMonthlyOvertimePay:
+          type: number
+          description: >-
+            The estimated monthly overtime pay amount for the employment from
+            the paystub, calculated by Finicity
+          example: 50
+        estimatedMonthlyBonusPay:
+          type: number
+          description: >-
+            The estimated monthly bonus pay amount for the employment from the
+            paystub, calculated by Finicity
+          example: 20
+        estimatedMonthlyCommissionPay:
+          type: number
+          description: >-
+            The estimated commission bonus pay amount for the employment from
+            the paystub, calculated by Finicity
+          example: 50
+        estimatedMonthlyOtherPay:
+          type: number
+          description: >-
+            The estimated monthly other pay amount for the employment from the
+            paystub, calculated by Finicity
+          example: 150
+        estimatedMonthlyTotalPay:
+          type: number
+          description: >-
+            The estimated monthly total pay amount for the employment from the
+            paystub, calculated by Finicity
+          example: 2120
     PeriodEndDate:
       type: integer
       description: >-
@@ -16820,7 +16879,7 @@ components:
             payStatements:
               type: array
               items:
-                $ref: '#/components/schemas/VOIEPaystubWithStatementPayStatement'
+                $ref: '#/components/schemas/VOIEPaystubPayStatement'
               description: >-
                 Extracted pay statement details, and the transaction matching
                 summary
@@ -16846,7 +16905,7 @@ components:
           properties:
             constraints:
               $ref: '#/components/schemas/VOIEReportConstraints'
-    VOIEPaystubWithStatementPayStatement:
+    PayStatementForVoie:
       required:
         - billable
         - assetId
@@ -16931,8 +16990,6 @@ components:
             $ref: '#/components/schemas/DirectDeposit'
           description:
             Information pertaining to the direct deposits on the pay statement
-        monthlyIncome:
-          $ref: '#/components/schemas/PaystubMonthlyIncomeRecord'
         institutions:
           type: array
           items:
@@ -16952,6 +17009,22 @@ components:
           type: string
           description: Error message for the asset
           example: 'Some error message'
+    VOIEPaystubWithStatementPayStatement:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PayStatementForVoie'
+        - type: object
+          properties:
+            monthlyIncome:
+              $ref: '#/components/schemas/PaystubTxVerifyMonthlyIncomeRecord'
+    VOIEPaystubPayStatement:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PayStatementForVoie'
+        - type: object
+          properties:
+            monthlyIncome:
+              $ref: '#/components/schemas/PaystubMonthlyIncomeRecord'
     VOIEPaystubWithTXVerifyReport:
       description: A VOIE Paystub With TXVerify report
       type: object
