@@ -17,9 +17,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Generate Redoc static HTML
         run: |
-          npx @redocly/cli build-docs finicity.yaml --output finicity.html
+          npx @redocly/cli build-docs openbanking-us.yaml --output openbanking-us.html
       - name: Create artifact
         uses: actions/upload-artifact@v3
         with:
-          name: finicity.html
-          path: ./finicity.html
+          name: openbanking-us.html
+          path: ./openbanking-us.html

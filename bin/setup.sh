@@ -110,16 +110,16 @@ echo ""
 
 echo "To run the API client tests:"
 echo ""
-echo "git clone https://github.com/Mastercard/finicity-openapi"
-echo "cd finicity-openapi/tests"
+echo "git clone https://github.com/Mastercard/open-banking-us-openapi"
+echo "cd open-banking-us-openapi/tests"
 echo "mvn clean test -DpartnerId="$1" -DpartnerSecret="$2" -DappKey="$3" -DcustomerId="$customer_id""
 echo ""
 
 echo "To run the Postman Collection:"
 echo ""
-echo "git clone https://github.com/Mastercard/finicity-postman"
-echo "cd finicity-postman"
-echo "npx newman run finicity.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id" --folder 'All APIs'"
+echo "git clone https://github.com/Mastercard/open-banking-us-postman"
+echo "cd open-banking-us-postman"
+echo "npx newman run openbanking-us.postman_collection.json --env-var partnerId="$1" --env-var partnerSecret="$2" --env-var appKey="$3" --env-var customerId="$customer_id" --folder 'All APIs'"
 echo ""
 
 enter_to_exit

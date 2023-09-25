@@ -114,12 +114,12 @@ Write-Output "PARTNER_ID: $PartnerId"
 Write-Output "PARTNER_SECRET: $PartnerSecret"
 
 Write-Host "`r`nTo run the API client tests:`r`n" -ForegroundColor Yellow
-Write-Output "git clone https://github.com/Mastercard/finicity-openapi"
-Write-Output "cd finicity-openapi/tests"
+Write-Output "git clone https://github.com/Mastercard/open-banking-us-openapi"
+Write-Output "cd open-banking-us-openapi-openapi/tests"
 Write-Output "mvn clean test -DpartnerId=$PartnerId -DpartnerSecret=$PartnerSecret -DappKey=$AppKey -DcustomerId=$CustomerId"
 
 Write-Host "`r`nTo run the Postman Collection:`r`n" -ForegroundColor Yellow
-Write-Output "git clone https://github.com/Mastercard/finicity-postman"
-Write-Output "cd finicity-postman"
-Write-Output "npx newman run finicity.postman_collection.json --env-var partnerId=$PartnerId --env-var partnerSecret=$PartnerSecret --env-var appKey=$AppKey --env-var customerId=$CustomerId --folder 'All APIs'"
+Write-Output "git clone https://github.com/Mastercard/open-banking-us-postman"
+Write-Output "cd open-banking-us-postman"
+Write-Output "npx newman run openbanking-us.postman_collection.json --env-var partnerId=$PartnerId --env-var partnerSecret=$PartnerSecret --env-var appKey=$AppKey --env-var customerId=$CustomerId --folder 'All APIs'"
 EnterToExit

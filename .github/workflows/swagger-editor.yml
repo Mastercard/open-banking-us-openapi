@@ -19,4 +19,4 @@ jobs:
       - name: Validate OpenAPI definition
         uses: char0n/swagger-editor-validate@v1.3.2
         with:
-          definition-file: finicity.yaml
+          definition-file: openbanking-us.yaml

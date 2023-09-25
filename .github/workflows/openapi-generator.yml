@@ -19,7 +19,7 @@ jobs:
         uses: openapi-generators/openapitools-generator-action@v1.3.0
         with:
           generator: java
-          openapi-file: finicity.yaml
+          openapi-file: openbanking-us.yaml
           generator-tag: latest-release
       - name: Create artifact
         uses: actions/upload-artifact@v3

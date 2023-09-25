@@ -1,11 +1,11 @@
 package client.api;
 
 import com.google.gson.reflect.TypeToken;
-import com.mastercard.finicity.client.ApiClient;
-import com.mastercard.finicity.client.ApiException;
-import com.mastercard.finicity.client.ApiResponse;
-import com.mastercard.finicity.client.api.BalanceAnalyticsApi;
-import com.mastercard.finicity.client.model.ObbAnalyticsReport;
+import com.mastercard.openbanking.client.ApiClient;
+import com.mastercard.openbanking.client.ApiException;
+import com.mastercard.openbanking.client.ApiResponse;
+import com.mastercard.openbanking.client.api.BalanceAnalyticsApi;
+import com.mastercard.openbanking.client.model.ObbAnalyticsReport;
 import okhttp3.Call;
 import okhttp3.Request;
 
