@@ -1,16 +1,16 @@
 openapi: 3.0.3
 info:
-  title: Finicity APIs
+  title: Mastercard Open Banking APIs
   description: >-
-    OpenAPI specification for Finicity APIs
+    OpenAPI specification for Mastercard Open Banking APIs (US)
 
 
-    ![](https://raw.githubusercontent.com/Mastercard/finicity-openapi/main/res/logo.png)
+    ![](https://raw.githubusercontent.com/Mastercard/open-banking-us-openapi/main/res/logo.png)
   contact:
-    name: Finicity
-    email: business.development@finicity.com
-    url: 'https://www.finicity.com/contact/'
-  version: 1.13.5
+    name: API Support
+    email: apisupport@mastercard.com
+    url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
+  version: 1.13.6
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2144,7 +2144,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://docs.finicity.com/txpush-listener-service/).
+        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2175,7 +2175,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://docs.finicity.com/txpush-listener-service/).
+        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2208,7 +2208,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://docs.finicity.com/txpush-listener-service/).
+        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2240,7 +2240,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://docs.finicity.com/txpush-listener-service/).
+        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -7204,7 +7204,7 @@ components:
       description: >-
         The text you wish to match. Leave this empty if you wish to return all
         customers. Must be URL-encoded (see: [Handling Spaces in
-        Queries](https://docs.finicity.com/endpoint-syntax-and-format/)).
+        Queries](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/)).
       schema:
         type: string
         example: searchvalue
@@ -7278,9 +7278,9 @@ components:
       required: true
       description: >-
         2-digit code from [Permissible Purpose
-        Codes](https://docs.finicity.com/permissible-purpose-codes/), specifying
-        the reason for retrieving this report. Required for retrieving some
-        reports.
+        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
+        specifying the reason for retrieving this report. Required for
+        retrieving some reports.
       schema:
         type: string
       example: '3F'
@@ -7290,9 +7290,9 @@ components:
       required: false
       description: >-
         2-digit code from [Permissible Purpose
-        Codes](https://docs.finicity.com/permissible-purpose-codes/), specifying
-        the reason for retrieving this report. Required for retrieving some
-        reports.
+        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
+        specifying the reason for retrieving this report. Required for
+        retrieving some reports.
       schema:
         $ref: '#/components/schemas/PurposeCode'
       example: '3F'
@@ -7993,7 +7993,8 @@ components:
       type: integer
       description: >-
         The status of the most recent aggregation attempt (see [Aggregation
-        Status Codes](https://docs.finicity.com/aggregation-status-codes/)).
+        Status
+        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/account-aggregation/#aggregation-status-codes)).
         Won't be present until you have run your first aggregation for the
         account.
     AnnualIncome:
@@ -8299,24 +8300,15 @@ components:
     BalanceAnalyticsAccountResult:
       properties:
         accountDetails:
-          allOf:
-            - $ref: '#/components/schemas/ObbAccountDetails'
-          description: Details of the account and financial institution
+          $ref: '#/components/schemas/ObbAccountDetails'
         accountId:
           $ref: '#/components/schemas/NumericAccountId'
         balanceAnalyticsMetrics:
-          allOf:
-            - $ref: '#/components/schemas/BalanceAnalyticsMetrics'
-          description: Balance analytics metrics and calculations
+          $ref: '#/components/schemas/BalanceAnalyticsMetrics'
         currentReportRequest:
-          allOf:
-            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
-          description: Describes the requested attributes of the report
+          $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
         historicDataAvailability:
-          allOf:
-            - $ref: '#/components/schemas/ObbDataAvailability'
-          description:
-            Describes the availability of historical data for the account
+          $ref: '#/components/schemas/ObbDataAvailability'
       required:
         - accountId
         - accountDetails
@@ -8324,25 +8316,18 @@ components:
         - currentReportRequest
       type: object
     BalanceAnalyticsBusinessSummary:
+      description:
+        Balance analytics summarized across all accounts in the report
       properties:
         balanceAnalyticsMetrics:
-          allOf:
-            - $ref: '#/components/schemas/BalanceAnalyticsMetrics'
-          description: >-
-            Balance analytics metrics and calculations across all accounts in
-            the report
+          $ref: '#/components/schemas/BalanceAnalyticsMetrics'
         currentReportRequest:
-          allOf:
-            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
-          description: Describes the requested attributes of the report
+          $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
         historicDataAvailability:
-          allOf:
-            - $ref: '#/components/schemas/ObbDataAvailability'
-          description: >-
-            Describes the availability of historical data for all accounts owned
-            by the business
+          $ref: '#/components/schemas/ObbDataAvailability'
       type: object
     BalanceAnalyticsMetrics:
+      description: Balance analytics metrics and calculations
       properties:
         availableBalance:
           description: Available Balance
@@ -8409,11 +8394,7 @@ components:
             $ref: '#/components/schemas/ObbDailyBalance'
           type: array
         historicNumberOfWeeksAverageBalanceIncreasing:
-          allOf:
-            - $ref: '#/components/schemas/ObbNumWeeksAverageBalanceIncreasing'
-          description: >-
-            Report of average account balance week over week and count of weeks
-            where the average balance increased
+          $ref: '#/components/schemas/ObbNumWeeksAverageBalanceIncreasing'
         maximumDailyBalanceByMonthForTheReportTimePeriod:
           description:
             Maximum daily ending balance each month over the report time period
@@ -8448,16 +8429,11 @@ components:
           example: 4444
           type: integer
         businessSummary:
-          allOf:
-            - $ref: '#/components/schemas/BalanceAnalyticsBusinessSummary'
-          description:
-            Balance analytics summarized across all accounts in the report
+          $ref: '#/components/schemas/BalanceAnalyticsBusinessSummary'
         customerId:
           $ref: '#/components/schemas/NumericCustomerId'
         reportHeader:
-          allOf:
-            - $ref: '#/components/schemas/ObbReportHeader'
-          description: Customer and report metadata
+          $ref: '#/components/schemas/ObbReportHeader'
         requesterName:
           description: Name of requester
           example: Mortgage ABC LLC
@@ -8733,25 +8709,15 @@ components:
     CashFlowAnalyticsAccountResult:
       properties:
         accountDetails:
-          allOf:
-            - $ref: '#/components/schemas/ObbAccountDetails'
-          description: Details of the account and financial institution
+          $ref: '#/components/schemas/ObbAccountDetails'
         accountId:
           $ref: '#/components/schemas/NumericAccountId'
         cashflowAnalyticsMetrics:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
-          description: Generated cashflow calculations/metrics
+          $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
         currentReportRequest:
-          allOf:
-            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
-          description: Describes the requested attributes of the report
+          $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
         historicDataAvailability:
-          allOf:
-            - $ref: '#/components/schemas/ObbDataAvailability'
-          description:
-            Describes the availability of data at the time the report was
-            requested
+          $ref: '#/components/schemas/ObbDataAvailability'
       required:
         - accountId
         - accountDetails
@@ -8759,43 +8725,28 @@ components:
         - currentReportRequest
       type: object
     CashFlowAnalyticsBusinessSummary:
+      description:
+        Cash flow analytics summarized across all accounts in the report
       properties:
         cashflowAnalyticsMetrics:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
-          description: >-
-            Cash flow analytics metrics and calculations across all accounts in
-            the report
+          $ref: '#/components/schemas/CashFlowAnalyticsMetrics'
         currentReportRequest:
-          allOf:
-            - $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
-          description: Describes the requested attributes of the report
+          $ref: '#/components/schemas/ObbCurrentReportRequestDetails'
         historicDataAvailability:
-          allOf:
-            - $ref: '#/components/schemas/ObbDataAvailability'
-          description: >-
-            Describes the availability of historical data for all accounts owned
-            by the business
+          $ref: '#/components/schemas/ObbDataAvailability'
       required:
         - historicDataAvailability
         - currentReportRequest
       type: object
     CashFlowAnalyticsMetrics:
+      description: Cash flow analytics metrics and calculations
       properties:
         inflow:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowInflowAttributes'
-          description: Inflow Attributes
+          $ref: '#/components/schemas/CashFlowInflowAttributes'
         negativeTriggers:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowNegativeTriggers'
-          description: >-
-            Details of transactions that may be warning signs of bad
-            creditworthiness
+          $ref: '#/components/schemas/CashFlowNegativeTriggers'
         outflow:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowOutflowAttributes'
-          description: Outflow attributes
+          $ref: '#/components/schemas/CashFlowOutflowAttributes'
         revenueByMonthForTheReportTimePeriod:
           description:
             'Sum of all transactions categorized as revenue, split by months'
@@ -8807,9 +8758,7 @@ components:
           example: 43893.44
           type: number
         transactionAnalytics:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowTransactionAnalyticsAttributes'
-          description: Transaction Analytics Attributes
+          $ref: '#/components/schemas/CashFlowTransactionAnalyticsAttributes'
       type: object
     CashFlowAnalyticsReport:
       description: Cash Flow Analytics report data as JSON
@@ -8824,16 +8773,11 @@ components:
           example: 4444
           type: integer
         businessSummary:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowAnalyticsBusinessSummary'
-          description:
-            Cash flow analytics summarized across all accounts in the report
+          $ref: '#/components/schemas/CashFlowAnalyticsBusinessSummary'
         customerId:
           $ref: '#/components/schemas/NumericCustomerId'
         reportHeader:
-          allOf:
-            - $ref: '#/components/schemas/ObbReportHeader'
-          description: Customer and report metadata
+          $ref: '#/components/schemas/ObbReportHeader'
         requesterName:
           description: Name of requester
           example: Mortgage ABC LLC
@@ -9273,6 +9217,7 @@ components:
             account
           example: -100
     CashFlowInflowAttributes:
+      description: Inflow Attributes
       properties:
         averageDepositByMonthForTheReportTimePeriod:
           description: Average value of deposits during periods in the report
@@ -9319,6 +9264,7 @@ components:
         - historicCountOfDepositTransactions
       type: object
     CashFlowInsufficientFundsFees:
+      description: Non Sufficient Fund Fees
       properties:
         countOfTransactionsForTheReportTimePeriod:
           description: Count of all NSF transactions during the report
@@ -9659,13 +9605,15 @@ components:
           description: The average debit amount
           example: 500
     CashFlowNegativeTriggers:
+      description:
+        Transactions that may be warning signs of bad creditworthiness
       properties:
         insufficientFundFees:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowInsufficientFundsFees'
-          description: Non Sufficient Fund Fees
+          $ref: '#/components/schemas/CashFlowInsufficientFundsFees'
       type: object
     CashFlowNumWeeksZeros:
+      description:
+        Weeks with zero transactions during the known history of the account
       properties:
         historicNumberOfWeeksWithDataAvailable:
           description: >-
@@ -9690,6 +9638,7 @@ components:
         - historicWeeksWithZeroTransactions
       type: object
     CashFlowOutflowAttributes:
+      description: Outflow attributes
       properties:
         averageWithdrawalByMonthForTheReportTimePeriod:
           description: Average value of withdrawals during periods in the report
@@ -9994,6 +9943,7 @@ components:
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     CashFlowTransactionAnalyticsAttributes:
+      description: Transaction Analytics Attributes
       properties:
         activityDepositsCreditsForTheReportTimePeriod:
           description: >-
@@ -10017,11 +9967,7 @@ components:
             $ref: '#/components/schemas/ObbDateRangeAndAmount'
           type: array
         historicWeeksWithZeroTransactions:
-          allOf:
-            - $ref: '#/components/schemas/CashFlowNumWeeksZeros'
-          description: >-
-            Details of weeks with zero transactions during the known history of
-            the account
+          $ref: '#/components/schemas/CashFlowNumWeeksZeros'
         lastTransactionDate:
           description: >-
             Latest posted transaction(s) to the account. May be more than one if
@@ -10757,7 +10703,7 @@ components:
       description: >-
         (Student Loan) The date the loan enters into repayment. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     Country:
@@ -10882,6 +10828,10 @@ components:
           $ref: '#/components/schemas/CustomerAccountAggregationAttemptDate'
         createdDate:
           $ref: '#/components/schemas/CustomerAccountCreatedDate'
+        lastUpdatedDate:
+          $ref: '#/components/schemas/CustomerLastUpdatedDate'
+        marketSegment:
+          $ref: '#/components/schemas/CustomerAccountMarketSegment'
         currency:
           $ref: '#/components/schemas/Currency'
         lastTransactionDate:
@@ -10908,7 +10858,7 @@ components:
         not. This will not be present until you have run your first aggregation
         for the account. A date in Unix epoch time (in seconds). See: [Handling
         Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     CustomerAccountAggregationSuccessDate:
@@ -10917,7 +10867,8 @@ components:
         A timestamp showing the last successful aggregation of the account. This
         will not be present until you have run your first aggregation for the
         account. A date in Unix epoch time (in seconds). See: [Handling Epoch
-        Dates and Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Dates and
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     CustomerAccountBalanceDate:
@@ -10925,7 +10876,7 @@ components:
       description: >-
         A timestamp showing when the balance was captured. A date in Unix epoch
         time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     CustomerAccountCreatedDate:
@@ -10933,9 +10884,22 @@ components:
       description: >-
         A timestamp showing when the account was added to the system. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
+    CustomerLastUpdatedDate:
+      type: integer
+      description: >-
+        A timestamp showing when the account was last modified to the system. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+      format: int64
+      example: 1607450357
+    CustomerAccountMarketSegment:
+      type: string
+      description:
+        'The market segment of the account. Possible values: personal, business'
+      example: personal
     CustomerAccountDetail:
       description: >-
         Additional customer account details. Not all data points will return for
@@ -11181,6 +11145,14 @@ components:
         autoPayEnrolled:
           type: boolean
           description: (Mortgage/Loan) Enrolled in autopay (F/Y)
+          example: true
+        marginAllowed:
+          type: boolean
+          description: Margin trading indicator (true / false)
+          example: true
+        cashAccountAllowed:
+          type: boolean
+          description: Cash account allowed indicator (true / false)
           example: true
         collateral:
           type: string
@@ -11452,7 +11424,7 @@ components:
         The date of the latest transaction on the account. This will not be
         present until you have run your first aggregation for the account. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     CustomerAccountOldestTransactionDate:
@@ -11460,7 +11432,7 @@ components:
       description: >-
         The date of the oldest transaction in the transactions for the account.
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     CustomerAccountParentAccountId:
@@ -11508,10 +11480,26 @@ components:
           description:
             Market value of an investment position at the time of retrieval
           example: 271.84
+        changePercent:
+          type: number
+          description: The percent change in value since the previous day
+          example: 170.02
+        dailyChange:
+          type: number
+          description: The value amount change since the previous day
+          example: 180.03
         costBasis:
           type: number
           description: The total cost of acquiring the security
           example: 190.01
+        holdType:
+          type: string
+          description: The type of the holding
+          example: INVESTMENT
+        invSecurityType:
+          type: string
+          description: The security type for the investment holding
+          example: OTHERINFO
         status:
           type: string
           description: The status of the holding
@@ -11754,7 +11742,7 @@ components:
       description: >-
         (All Account Types) Most recent date of the following information. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     DateTimeWithZone:
@@ -12079,9 +12067,10 @@ components:
           type: object
           description: >-
             An error code (can be returned as a number or a string). Useful
-            links: [API Errors](https://docs.finicity.com/api-errors/),
+            links: [Common API Status
+            Codes](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/#common-api-status-codes),
             [Aggregation Status
-            Codes](https://docs.finicity.com/aggregation-status-codes/).
+            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/account-aggregation/#aggregation-status-codes).
           example: '10001'
         status:
           type: string
@@ -12123,7 +12112,7 @@ components:
       description: >-
         (Student Loan) The expected date of the payoff date. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     Experience:
@@ -12145,8 +12134,8 @@ components:
         Note: the Finicity sales engineers (SE) help you set up a default
         experience for your company when you migrate to Connect 2.0. For each
         additional experience you create thereafter, they'll give you a unique
-        ID. See [Generate 2.0 Connect URL
-        APIs](https://docs.finicity.com/migrate-to-connect-web-sdk-2-0/#migrate-connect-web-sdk-1).
+        ID. See [Generate Connect
+        URL](https://developer.mastercard.com/open-banking-us/documentation/connect/generate-2-connect-url-apis/).
 
 
         Experience values options: 
@@ -12188,7 +12177,7 @@ components:
       description: >-
         (Mortgage/Loan) First payment due date. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     FixConnectParameters:
@@ -12284,7 +12273,7 @@ components:
       description: >-
         (Mortgage/Loan) Original date of loan. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     InitiatedMicroDeposit:
@@ -12490,7 +12479,7 @@ components:
       description: >-
         Advanced options for configuration of which institutions to display in.
         See [Institution
-        Settings](https://docs.finicity.com/connect-institution-settings/).
+        Settings](https://developer.mastercard.com/open-banking-us/documentation/connect/connect-institutions-settings/).
     InstitutionStateAgg:
       type: boolean
       description: >-
@@ -12720,7 +12709,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) The date of the last payment. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     LastPaymentDueDate:
@@ -12728,7 +12717,7 @@ components:
       description: >-
         (Mortgage/Loan) Due date of last payment. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     LastPaymentReceiveDate:
@@ -12736,7 +12725,7 @@ components:
       description: >-
         (Mortgage/Loan) The date of the last payment. A date in Unix epoch time
         (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     LiteConnectParameters:
@@ -12925,7 +12914,7 @@ components:
       description: >-
         (Student Loan) The end date of the current status. A date in Unix epoch
         time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     LoanStatusStartDate:
@@ -12933,7 +12922,7 @@ components:
       description: >-
         (Student Loan) The start date of the current status. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     MainPayStatementFields:
@@ -13031,7 +13020,7 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Maturity date of account type. A date
         in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     MicroDepositCallbackUrl:
@@ -13270,7 +13259,7 @@ components:
       description: >-
         (Mortgage/Loan) Due date for the next payment. A date in Unix epoch time
         (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     NoZoneDateTime:
@@ -13310,6 +13299,7 @@ components:
         number
       example: 2581
     ObbAccountDetails:
+      description: Details of the account and financial institution
       properties:
         accountNumberDisplay:
           description:
@@ -13319,11 +13309,7 @@ components:
           minLength: 0
           maxLength: 50
         accountOwner:
-          allOf:
-            - $ref: '#/components/schemas/ObbAccountOwner'
-          description: >-
-            Details about who is on record as the owner of the account. May be
-            the business name, the business owner name, or otherwise
+          $ref: '#/components/schemas/ObbAccountOwner'
         aggregationAttemptDate:
           description: >-
             A timestamp showing the last aggregation attempt. This will not be
@@ -13360,10 +13346,7 @@ components:
         id:
           $ref: '#/components/schemas/NumericAccountId'
         institution:
-          allOf:
-            - $ref: '#/components/schemas/ObbInstitution'
-          description:
-            Details of the financial institution this account is home to
+          $ref: '#/components/schemas/ObbInstitution'
         institutionLoginId:
           $ref: '#/components/schemas/NumericInstitutionLoginId'
         name:
@@ -13396,6 +13379,9 @@ components:
         - accountOwner
       type: object
     ObbAccountOwner:
+      description:
+        Who is on record as the owner of the account. May be the business name,
+        the business owner name, or otherwise.
       properties:
         address:
           description: Address of the owner on record for the account
@@ -13449,6 +13435,7 @@ components:
         - amount
       type: object
     ObbCurrentReportRequestDetails:
+      description: Requested attributes of the report
       properties:
         reportBeginDate:
           description: Date from when the requested data is available
@@ -13509,6 +13496,8 @@ components:
         - dayOfWeek
       type: object
     ObbDataAvailability:
+      description:
+        Availability of historical data at the time the report was requested
       properties:
         historicAvailabilityBeginDate:
           description: Begin date for data availability
@@ -13613,6 +13602,7 @@ components:
         - message
       type: object
     ObbInstitution:
+      description: Details of the financial institution this account is home to
       properties:
         institutionIconUrl:
           description: URL of the institution logo icon for reporting
@@ -13642,6 +13632,9 @@ components:
         - institutionId
       type: object
     ObbNumWeeksAverageBalanceIncreasing:
+      description:
+        Report of average account balance week over week and count of weeks
+        where the average balance increased
       properties:
         historicAverageWeeklyBalances:
           description: Average weekly balances over the known history
@@ -13665,9 +13658,9 @@ components:
         - historicAverageWeeklyBalances
       type: object
     ObbReportHeader:
-      description: >-
-        Includes details about the business the report is generated for and
-        metadata about the report
+      description:
+        Details about the business the report is generated for and metadata
+        about the report
       properties:
         businessAddress:
           description: Business address line 1
@@ -13751,7 +13744,7 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Date when account was opened. A date
         in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     OriginalMaturityDate:
@@ -13759,7 +13752,7 @@ components:
       description: >-
         (Mortgage/Loan) Original date of loan maturity. A date in Unix epoch
         time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     OriginalPayrollReportId:
@@ -13775,7 +13768,7 @@ components:
         (Student Loan) The date the borrower graduated or dropped below
         half-time enrollment in school. A date in Unix epoch time (in seconds).
         See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     PartnerCredentials:
@@ -14033,7 +14026,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) Due date for the next payment. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     PayoffAmountDate:
@@ -14041,7 +14034,7 @@ components:
       description: >-
         (Mortgage/Loan) Date of final payment. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     PayrollData:
@@ -14524,7 +14517,7 @@ components:
       description: >-
         End date of period. A date in Unix epoch time (in seconds). See:
         [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     PeriodStartDate:
@@ -14532,7 +14525,7 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Start date of period. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     PhoneCarrier:
@@ -14968,7 +14961,7 @@ components:
       description: >-
         (Student Loan) The end date of the current repayment plan. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     RepaymentPlanStartDate:
@@ -14976,7 +14969,7 @@ components:
       description: >-
         (Student Loan) The start date of the current repayment plan. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     Report:
@@ -15067,7 +15060,7 @@ components:
       description: >-
         The `postedDate` of the latest transaction analyzed for the report. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     ReportId:
@@ -15167,7 +15160,7 @@ components:
       description: >-
         The `postedDate` of the earliest transaction analyzed for the report. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     ReportStatus:
@@ -15426,7 +15419,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) End date of statement period. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     StatementReport:
@@ -15473,7 +15466,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) Start date of statement period. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     StatementType:
@@ -15484,7 +15477,7 @@ components:
       type: string
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: '1607450357'
     StudentLoanDataCertification:
@@ -15577,7 +15570,7 @@ components:
         * `customerId`: This is recipient's customer identifier
         * `partnerId`: This is recipient partner identifier
         * `thirdPartyPartnerId`: This is requester's partner identifier
-        * `products`: Array of values representing the Finicity APIs for
+        * `products`: Array of values representing the Mastercard Open Banking APIs for
         which access needs to be generated.
       type: object
       required:
@@ -15785,8 +15778,8 @@ components:
         status:
           type: string
           description: >-
-            One of "active", "pending", or "shadow" (see [Pending and Shadow
-            Transactions](https://docs.finicity.com/pending-and-shadow-transactions/))
+            One of "active", "pending", or "shadow" (see [Transaction
+            Status](https://developer.mastercard.com/open-banking-us/documentation/products/manage/transaction-data/#transaction-status))
           example: active
         description:
           type: string
@@ -15924,7 +15917,8 @@ components:
       description: >-
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it was added to our platform. See: [Handling Epoch
-        Dates and Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Dates and
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionDate:
@@ -15932,7 +15926,7 @@ components:
       description: >-
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it occurred. See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionEffectiveDate:
@@ -15941,7 +15935,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it became effective on an account by an institution.
         See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionFirstEffectiveDate:
@@ -15950,7 +15944,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the first timestamp
         of the transaction recorded in the `effectiveDate` field. See: [Handling
         Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionId:
@@ -15964,7 +15958,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction expiration date when it became expires on an account by an
         institution. See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionPostedDate:
@@ -15973,7 +15967,8 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it was posted or cleared by the institution. This value
         isn't required for student loan transaction data. See: [Handling Epoch
-        Dates and Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Dates and
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     TransactionType:
@@ -16220,17 +16215,17 @@ components:
       type: integer
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
     ReportCreatedDate:
       type: integer
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://docs.finicity.com/endpoint-syntax-and-format/). Note: If
-        the report is retrieved on a day other than the day it was generated, on
-        the header of the PDF version of the report there will be a "Retrieved
-        Date" populated.
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Note: If the report is retrieved on a day other than the day it was
+        generated, on the header of the PDF version of the report there will be
+        a "Retrieved Date" populated.
       format: int64
       example: 1607450357
     VOAIReportIncomeStream:
@@ -17549,8 +17544,8 @@ components:
       description: >-
         The publicly available URL you want to be notified with events as the
         user progresses through the application. See [Connect Webhook
-        Event](https://docs.finicity.com/connect-and-mvs-webhooks/) for event
-        details.
+        Event](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-connect/)
+        for event details.
       example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
     WebhookContentType:
       type: string
@@ -17564,13 +17559,13 @@ components:
       description: >-
         Allows additional identifiable information to be inserted into the
         payload of connect webhook events. See: [Custom
-        Webhooks](https://docs.finicity.com/custom-webhooks/).
+        Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
     WebhookHeaders:
       type: object
       description: >-
         Allows additional identifiable information to be included as headers of
         connect webhook event. See: [Custom
-        Webhooks](https://docs.finicity.com/custom-webhooks/).
+        Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
     WithInsights:
       type: boolean
       description: If Identity Insights data must be returned or not
