@@ -1,16 +1,16 @@
 openapi: 3.0.3
 info:
-  title: Mastercard Open Banking APIs
-  description: >-
-    OpenAPI specification for Mastercard Open Banking APIs (US)
+  title: Open Banking
+  description: |-
+    OpenAPI specification for Finicity APIs.
 
-
-    ![](https://raw.githubusercontent.com/Mastercard/open-banking-us-openapi/main/res/logo.png)
+    Open Banking solutions in the US are provided by Finicity, a Mastercard
+    company.
   contact:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.6
+  version: 1.13.7
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -5810,6 +5810,7 @@ components:
                 postedDate: 1582286400
                 description: FINICITY INC PAYROLL
                 memo: Finicity amount credit
+                investmentTransactionType: dividend
                 normalizedPayee: Finicity
                 institutionTransactionId: '100000000'
                 category: Paycheck
@@ -5820,6 +5821,17 @@ components:
               vestedBalance: 300000
               currentLoanBalance: 0
               availableBalanceAmount: 1000
+              marginBalance: 100.00
+              currentBalance: 1000.00
+            position:
+              id: 637054
+              currency: USD
+              symbol: MCD
+              securityName: Common Stock
+              units: 5
+              marketValue: 1403.55
+              currentPrice: 280.71
+              securityType: Stock
             asset:
               currentBalance: 1000
               twoMonthAverage: -1865.96
@@ -5896,6 +5908,8 @@ components:
               amount: 22.21
               postedDate: 1582286400
               description: FINICITY INC PAYROLL
+              memo: Finicity amount credit
+              investmentTransactionType: dividend
               normalizedPayee: Finicity
               institutionTransactionId: '100000000'
               category: Paycheck
@@ -5911,6 +5925,17 @@ components:
               vestedBalance: 300000
               currentLoanBalance: 0
               availableBalanceAmount: 1000
+              marginBalance: 100.00
+              currentBalance: 1000.00
+            position:
+              id: 637054
+              currency: USD
+              symbol: MCD
+              securityName: Common Stock
+              units: 5
+              marketValue: 1403.55
+              currentPrice: 280.71
+              securityType: Stock
             incomeStreams:
               id: dens28i3vsch-voah
               name: none
@@ -6517,7 +6542,34 @@ components:
                       category: Paycheck
               balance: 123.45
               averageMonthlyBalance: 301.45
-              transactions: []
+              transactions:
+                - id: 100000527471
+                  amount: 22.21
+                  postedDate: 1582286400
+                  description: FINICITY INC PAYROLL
+                  memo: Finicity amount credit
+                  investmentTransactionType: dividend
+                  normalizedPayee: Finicity
+                  institutionTransactionId: '100000000'
+                  category: Paycheck
+                  bestRepresentation: FINICITY INC PAYROLL
+              details:
+                interestMarginBalance: -50000
+                availableCashBalance: 1500
+                vestedBalance: 300000
+                currentLoanBalance: 0
+                availableBalanceAmount: 1000
+                marginBalance: 100.00
+                currentBalance: 1000.00
+              position:
+                id: 637054
+                currency: USD
+                symbol: MCD
+                securityName: Common Stock
+                units: 5
+                marketValue: 1403.55
+                currentPrice: 280.71
+                securityType: Stock
               availableBalance: 123.45
     ObbBadRequestResponseExample:
       value:
@@ -7545,6 +7597,20 @@ components:
           type: number
           description: The available balance for the account
           example: 1000
+    AccountDetailsTxBased:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AccountDetails'
+        - type: object
+          properties:
+            marginBalance:
+              type: number
+              description: Net interest earned after deducting interest paid out
+              example: 100.00
+            currentBalance:
+              type: number
+              description: Current balance
+              example: 1000.00
     AccountId:
       type: string
       description: An account ID
@@ -8271,7 +8337,6 @@ components:
         - availableBalanceDate
         - clearedBalance
         - clearedBalanceDate
-        - aggregationStatusCode
         - currency
       type: object
       properties:
@@ -13983,6 +14048,7 @@ components:
                 $ref: '#/components/schemas/VOIEPayStatement'
               description: Extracted pay statement details
     PayStatementReportAck:
+      description: A Pay Statement report being generated
       required:
         - id
         - portfolioId
@@ -14320,6 +14386,7 @@ components:
             latest position for this employment in ISO 8601 format (eg P1Y6M0D)
           example: P1Y6M0D
     PayrollReportAck:
+      description: A Payroll report being generated
       required:
         - id
         - portfolioId
@@ -14827,6 +14894,7 @@ components:
         details:
           $ref: '#/components/schemas/AccountDetails'
     PrequalificationReportAck:
+      description: A Prequalification report being generated
       required:
         - id
         - portfolioId
@@ -15213,7 +15281,7 @@ components:
       type: string
       description: Title of the report
       example: Finicity Asset Ready Report (CRA)
-    ReportTransaction:
+    ReportTransactionBase1:
       required:
         - id
         - postedDate
@@ -15251,6 +15319,9 @@ components:
             The institution must provide either a description, a memo, or both.
             It is recommended to concatenate the two fields into a single value.
           example: Some St Somewhere City State
+    ReportTransactionBase2:
+      type: object
+      properties:
         normalizedPayee:
           type: string
           description: >-
@@ -15283,6 +15354,101 @@ components:
           description: A commission amount
           type: number
           example: 0
+    ReportTransaction:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ReportTransactionBase1'
+        - $ref: '#/components/schemas/ReportTransactionBase2'
+    ReportTransactionNewTxBased:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ReportTransactionBase1'
+        - type: object
+          properties:
+            investmentTransactionType:
+              type: string
+              description: |
+                Keywords in the description and memo fields were used to translate investment transactions into these types
+
+                * `cancel`
+
+                * `purchaseToClose`
+
+                * `purchasetoCover`
+
+                * `contribution`
+
+                * `optionExercise`
+
+                * `optionExpiration`
+
+                * `fee`
+
+                * `soldToClose`
+
+                * `soldToOpen`
+
+                * `split`
+
+                * `transfer`
+
+                * `returnOfCapital`
+
+                * `income`
+
+                * `purchased`
+
+                * `sold`
+
+                * `dividendreInvest`
+
+                * `dividend`
+
+                * `reinvestOfIncome`
+
+                * `interest`
+
+                * `deposit`
+
+                * `otherInfo`
+              example: dividend
+        - $ref: '#/components/schemas/ReportTransactionBase2'
+    ReportAccountPosition:
+      type: object
+      properties:
+        id:
+          type: number
+          description: The id of the investment position
+          example: 637054
+        currency:
+          type: string
+          description: What currency the account operates in
+          example: USD
+        symbol:
+          type: string
+          description: The investment position’s market ticker symbol
+          example: MCD
+        securityName:
+          type: string
+          description: The security name for the investment holding
+          example: Common Stock
+        units:
+          type: number
+          description: The number of units of the holding
+          example: 5
+        marketValue:
+          type: number
+          description:
+            Market value of an investment position at the time of retrieval
+          example: 1403.55
+        currentPrice:
+          description: The current price of the investment holding
+          type: number
+          example: 280.71
+        securityType:
+          description: Type of security of the investment position
+          type: number
+          example: Stock
     ReportType:
       description: |
         A report type. Possible values:
@@ -15432,6 +15598,7 @@ components:
             assetId:
               $ref: '#/components/schemas/AssetId'
     StatementReportAck:
+      description: A Statement report being generated
       required:
         - id
         - portfolioId
@@ -16134,6 +16301,7 @@ components:
           description: a list of transaction records
       description: Fields used for the Transaction History Report (CRA products)
     TransactionsReportAck:
+      description: A Transaction report being generated
       required:
         - id
         - portfolioId
@@ -16424,13 +16592,16 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/ReportTransaction'
+            $ref: '#/components/schemas/ReportTransactionNewTxBased'
           description: a list of transaction records
         details:
-          $ref: '#/components/schemas/AccountDetails'
+          $ref: '#/components/schemas/AccountDetailsTxBased'
+        position:
+          $ref: '#/components/schemas/ReportAccountPosition'
         asset:
           $ref: '#/components/schemas/PrequalificationReportAssetSummary'
     VOAReportAck:
+      description: A VOA report being generated
       required:
         - id
         - portfolioId
@@ -16517,6 +16688,7 @@ components:
                 $ref: '#/components/schemas/VOAIReportIncomeStream'
               description: A list of income stream records
     VOAWithIncomeReportAck:
+      description: A VOA with income report being generated
       required:
         - id
         - portfolioId
@@ -16652,6 +16824,7 @@ components:
             $ref: '#/components/schemas/VOETransactionsReportIncomeStream'
           description: A list of income stream records
     VOETransactionsReportAck:
+      description: A VOE Transactions report being generated
       required:
         - id
         - portfolioId
@@ -16879,6 +17052,7 @@ components:
                 Extracted pay statement details, and the transaction matching
                 summary
     VOIEPaystubReportAck:
+      description: A VOIE Paystub report being generated
       required:
         - id
         - portfolioId
@@ -17053,6 +17227,7 @@ components:
                 The details of the financial institution accounts included in
                 the report.
     VOIEPaystubWithTXVerifyReportAck:
+      description: A VOIE Paystub With TXVerify report being generated
       required:
         - id
         - portfolioId
@@ -17149,8 +17324,12 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/ReportTransaction'
+            $ref: '#/components/schemas/ReportTransactionNewTxBased'
           description: a list of transaction records
+        details:
+          $ref: '#/components/schemas/AccountDetailsTxBased'
+        position:
+          $ref: '#/components/schemas/ReportAccountPosition'
         availableBalance:
           type: number
           description: The available balance for the account
@@ -17402,6 +17581,7 @@ components:
             $ref: '#/components/schemas/ReportTransaction'
           description: A list of miscellaneous deposits
     VOIReportAck:
+      description: A VOI report being generated
       required:
         - id
         - portfolioId

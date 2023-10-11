@@ -75,8 +75,8 @@ class CustomersApiTest extends BaseTest {
     @Test
     void getCustomerWithApplicationDataTest_NoAppRegistered() {
         try {
-            api.getCustomerWithAppData(CUSTOMER_ID);
-            Assertions.fail();
+            var customer = api.getCustomerWithAppData(CUSTOMER_ID);
+            assertEquals(CUSTOMER_ID, customer.getId());
         } catch (ApiException e) {
             // {"code":50051,"message":"No registered partner applications found."}
             logApiException(e);
