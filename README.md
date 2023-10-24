@@ -33,8 +33,9 @@ The following workflows ensure the API specification stays in good shape and can
   * `refreshCustomerAccounts`
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/3964455/195069664-638aa443-d87d-48ea-94fc-167f2ebfff57.gif" width="300px"/>
+<img src="https://github.com/Mastercard/open-banking-us-openapi/assets/13854193/11235128-67d8-47a6-8b1b-c93e35e590da.gif" width="300px"/>
 </p>
+
 
 ### Run Tests Locally
 
