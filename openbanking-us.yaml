@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.7
+  version: 1.13.8
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -49,6 +49,8 @@ tags:
     description: Search and fetch financial institutions
   - name: Pay Statements
     description: Upload pay statements
+  - name: Payment History
+    description: Payment History for business
   - name: Payments
     description: Fetch ACH details and account balances
   - name: Portfolios
@@ -143,18 +145,22 @@ paths:
         Generate a Connect 2.0 URL link to add within your own applications.
 
 
-        In option, use the `experience` parameter to call Connect (per session)
-        in the body of the request. Configure the `experience` parameter to
-        change the brand color, logo, icon, which credit decisioning report to
-        generate when the Connect application completes, and more.
+        Optional Parameters:
+
+        * `experience`: Configure different customer experiences per Connect
+        session by changing the brand, color, logo, icon, the type of credit
+        decisioning report to generate after the session ends, and more.
+
+        * `language`: By default, the Connect application is in English. You
+        don't need to pass  this parameter unless you want to translate Connect
+        into one of our supported languages. 
+
+          * Spanish (United States)
+          * French (Canada)
 
 
-        Note: contact your Sales Account Team to set up the `experience`
-        parameter.
-
-
-        MVS Developers: You can pre-populate the consumer's SSN on the "Find
-        employment records" page at the beginning of the MVS payroll app. Pass
+        MVS Developers: You can pre-populate the consumer's SSN on the Find
+        employment records page at the beginning of the MVS payroll app. Pass
         the SSN value for the consumer in the body of the request call.
 
 
@@ -2937,17 +2943,158 @@ paths:
           $ref: '#/components/responses/ObbResourceNotFoundResponse'
         '409':
           $ref: '#/components/responses/ObbResourceConflictResponse'
+  /analytics/payment-history/v1/customer/{customerId}:
+    post:
+      tags:
+        - Payment History
+      summary: Generate Payment History
+      operationId: GeneratePaymentHistory
+      description: >-
+        Payment history report analyzes up to 12-months of transactions and
+        predicts the probability that a SMB will experience a payment risk
+        event, such as NSF/Overdraft or missed recurring payments, in the near
+        future when making a payment. The Risk Score provided in the report is a
+        2-digit ranking with four levels of risk going from low to high.
+
+
+        Some of the highlights of calculated risk present in the report include:
+
+        * Risk Score representing the likelihood of a missed payment
+          based on analysis of permissioned open-banking data
+
+        * Monthly average balance for all accounts by month in the requested
+          time period
+
+        * Total deposit amount by month for all accounts in the requested time
+          period
+
+        * Total withdrawal amounts by month for all accounts in the requested
+          time period
+
+        * Number of NSF counts and aggregate amount per month in the requested
+          time period
+
+        * Recurring loan payment amounts per month in the requested time period
+
+        * Insurance payment amount per month in the requested time period
+
+        * Tax payment amounts per month in the requested time period
+
+
+        This version of the API is intended for piloting and integration testing
+        your application with the Payment History product. It does not adhere to
+        FCRA requirements, and should not be used for production/lending
+        purposes. See _Generate Payment History - FCRA_ for the FCRA compliant
+        version of this API.
+
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get OBB Analytics
+        Report_ (operation: _GetObbAnalyticsReport_).
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GeneratePaymentHistoryResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+  /analytics/payment-history/v1/customer/{customerId}/fcra:
+    post:
+      tags:
+        - Payment History
+      summary: Generate Payment History - FCRA
+      operationId: GeneratePaymentHistoryFcra
+      description: >-
+        Payment history report analyzes up to 12-months of transactions and
+        predicts the probability that a SMB will experience a payment risk
+        event, such as NSF/Overdraft or missed recurring payments, in the near
+        future when making a payment. The Risk Score provided in the report is a
+        2-digit ranking with four levels of risk going from low to high.
+
+
+        Some of the highlights of calculated risk present in the report include:
+
+        * Risk Score representing the likelihood of a missed payment
+          based on analysis of permissioned open-banking data
+
+        * Monthly average balance for all accounts by month in the requested
+          time period
+
+        * Total deposit amount by month for all accounts in the requested time
+          period
+
+        * Total withdrawal amounts by month for all accounts in the requested
+          time period
+
+        * Number of NSF counts and aggregate amount per month in the requested
+          time period
+
+        * Recurring loan payment amounts per month in the requested time period
+
+        * Insurance payment amount per month in the requested time period
+
+        * Tax payment amounts per month in the requested time period
+
+
+        This version of the API is intended for production use. It maintains and
+         enforces all compliance iwth FCRA rules and requirements.
+
+
+        *Note:* this is a premium service, billable per every successful API
+        call for non-testing customers.
+
+
+        A successful call to this API will generate analytics and store a report
+        within Finicity. The report can be retrieved via _Get OBB Analytics
+        Report - FCRA_  (operation: _GetObbAnalyticsReportFcra_).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/ReferenceNumberParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GeneratePaymentHistoryFcraResponse'
+        '400':
+          $ref: '#/components/responses/ObbBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/ObbResourceNotFoundResponse'
+        '409':
+          $ref: '#/components/responses/ObbResourceConflictResponse'
   /analytics/data/v1/{obb_report_id}:
     get:
       tags:
         - Balance Analytics
         - Cash Flow Analytics
+        - Payment History
       summary: Get OBB Analytics Report
       operationId: GetObbAnalyticsReport
       description: >-
-        Retrieve the report saved by _Generate Balance Analytics_ or _Generate
-        Cash Flow Analytics_. Requires the report ID generated by the previous
-        call.
+        Retrieve the report saved by _Generate Balance Analytics_, _Generate
+        Cash Flow Analytics_, or _Generate Payment History_. Requires the report
+        ID generated by the previous call.
 
 
         Report data can either be retrieved as a JSON document or PDF file.
@@ -2959,6 +3106,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/GetObbAnalyticsReportResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   /analytics/data/v1/{obb_report_id}/fcra:
@@ -2966,12 +3117,13 @@ paths:
       tags:
         - Balance Analytics
         - Cash Flow Analytics
+        - Payment History
       summary: Get OBB Analytics Report - FCRA
       operationId: GetObbAnalyticsReportFcra
       description: >-
-        Retrieve the report saved by _Generate Balance Analytics - FCRA_ or
-        _Generate Cash Flow Analytics - FCRA_. Requires the report ID generated
-        by the previous call.
+        Retrieve the report saved by _Generate Balance Analytics - FCRA_,
+        _Generate Cash Flow Analytics - FCRA_, or _Generate Payment History -
+        FCRA_. Requires the report ID generated by the previous call.
 
 
         Report data can either be retrieved as a JSON document or PDF file.
@@ -2988,6 +3140,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/GetObbAnalyticsReportFcraResponse'
+        '401':
+          $ref: '#/components/responses/ObbUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/ObbAccessForbiddenResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
 
@@ -4060,7 +4216,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
           examples:
             GenerateBalanceAnalyticsResponseExample:
               $ref: '#/components/examples/GenerateBalanceAnalyticsResponseExample'
@@ -4072,7 +4228,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
           examples:
             GenerateBalanceAnalyticsFcraResponseExample:
               $ref: '#/components/examples/GenerateBalanceAnalyticsResponseExample'
@@ -4084,7 +4240,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
           examples:
             GenerateCashFlowAnalyticsResponseExample:
               $ref: '#/components/examples/GenerateCashFlowAnalyticsResponseExample'
@@ -4096,10 +4252,34 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BalanceAndCashFlowAnalyticsReportAck'
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
           examples:
             GenerateCashFlowAnalyticsFcraResponseExample:
               $ref: '#/components/examples/GenerateCashFlowAnalyticsResponseExample'
+    GeneratePaymentHistoryResponse:
+      description: >-
+        Response given when payment history was generated successfully,
+        providing the caller with a report ID which can be used to retrieve the
+        report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
+          examples:
+            GeneratePaymentHistoryResponseExample:
+              $ref: '#/components/examples/GeneratePaymentHistoryResponseExample'
+    GeneratePaymentHistoryFcraResponse:
+      description: >-
+        Response given when payment history (FCRA) was generated successfully,
+        providing the caller with a report ID which can be used to retrieve the
+        report as JSON or a PDF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObbAnalyticsReportAck'
+          examples:
+            GeneratePaymentHistoryResponseExample:
+              $ref: '#/components/examples/GeneratePaymentHistoryResponseExample'
     GetObbAnalyticsReportResponse:
       description: OBB Analytics report data as JSON or PDF
       content:
@@ -4111,6 +4291,8 @@ components:
               $ref: '#/components/examples/BalanceAnalyticsReportExample'
             CashFlowAnalyticsReportExample:
               $ref: '#/components/examples/CashFlowAnalyticsReportExample'
+            PaymentHistoryReportExample:
+              $ref: '#/components/examples/PaymentHistoryReportExample'
         application/pdf:
           schema:
             type: string
@@ -4126,6 +4308,8 @@ components:
               $ref: '#/components/examples/BalanceAnalyticsReportExample'
             CashFlowAnalyticsFcraReportExample:
               $ref: '#/components/examples/CashFlowAnalyticsReportExample'
+            PaymentHistoryReportExample:
+              $ref: '#/components/examples/PaymentHistoryReportExample'
         application/pdf:
           schema:
             type: string
@@ -6611,6 +6795,16 @@ components:
         reportPin: 'qert'
         requesterName: 'Mortage ABC LLC'
         title: 'Finicity Cashflow Analytics'
+    GeneratePaymentHistoryResponseExample:
+      value:
+        reportId: '145cabe0-2b38-4175-9b7e-115431359839'
+        reportPin: 'qert'
+        customerId: 10001
+        accountIds: [10001, 10002, 10003]
+        title: 'Finicity Payment History'
+        createdDate: '2022-02-10T05:00:00-07:00'
+        businessId: 123
+        requesterName: 'Mortage ABC LLC'
     BalanceAnalyticsReportExample:
       value:
         accountResults:
@@ -7131,6 +7325,70 @@ components:
         requesterName: 'Mortgage ABC LLC'
         title: 'Finicity Cash Flow Analytics'
         totalRevenue: 904909.33
+    PaymentHistoryReportExample:
+      value:
+        title: 'Finicity Payment History'
+        customerId: 10001
+        accountIds: [5001131116, 5001131117]
+        businessId: 123
+        requesterName: 'Mortgage ABC LLC'
+        reportHeader:
+          businessName: B&G Construction
+          businessAddress: 123 Main St
+          businessCity: Portland
+          businessState: OR
+          businessZip: '12345'
+          reportId: 8ff8b4b2-706f-45c3-8d66-857bdb516214
+          referenceNumber: 32asdfaasd0823
+          reportDate: '2022-03-16T21:28:38-07:00'
+        analytics:
+          status: 'success'
+          riskScore: 31.49
+          transactionHistory: 2
+          transactionsSummary:
+            totalNonSufficientFunds: 0.0
+            averageMonthlyNonSufficientFunds: 0.0
+            totalDeposits: 60414.90
+            averageMonthlyDeposits: 30212.45
+            totalWithdrawals: 2162.26
+            averageMonthlyWithdrawals: 1081.13
+            beginDate: '2022-06-01T00:00:00'
+            endDate: '2022-08-01T00:00:00'
+          accountSummaries:
+            - accountNumberDisplay: '2121'
+              financialInstitution: Some Institution
+              institutionIcon: http://some-institution.com/some-icon
+              currency: 'USD'
+              status: 'active'
+              accountName: '401K'
+              accountOwner:
+                name: 'Johnny Appleseed'
+                address: 123 Main St
+                city: Portland
+                state: OR
+                zip: '12345'
+              accountType: '401k'
+              beginningBalance: 9006.13
+              averageMonthlyBalance: 9005.56
+              currentBalance: 9005.00
+              beginDate: '2022-06-01'
+              endDate: '2022-08-01'
+              totalNonSufficientFunds: 0.00
+              daysSinceNonsufficientFunds: 0
+          customerSummaryByMonths:
+            - month: '2022-06-01'
+              averageBalance: 20573.58
+              closingBalance: 20711.36
+              openingBalance: 19471.36
+              totalDeposits: 1240.0
+              totalWithdrawals: 0.0
+              nonSufficientFunds: 0
+              insurancePayments: 0
+              taxPayments: 103.23
+              recurringExpensePayments: 234.11
+              missedRecurringExpensePayments: 0
+              recurringLoanPayments: 234.34
+              missedRecurringLoanPayments: 0
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -8512,9 +8770,42 @@ components:
         - title
         - reportHeader
       type: object
-    BalanceAndCashFlowAnalyticsReportAck:
+    PaymentHistoryReport:
+      description: Payment history report data as JSON
+      properties:
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        accountIds:
+          description: List of account IDs included in the report
+          type: array
+          items:
+            $ref: '#/components/schemas/NumericAccountId'
+        businessId:
+          description: Business ID
+          example: 4444
+          type: integer
+        requesterName:
+          description: Name of requester
+          example: Mortgage ABC LLC
+          type: string
+          minLength: 0
+          maxLength: 255
+        reportHeader:
+          allOf:
+            - $ref: '#/components/schemas/ObbReportHeader'
+          description: Customer and report metadata
+        analytics:
+          $ref: '#/components/schemas/PaymentHistoryAnalytics'
+      required:
+        - customerId
+        - title
+        - reportHeader
+      type: object
+    ObbAnalyticsReportAck:
       description: >-
-        Response given when analtyics were generated successfully, providing the
+        Response given when analytics were generated successfully, providing the
         caller with a report ID which can be used to retrieve the report as JSON
         or a PDF.
       properties:
@@ -8526,13 +8817,13 @@ components:
         businessId:
           description: Business ID associated with the requested customer
           type: integer
-          example: 1234
+          example: 1005061234
         createdDate:
           description: Created date of balance analytics request
           type: string
           minLength: 25
           maxLength: 25
-          example: '2022-02-10T05:00:00-07:00'
+          example: '2023-05-17T06:48:22-07:00'
         customerId:
           $ref: '#/components/schemas/NumericCustomerId'
         reportId:
@@ -8579,6 +8870,234 @@ components:
             time at which the request was received (730 days).
           type: integer
           example: 730
+    PaymentHistoryAnalytics:
+      description: Payment History computed analytics
+      properties:
+        status:
+          description: Report status
+          type: string
+          example: 'success'
+        riskScore:
+          description: Calculated risk score
+          type: number
+          example: 82.45
+        transactionHistory:
+          description: Months of transactions
+          type: integer
+          example: 12
+        transactionsSummary:
+          $ref: '#/components/schemas/PaymentHistoryTransactionsSummary'
+        accountSummaries:
+          description: Account-level summary of transactions
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentHistoryAccountSummary'
+        customerSummaryByMonths:
+          description: Customer-level summary of transactions per month
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentHistoryCustomerMonthlySummary'
+    PaymentHistoryTransactionsSummary:
+      description: Top-level summary of transactions
+      properties:
+        totalNonSufficientFunds:
+          description: Total of nsf transactions
+          type: number
+        averageMonthlyNonSufficientFunds:
+          description: Monthly average of nsf transactions
+          type: number
+        totalDeposits:
+          description: Total of deposit transactions
+          type: number
+        averageMonthlyDeposits:
+          description: Monthly average of deposit transactions
+          type: number
+        totalWithdrawals:
+          description: Total of withdrawals transactions
+          type: number
+        averageMonthlyWithdrawals:
+          description: Monthly average of withdrawal transactions
+          type: number
+        beginDate:
+          description: ISO-8601 date of earliest transaction
+          type: string
+        endDate:
+          description: ISO-8601 date of latest transaction
+          type: string
+      required:
+        - totalNonSufficientFunds
+        - averageMonthlyNonSufficientFunds
+        - totalDeposits
+        - averageMonthlyDeposits
+        - totalWithdrawals
+        - averageMonthlyWithdrawals
+        - beginDate
+        - endDate
+      type: object
+    PaymentHistoryAccountSummary:
+      description: Account-level summary of transactions
+      properties:
+        accountNumberDisplay:
+          description: Last four digits of the account
+          type: string
+          example: '2222'
+        financialInstitution:
+          description: Name of the account's institution
+          type: string
+          example: 'FinBank'
+        institutionIcon:
+          description: URL of institution icon
+          type: string
+          example: 'https://my-sample-app.com/12345/some-icon.jpg'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+        accountName:
+          description: The account name from the institution
+          type: string
+          example: 'My 401k'
+        accountOwner:
+          description: The account owner information
+          type: object
+          properties:
+            name:
+              $ref: '#/components/schemas/AccountOwnerName'
+            address:
+              $ref: '#/components/schemas/Address'
+            city:
+              $ref: '#/components/schemas/City'
+            state:
+              $ref: '#/components/schemas/State'
+            zip:
+              $ref: '#/components/schemas/ZipCode'
+          required:
+            - name
+            - address
+            - city
+            - state
+            - zip
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        beginningBalance:
+          description: Beginning balance of account
+          type: number
+          example: 123.45
+        averageMonthlyBalance:
+          description: Monthly average balance of account
+          type: number
+          example: 123.45
+        currentBalance:
+          description: Current balance of account
+          type: number
+          example: 123.45
+        beginDate:
+          description: Begin date of account
+          type: string
+          example: '2023-06-01'
+        endDate:
+          description: End date of account
+          type: string
+          example: '2023-06-01'
+        totalNonsufficientFunds:
+          description: Total of nsf transactions in this account
+          type: number
+          example: 123.45
+        daysSinceNonsufficientFunds:
+          description: Days since the latest nsf transaction for this account
+          type: integer
+          example: 3
+      required:
+        - accountNumberDisplay
+        - financialInstitution
+        - institutionIcon
+        - currency
+        - status
+        - accountName
+        - accountOwner
+        - accountType
+        - beginningBalance
+        - averageMonthlyBalance
+        - currentBalance
+        - beginDate
+        - endDate
+        - totalNonSufficientFunds
+        - daysSinceNonsufficientFunds
+      type: object
+    PaymentHistoryCustomerMonthlySummary:
+      description: Customer-level summary of transactions in a month
+      properties:
+        month:
+          description: Date of the month
+          type: string
+          example: '2023-06-01'
+        averageBalance:
+          description: Average balance for the month
+          type: number
+          example: 123.45
+        closingBalance:
+          description: Closing balance for the month
+          type: number
+          example: 123.45
+        openingBalance:
+          description: Opening balance for the month
+          type: number
+          example: 123.45
+        totalDeposits:
+          description: Total of deposit transactions for the month
+          type: number
+          example: 123.45
+        totalWithdrawals:
+          description: Total of withdrawal transactions for the month
+          type: number
+          example: 123.45
+        nonSufficientFunds:
+          description: Total of nsf transactions for the month
+          type: number
+          example: 3
+        insurancePayments:
+          description: Total of insurance payment transactions for the month
+          type: number
+          example: 123.45
+        taxPayments:
+          description: Total of tax payment transactions for the month
+          type: number
+          example: 123.45
+        recurringExpensePayments:
+          description:
+            Total of recurring expense payment transactions for the month
+          type: number
+          example: 543.21
+        missedRecurringExpensePayments:
+          description:
+            Total of missed recurring expense payment transactions for the month
+          type: number
+          example: 123.45
+        recurringLoanPayments:
+          description:
+            Total of recurring loan payment transactions for the month
+          type: number
+          example: 543.21
+        missedRecurringLoanPayments:
+          description:
+            Total of missed recurring loan payment transactions for the month
+          type: number
+          example: 123.45
+      required:
+        - month
+        - averageBalance
+        - closingBalance
+        - openingBalance
+        - totalDeposits
+        - totalWithdrawals
+        - nonSufficientFunds
+        - insurancePayments
+        - taxPayments
+        - recurringExpensePayments
+        - missedRecurringExpensePayments
+        - recurringLoanPayments
+        - missedRecurringLoanPayments
+      type: object
     BaseReportAck:
       description: Properties shared by all generated reports
       type: object
@@ -10604,14 +11123,13 @@ components:
           $ref: '#/components/schemas/SingleUseUrl'
     ConnectLanguage:
       description: |
-        Generate a translated Connect URL link. 
+        By default, the Connect application is in English. You don't need to pass this parameter unless
+        you want to translate Connect into one of our supported languages.
 
-        Supported languages: 
-        * English (default)
         * Spanish (United States): `es`
-        * French (Canada): `fr` or `fr-CA`
+        * French (Canada): `fr`
       type: string
-      example: fr-CA
+      example: 'es'
     ConnectLink:
       type: string
       description: A generated Connect URL
@@ -13465,10 +13983,13 @@ components:
         - address
       type: object
     ObbAnalyticsReport:
-      description: Cash Flow or Balance Analytics report data as JSON
+      description:
+        Cash Flow Analytics, Balance Analytics, and Payment History report data
+        as JSON
       allOf:
         - $ref: '#/components/schemas/CashFlowAnalyticsReport'
         - $ref: '#/components/schemas/BalanceAnalyticsReport'
+        - $ref: '#/components/schemas/PaymentHistoryReport'
     ObbAverageWeeklyBalance:
       properties:
         amount:
@@ -13655,13 +14176,13 @@ components:
         errorCode:
           type: integer
           description: Error code
-          example: 0
+          example: 404
         message:
           type: string
           description: Detailed reason about the source of the error
           minLength: 0
           maxLength: 255
-          example: 'Some error message'
+          example: 'Customer Id does not exist'
       required:
         - errorCode
         - message
