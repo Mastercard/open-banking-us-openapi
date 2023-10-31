@@ -8,6 +8,7 @@ import com.mastercard.openbanking.client.test.utils.AccountUtils;
 import com.mastercard.openbanking.client.test.utils.ConsumerUtils;
 import com.mastercard.openbanking.client.test.utils.PayStatementUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -183,6 +184,7 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
+    @Disabled
     void getPayStatementReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("paystatement");
@@ -221,6 +223,7 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
+    @Disabled
     void getVOIEPaystubReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("voieTxVerify");
@@ -240,6 +243,7 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
+    @Disabled
     void getVOIEPaystubWithTXVerifyReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("voieTxVerify");

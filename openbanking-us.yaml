@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.8
+  version: 1.13.9
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -334,8 +334,7 @@ paths:
         - Customers
       summary: Add Testing Customer
       description: >-
-        Enroll a testing customer ([Test Drive](https://signup.finicity.com/)
-        accounts).
+        Enroll a testing customer (Test Drive accounts).
 
 
         For using testing customers with FinBank OAuth, you must register a test
@@ -4098,8 +4097,8 @@ components:
               $ref: '#/components/examples/TooManyRequestsExample'
     TooManyRequestsErrorResponse:
       description:
-        The service can't accept more requests or is not available from the
-        [Test Drive](https://signup.finicity.com/).
+        The service can't accept more requests or is not available from the Test
+        Drive.
     ResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -8974,9 +8973,6 @@ components:
           required:
             - name
             - address
-            - city
-            - state
-            - zip
         accountType:
           $ref: '#/components/schemas/AccountType'
         beginningBalance:
@@ -12279,8 +12275,8 @@ components:
         characters ! @ . # $ % & * _ - + the use of email in this field is
         discouraged it is recommended to use a unique non-email identifier. Use
         of special characters may result in an error (e.g. í, ü, etc.).
-        Usernames are unique. A username used in [Test
-        Drive](https://signup.finicity.com/) can't be reused in other plans.
+        Usernames are unique. A username used in Test Drive can't be reused in
+        other plans.
       example: customerusername1
     CustomerWithAppData:
       description: A finicity customer record with application info
@@ -14369,7 +14365,7 @@ components:
           type: string
           description: >-
             Your Partner Secret displayed in the [Developer
-            Dashboard](https://developer.finicity.com/admin)
+            Dashboard](https://developer.mastercard.com/account/log-in)
           example: aqJ5Ic4SEVx2IgDQ6oR4
     PartnerCredentialsWithNewSecret:
       required:
@@ -14389,7 +14385,7 @@ components:
       type: string
       description: >-
         Your Partner ID displayed in the [Developer
-        Dashboard](https://developer.finicity.com/admin)
+        Dashboard](https://developer.mastercard.com/account/log-in)
       example: '1234583871234'
     PartnerName:
       type: string
