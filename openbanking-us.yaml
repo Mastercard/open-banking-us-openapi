@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.9
+  version: 1.13.10
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1869,8 +1869,8 @@ paths:
         - Bank Statements
       summary: Generate Statement Report
       description: >-
-        Generate a Statement Report report for the given accounts under the
-        given customer.
+        Generate a Statement Report for the given accounts under the given
+        customer.
 
 
         This is a premium service. A billable event will be created upon the
@@ -4649,7 +4649,7 @@ components:
       value:
         statementReportData:
           accountId: 1000076901
-          index: 1
+          statementIndex: 1
         reportCustomFields:
           - label: loanID
             value: '123456'
@@ -4669,7 +4669,7 @@ components:
         constraints:
           statementReportData:
             accountId: 1000076901
-            index: 1
+            statementIndex: 1
           reportCustomFields:
             - label: loanID
               value: '123456'
@@ -5848,7 +5848,7 @@ components:
         constraints:
           statementReportData:
             accountId: 1000076901
-            index: 1
+            statementIndex: 1
           reportCustomFields:
             - label: loanID
               value: '123456'
