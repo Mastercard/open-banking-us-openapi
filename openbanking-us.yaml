@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.12
+  version: 1.13.13
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -682,7 +682,7 @@ paths:
       tags:
         - Accounts
       summary:
-        Refresh Customer Accounts by Institution Login ID for Dynamic Billing
+        Refresh Customer Account by Institution Login ID for Data Access Tiers
       description: >-
         Refresh account and transaction data for all accounts associated with a
         given 'institutionLoginId` with a connection to the institution. Client
@@ -858,7 +858,7 @@ paths:
     post:
       tags:
         - Accounts
-      summary: Refresh Customer Accounts For Dynamic Billing
+      summary: Refresh Customer Accounts for Data Access Tiers
       description: >-
         Refresh account and transaction data for all accounts associated with
         the  given `customerId` with a connection to the institution.
@@ -16505,9 +16505,8 @@ components:
         optionExpireDate:
           $ref: '#/components/schemas/TransactionOptionExpireDate'
         checkNum:
-          type: integer
+          type: string
           description: The check number of the transaction
-          format: int32
           example: 299
         escrowAmount:
           type: number
