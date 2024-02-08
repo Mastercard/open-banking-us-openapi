@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.13.13
+  version: 1.14.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -69,6 +69,10 @@ tags:
     description: Generate asset reports asynchronously
   - name: Verify Income and Employment
     description: Generate income and employment reports asynchronously
+  - name: Businesses API
+    description:
+      Create and manage business associated with customers in order to use
+      Balance Analytics or Cash Flow Analytics
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -153,7 +157,7 @@ paths:
 
         * `language`: By default, the Connect application is in English. You
         don't need to pass  this parameter unless you want to translate Connect
-        into one of our supported languages. 
+        into one of our supported languages.
 
           * Spanish (United States)
           * French (Canada)
@@ -1814,7 +1818,7 @@ paths:
         Retrieve the customer's bank statements in PDF format. Up to 24 months
         of history is available depending on the financial institution. Since
         this is a premium service, charges incur per each successful statement
-        retrieved. 
+        retrieved.
 
 
         For certified financial institutions, statements are available for the
@@ -1874,7 +1878,7 @@ paths:
 
 
         This is a premium service. A billable event will be created upon the
-        successful generation of the Statement Report. 
+        successful generation of the Statement Report.
 
 
         Before calling this API, a consumer must be created for the given
@@ -2301,7 +2305,7 @@ paths:
         Note: this is a premium service, billable per every successful API call.
 
 
-        _Supported account types_: "checking", "savings", "moneyMarket", "loan"
+        _Supported account types_: "checking", "savings", "moneyMarket", "cd"
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -3219,6 +3223,88 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/business-services/customers/{customer_id}/businesses':
+    parameters:
+      - $ref: '#/components/parameters/CustomerIdPathParameter'
+    post:
+      tags:
+        - Businesses API
+      summary: Create a New Business for a Customer
+      description: >-
+        Create a new business record for the associated customer.
+
+        A customer can have one business record associated.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: AddBusinessDetails
+      requestBody:
+        $ref: '#/components/requestBodies/BusinessDetailRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessCreatedResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+        '409':
+          $ref: '#/components/responses/ConflictErrorResponse'
+    get:
+      tags:
+        - Businesses API
+      summary: Get Business for Customer
+      description: >-
+        Retrieve business details associated with a specific customer. By
+        providing the unique customer identifier, details about the associated
+        business can be accessed.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetBusinessByCustomer
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessFoundResponse'
+        '404':
+          $ref: '#/components/responses/CustomerNotFoundErrorResponse'
+  '/business-services/businesses/{business_id}':
+    parameters:
+      - $ref: '#/components/parameters/BusinessIdParameter'
+    put:
+      tags:
+        - Businesses API
+      summary: Update Business by ID
+      description: >-
+        Update the details of a business based on its unique identifier. By
+        providing the specific business ID and the updated information in the
+        request, modifications can be made to the business's profile.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: UpdateBusiness
+      requestBody:
+        $ref: '#/components/requestBodies/BusinessDetailRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessUpdatedResponse'
+        '404':
+          $ref: '#/components/responses/BusinessNotFoundErrorResponse'
+    get:
+      tags:
+        - Businesses API
+      summary: Get Business by ID
+      description: >-
+        Retrieve business details.
+
+
+        _Supported regions_:
+        ![\U0001F1FA\U0001F1F8](https://flagcdn.com/20x15/us.png)
+      operationId: GetBusinessById
+      responses:
+        '200':
+          $ref: '#/components/responses/BusinessFoundResponse'
+        '404':
+          $ref: '#/components/responses/BusinessNotFoundErrorResponse'
+
 components:
   securitySchemes:
     FinicityAppKey:
@@ -3232,6 +3318,13 @@ components:
       in: header
       description: A token returned by the `/authentication` API
   requestBodies:
+    BusinessDetailRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewBusiness'
+
     CreateTokenRequest:
       required: true
       content:
@@ -3497,6 +3590,43 @@ components:
           schema:
             $ref: '#/components/schemas/ThirdPartyAccessKeyData'
   responses:
+    BusinessUpdatedResponse:
+      description: The business information was updated.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Business'
+    BusinessNotFoundErrorResponse:
+      description: The business does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            BusinessIdNotFoundResponse:
+              $ref: '#/components/examples/BusinessIdNotFound'
+    BusinessFoundResponse:
+      description: The business information was successfully retrieved.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessList'
+    CustomerNotFoundErrorResponse:
+      description: The customer does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            CustomerIdNotFoundResponse:
+              $ref: '#/components/examples/CustomerIdNotFound'
+    BusinessCreatedResponse:
+      description: The business was successfully created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Business'
+
     CreateTokenResponse:
       description: The access token was successfully created
       content:
@@ -4391,6 +4521,20 @@ components:
           schema:
             $ref: '#/components/schemas/AccountOwnerHolders'
   examples:
+    BusinessIdNotFound:
+      value:
+        code: 10003
+        message: Business ID was not found.
+        status: '404'
+        title: Business ID was not found.
+        user_message: Business ID was not found.
+    CustomerIdNotFound:
+      value:
+        code: 10002
+        message: Customer ID was not found.
+        status: '404'
+        title: Customer ID was not found.
+        user_message: Customer ID was not found.
     MissingFinicityAppKeyExample:
       value:
         code: 10026
@@ -4549,27 +4693,25 @@ components:
     GenerateVOEPayrollReportResponseExample:
       value:
         id: 41h4nzppn47u-voepayroll
-        portfolioId: 9qud7dtuzbew-3-port
+        portfolioId: 9qud7dtuzbew-1-port
         customerType: active
         customerId: 1011140000
         requestId: 7a7qyps2iy
+        type: voePayroll
+        reportStyle: credentialedPayroll
         requesterName: Decisioning API
         createdDate: 1579819592
-        title: Finicity Verification of Employment - Payroll
+        title: Mastercard Open Banking Verification of Employment - Payroll
         consumerId: 656cf7083c5c06e0c125a698579f0000
         consumerSsn: '6789'
         constraints:
           payrollData:
-            payrollDataRetrievalId: hahvhe2k0000
-            employerNames:
-              - ACME INC
-            reportId: abcdefghijkl-voiepayroll
-          payStatementsFromDate: 1580558400
+            payrollAccountIds:
+              - 018bf5c9-b542-c2ba-8f92-c5c7be6be515
           reportCustomFields:
             - label: loanID
               value: '12345'
               shown: true
-        type: voePayroll
         status: inProgress
     RefreshVOIEPayrollReportResponseExample:
       value:
@@ -4580,21 +4722,21 @@ components:
         requesterName: Decisioning API
         requestId: 7a7qyps2iy
         type: voiePayroll
+        reportStyle: credentialedPayroll
         status: inProgress
         createdDate: 1579819592
         constraints:
           payrollData:
-            payrollDataRetrievalId: hahvhe2k0000
-            employerNames:
-              - ACME INC
-            reportId: abcdefghijkl-voiepayroll
-          payStatementsFromDate: 1580558400
+            payrollAccountIds:
+              - 018b8f10-fdf8-0ef7-ded5-34a17c34d86f
           reportCustomFields:
             - label: loanID
               value: '12345'
               shown: true
         customerType: active
-        title: Finicity Verification of Income and Employment - Payroll
+        title:
+          Mastercard Open Banking Verification of Income and Employment -
+          Payroll
         portfolioId: 9qud7dtuzbew-2-port
     GeneratePayStatementReportRequestExample:
       value:
@@ -6168,7 +6310,7 @@ components:
       summary: VOE - Payroll Report
       value:
         id: 41h4nzppn47u-voepayroll
-        portfolioId: 9qud7dtuzbew-3-port
+        portfolioId: 9qud7dtuzbew-1-port
         gseEnabled: true
         createdDate: 1579819592
         requesterName: Decisioning API
@@ -6178,18 +6320,18 @@ components:
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
         type: voePayroll
-        title: Verification of Employment - Payroll
+        reportStyle: credentialedPayroll
+        title: Mastercard Open Banking Verification of Employment - Payroll
         status: success
         constraints:
           payrollData:
-            payrollDataRetrievalId: hahvhe2k0000
-            employerNames:
-              - ACME INC
-            reportId: abcdefghijkl-voiepayroll
+            payrollAccountIds:
+              - 018d3f0e-6c1c-fa13-7e50-0003acfcfdae
         employmentHistory:
           - asOfDate: 1596175200
+            employmentId: zgk6wh3urqr0gtxv
             employerName: ACME INC
-            payrollSource: finPayroll
+            payrollSource: argyle
             employee:
               name: John Doe Smith
               givenName: John
@@ -6219,6 +6361,8 @@ components:
               employmentStatusName: Active
               workLevelCode: FT
               workLevelName: Full Time-Regular
+              latestPayPeriodEndDate: 1699747200
+              derivedEmploymentStatus: false
               workLevelStatus: Full Time
               positionTitle: Shift Supervisor
               positionDuration: P1Y6M0D
@@ -6369,7 +6513,7 @@ components:
       summary: VOIE - Payroll Report
       value:
         id: 41h4nzppn37u-voiepayroll
-        portfolioId: 9qud7dtuzbew-13-port
+        portfolioId: 9qud7dtuzbew-1-port
         gseEnabled: true
         customerType: active
         customerId: 1275320
@@ -6378,23 +6522,25 @@ components:
         consumerSsn: '6789'
         requesterName: Decisioning API
         type: voiePayroll
+        reportStyle: credentialedPayroll
         status: success
         createdDate: 1579819592
-        title: Verification of Income and Employment - Payroll
+        title:
+          Mastercard Open Banking Verification of Income and Employment -
+          Payroll
         constraints:
           payrollData:
-            payrollDataRetrievalId: hahvhe2k0000
-            employerNames:
-              - ACME INC
+            payrollAccountIds:
+              - 018b8f10-fdf8-0ef7-ded5-34a17c34d86f
           reportCustomFields:
             label: loanID
             value: '12345'
             shown: true
-          payStatementsFromDate: 1580558400
         employmentHistory:
           asOfDate: 1596175200
+          employmentId: vkvxszcy7nc9c19d
           employerName: ACME INC
-          payrollSource: finPayroll
+          payrollSource: argyle
           employee:
             name: John Doe Smith
             givenName: John
@@ -6450,36 +6596,6 @@ components:
             monthlyIncome:
               estimatedMonthlyBasePay: 2000
               estimatedMonthlyOvertimePay: 100
-            directPayStatements:
-              - payrollPayHistoryId: cy1a742k28
-                lastPayPeriodIndicator: true
-                mainPayStatementFields:
-                  payDate: 1596175200
-                  startDate: 1595138400
-                  endDate: 1595656800
-                  payPeriodHours: 40
-                  payFrequency: Weekly
-                  payType: Hourly
-                  grossPayAmount: 1888.75
-                  grossPayAmountYTD: 73925
-                  netPayAmount: 1401.95
-                  netPayAmountYTD: 73925
-                earnings:
-                  - name: basePayAmount
-                    type: base
-                    rate: 27.5
-                    amount: 1100
-                    amountYTD: 5500
-                deductions:
-                  - type: Federal tax
-                    amount: 143.45
-                  - type: State tax
-                    amount: 12.5
-                directDeposits:
-                  - accountTypeCode: Savings
-                    amount: 1401.95
-                    accountLastFour: '1234'
-                    routingNumber: '000000000'
     VOIEPaystubReportExample:
       summary: VOIE - Paystub Report
       value:
@@ -7409,9 +7525,25 @@ components:
       schema:
         $ref: '#/components/schemas/AssetId'
       example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
+    BusinessIdParameter:
+      description: Unique identifier of the business
+      name: business_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/BusinessId'
+      example: '192323'
     CustomerIdParameter:
       description: A customer ID
       name: customerId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/CustomerId'
+      example: '1005061234'
+    CustomerIdPathParameter:
+      description: Unique identifier of the customer
+      name: customer_id
       in: path
       required: true
       schema:
@@ -7806,6 +7938,90 @@ components:
         description: Report ID generated and returned by OBB products
         type: string
   schemas:
+    BusinessList:
+      type: array
+      minItems: 1
+      maxItems: 1
+      items:
+        $ref: '#/components/schemas/Business'
+    BusinessId:
+      type: string
+      description: Unique identifier of the business
+      minLength: 1
+      maxLength: 50
+      example: '1112'
+    Business:
+      allOf:
+        - $ref: '#/components/schemas/NewBusiness'
+        - type: object
+          properties:
+            businessId:
+              $ref: '#/components/schemas/BusinessId'
+            createdDate:
+              $ref: '#/components/schemas/NoZoneDateTime'
+            modifiedDate:
+              $ref: '#/components/schemas/NoZoneDateTime'
+    PhoneNumberFormat:
+      type: object
+      properties:
+        countryCode:
+          $ref: '#/components/schemas/CountryCodeNumber'
+        phoneNo:
+          $ref: '#/components/schemas/NewPhoneNumber'
+    NewPhoneNumber:
+      type: string
+      description: >-
+        A phone number ([E.164](https://en.wikipedia.org/wiki/E.164) format)
+        minLength: 7
+      maxLength: 12
+      example: '8042221111'
+    NewBusiness:
+      type: object
+      required:
+        - name
+        - personallyLiable
+        - address
+        - phoneNumber
+      properties:
+        name:
+          type: string
+          description: The legal name of the business
+          minLength: 1
+          maxLength: 150
+          example: ABC Tires Inc
+        personallyLiable:
+          type: boolean
+          description: >-
+            Indicates whether a business owner is personally liable for a loan
+          example: true
+        address:
+          $ref: '#/components/schemas/NewAddress'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumberFormat'
+        url:
+          description: A URL for the business website
+          format: uri
+          maxLength: 2000
+          minLength: 0
+          type: string
+          example: 'https://www.finicity.com/'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        type:
+          description: >-
+            The business type eg LLC, Corp, S Corp, C Corp, B Corp, Sole
+            Propriertorship, Nonprofit, etc.
+          maxLength: 150
+          minLength: 0
+          type: string
+          example: Nonprofit
+        taxId:
+          description: >-
+            Provide details of the tax id for the business
+          maxLength: 15
+          minLength: 9
+          type: string
+          example: 'A1234561Z'
     ACHDetails:
       required:
         - routingNumber
@@ -8247,6 +8463,35 @@ components:
       description: 'Possible values: "ACTIVE", "INACTIVE"'
       type: string
       example: ACTIVE
+    CountryCodeNumber:
+      type: string
+      description:
+        The country code digit representing the phone number for specific
+        country
+      minLength: 1
+      maxLength: 3
+      example: '1'
+    CountryCode:
+      type: string
+      description: Two-letter ISO 3166-1 alpha-2 country code
+      minLength: 2
+      maxLength: 2
+      example: US
+    NewAddress:
+      type: object
+      properties:
+        addressLine1:
+          $ref: '#/components/schemas/AddressLine1'
+        addressLine2:
+          $ref: '#/components/schemas/AddressLine2'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        country:
+          $ref: '#/components/schemas/CountryCode'
+        postalCode:
+          $ref: '#/components/schemas/ZipCode'
     Address:
       type: string
       description: A street address
@@ -8606,6 +8851,7 @@ components:
         - availableBalanceDate
         - clearedBalance
         - clearedBalanceDate
+        - aggregationStatusCode
         - currency
       type: object
       properties:
@@ -10632,7 +10878,7 @@ components:
 
         * "Baby Supplies"
 
-        * "Babysitter & Day Care"
+        * "Babysitter & Daycare"
 
         * "Bank Fee"
 
@@ -10676,7 +10922,7 @@ components:
 
         * "Entertainment"
 
-        * "Eye Care"
+        * "Eyecare"
 
         * "Fast Food"
 
@@ -10806,7 +11052,7 @@ components:
 
         * "Sell"
 
-        * "Services & Parts"
+        * "Service & Parts"
 
         * "Service Fee"
 
@@ -14558,9 +14804,7 @@ components:
             endDate:
               $ref: '#/components/schemas/ReportEndDate'
             reportStyle:
-              description: A type of report
-              type: string
-              example: paystatement
+              $ref: '#/components/schemas/ReportStyle'
             numberOfBillableAssets:
               type: integer
               description:
@@ -14645,9 +14889,6 @@ components:
         reportId:
           $ref: '#/components/schemas/OriginalPayrollReportId'
     PayrollDataOut:
-      required:
-        - payrollDataRetrievalId
-        - employerNames
       type: object
       properties:
         payrollDataRetrievalId:
@@ -14656,14 +14897,16 @@ components:
             An ID to identify the data retrieved from the payroll providers for
             the report.
           example: hahvhe2k0000
-        employerNames:
+        employmentIds:
           type: array
+          description: An array of employmentIds
           items:
-            type: string
-            example: Enterprise One
-          description: >-
-            An array of employer names that the consumer submitted after
-            completing the Connect application.
+            $ref: '#/components/schemas/EmploymentId'
+        payrollAccountIds:
+          type: array
+          description: An array of payrollAccountIds
+          items:
+            $ref: '#/components/schemas/PayrollAccountId'
         reportId:
           $ref: '#/components/schemas/ReportId'
     PayrollEmployeeAddress:
@@ -14692,8 +14935,6 @@ components:
     PayrollEmployeeRecord:
       required:
         - name
-        - givenName
-        - familyName
       type: object
       properties:
         name:
@@ -14778,6 +15019,8 @@ components:
       properties:
         asOfDate:
           $ref: '#/components/schemas/AsOfDate'
+        employmentId:
+          $ref: '#/components/schemas/EmploymentId'
         employerName:
           $ref: '#/components/schemas/EmployerName'
         payrollSource:
@@ -14817,6 +15060,11 @@ components:
             employer states the latest hire date at the company
           format: int64
           example: 1527832800
+        latestPayPeriodEndDate:
+          type: integer
+          description: The most recent pay period’s end date.
+          format: int64
+          example: 1596175201
         latestPayDate:
           type: integer
           description: The most recent pay date from an employer
@@ -14855,13 +15103,20 @@ components:
           type: string
           description: >-
             'Status codes: `A` - Active, `NLE` - No Longer Employed, `L` -
-            Leave, `O` - Other'
+            Leave, `O` - Other', `I` - Inactive, `U` - Unknown'
           example: A
         employmentStatusName:
           type: string
           description:
-            "'Status name: `Active`, `No Longer Employed`, `Leave` or `Other`'"
+            "'Status name: `Active`, `No Longer Employed`, `Leave` or `Other`,
+            `Inactive`, or `Unknown`'"
           example: Active
+        derivedEmploymentStatus:
+          type: boolean
+          description:
+            Describes the employment status - it will be true if it is not
+            directly stated by the employer, and false otherwise
+          example: true
         workLevelCode:
           type: string
           description: >-
@@ -14934,6 +15189,8 @@ components:
         - $ref: '#/components/schemas/BaseReportAckWithPortfolioId'
         - type: object
           properties:
+            reportStyle:
+              $ref: '#/components/schemas/ReportStyle'
             constraints:
               $ref: '#/components/schemas/PayrollReportConstraintsOut'
     PayrollReportConstraints:
@@ -17554,6 +17811,8 @@ components:
                 verified employers
             gseEnabled:
               $ref: '#/components/schemas/GseEnabled'
+            reportStyle:
+              $ref: '#/components/schemas/ReportStyle'
     VOIEPaystubReport:
       description: A VOIE Paystub report
       type: object
@@ -18291,3 +18550,24 @@ components:
       type: string
       description: A ZIP code
       example: '84123'
+    EmploymentId:
+      type: string
+      description: >-
+        This is a Mastercard assigned ID to the employment record. It remains
+        consistent for that employment record, even if the report is refreshed.
+        It can be used to limit the employment records that are returned in the
+        report.
+      example: 123v3bv2s5n
+    PayrollAccountId:
+      type: string
+      description: >-
+        The payroll accountId associated with the payroll account (employer or
+        payroll provider).
+      example: 018b8f10-fdf8-0ef7-ded5-34a17c34d86f
+    ReportStyle:
+      type: string
+      example: credentialedPayroll
+      description:
+        A report style. Possible values are directAPIPayroll,
+        credentialedPayroll, paystatement, voieWithInterview, voieWithStatement,
+        voieWithReport
