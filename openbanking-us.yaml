@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.14.1
+  version: 1.15.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2050,6 +2050,100 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v2/customers/{customerId}/reports/balance-analytics/userTypes/{userType}':
+    post:
+      tags:
+        - Balance Analytics
+      summary: Generate Balance Analytics Report - Personal/Business
+      description: >-
+        Generate a Balance Analytics Report for a given customer. This service
+        retrieves up to two years of transaction history from connected
+        accounts.
+
+
+        Balance  Analytics analyzes bank balances over time to report metrics
+        and identify behavior that may indicate risk.
+
+
+        Before calling this API, A consumer or business may need to be created
+        for the given customer ID based on the user type (see Consumer/Business
+        APIs).
+
+
+        If no account type of checking or savings is found, the service will
+        return HTTP 400 Bad Request.
+
+
+        This is a premium service, billable per every successful API call for
+        non-testing customers. A successful call to this API will generate
+        analytics report which can be retrieved via Get Report by Customer or
+        Get Report by Consumer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateBalanceAnalyticsReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/UserTypeParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateBalanceAnalyticsReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GenerateBalanceAnalyticsReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v2/customers/{customerId}/reports/cashflow-analytics/userTypes/{userType}':
+    post:
+      tags:
+        - Cash Flow Analytics
+      summary: Generate Cashflow Analytics Report - Personal/Business
+      description: >-
+        Generate a Cashflow Analytics Report for a given customer. This service
+        retrieves up to two years of transaction history from connected
+        accounts.
+
+
+        Cashflow Analytics analyzes transaction over time to report metrics and
+        identify behavior that may indicate risk.
+
+
+        Before calling this API, A consumer or business may need to be created
+        for the given customer ID based on the user type (see Consumer/Business
+        APIs).
+
+
+        If no account type of checking or savings is found, the service will
+        return HTTP 400 Bad Request.
+
+
+        This is a premium service, billable per every successful API call for
+        non-testing customers. A successful call to this API will generate
+        analytics report which can be retrieved via Get Report by Customer or
+        Get Report by Consumer.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateCashflowAnalyticsReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/UserTypeParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateCashflowAnalyticsReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GenerateCashflowAnalyticsReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/payStatements':
     post:
       tags:
@@ -3529,6 +3623,40 @@ components:
           examples:
             GenerateStatementReportRequestExample:
               $ref: '#/components/examples/GenerateStatementReportRequestExample'
+    GenerateBalanceAnalyticsReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsReportConstraints'
+          examples:
+            GenerateBalanceBusinessCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessCraAnalyticsReportRequestExample'
+            GenerateBalanceBusinessNonCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessNonCraAnalyticsReportRequestExample'
+            GenerateBalanceBusinessFtcAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessFtcAnalyticsReportRequestExample'
+            GenerateBalancePersonalCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateBalancePersonalCraAnalyticsReportRequestExample'
+            GenerateBalancePersonalNonCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateBalancePersonalNonCraAnalyticsReportRequestExample'
+    GenerateCashflowAnalyticsReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsReportConstraints'
+          examples:
+            GenerateCashflowBusinessCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessCraAnalyticsReportRequestExample'
+            GenerateCashflowBusinessNonCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessNonCraAnalyticsReportRequestExample'
+            GenerateCashflowBusinessFtcAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessFtcAnalyticsReportRequestExample'
+            GenerateCashflowPersonalCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateCashflowPersonalCraAnalyticsReportRequestExample'
+            GenerateCashflowPersonalNonCraAnalyticsReportRequestExample:
+              $ref: '#/components/examples/GenerateCashflowPersonalNonCraAnalyticsReportRequestExample'
     CreateTxPushTestTransactionRequest:
       required: true
       content:
@@ -3939,6 +4067,70 @@ components:
           examples:
             GenerateVOIReportResponseExample:
               $ref: '#/components/examples/GenerateVOIReportResponseExample'
+    GenerateBalanceAnalyticsReportResponse:
+      description: >-
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status.
+      headers:
+        Location:
+          schema:
+            type: string
+          description: >-
+            Please Check the Report status at URL
+            /decisioning/v4/consumers/{consumer_id}/reports/{report_id}
+            /decisioning/v4/customers/{customer_id}/reports/{report_id}
+          example: '/decisioning/v4/customers/567890/reports/sd1j45yn37wr-barpnoncra'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsReportAck'
+          examples:
+            GenerateBalanceBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessCraAnalyticsReportResponseExample'
+            GenerateBalanceBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessNonCraAnalyticsReportResponseExample'
+            GenerateBalanceBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateBalanceBusinessFtcAnalyticsReportResponseExample'
+            GenerateBalancePersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateBalancePersonalCraAnalyticsReportResponseExample'
+            GenerateBalancePersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateBalancePersonalNonCraAnalyticsReportResponseExample'
+    GenerateCashflowAnalyticsReportResponse:
+      description: >-
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status.
+      headers:
+        Location:
+          schema:
+            type: string
+          description: >-
+            Please Check the Report status at URL
+            /decisioning/v4/consumers/{consumer_id}/reports/{report_id}
+            /decisioning/v4/customers/{customer_id}/reports/{report_id}
+          example: '/decisioning/v4/customers/567890/reports/sd1j45yn37wr-cfrpnoncra'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyticsReportAck'
+          examples:
+            GenerateCashflowBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessCraAnalyticsReportResponseExample'
+            GenerateCashflowBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessNonCraAnalyticsReportResponseExample'
+            GenerateCashflowBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateCashflowBusinessFtcAnalyticsReportResponseExample'
+            GenerateCashflowPersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateCashflowPersonalCraAnalyticsReportResponseExample'
+            GenerateCashflowPersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/GenerateCashflowPersonalNonCraAnalyticsReportResponseExample'
     GetReportResponse:
       description: The report was successfully retrieved
       content:
@@ -3946,6 +4138,26 @@ components:
           schema:
             $ref: '#/components/schemas/Report'
           examples:
+            BalanceBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessCraAnalyticsReportResponseExample'
+            BalanceBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessNonCraAnalyticsReportResponseExample'
+            BalanceBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessFtcAnalyticsReportResponseExample'
+            BalancePersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalancePersonalCraAnalyticsReportResponseExample'
+            BalancePersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalancePersonalNonCraAnalyticsReportResponseExample'
+            CashflowBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessCraAnalyticsReportResponseExample'
+            CashflowusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessNonCraAnalyticsReportResponseExample'
+            CashflowBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessFtcAnalyticsReportResponseExample'
+            CashflowPersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowPersonalCraAnalyticsReportResponseExample'
+            CashflowPersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowPersonalNonCraAnalyticsReportResponseExample'
             CashFlowPersonalReportExample:
               $ref: '#/components/examples/CashFlowPersonalReportExample'
             CashFlowBusinessReportExample:
@@ -4919,6 +5131,250 @@ components:
     GenerateTransactionsReportRequestExample:
       value:
         accountIds: 1027339038 1027339039
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateBalanceBusinessCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          applicantIsPersonalGuarantor: true
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateBalanceBusinessNonCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateBalanceBusinessFtcAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          applicantIsPersonalGuarantor: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateBalancePersonalCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateBalancePersonalNonCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateCashflowBusinessCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          applicantIsPersonalGuarantor: true
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateCashflowBusinessNonCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateCashflowBusinessFtcAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          applicantIsPersonalGuarantor: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateCashflowPersonalCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: true
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
+        reportCustomFields:
+          - label: loanID
+            value: '12345'
+            shown: true
+          - label: trackingID
+            value: '5555'
+            shown: true
+          - label: loanType
+            value: car
+            shown: false
+          - label: vendorID
+            value: 1613aa23
+            shown: true
+          - label: vendorName
+            value: PSC Finance
+            shown: false
+        fromDate: 1580558400
+    GenerateCashflowPersonalNonCraAnalyticsReportRequestExample:
+      value:
+        analyticsReportData:
+          forCraPurpose: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+        accountIds: '1000535275 1000535276'
         reportCustomFields:
           - label: loanID
             value: '12345'
@@ -6882,6 +7338,3628 @@ components:
                 currentPrice: 280.71
                 securityType: Stock
               availableBalance: 123.45
+    GenerateBalanceBusinessCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Balance Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbcra
+        status: inProgress
+    GenerateBalanceBusinessNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Balance Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbnoncra
+        status: inProgress
+    GenerateBalanceBusinessFtcAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbftc
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Balance Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbftc
+        status: inProgress
+    GenerateBalancePersonalCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barpcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Balance Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barpcra
+        status: inProgress
+    GenerateBalancePersonalNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barpnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Balance Analytics
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barpnoncra
+        status: inProgress
+    GenerateCashflowBusinessCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Cash Flow Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbcra
+        status: inProgress
+    GenerateCashflowBusinessNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Cash Flow Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbnoncra
+        status: inProgress
+    GenerateCashflowBusinessFtcAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbftc
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Cash Flow Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barbftc
+        status: inProgress
+    GenerateCashflowPersonalCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrpcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Cash Flow Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barpcra
+        status: inProgress
+    GenerateCashflowPersonalNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrpnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        createdDate: 1579819592
+        title: Mastercard Open Banking Cash Flow Analytics
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          fromDate: 1673034682
+          reportCustomFields:
+            - label: loanID
+              value: '12345'
+              shown: true
+            - label: trackingID
+              value: '5555'
+              shown: true
+            - label: loanType
+              value: car
+              shown: false
+            - label: vendorID
+              value: 1613aa23
+              shown: true
+            - label: vendorName
+              value: PSC Finance
+              shown: false
+        type: barpnoncra
+        status: inProgress
+    BalanceBusinessCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Balance Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: barbcra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes: []
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    BalanceBusinessNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Balance Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: barbnoncra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes: []
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    BalanceBusinessFtcAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barbftc
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Balance Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: barbftc
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes: []
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    BalancePersonalCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barpcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Balance Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: barpcra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes: []
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '6010290887'
+                - '6010290914'
+    BalancePersonalNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-barpnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Balance Analytics
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: barpnoncra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes: []
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    CashflowBusinessCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Cashflow Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: cfrbcra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes: []
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: CASH_OUTFLOW
+              aggregatedByTimePeriods:
+                - periods:
+                    - count: 4
+                      endDate: '2021-12-31'
+                      max: -32
+                      mean: -317.6825
+                      median: -142.5
+                      min: -953.73
+                      standardDeviation: 433.2871371561819
+                      startDate: '2021-12-22'
+                      sum: -1270.73
+                    - count: 12
+                      endDate: '2022-01-31'
+                      max: -32
+                      mean: -171.95250000000001
+                      median: -68.35
+                      min: -953.73
+                      standardDeviation: 258.5863414492168
+                      startDate: '2022-01-01'
+                      sum: -2063.43
+                    - count: 0
+                      endDate: '2022-02-28'
+                      max: 0
+                      mean: 0.0
+                      median: 0.0
+                      min: 0.0
+                      standardDeviation: 0.0
+                      startDate: '2022-02-01'
+                      sum: 0.0
+                  timeIntervalType: MONTHLY_CALENDAR
+              streamIds:
+                - 26126034-6adb-4400-aaba-84f1d75522c5
+                - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+              transactionIds:
+                - '7019271133'
+                - '7019271149'
+                - '7019271008'
+                - '7019271153'
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    CashflowBusinessNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Cashflow Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: cfrbnoncra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+                        payor: John Smith
+                        payee: Whole Foods
+                        cadence: 0
+                        recency: 124
+                        transactionIds:
+                          - '00000005'
+                          - '00000008'
+                      - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+                        payor: John Smith
+                        payee: Walmart
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000006'
+                          - '00000007'
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: CASH_OUTFLOW
+              aggregatedByTimePeriods:
+                - periods:
+                    - count: 4
+                      endDate: '2021-12-31'
+                      max: -32
+                      mean: -317.6825
+                      median: -142.5
+                      min: -953.73
+                      standardDeviation: 433.2871371561819
+                      startDate: '2021-12-22'
+                      sum: -1270.73
+                    - count: 12
+                      endDate: '2022-01-31'
+                      max: -32
+                      mean: -171.95250000000001
+                      median: -68.35
+                      min: -953.73
+                      standardDeviation: 258.5863414492168
+                      startDate: '2022-01-01'
+                      sum: -2063.43
+                    - count: 0
+                      endDate: '2022-02-28'
+                      max: 0
+                      mean: 0.0
+                      median: 0.0
+                      min: 0.0
+                      standardDeviation: 0.0
+                      startDate: '2022-02-01'
+                      sum: 0.0
+                  timeIntervalType: MONTHLY_CALENDAR
+              streamIds:
+                - 26126034-6adb-4400-aaba-84f1d75522c5
+                - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+              transactionIds:
+                - '7019271133'
+                - '7019271149'
+                - '7019271008'
+                - '7019271153'
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    CashflowBusinessFtcAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrbftc
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Cashflow Analytics
+        businessDetails:
+          id: 123
+          name: Name1
+          address:
+            addressLine1: 2020 State Street
+            addressLine2: Suite 301
+            city: Salt Lake City
+            state: Utah
+            country: USA
+            postalCode: 84116
+        reportPin: '2398jk'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            applicantIsPersonalGuarantor: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: cfrbftc
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: CASH_OUTFLOW
+              aggregatedByTimePeriods:
+                - periods:
+                    - count: 4
+                      endDate: '2021-12-31'
+                      max: -32
+                      mean: -317.6825
+                      median: -142.5
+                      min: -953.73
+                      standardDeviation: 433.2871371561819
+                      startDate: '2021-12-22'
+                      sum: -1270.73
+                    - count: 12
+                      endDate: '2022-01-31'
+                      max: -32
+                      mean: -171.95250000000001
+                      median: -68.35
+                      min: -953.73
+                      standardDeviation: 258.5863414492168
+                      startDate: '2022-01-01'
+                      sum: -2063.43
+                    - count: 0
+                      endDate: '2022-02-28'
+                      max: 0
+                      mean: 0.0
+                      median: 0.0
+                      min: 0.0
+                      standardDeviation: 0.0
+                      startDate: '2022-02-01'
+                      sum: 0.0
+                  timeIntervalType: MONTHLY_CALENDAR
+              streamIds:
+                - 26126034-6adb-4400-aaba-84f1d75522c5
+                - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+              transactionIds:
+                - '7019271133'
+                - '7019271149'
+                - '7019271008'
+                - '7019271153'
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
+    CashflowPersonalCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrpcra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Cashflow Analytics
+        consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
+        consumerSsn: '1234'
+        constraints:
+          analyticsReportData:
+            forCraPurpose: true
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: cfrpcra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: CASH_OUTFLOW
+              aggregatedByTimePeriods:
+                - periods:
+                    - count: 4
+                      endDate: '2021-12-31'
+                      max: -32
+                      mean: -317.6825
+                      median: -142.5
+                      min: -953.73
+                      standardDeviation: 433.2871371561819
+                      startDate: '2021-12-22'
+                      sum: -1270.73
+                    - count: 12
+                      endDate: '2022-01-31'
+                      max: -32
+                      mean: -171.95250000000001
+                      median: -68.35
+                      min: -953.73
+                      standardDeviation: 258.5863414492168
+                      startDate: '2022-01-01'
+                      sum: -2063.43
+                    - count: 0
+                      endDate: '2022-02-28'
+                      max: 0
+                      mean: 0.0
+                      median: 0.0
+                      min: 0.0
+                      standardDeviation: 0.0
+                      startDate: '2022-02-01'
+                      sum: 0.0
+                  timeIntervalType: MONTHLY_CALENDAR
+              streamIds:
+                - 26126034-6adb-4400-aaba-84f1d75522c5
+                - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+              transactionIds:
+                - '7019271133'
+                - '7019271149'
+                - '7019271008'
+                - '7019271153'
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '6010290887'
+                - '6010290914'
+    CashflowPersonalNonCraAnalyticsReportResponseExample:
+      value:
+        id: sd1j45yn37wr-cfrpnoncra
+        customerType: active
+        customerId: 1275320
+        requestId: 7a7qyps2iy
+        requesterName: Decisioning API
+        title: Mastercard Open Banking Cashflow Analytics
+        constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+        type: cfrpnoncra
+        status: success
+        createdDate: 1579819592
+        startDate: 1512594823
+        endDate: 1575666823
+        days: 730
+        institutions:
+          - id: '102105'
+            name: FinBank Profiles
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: '1111'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000001'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000002'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000003'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000004'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+              - id: '2222'
+                ownerName: PATRICK & LORRAINE PURCHASER
+                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                name: Checking
+                number: XX1111
+                type: checking
+                aggregationStatusCode: '0'
+                currentBalance: 100000
+                availableBalance: 1000
+                balanceDate: 1614880526
+                transactions:
+                  - id: '00000005'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000006'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000007'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                  - id: '00000008'
+                    amount: -81.7
+                    postedDate: 1614859200
+                    description: TMOBILE*AUTO PAY
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Mobile Phone
+                analytics:
+                  - transactionalAttributes:
+                      - attributeName: CASH_OUTFLOW
+                        aggregatedByTimePeriods:
+                          - periods:
+                              - count: 4
+                                endDate: '2021-12-31'
+                                max: -32
+                                mean: -317.6825
+                                median: -142.5
+                                min: -953.73
+                                standardDeviation: 433.2871371561819
+                                startDate: '2021-12-22'
+                                sum: -1270.73
+                              - count: 12
+                                endDate: '2022-01-31'
+                                max: -32
+                                mean: -171.95250000000001
+                                median: -68.35
+                                min: -953.73
+                                standardDeviation: 258.5863414492168
+                                startDate: '2022-01-01'
+                                sum: -2063.43
+                              - count: 0
+                                endDate: '2022-02-28'
+                                max: 0
+                                mean: 0.0
+                                median: 0.0
+                                min: 0.0
+                                standardDeviation: 0.0
+                                startDate: '2022-02-01'
+                                sum: 0.0
+                            timeIntervalType: MONTHLY_CALENDAR
+                        streamIds:
+                          - 26126034-6adb-4400-aaba-84f1d75522c5
+                          - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+                        transactionIds:
+                          - '7019271133'
+                          - '7019271149'
+                          - '7019271008'
+                          - '7019271153'
+                    stateAttributes:
+                      - attributeName: ASSET_BALANCE
+                        reportedByTimePeriods:
+                          - timeIntervalType: MONTHLY_CALENDAR
+                            periods:
+                              - startDate: '2023-02-05'
+                                endDate: '2023-02-28'
+                                sum: 75517.99999999997
+                                count: 24
+                                mean: 3146.583333333333
+                                median: 3145.2
+                                min: 3145.2
+                                max: 3178.4
+                                standardDeviation: 6.776921621700182
+                                beginningValue: 3145.2
+                                endingValue: 3178.4
+                              - startDate: '2023-03-01'
+                                endDate: '2023-03-31'
+                                sum: 95350.54000000005
+                                count: 31
+                                mean: 3075.823870967742
+                                median: 3178.4
+                                min: 2946.3
+                                max: 3329.22
+                                standardDeviation: 132.58604314877732
+                                beginningValue: 3178.4
+                                endingValue: 3329.22
+                    streams:
+                      - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+                        payor: TD AMERITRADE
+                        payee: John Smith
+                        cadence: 15
+                        recency: 124
+                        transactionIds:
+                          - '00000003'
+                          - '00000004'
+                          - '00000001'
+                      - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+                        payor: John Smith
+                        payee: TD AMERITRADE
+                        cadence: 0
+                        recency: 139
+                        transactionIds:
+                          - '00000002'
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: CASH_OUTFLOW
+              aggregatedByTimePeriods:
+                - periods:
+                    - count: 4
+                      endDate: '2021-12-31'
+                      max: -32
+                      mean: -317.6825
+                      median: -142.5
+                      min: -953.73
+                      standardDeviation: 433.2871371561819
+                      startDate: '2021-12-22'
+                      sum: -1270.73
+                    - count: 12
+                      endDate: '2022-01-31'
+                      max: -32
+                      mean: -171.95250000000001
+                      median: -68.35
+                      min: -953.73
+                      standardDeviation: 258.5863414492168
+                      startDate: '2022-01-01'
+                      sum: -2063.43
+                    - count: 0
+                      endDate: '2022-02-28'
+                      max: 0
+                      mean: 0.0
+                      median: 0.0
+                      min: 0.0
+                      standardDeviation: 0.0
+                      startDate: '2022-02-01'
+                      sum: 0.0
+                  timeIntervalType: MONTHLY_CALENDAR
+              streamIds:
+                - 26126034-6adb-4400-aaba-84f1d75522c5
+                - 60e0afe6-8bea-4ba5-ba41-5a7f20add371
+              transactionIds:
+                - '7019271133'
+                - '7019271149'
+                - '7019271008'
+                - '7019271153'
+          stateAttributes:
+            - attributeName: ASSET_BALANCE
+              reportedByTimePeriods:
+                - timeIntervalType: MONTHLY_CALENDAR
+                  periods:
+                    - startDate: '2023-02-05'
+                      endDate: '2023-02-28'
+                      sum: 75517.99999999997
+                      count: 24
+                      mean: 3146.583333333333
+                      median: 3145.2
+                      min: 3145.2
+                      max: 3178.4
+                      standardDeviation: 6.776921621700182
+                      beginningValue: 3145.2
+                      endingValue: 3178.4
+                    - startDate: '2023-03-01'
+                      endDate: '2023-03-31'
+                      sum: 95350.54000000005
+                      count: 31
+                      mean: 3075.823870967742
+                      median: 3178.4
+                      min: 2946.3
+                      max: 3329.22
+                      standardDeviation: 132.58604314877732
+                      beginningValue: 3178.4
+                      endingValue: 3329.22
+          streams:
+            - id: 2b96f6d4-4882-4db2-96c6-f89530a68f1c
+              payor: TD AMERITRADE
+              payee: John Smith
+              cadence: 15
+              recency: 124
+              transactionIds:
+                - '00000003'
+                - '00000004'
+                - '00000001'
+            - id: dafc9b5d-762d-4f91-a429-f80573944bcd
+              payor: John Smith
+              payee: TD AMERITRADE
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000002'
+            - id: b838ffb3-2549-43b3-a1b1-50bc13438e0f
+              payor: John Smith
+              payee: Whole Foods
+              cadence: 0
+              recency: 124
+              transactionIds:
+                - '00000005'
+                - '00000008'
+            - id: 54214633-39d7-43f4-9314-bae2ce3b6af9
+              payor: John Smith
+              payee: Walmart
+              cadence: 0
+              recency: 139
+              transactionIds:
+                - '00000006'
+                - '00000007'
     ObbBadRequestResponseExample:
       value:
         errorCode: 400
@@ -7894,6 +11972,16 @@ components:
       schema:
         type: string
         example: 'https://finicity-test/webhook'
+    UserTypeParameter:
+      description: >-
+        UserType indicates if the request is for a business or personal use
+        case, Allowed values: business/personal.
+      name: userType
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/UserType'
+      example: personal
     ConsentReceiptIdParameter:
       description: Third party access key receipt ID
       name: consentReceiptId
@@ -8041,6 +12129,29 @@ components:
           example: '002345678901'
       description:
         The routing and account number information to initiate ACH transfers
+    AccountAnalytics:
+      description: Analytics calculated for one account in the report.
+      type: object
+      required:
+        - transactionalAttributes
+        - stateAttributes
+        - streams
+      properties:
+        transactionalAttributes:
+          description: List of calculated transactional attributes
+          items:
+            $ref: '#/components/schemas/TransactionalAttribute'
+          type: array
+        stateAttributes:
+          description: List of calculated state attributes
+          items:
+            $ref: '#/components/schemas/StateAttribute'
+          type: array
+        streams:
+          description: List of generated streams
+          items:
+            $ref: '#/components/schemas/StreamModel'
+          type: array
     AccessToken:
       required:
         - token
@@ -8563,6 +12674,62 @@ components:
         are valid, but the subpremise of the input address was missing and thus
         unable to be confirmed as valid or invalid.
       example: valid
+    AFBalanceAnalyticsReport:
+      description: A Balance Analytics Report
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsReportAck'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 730
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 365 days'
+              example: true
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: >-
+                A list of institution records, including information about the
+                individual accounts used in this report
+            customerAnalytics:
+              $ref: '#/components/schemas/CustomerAnalytics'
+    AFCashFlowAnalyticsReport:
+      description: A Cash Flow Analytics Report
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsReportAck'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 730
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 365 days'
+              example: true
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: >-
+                A list of institution records, including information about the
+                individual accounts used in this report
+            customerAnalytics:
+              $ref: '#/components/schemas/CustomerAnalytics'
     AggregationStatus:
       type: string
       description: |-
@@ -8577,6 +12744,143 @@ components:
         Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/account-aggregation/#aggregation-status-codes)).
         Won't be present until you have run your first aggregation for the
         account.
+    AnalyticsReportAck:
+      required:
+        - id
+        - customerType
+        - customerId
+        - requestId
+        - requesterName
+        - createdDate
+        - title
+        - type
+        - status
+        - constraints
+      allOf:
+        - $ref: '#/components/schemas/BaseReportAck'
+        - type: object
+          properties:
+            businessDetails:
+              $ref: '#/components/schemas/BusinessDetails'
+            reportPin:
+              $ref: '#/components/schemas/ReportPin'
+            constraints:
+              $ref: '#/components/schemas/AnalyticsReportConstraintsOut'
+    AnalyticsReportsAccount:
+      required:
+        - id
+        - name
+        - number
+        - type
+        - currency
+        - transactions
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the account
+          format: int64
+          example: 1000023996
+        ownerName:
+          type: string
+          description:
+            The name(s) of the account owner(s), retrieved from the institution.
+          example: PATRICK & LORRAINE PURCHASER
+        ownerAddress:
+          type: string
+          description: >-
+            The mailing address of the account owner, retrieved from the
+            institution.
+          example: 7195 BELMONT ST. PARLIN, NJ 08859
+        name:
+          type: string
+          description: The account name from the institution
+          example: Checking
+        number:
+          type: string
+          description: The account number from the institution (obfuscated)
+          example: XX1111
+        type:
+          type: string
+          description: One of the values from account types
+          example: checking
+        aggregationStatusCode:
+          type: integer
+          description: The status of the most recent aggregation attempt
+          format: int32
+          example: 0
+        currentBalance:
+          type: number
+          description: The cleared balance of the account as-of `balanceDate`
+          example: 100000
+        availableBalance:
+          type: number
+          description: Available balance
+          example: 1000
+        balanceDate:
+          type: integer
+          description: A timestamp showing when the `balance` was captured
+          format: int64
+          example: 1614880526
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportTransaction'
+          description: a list of transaction records
+        details:
+          $ref: '#/components/schemas/AccountDetails'
+        accountAnalytics:
+          $ref: '#/components/schemas/AccountAnalytics'
+    AnalyticsReportConstraints:
+      type: object
+      properties:
+        analyticsReportData:
+          $ref: '#/components/schemas/AnalyticsReportData'
+        accountIds:
+          $ref: '#/components/schemas/ReportAccountIdsString'
+        reportCustomFields:
+          $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+    AnalyticsReportConstraintsOut:
+      type: object
+      properties:
+        analyticsReportData:
+          $ref: '#/components/schemas/AnalyticsReportData'
+        accountIds:
+          $ref: '#/components/schemas/ReportAccountIds'
+        reportCustomFields:
+          $ref: '#/components/schemas/ReportCustomFields'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+    AnalyticsReportData:
+      description: Parameters supplied by the client requesting the analytics.
+      properties:
+        forCraPurpose:
+          type: boolean
+          description:
+            Field to indicate if the requested report is for CRA or NONCRA. For
+            small business lending or other similar business use cases, pass the
+            value as “true” for purposes of this field.
+          example: true
+        applicantIsPersonalGuarantor:
+          type: boolean
+          description: >-
+            Field to indicate if the business owner will personally guarantee
+            the loan. If true, a consumer record will be required.
+          example: true
+        timeIntervalTypes:
+          description: >-
+            Requested time interval for attribute values.
+          example:
+            - MONTHLY_CALENDAR
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/TimeIntervalType'
+          type: array
+      required:
+        - forCraPurpose
+      type: object
     AnnualIncome:
       required:
         - year
@@ -9480,6 +13784,40 @@ components:
       properties:
         branding:
           $ref: '#/components/schemas/Branding'
+    AFBusiness:
+      type: object
+      required:
+        - name
+        - address
+      properties:
+        name:
+          $ref: '#/components/schemas/BusinessName'
+        address:
+          type: object
+          properties:
+            addressLine1:
+              $ref: '#/components/schemas/AddressLine1'
+            addressLine2:
+              $ref: '#/components/schemas/AddressLine2'
+            city:
+              $ref: '#/components/schemas/City'
+            state:
+              $ref: '#/components/schemas/State'
+            country:
+              $ref: '#/components/schemas/Country'
+            postalCode:
+              $ref: '#/components/schemas/ZipCode'
+    BusinessDetails:
+      allOf:
+        - $ref: '#/components/schemas/AFBusiness'
+        - type: object
+          properties:
+            businessId:
+              $ref: '#/components/schemas/BusinessId'
+    BusinessName:
+      type: string
+      description: The name of a business
+      example: ABC Tires Inc
     CadenceDetails:
       type: object
       properties:
@@ -12506,6 +16844,29 @@ components:
           items:
             $ref: '#/components/schemas/CustomerAccountSimple'
           description: A list of accounts with basic information of a customer
+    CustomerAnalytics:
+      type: object
+      required:
+        - transactionalAttributes
+        - stateAttributes
+        - streams
+      description: Analytics and attributes generated at a customer level
+      properties:
+        transactionalAttributes:
+          description: List of calculated transactional attributes
+          items:
+            $ref: '#/components/schemas/TransactionalAttribute'
+          type: array
+        stateAttributes:
+          description: List of calculated state attributes
+          items:
+            $ref: '#/components/schemas/StateAttribute'
+          type: array
+        streams:
+          description: List of generated streams
+          items:
+            $ref: '#/components/schemas/StreamModel'
+          type: array
     CustomerId:
       type: string
       description:
@@ -15840,6 +20201,8 @@ components:
         - type
         - status
       allOf:
+        - $ref: '#/components/schemas/AFBalanceAnalyticsReport'
+        - $ref: '#/components/schemas/AFCashFlowAnalyticsReport'
         - $ref: '#/components/schemas/CashFlowReport'
         - $ref: '#/components/schemas/PrequalificationReport'
         - $ref: '#/components/schemas/PayStatementReport'
@@ -15996,6 +20359,7 @@ components:
       description: An account record
       type: object
       allOf:
+        - $ref: '#/components/schemas/AnalyticsReportsAccount'
         - $ref: '#/components/schemas/CashFlowReportAccount'
         - $ref: '#/components/schemas/PrequalificationReportAccount'
         - $ref: '#/components/schemas/TransactionsReportAccount'
@@ -16004,6 +20368,10 @@ components:
         - $ref: '#/components/schemas/VOETransactionsReportAccount'
         - $ref: '#/components/schemas/VOIReportAccount'
         - $ref: '#/components/schemas/VOIETXVerifyReportAccount'
+    ReportPin:
+      type: string
+      description: A unique key returned per report for consumer Portal
+      example: 2398jk
     ReportRequestId:
       type: string
       description:
@@ -16274,6 +20642,16 @@ components:
         * `cfrp` 
 
         * `cfrb`
+
+        * `barpcra`
+
+        * `barpnoncra`
+
+        * `barbcra`
+
+        * `barbftc`
+
+        * `barbnoncra`
       type: string
       example: voi
     RoutingNumber:
@@ -16426,6 +20804,144 @@ components:
       type: string
       description: Account statement types
       example: taxStatement
+    StateAttribute:
+      description: 'An attribute which represents some state over time, such as
+        a balance or a
+
+        calculation, including derivatives, ratios, or projections. Reports the
+
+        state over the requested time interval(s).'
+      properties:
+        attributeName:
+          description: Name of Attribute as mentioned in Data Dictionary
+          example: NET_CASH_FLOW
+          type: string
+        reportedByTimePeriods:
+          description: List of state values grouped by specified Time Interval
+          items:
+            $ref: '#/components/schemas/StateTimeInterval'
+          type: array
+      required:
+        - attributeName
+        - reportedByTimePeriods
+      type: object
+    StatePeriod:
+      description: Statistics for one period in the report of a StateAttribute.
+      properties:
+        beginningValue:
+          description: Value on the first date in the period
+          example: 60.21
+          type: number
+        count:
+          description: Count of data points during the period
+          example: 2
+          type: integer
+        endDate:
+          description: End date for the period being reported
+          example: '2023-01-01'
+          format: date
+          type: string
+        endingValue:
+          description: Value on the last date in the period
+          example: 60.21
+          type: number
+        max:
+          description: Maximum amount during the period
+          example: 60.21
+          type: number
+        mean:
+          description: Mean of amounts during the period
+          example: 42.22
+          type: number
+        median:
+          description: Median of amounts during the period
+          example: 42.22
+          type: number
+        min:
+          description: Minimum amount during the period
+          example: 30.22
+          type: number
+        standardDeviation:
+          description: Standard deviation of amounts during the period
+          example: 14.995
+          type: number
+        startDate:
+          description: Start date for the period being reported
+          example: '2022-12-01'
+          format: date
+          type: string
+        sum:
+          description: Sum of amounts during the period
+          example: 90.43
+          type: number
+      required:
+        - startDate
+        - endDate
+        - count
+        - beginningValue
+        - endingValue
+      type: object
+    StateTimeInterval:
+      description: 'For a StateAttribute, describes a time interval type being
+        reported
+
+        and a list of periods generated according to that type.'
+      properties:
+        periods:
+          description:
+            Periods of the specified time interval type, describing the
+            attribute calculations
+          items:
+            $ref: '#/components/schemas/StatePeriod'
+          type: array
+        timeIntervalType:
+          $ref: '#/components/schemas/TimeIntervalTypeEnum'
+      required:
+        - timeIntervalType
+        - periods
+      type: object
+    StreamModel:
+      description:
+        Describes a history of repeated transactions between the same parties.
+      properties:
+        cadence:
+          description:
+            Number of days that occur between each transaction in the stream
+          example: 30
+          type: integer
+        id:
+          description: Stream Id assigned to identified Stream
+          example: '1'
+          type: string
+        payee:
+          description: The party in the transaction that is receiving the funds
+          example: Walmart
+          type: string
+        payor:
+          description: The party in the transaction that is sending the funds
+          example: Elizabeth Johnson
+          type: string
+        recency:
+          description:
+            Number of days since the last transaction occurred in the stream
+          example: 2
+          type: integer
+        transactionIds:
+          description: List of Transaction IDs that comprise the stream
+          example:
+            - '6010290887'
+            - '6010290914'
+          items:
+            type: string
+          type: array
+      required:
+        - id
+        - payor
+        - payee
+        - cadence
+        - recency
+        - transactionIds
+      type: object
     StringUnixDate:
       type: string
       description: >-
@@ -16705,6 +21221,22 @@ components:
           $ref: '#/components/schemas/ThirdPartyAccessReceipt'
         proof:
           $ref: '#/components/schemas/ThirdPartyAccessProof'
+    TimeIntervalType:
+      description: >-
+        Possible values for strategies in which attributes may be aggregated and
+        reported across varying time intervals. Allowed Values -
+        MONTHLY_CALENDAR - MONTHLY_ROLLING_30
+      example: MONTHLY_CALENDAR
+      type: string
+      default: MONTHLY_CALENDAR
+    TimeIntervalTypeEnum:
+      description: >-
+        Possible values for strategies in which attributes may be aggregated and
+        reported across varying time intervals. Allowed Values -
+        MONTHLY_CALENDAR - MONTHLY_ROLLING_30
+      example: MONTHLY_CALENDAR
+      type: string
+      default: MONTHLY_CALENDAR
     Transaction:
       required:
         - id
@@ -17135,6 +21667,113 @@ components:
         Value of the `toDate` request parameter that generated this response
       format: int64
       example: 1607450357
+    TransactionalAttribute:
+      description: 'An attribute which represents some
+        categorization/classification of
+
+        transactions. Enumerates those identified transactions and reports
+
+        aggregations of them over the requested time interval(s).'
+      properties:
+        aggregatedByTimePeriods:
+          description: List of aggregations by specified Time Interval
+          items:
+            $ref: '#/components/schemas/TransactionalTimeInterval'
+          type: array
+        attributeName:
+          description: Name of Attribute as mentioned in Data Dictionary
+          example: INFLOW_TRANSACTIONS
+          type: string
+        streamIds:
+          description:
+            List of stream IDs categorized as belonging to this attribute
+          example:
+            - '1'
+            - '2'
+          items:
+            type: string
+          type: array
+        transactionIds:
+          description:
+            List of transaction IDs categorized as belonging to this attribute
+          example:
+            - '6010290887'
+            - '6010290914'
+          items:
+            type: string
+          type: array
+      required:
+        - attributeName
+        - aggregatedByTimePeriods
+        - transactionIds
+        - streamIds
+      type: object
+    TransactionalPeriod:
+      description:
+        Statistics for one period in the report of a TransactionalAttribute.
+      properties:
+        count:
+          description: Count of data points during the period
+          example: 2
+          type: integer
+        endDate:
+          description: End date for the period being reported
+          example: '2023-01-01'
+          format: date
+          type: string
+        max:
+          description: Maximum amount during the period
+          example: 60.21
+          type: number
+        mean:
+          description: Mean of amounts during the period
+          example: 42.22
+          type: number
+        median:
+          description: Median of amounts during the period
+          example: 42.22
+          type: number
+        min:
+          description: Minimum amount during the period
+          example: 30.22
+          type: number
+        standardDeviation:
+          description: Standard deviation of amounts during the period
+          example: 14.995
+          type: number
+        startDate:
+          description: Start date for the period being reported
+          example: '2022-12-01'
+          format: date
+          type: string
+        sum:
+          description: Sum of amounts during the period
+          example: 90.43
+          type: number
+      required:
+        - startDate
+        - endDate
+        - count
+      type: object
+    TransactionalTimeInterval:
+      description: 'For a TransactionalAttribute, describes a time interval type
+        being reported
+
+        and a list of periods generated according to that type.'
+      properties:
+        periods:
+          description:
+            Periods of the specified time interval type, describing the
+            attribute calculations
+          items:
+            $ref: '#/components/schemas/TransactionalPeriod'
+          type: array
+        timeIntervalType:
+          $ref: '#/components/schemas/TimeIntervalTypeEnum'
+      required:
+        - timeIntervalType
+        - periods
+      type: object
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
@@ -17171,6 +21810,10 @@ components:
         Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
+    UserType:
+      type: string
+      description: Type of User, Allowed values Personal/Business
+      example: business
     ReportCreatedDate:
       type: integer
       description: >-
