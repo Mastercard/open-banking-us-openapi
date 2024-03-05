@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.16.0
+  version: 1.16.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -3360,8 +3360,6 @@ paths:
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      parameters:
-        - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
       responses:
         '200':
           $ref: '#/components/responses/CustomerAuthorizationDetails'
@@ -3372,9 +3370,9 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
       operationId: getCustomerAuthorizationDetails
+      parameters:
+        - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
   '/business-services/customers/{customer_id}/businesses':
-    parameters:
-      - $ref: '#/components/parameters/CustomerIdPathParameter'
     post:
       tags:
         - Businesses API
@@ -3387,6 +3385,8 @@ paths:
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: AddBusinessDetails
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
       requestBody:
         $ref: '#/components/requestBodies/BusinessDetailRequest'
       responses:
@@ -3416,8 +3416,6 @@ paths:
         '404':
           $ref: '#/components/responses/CustomerNotFoundErrorResponse'
   '/business-services/businesses/{business_id}':
-    parameters:
-      - $ref: '#/components/parameters/BusinessIdParameter'
     put:
       tags:
         - Businesses API
@@ -3430,6 +3428,8 @@ paths:
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: UpdateBusiness
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
       requestBody:
         $ref: '#/components/requestBodies/BusinessDetailRequest'
       responses:
@@ -3448,6 +3448,8 @@ paths:
         _Supported regions_:
         ![\U0001F1FA\U0001F1F8](https://flagcdn.com/20x15/us.png)
       operationId: GetBusinessById
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
       responses:
         '200':
           $ref: '#/components/responses/BusinessFoundResponse'
