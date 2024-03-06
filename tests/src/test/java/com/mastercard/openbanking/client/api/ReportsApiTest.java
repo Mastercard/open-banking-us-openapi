@@ -8,15 +8,16 @@ import com.mastercard.openbanking.client.test.utils.AccountUtils;
 import com.mastercard.openbanking.client.test.utils.ConsumerUtils;
 import com.mastercard.openbanking.client.test.utils.PayStatementUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ReportsApiTest extends BaseTest {
@@ -34,7 +35,8 @@ class ReportsApiTest extends BaseTest {
     private static String consumerId;
     private static Map<String, String> reportsByType; // type <-> id
 
-    private final static String IN_PROGRESS = "inProgress";
+    private final static Set<String> NON_FINAL_STATUS = Set.of("inProgress", "editing");
+    private static final String SUCCESS_STATUS = "success";
     private final static String ON_BEHALF_OF = "Someone";
     private final static String PURPOSE = "99";
 
@@ -184,7 +186,6 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
-    @Disabled
     void getPayStatementReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("paystatement");
@@ -223,7 +224,6 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
-    @Disabled
     void getVOIEPaystubReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("voieTxVerify");
@@ -243,7 +243,6 @@ class ReportsApiTest extends BaseTest {
     }
 
     @Test
-    @Disabled
     void getVOIEPaystubWithTXVerifyReportByConsumerOrCustomerTest() throws Exception {
         try {
             var reportId = reportsByType.get("voieTxVerify");
@@ -335,13 +334,14 @@ class ReportsApiTest extends BaseTest {
             var report = api.getReportByConsumer(consumerId, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
             status = report.getStatus();
-        } while (IN_PROGRESS.equals(status));
+        } while (NON_FINAL_STATUS.contains(status));
         do {
             System.out.println("Waiting for report " + reportId + " by customer ID ...");
             Thread.sleep(5000);
             var report = api.getReportByCustomer(CUSTOMER_ID, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
             status = report.getStatus();
-        } while (IN_PROGRESS.equals(status));
+        } while (NON_FINAL_STATUS.contains(status));
+        assertEquals(SUCCESS_STATUS, status, "Report status is: failure");
     }
 }
