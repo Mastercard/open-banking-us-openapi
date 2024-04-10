@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.16.1
+  version: 1.16.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -69,8 +69,6 @@ tags:
     description: Generate asset reports asynchronously
   - name: Verify Income and Employment
     description: Generate income and employment reports asynchronously
-  - name: Customer Authorization Details
-    description: APIs to retrieve customer authorization details
   - name: Businesses API
     description:
       Create and manage business associated with customers in order to use
@@ -1909,8 +1907,8 @@ paths:
         - Bank Statements
       summary: Get Customer Account Multiple Statements
       description: >-
-        This endpoint is retrieving the account statement for a given customer.
-        The maximum number of indexes it will fetch for a single login is 24.
+        This endpoint retrieves account statements for a given customer. The
+        maximum number of statements that can be returned is 24.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -3346,32 +3344,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-  '/customers/institution-logins/{institution_login_id}/authorization-details':
-    get:
-      tags:
-        - Customer Authorization Details
-      summary:
-        Returns customer authorization details for the institution login
-        identification.
-      description: >-
-        The endpoint provides customer authorization details like authorization
-        start date, authorization end date against the requested institution
-        login id
-
-
-        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      responses:
-        '200':
-          $ref: '#/components/responses/CustomerAuthorizationDetails'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
-      operationId: getCustomerAuthorizationDetails
-      parameters:
-        - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
   '/business-services/customers/{customer_id}/businesses':
     post:
       tags:
@@ -3455,6 +3427,36 @@ paths:
           $ref: '#/components/responses/BusinessFoundResponse'
         '404':
           $ref: '#/components/responses/BusinessNotFoundErrorResponse'
+  '/aggregation/v3/customers/{customerId}/accounts/{accountId}/details':
+    get:
+      tags:
+        - Payments
+      summary: Get ACH Account Details
+      description: >-
+        Return the real account number and routing number details for an ACH
+        payment along with the supported payment instruction details.
+
+
+        Note: this is a premium service, billable per every successful API call.
+
+
+        _Supported account types_: "checking", "savings", "moneyMarket", "loan"
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetAccountPaymentInstructionDetails
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAccountPaymentInstructionDetailsResponse'
+        '400':
+          $ref: '#/components/responses/GetAccountPaymentInstructionBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
 components:
   securitySchemes:
     FinicityAppKey:
@@ -4212,7 +4214,7 @@ components:
               $ref: '#/components/examples/BalancePersonalNonCraAnalyticsReportResponseExample'
             CashflowBusinessCraAnalyticsReportResponseExample:
               $ref: '#/components/examples/CashflowBusinessCraAnalyticsReportResponseExample'
-            CashflowusinessNonCraAnalyticsReportResponseExample:
+            CashflowBusinessNonCraAnalyticsReportResponseExample:
               $ref: '#/components/examples/CashflowBusinessNonCraAnalyticsReportResponseExample'
             CashflowBusinessFtcAnalyticsReportResponseExample:
               $ref: '#/components/examples/CashflowBusinessFtcAnalyticsReportResponseExample'
@@ -4534,8 +4536,6 @@ components:
               $ref: '#/components/examples/ResourceNotFoundExample'
             NoRegisteredApplicationExample:
               $ref: '#/components/examples/NoRegisteredApplicationExample'
-            InstitutionLoginIdNotFoundErrorResponseExample:
-              $ref: '#/components/examples/InstitutionLoginIdNotFoundErrorResponseExample'
     ConflictErrorResponse:
       description: The resource already exists
       content:
@@ -4796,17 +4796,34 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AccountOwnerHolders'
-    CustomerAuthorizationDetails:
-      description:
-        Successfully retrieved customer authorization details by institution
-        login id.
+    GetAccountPaymentInstructionDetailsResponse:
+      description: Account ACH details were successfully retrieved
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CustomerAuthorizationDetails'
+            $ref: '#/components/schemas/PaymentInstructions'
           examples:
-            CustomerAuthorizationDetailsExample:
-              $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
+            ACHDetailsExample:
+              $ref: >-
+                #/components/examples/ACHDetailsExample
+            ACHDetailsWithoutRTPDetailsExample:
+              $ref: >-
+                #/components/examples/ACHDetailsWithoutRTPDetailsExample
+    GetAccountPaymentInstructionBadRequestErrorResponse:
+      description: The request was rejected due to validation failures
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            InvalidFieldExample:
+              $ref: '#/components/examples/InvalidFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            AccountTypeNotSupportedExample:
+              $ref: '#/components/examples/AccountTypeNotSupportedExample'
   examples:
     BusinessIdNotFound:
       value:
@@ -5924,8 +5941,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '6681984'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -6077,8 +6094,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '6681984'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -6116,8 +6133,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '6681984'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -6269,8 +6286,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '6681984'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -6335,6 +6352,8 @@ components:
           accounts:
             id: 1000023996
             number: '1111'
+            ownerName: 'JOHN DOE'
+            ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
             name: Checking
             type: checking
             aggregationStatusCode: 0
@@ -6411,8 +6430,9 @@ components:
             accounts:
               - id: 1000023996
                 number: '1111'
-                ownerName: JOHN DOE
-                ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+                ownerName: 'JOHN DOE'
+                ownerAddress:
+                  '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                 name: Checking
                 type: checking
                 availableBalance: 0
@@ -6660,8 +6680,8 @@ components:
           accounts:
             id: 1000023996
             number: '1111'
-            ownerName: JOHN DOE
-            ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+            ownerName: 'JOHN DOE'
+            ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
             name: Checking
             type: checking
             availableBalance: 501.24
@@ -6760,8 +6780,8 @@ components:
           accounts:
             id: 6001966289
             number: '1111'
-            ownerName: JOHN DOE
-            ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+            ownerName: 'JOHN DOE'
+            ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
             name: Checking
             type: checking
             currency: USD
@@ -6935,8 +6955,9 @@ components:
             accounts:
               - id: 1000023996
                 number: '1111'
-                ownerName: JOHN DOE
-                ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+                ownerName: 'JOHN DOE'
+                ownerAddress:
+                  '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
                 name: Checking
                 type: checking
                 aggregationStatusCode: 0
@@ -6986,6 +7007,8 @@ components:
           accounts:
             id: 1000023996
             number: '1111'
+            ownerName: 'JOHN DOE'
+            ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
             name: Checking
             type: checking
             aggregationStatusCode: 0
@@ -7270,8 +7293,8 @@ components:
             accounts:
               id: 1000023996
               number: '1111'
-              ownerName: JOHN DOE
-              ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+              ownerName: 'JOHN DOE'
+              ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
               name: Checking
               type: checking
               availableBalance: 123.45
@@ -7350,8 +7373,8 @@ components:
           urlHomeApp: https://finbank.prod.fini.city/CCBankImageMFA/login.jsp
           accounts:
             - id: 1000023996
-              ownerName: JOHN DOE
-              ownerAddress: 924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518
+              ownerName: 'JOHN DOE'
+              ownerAddress: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
               name: Checking
               number: '1111'
               type: checking
@@ -7890,8 +7913,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -7975,8 +7998,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8157,8 +8180,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8242,8 +8265,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8425,8 +8448,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8510,8 +8533,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8683,8 +8706,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8768,8 +8791,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -8939,8 +8962,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9024,8 +9047,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9209,8 +9232,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9333,8 +9356,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9554,8 +9577,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9678,8 +9701,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -9939,8 +9962,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -10063,8 +10086,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -10314,8 +10337,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -10438,8 +10461,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -10687,8 +10710,8 @@ components:
             urlHomeApp: http://www.finbank.com
             accounts:
               - id: '1111'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -10811,8 +10834,8 @@ components:
                         transactionIds:
                           - '00000002'
               - id: '2222'
-                ownerName: PATRICK & LORRAINE PURCHASER
-                ownerAddress: 7195 BELMONT ST. PARLIN, NJ 08859
+                ownerName: 'PATRICK & LORRAINE PURCHASER'
+                ownerAddress: '7195 BELMONT ST. PARLIN, NJ 08859'
                 name: Checking
                 number: XX1111
                 type: checking
@@ -11669,17 +11692,29 @@ components:
               missedRecurringExpensePayments: 0
               recurringLoanPayments: 234.34
               missedRecurringLoanPayments: 0
-    CustomerAuthorizationDetailsExample:
+    ACHDetailsExample:
       value:
-        institutionLoginId: 7008461438
-        authorizationStartDate: 2020-07-30T16:11:23:20Z
-        authorizationEndDate: 2020-07-30T16:11:23:20Z
-    InstitutionLoginIdNotFoundErrorResponseExample:
+        paymentInstruction:
+          - type: ach
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
+          - type: rtp
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
+            transferInEnabled: true
+            transferOutEnabled: true
+    ACHDetailsWithoutRTPDetailsExample:
       value:
-        status: '404'
-        code: 1606
-        message: Resource Not Found.
-        user_message: 'Institution login id : 7008461438 is not found'
+        paymentInstruction:
+          - type: ach
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -11943,10 +11978,10 @@ components:
       in: query
       required: false
       description:
-        Request statements with comma-separated indexes ranged between 1-24. The
+        Request statements with comma-separated indexes between 1-24. The
         default value is 1 and it will return the most recent statement.
         Increasing the index will return older statements, for example, setting
-        the index value to 6 will return a statement from six months ago.
+        the index value to 6 will return the sixth most recent statement.
       schema:
         type: string
         default: '1'
@@ -12124,15 +12159,6 @@ components:
       schema:
         description: Report ID generated and returned by OBB products
         type: string
-    InstitutionLoginIdPathParam:
-      name: institution_login_id
-      description: Institution login id of the customer.
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 7008461438
   schemas:
     BusinessList:
       type: array
@@ -12911,16 +12937,9 @@ components:
           format: int64
           example: 1000023996
         ownerName:
-          type: string
-          description:
-            The name(s) of the account owner(s), retrieved from the institution.
-          example: PATRICK & LORRAINE PURCHASER
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner, retrieved from the
-            institution.
-          example: 7195 BELMONT ST. PARLIN, NJ 08859
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -13210,8 +13229,8 @@ components:
     Index:
       type: string
       description: >-
-        Returns the index of the month for the statement. It may go up to 24
-        months back. The valid range is 1-24.
+        The index for the statement. This can range from 1 to 24 statement
+        indexes.
     Application:
       required:
         - appDescription
@@ -15061,17 +15080,9 @@ components:
           description: Finicity account ID
           example: '6681984'
         ownerName:
-          type: string
-          description:
-            'The name(s) of the account owner(s), retrieved from the
-            institution.'
-          example: PATRICK & LORRAINE PURCHASER
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner, retrieved from the
-            institution.
-          example: '7195 BELMONT ST. PARLIN, NJ 08859'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -15183,17 +15194,9 @@ components:
           description: Finicity account ID
           example: 6681984
         ownerName:
-          type: string
-          description:
-            'The name(s) of the account owner(s), retrieved from the
-            institution.'
-          example: PATRICK & LORRAINE PURCHASER
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner, retrieved from the
-            institution.
-          example: '7195 BELMONT ST. PARLIN, NJ 08859'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -20138,17 +20141,9 @@ components:
             four are obfuscated)
           example: '1111'
         ownerName:
-          type: string
-          description: >-
-            The name of the account owner. If no owner information is available,
-            this field won't appear in the report.
-          example: JOHN DOE
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner. If no owner information is
-            available, this field won't appear in the report.
-          example: '123 GAINSVILLE STREET BUFORD, GA 84937'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -20908,11 +20903,15 @@ components:
           $ref: '#/components/schemas/NumericAccountId'
         statementIndex:
           type: integer
-          description: Index of the statement to retrieve
+          description: >-
+            Index of the statement to include in the report. Request statements
+            from 1-24. By default, 1 is the most recent statement. Increase the
+            index value to count back (by month) and retrieve its most recent
+            statement.
           format: int32
           example: 1
           default: 1
-          maximum: 6
+          maximum: 24
     StatementEndDate:
       type: integer
       description: >-
@@ -22122,19 +22121,9 @@ components:
             four are obfuscated)
           example: '1111'
         ownerName:
-          type: string
-          description: >-
-            The name(s) of the account owner(s). This field is optional. If no
-            owner information is available, this field will not appear in the
-            report.
-          example: JOHN DOE
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner(s). This field is optional.
-            If no owner information is available, this field will not appear in
-            the report.
-          example: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -22389,19 +22378,9 @@ components:
             four are obfuscated)
           example: '1111'
         ownerName:
-          type: string
-          description: >-
-            The name(s) of the account owner(s). This field is optional. If no
-            owner information is available, this field will not appear in the
-            report.
-          example: JOHN DOE
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner(s). This field is optional.
-            If no owner information is available, this field will not appear in
-            the report.
-          example: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -22881,19 +22860,9 @@ components:
             four are obfuscated)
           example: '1111'
         ownerName:
-          type: string
-          description: >-
-            The name(s) of the account owner(s). This field is optional. If no
-            owner information is available, this field will not appear in the
-            report.
-          example: JOHN DOE
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner(s). This field is optional.
-            If no owner information is available, this field will not appear in
-            the report.
-          example: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -23115,19 +23084,9 @@ components:
             four are obfuscated)
           example: '1111'
         ownerName:
-          type: string
-          description: >-
-            The name(s) of the account owner(s). This field is optional. If no
-            owner information is available, this field will not appear in the
-            report.
-          example: JOHN DOE
+          $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
-          type: string
-          description: >-
-            The mailing address of the account owner(s). This field is optional.
-            If no owner information is available, this field will not appear in
-            the report.
-          example: '924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518'
+          $ref: '#/components/schemas/ReportAccountOwnerAddress'
         name:
           type: string
           description: The account name from the institution
@@ -23321,7 +23280,7 @@ components:
           * Address: Input state corrected
           * Email: Address is too long
           * Email: General syntax error
-          * Email: Invalid domain syntax
+          * Email: Invalid domain syntax 
           * Email: Invalid top-level-domain (TLD) in address
           * Email: Invalid username syntax
           * IP: IP address is in private range
@@ -23362,26 +23321,6 @@ components:
       type: string
       description: A ZIP code
       example: '84123'
-    CustomerAuthorizationDetails:
-      type: object
-      properties:
-        institutionLoginId:
-          type: integer
-          description: Institution login id of the customer.
-          format: int64
-          example: 7009561328
-        authorizationStartDate:
-          type: string
-          description: Authorization start date and time in ISO 8601 format.
-          example: 2020-07-30T16:11:23:20Z
-        authorizationEndDate:
-          type: string
-          description: Authorization end date and time in ISO 8601 format.
-          example: 2020-07-30T16:11:23:20Z
-      required:
-        - institutionLoginId
-        - authorizationStartDate
-        - authorizationEndDate
     EmploymentId:
       type: string
       description: >-
@@ -23403,3 +23342,79 @@ components:
         A report style. Possible values are directAPIPayroll,
         credentialedPayroll, paystatement, voieWithInterview, voieWithStatement,
         voieWithReport
+    PaymentInstructions:
+      description: A list of payment instructions
+      type: object
+      properties:
+        paymentInstruction:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentInstruction'
+          description: List of payment instructions
+    PaymentInstruction:
+      required:
+        - accountNumber
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: >-
+            The type of payment instruction:
+
+            1. ACH: when payment instruction type is ACH (Automated Clearing
+            House)
+
+            2. RTP: when payment instruction type is RTP (Real-Time Payments)
+
+          example: ach
+        accountNumber:
+          type: string
+          description: 'The account number from the institution'
+          example: '124344454'
+        descriptors:
+          type: array
+          description: List of descriptors
+          items:
+            $ref: '#/components/schemas/Descriptor'
+        transferInEnabled:
+          type: boolean
+          description:
+            'Indicates whether transfer to this account is enabled or not.
+            Applicable for "RTP" type only.'
+          example: true
+        transferOutEnabled:
+          type: boolean
+          description:
+            'Indicates whether transfer from this account is enabled or not.
+            Applicable for "RTP" type only.'
+          example: true
+    Descriptor:
+      required:
+        - type
+        - value
+      type: object
+      properties:
+        type:
+          type: string
+          description: Payment Instruction Descriptor Type
+          example: routingNumber
+        value:
+          type: string
+          description: Value that the Descriptor Type Holds
+          example: '2434345'
+    ReportAccountOwnerName:
+      type: string
+      description: >-
+        The name(s) of the account owner(s). If the owner information is not
+        available, this field will not appear in the report. If the account has
+        multiple owners then all owners will be listed separated by |.
+      example: 'PATRICK PURCHASER|LORRAINE PURCHASER'
+    ReportAccountOwnerAddress:
+      type: string
+      description: >-
+        The mailing address of the account owner(s). If the owner information is
+        not available, this field will not appear in the report. If the account
+        has multiple owners then the address of the primary owner will be
+        listed.
+      example: '7195 BELMONT ST. PARLIN, NJ 08859'
