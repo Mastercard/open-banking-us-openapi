@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.17.0
+  version: 1.17.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -49,8 +49,6 @@ tags:
       report services
   - name: Customers
     description: Enroll and manage customers
-  - name: Experiences
-    description: Retrieve experiences tailored for your application
   - name: Institutions
     description: Search and fetch financial institutions
   - name: Pay Statements
@@ -149,7 +147,7 @@ paths:
         - Connect 🔗
       summary: Generate Connect URL
       description: >-
-        Generate a Connect 2.0 URL link to add within your own applications.
+        Generate a Connect URL link to add within your own applications.
 
 
         Optional Parameters:
@@ -3467,11 +3465,11 @@ paths:
   '/connect/experiences':
     get:
       tags:
-        - Experiences
+        - Connect 🔗
       summary: Get Experience IDs
       description:
-        Retrieve experience IDs of partners by their application name.
-        Optionally, filter the experiences by product codes.
+        Retrieve Connect experiences by application name. Optionally, filter the
+        experiences by product codes.
       operationId: GetAllExperience
       security:
         - FinicityAppToken: []
@@ -3902,7 +3900,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Customer'
+            allOf:
+              - $ref: '#/components/schemas/Customer'
+              - type: object
+                properties:
+                  applicationId:
+                    $ref: '#/components/schemas/ApplicationId'
     GetCustomerWithAppDataResponse:
       description: The customer was successfully retrieved
       content:
@@ -16216,6 +16219,10 @@ components:
           $ref: '#/components/schemas/FirstName'
         lastName:
           $ref: '#/components/schemas/LastName'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
         type:
           $ref: '#/components/schemas/CustomerType'
         createdDate:
@@ -17603,10 +17610,9 @@ components:
 
 
         Note: the Finicity sales engineers (SE) help you set up a default
-        experience for your company when you migrate to Connect 2.0. For each
-        additional experience you create thereafter, they'll give you a unique
-        ID. See [Generate Connect
-        URL](https://developer.mastercard.com/open-banking-us/documentation/connect/generate-2-connect-url-apis/).
+        experience for your company. For each additional experience you create
+        thereafter, they'll give you a unique ID. See [Configure the Connect
+        Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
 
 
         Experience values options:
