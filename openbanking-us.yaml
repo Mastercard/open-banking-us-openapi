@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.17.1
+  version: 1.17.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -485,6 +485,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/DisputeStatementErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
     delete:
@@ -1445,6 +1447,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voaHistory':
@@ -1491,6 +1495,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/preQualVoa':
@@ -1522,6 +1528,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/assetSummary':
@@ -1553,6 +1561,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voi':
@@ -1590,6 +1600,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voePayroll':
@@ -1623,6 +1635,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voeTransactions':
@@ -1664,6 +1678,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/payStatement':
@@ -1697,6 +1713,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withInterview':
@@ -1740,6 +1758,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voieTxVerify/withStatement':
@@ -1773,6 +1793,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voiePayroll':
@@ -1806,6 +1828,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/statement':
@@ -1898,6 +1922,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/statement':
@@ -2074,6 +2100,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/reports/balance-analytics/userTypes/{userType}':
@@ -2091,7 +2119,7 @@ paths:
         and identify behavior that may indicate risk.
 
 
-        Before calling this API, A consumer or business may need to be created
+        Before calling this API, a consumer or business may need to be created
         for the given customer ID based on the user type (see Consumer/Business
         APIs).
 
@@ -2121,6 +2149,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/reports/cashflow-analytics/userTypes/{userType}':
@@ -2138,7 +2168,7 @@ paths:
         identify behavior that may indicate risk.
 
 
-        Before calling this API, A consumer or business may need to be created
+        Before calling this API, a consumer or business may need to be created
         for the given customer ID based on the user type (see Consumer/Business
         APIs).
 
@@ -2168,6 +2198,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/payStatements':
@@ -2244,6 +2276,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/txpush':
@@ -2410,6 +2444,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details':
@@ -2425,7 +2461,7 @@ paths:
         Note: this is a premium service, billable per every successful API call.
 
 
-        _Supported account types_: "checking", "savings", "moneyMarket", "cd"
+        _Supported account types_: "checking", "savings", "moneyMarket"
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2477,6 +2513,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v3/consumers/{consumerId}/reports/{reportId}':
@@ -2514,6 +2552,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v1/customers/{customerId}/reports':
@@ -2543,6 +2583,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
         '429':
@@ -2574,6 +2616,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
         '429':
@@ -2701,6 +2745,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/cashFlowPersonal':
@@ -2748,6 +2794,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/microentry/v1/customers/{customerId}':
@@ -3436,16 +3484,19 @@ paths:
     get:
       tags:
         - Payments
-      summary: Get ACH Account Details
+      summary: Get Account ACH Details with RTP
       description: >-
         Return the real account number and routing number details for an ACH
-        payment along with the supported payment instruction details.
+        payment along with the supported payment instruction details. If the RTP
+        (Real Time Payment) value for “transferInEnabled” is true, then the
+        account can receive RTPs. If the value for “transferOutEnabled” is true,
+        then the account can send RTPs  
 
 
         Note: this is a premium service, billable per every successful API call.
 
 
-        _Supported account types_: "checking", "savings", "moneyMarket", "loan"
+        _Supported account types_: "checking", "savings", "moneyMarket"
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4227,6 +4278,24 @@ components:
               $ref: '#/components/examples/GenerateCashflowPersonalCraAnalyticsReportResponseExample'
             GenerateCashflowPersonalNonCraAnalyticsReportResponseExample:
               $ref: '#/components/examples/GenerateCashflowPersonalNonCraAnalyticsReportResponseExample'
+    SecurityFreezeErrorResponse:
+      description: 'The active security freeze for this consumer exists.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SecurityFreezeErrorMessage'
+          examples:
+            SecurityFreezeErrorExample:
+              $ref: '#/components/examples/SecurityFreezeErrorExample'
+    DisputeStatementErrorResponse:
+      description: 'The active dispute statement for this consumer exists.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DisputeStatementErrorMessage'
+          examples:
+            SecurityFreezeErrorExample:
+              $ref: '#/components/examples/DisputeStatementErrorExample'
     GetReportResponse:
       description: The report was successfully retrieved
       content:
@@ -4972,6 +5041,16 @@ components:
           One or more of the fields could not be validated. Please ensure you
           have entered the correct data.
         tags: ''
+    DisputeStatementErrorExample:
+      value:
+        code: '10406'
+        status: '403'
+        message: 'The active dispute statement for this consumer exists.'
+    SecurityFreezeErrorExample:
+      value:
+        code: '10405'
+        status: '403'
+        message: 'The active security freeze for this consumer exists.'
     InvalidFieldExample:
       value:
         code: '10010'
@@ -5062,6 +5141,15 @@ components:
         type: voePayroll
         reportStyle: credentialedPayroll
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Verification of Employment - Payroll
         consumerId: 656cf7083c5c06e0c125a698579f0000
@@ -5082,6 +5170,15 @@ components:
         consumerId: 656cf7083c5c06e0c125a698579f0000
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 7a7qyps2iy
         type: voiePayroll
         reportStyle: credentialedPayroll
@@ -5132,6 +5229,15 @@ components:
         customerId: 1003413624
         requestId: 8wy5htqg8u
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Finicity Pay Statement Extraction Report
         consumerId: 4089f408963dd6b90b28a935e9903c0e
@@ -5178,6 +5284,15 @@ components:
         customerId: 1010560999
         requestId: ny7x32stfq
         requesterName: Demo
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1596226182
         title: Finicity Statement Report
         consumerId: 555595ec74c8ec57adf44dadddb6a35
@@ -5221,6 +5336,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Finicity Cash Flow Report - Business
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -5253,6 +5377,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Finicity Cash Flow Report - Personal
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -5550,6 +5683,15 @@ components:
         customerId: 1000018865
         requestID: ky2nhsufhv
         requesterName: Decisioning API Tests
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1594678007
         title: Finicity Transactions Report
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
@@ -5607,6 +5749,15 @@ components:
         customerId: 1000006677
         requestId: sfb7xp439w
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Finicity Verification of Assets
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -5665,6 +5816,15 @@ components:
         customerId: 1000006677
         requestId: sfb7x1we9w
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Verification of Asset and Income - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -5722,6 +5882,15 @@ components:
         customerId: 1000006677
         requestId: sfb7xacr9w
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Asset Ready Report (CRA)
         consumerId: cb619e10185177cd92271c4da2df3fa3
@@ -5758,6 +5927,15 @@ components:
         customerId: 1000006677
         requestId: sfb7xp4iui
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Asset Ready Report (NON-CRA)
         constraints:
@@ -5814,6 +5992,15 @@ components:
         customerId: 1000006677
         requestId: sfb7x1we9w
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Finicity Verification Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -5858,6 +6045,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Verification of Income and Employment - Paystub
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -5895,6 +6091,15 @@ components:
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: inProgress
@@ -5947,6 +6152,15 @@ components:
         customerId: 1000006677
         requestId: sfb7xp4wer
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1588350269
         title: Finicity Verification of Income
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -5983,6 +6197,15 @@ components:
         customerId: 5555
         requestId: xtw6tjemt6
         title: Finicity Cash Flow Report - Personal
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         consumerId: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn: '1111'
         requesterName: Decisioning API Tests
@@ -6178,6 +6401,15 @@ components:
         requestId: xtw6tjemt6
         title: Finicity Cash Flow Report - Business
         requesterName: Decisioning API Tests
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         type: cfrb
         status: success
         createdDate: 1575666823
@@ -6367,6 +6599,15 @@ components:
         id: 88w4fbssrbja-prequalvoa
         customerId: 1000006677
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: sfb7xacr9w
         type: preQualVoa
         status: success
@@ -6447,6 +6688,15 @@ components:
         id: rceiqx616awa-assetsummary
         customerId: 1000006677
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: sfb7xp4iui
         type: assetSummary
         status: success
@@ -6527,6 +6777,15 @@ components:
         consumerId: 4089f408963dd6b90b28a935e9903c0e
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 8wy5htqg8u
         type: paystatement
         status: success
@@ -6608,6 +6867,15 @@ components:
         consumerId: d15ff15ed0c8627eae61c452928d7fc3
         consumerSsn: '1111'
         requesterName: Demo
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         constraints:
           statementReportData:
             accountId: 1000076901
@@ -6632,6 +6900,15 @@ components:
         type: transactions
         status: success
         createdDate: 1594678007
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         constraints:
           accountIds:
             - '1000075473'
@@ -6697,6 +6974,15 @@ components:
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: sfb7xp439w
         type: voa
         status: success
@@ -6802,6 +7088,15 @@ components:
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         constraints:
           accountIds:
             - '1000535275'
@@ -6923,6 +7218,15 @@ components:
         gseEnabled: true
         createdDate: 1579819592
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 7a7qyps2iy
         customerType: active
         customerId: 1275320
@@ -6989,6 +7293,15 @@ components:
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         constraints:
           reportId: j7k8qbgwsa7d-voietxverify
           reportCustomFields:
@@ -7047,6 +7360,15 @@ components:
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: sfb7xp4wer
         type: voi
         status: success
@@ -7133,6 +7455,15 @@ components:
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         type: voiePayroll
         reportStyle: credentialedPayroll
         status: success
@@ -7218,6 +7549,15 @@ components:
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -7279,6 +7619,15 @@ components:
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -7501,6 +7850,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7551,6 +7909,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
@@ -7598,6 +7965,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
@@ -7646,6 +8022,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7684,6 +8069,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         constraints:
@@ -7720,6 +8114,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7770,6 +8173,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         businessDetails:
@@ -7817,6 +8229,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         businessDetails:
@@ -7865,6 +8286,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7903,6 +8333,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         constraints:
@@ -7939,6 +8378,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -8209,6 +8657,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
           id: 123
@@ -8476,6 +8933,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
           id: 123
@@ -8744,6 +9210,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -9002,6 +9477,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Balance Analytics
         constraints:
           analyticsReportData:
@@ -9258,6 +9742,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Cashflow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -9606,6 +10099,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Cashflow Analytics
         businessDetails:
           id: 123
@@ -9990,6 +10492,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Cashflow Analytics
         businessDetails:
           id: 123
@@ -10375,6 +10886,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Cashflow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -10750,6 +11270,15 @@ components:
         customerId: 1275320
         requestId: 7a7qyps2iy
         requesterName: Decisioning API
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
         title: Mastercard Open Banking Cashflow Analytics
         constraints:
           analyticsReportData:
@@ -13959,6 +14488,8 @@ components:
           $ref: '#/components/schemas/ReportRequestId'
         requesterName:
           $ref: '#/components/schemas/PartnerName'
+        endUser:
+          $ref: '#/components/schemas/ConsumerEndUser'
         createdDate:
           $ref: '#/components/schemas/ReportCreatedDate'
         title:
@@ -16101,6 +16632,8 @@ components:
           $ref: '#/components/schemas/UnixDate'
         suffix:
           $ref: '#/components/schemas/Suffix'
+        endUser:
+          $ref: '#/components/schemas/ConsumerEndUser'
     ConsumerDateOfBirth:
       type: integer
       description: >-
@@ -16149,6 +16682,8 @@ components:
           $ref: '#/components/schemas/EmailAddress'
         suffix:
           $ref: '#/components/schemas/Suffix'
+        endUser:
+          $ref: '#/components/schemas/ConsumerEndUser'
     ConvertToRepayment:
       type: integer
       description: >-
@@ -18713,6 +19248,8 @@ components:
           $ref: '#/components/schemas/EmailAddress'
         suffix:
           $ref: '#/components/schemas/Suffix'
+        endUser:
+          $ref: '#/components/schemas/ConsumerEndUser'
     NewCustomer:
       description: A new customer to be enrolled
       required:
@@ -19285,6 +19822,52 @@ components:
         Your Partner ID displayed in the [Developer
         Dashboard](https://developer.mastercard.com/account/log-in)
       example: '1234583871234'
+    DisputeStatementErrorMessage:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: integer
+          description: >-
+            An error code for dispute statement. Useful links: [API
+            Errors](https://developer.mastercard.com/open-banking-us/documentation/errors/),
+            [Aggregation Status
+            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/aggregation-status-codes/).
+          format: int32
+          example: 10406
+        status:
+          type: string
+          description: A status code
+          example: '403'
+        message:
+          type: string
+          description: An error message
+          example: 'The active dispute statement for this consumer exists.'
+    SecurityFreezeErrorMessage:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: integer
+          description: >-
+            An error code for security freeze. Useful links: [API
+            Errors](https://developer.mastercard.com/open-banking-us/documentation/errors/),
+            [Aggregation Status
+            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/aggregation-status-codes/).
+          format: int32
+          example: 10405
+        status:
+          type: string
+          description: A status code
+          example: '403'
+        message:
+          type: string
+          description: An error message
+          example: 'The active security freeze for this consumer exists.'
     PartnerName:
       type: string
       description: Name of a Finicity partner
@@ -19317,6 +19900,8 @@ components:
         * `Every 5.2 wks`
 
         * `Other`
+
+        * `Unknown`
       example: Weekly
     PayStat:
       type: object
@@ -23553,3 +24138,37 @@ components:
             type: string
             minLength: 1
             maxLength: 10
+    EndUserUrl:
+      type: string
+      description: Reseller end user URL
+      minLength: 2
+      maximum: 999
+      example: 'testurl.com'
+    ConsumerEndUser:
+      description: Reseller end user information
+      required:
+        - name
+        - address
+        - city
+        - state
+        - zip
+        - phone
+        - url
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FirstName'
+        address:
+          $ref: '#/components/schemas/AddressLine1'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        zip:
+          $ref: '#/components/schemas/ZipCode'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        url:
+          $ref: '#/components/schemas/EndUserUrl'
