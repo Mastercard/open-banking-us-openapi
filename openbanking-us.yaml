@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.17.2
+  version: 1.17.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -7245,6 +7245,7 @@ components:
             employmentId: zgk6wh3urqr0gtxv
             employerName: ACME INC
             payrollSource: argyle
+            payrollProvider: Paychex
             employee:
               name: John Doe Smith
               givenName: John
@@ -7484,6 +7485,7 @@ components:
           employmentId: vkvxszcy7nc9c19d
           employerName: ACME INC
           payrollSource: argyle
+          payrollProvider: Paychex
           employee:
             name: John Doe Smith
             givenName: John
@@ -7539,6 +7541,31 @@ components:
             monthlyIncome:
               estimatedMonthlyBasePay: 2000
               estimatedMonthlyOvertimePay: 100
+            directPayStatements:
+              - payrollPayHistoryId: cy1a742k28
+                lastPayPeriodIndicator: true
+                mainPayStatementFields:
+                  payDate: 1596175200
+                  startDate: 1595138400
+                  endDate: 1595656800
+                  payPeriodHours: 40
+                  payFrequency: Weekly
+                  payType: Hourly
+                  grossPayAmount: 1888.75
+                  grossPayAmountYTD: 73925
+                  netPayAmount: 1401.95
+                  netPayAmountYTD: 73925
+                earnings:
+                  - name: basePayAmount
+                    type: base
+                    rate: 27.5
+                    amount: 1100
+                    amountYTD: 5500
+                deductions:
+                  - type: Federal tax
+                    amount: 143.45
+                  - type: State tax
+                    amount: 12.5
     VOIEPaystubReportExample:
       summary: VOIE - Paystub Report
       value:
@@ -17859,36 +17886,6 @@ components:
           description:
             The last four numbers of the account the deposit went into
           example: '1234'
-    DirectDeposits:
-      type: object
-      properties:
-        accountTypeCode:
-          type: string
-          description: >
-            Bank account type:
-
-
-            * `Checking`
-
-
-            * `Savings`
-
-
-            * `Loan`: Loan account employee choose to direct a portion of their
-            net pay to help pay off a loan
-          example: Savings
-        amount:
-          type: number
-          description: Direct deposit amount
-          example: 12.34
-        accountLastFour:
-          type: string
-          description: Last four digits of the deposit account number
-          example: 3337
-        routingNumber:
-          type: string
-          description: Routing number for the deposit account
-          example: 30207583
     DirectPayStatements:
       required:
         - payrollPayHistoryId
@@ -17918,11 +17915,7 @@ components:
           items:
             $ref: '#/components/schemas/Deductions'
           description: Deductions from the pay check
-        directDeposits:
-          type: array
-          items:
-            $ref: '#/components/schemas/DirectDeposits'
-          description: Direct deposit information for the paycheck
+
     DisplayPosition:
       type: integer
       description: |-
@@ -20207,6 +20200,11 @@ components:
           description:
             Employer zip code as stated by the employer in the payroll system
           example: '99999'
+    PayrollProviderName:
+      type: string
+      description:
+        The name of the provider who provides payroll data to payroll source
+      example: Paychex
     PayrollEmploymentHistoryVOE:
       required:
         - asOfDate
@@ -20226,6 +20224,8 @@ components:
           description:
             The name of the payroll source where the data was retrieved
           example: finPayroll
+        payrollProvider:
+          $ref: '#/components/schemas/PayrollProviderName'
         employee:
           $ref: '#/components/schemas/PayrollEmployeeRecord'
         employment:
@@ -20253,6 +20253,8 @@ components:
           description:
             The name of the payroll source where the data was retrieved
           example: finPayroll
+        payrollProvider:
+          $ref: '#/components/schemas/PayrollProviderName'
         employee:
           $ref: '#/components/schemas/PayrollEmployeeRecord'
         employment:
@@ -20997,11 +20999,15 @@ components:
           description: Micro entries receiving account number of bank
         accountType:
           type: string
-          example: checking
+          example: personalChecking
           description: |-
             The list of supported account types.
-            * "checking": Standard checking
-            * "savings": Standard savings
+            * "personalChecking": Personal Checking
+            * "businessChecking": Business Checking
+            * "personalSavings": Personal Savings
+            * "businessSavings": Business Savings
+            * "checking": Standard checking, will be deprecated
+            * "savings": Standard savings, will be deprecated
         name:
           type: string
           example: Bob Smith
