@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.17.4
+  version: 1.18.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -3397,6 +3397,30 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/customers/institution-logins/{institution_login_id}/authorization-details':
+    get:
+      tags:
+        - Customer Authorization Details
+      summary:
+        Returns customer authorization details for the institution login
+        identification.
+      description: >-
+        The endpoint provides customer authorization details like authorization
+        start date, authorization end date against the requested institution
+        login id
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/CustomerAuthorizationDetails'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetCustomerAuthorizationDetailsNotFoundErrorResponse'
+      operationId: getCustomerAuthorizationDetails
   '/business-services/customers/{customer_id}/businesses':
     post:
       tags:
@@ -4337,10 +4361,14 @@ components:
               $ref: '#/components/examples/StatementReportExample'
             TransactionsReportExample:
               $ref: '#/components/examples/TransactionsReportExample'
+            TransactionNONCRAExample:
+              $ref: '#/components/examples/TransactionNONCRAExample'
             VOAReportExample:
               $ref: '#/components/examples/VOAReportExample'
             VOAWithIncomeReportExample:
               $ref: '#/components/examples/VOAWithIncomeReportExample'
+            VOIEWithStatementReportExample:
+              $ref: '#/components/examples/VOIEWithStatementReportExample'
             VOEPayrollReportExample:
               $ref: '#/components/examples/VOEPayrollReportExample'
             VOETransactionsReportExample:
@@ -4574,6 +4602,16 @@ components:
               $ref: '#/components/examples/ExpiredTokenExample'
             MissingFinicityAppKeyExample:
               $ref: '#/components/examples/MissingFinicityAppKeyExample'
+            MissingFinicityAppTokenExample:
+              $ref: '#/components/examples/MissingFinicityAppTokenExample'
+            InvalidFinicityAppTokenExample:
+              $ref: '#/components/examples/InvalidFinicityAppTokenExample'
+            ExpiredFinicityAppTokenExample:
+              $ref: '#/components/examples/ExpiredFinicityAppTokenExample'
+        text/plain:
+          schema:
+            type: string
+            example: 'Invalid (Finicity-App-Key)'
     BadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -4581,6 +4619,8 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
+            PermissiblePurposeCodeExample:
+              $ref: '#/components/examples/PermissiblePurposeCodeExample'
             MissingFieldExample:
               $ref: '#/components/examples/MissingFieldExample'
             InvalidFieldExample:
@@ -4832,6 +4872,17 @@ components:
           schema:
             type: string
             format: binary
+    CustomerAuthorizationDetails:
+      description:
+        Successfully retrieved customer authorization details by institution
+        login id.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAuthorizationDetails'
+          examples:
+            CustomerAuthorizationDetailsExample:
+              $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
     ObbBadRequestResponse:
       description: A bad request was provided
       content:
@@ -4910,6 +4961,19 @@ components:
             ACHDetailsWithoutRTPDetailsExample:
               $ref: >-
                 #/components/examples/ACHDetailsWithoutRTPDetailsExample
+            CustomerAuthorizationDetailsExample:
+              $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
+    GetCustomerAuthorizationDetailsNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InstitutionLoginIdNotFoundErrorResponseExample:
+              $ref: '#/components/examples/InstitutionLoginIdNotFoundErrorResponseExample'
+            InstitutionLoginIdDetailsNotFoundErrorResponseExample:
+              $ref: '#/components/examples/InstitutionLoginIdDetailsNotFoundErrorResponseExample'
     GetAccountPaymentInstructionBadRequestErrorResponse:
       description: The request was rejected due to validation failures
       content:
@@ -4917,6 +4981,10 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
+            InstitutionLoginIdNotFoundErrorResponseExample:
+              $ref: '#/components/examples/InstitutionLoginIdNotFoundErrorResponseExample'
+            InstitutionLoginIdDetailsNotFoundErrorResponseExample:
+              $ref: '#/components/examples/InstitutionLoginIdDetailsNotFoundErrorResponseExample'
             MissingFieldExample:
               $ref: '#/components/examples/MissingFieldExample'
             InvalidFieldExample:
@@ -4970,6 +5038,18 @@ components:
       value:
         code: 10026
         message: Missing parameter (Finicity-App-Key)
+    MissingFinicityAppTokenExample:
+      value:
+        code: 10024
+        message: Missing parameter (Finicity-App-Token)
+    InvalidFinicityAppTokenExample:
+      value:
+        code: 10022
+        message: Invalid (Finicity-App-Token)
+    ExpiredFinicityAppTokenExample:
+      value:
+        code: 10023
+        message: Expired (Finicity-App-Token)
     InvalidCredentialsExample:
       value:
         code: 10001
@@ -5041,6 +5121,11 @@ components:
           One or more of the fields could not be validated. Please ensure you
           have entered the correct data.
         tags: ''
+    PermissiblePurposeCodeExample:
+      value:
+        code: '10100'
+        status: '400'
+        message: 'Permissible Purpose Code is required'
     DisputeStatementErrorExample:
       value:
         code: '10406'
@@ -5239,7 +5324,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1588350269
-        title: Finicity Pay Statement Extraction Report
+        title: Mastercard Open Banking Pay Statement Extraction Report
         consumerId: 4089f408963dd6b90b28a935e9903c0e
         consumerSsn: '6789'
         constraints:
@@ -5294,7 +5379,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1596226182
-        title: Finicity Statement Report
+        title: Mastercard Open Banking Statement Report
         consumerId: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn: '1234'
         constraints:
@@ -5346,7 +5431,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1579819592
-        title: Finicity Cash Flow Report - Business
+        title: Mastercard Open Banking Cash Flow Report - Business
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
         constraints:
@@ -5387,7 +5472,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1579819592
-        title: Finicity Cash Flow Report - Personal
+        title: Mastercard Open Banking Cash Flow Report - Personal
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
         constraints:
@@ -5693,7 +5778,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1594678007
-        title: Finicity Transactions Report
+        title: Mastercard Open Banking Transactions Report
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
         consumerSsn: '6789'
         constraints:
@@ -5759,7 +5844,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1588350269
-        title: Finicity Verification of Assets
+        title: Mastercard Open Banking Verification of Assets
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         constraints:
@@ -6002,7 +6087,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1588350269
-        title: Finicity Verification Employment - Transactions
+        title: Mastercard Open Banking Verification Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         constraints:
@@ -6162,7 +6247,7 @@ components:
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
         createdDate: 1588350269
-        title: Finicity Verification of Income
+        title: Mastercard Open Banking Verification of Income
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
         constraints:
@@ -6196,7 +6281,7 @@ components:
         customerType: testing
         customerId: 5555
         requestId: xtw6tjemt6
-        title: Finicity Cash Flow Report - Personal
+        title: Mastercard Open Banking Cash Flow Report - Personal
         endUser:
           name: 'ABC Apartments'
           address: '123 Main St'
@@ -6208,6 +6293,7 @@ components:
           url: 'abcapartments.com'
         consumerId: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn: '1111'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API Tests
         type: cfrp
         status: success
@@ -6399,7 +6485,7 @@ components:
         customerType: testing
         customerId: 5555
         requestId: xtw6tjemt6
-        title: Finicity Cash Flow Report - Business
+        title: Mastercard Open Banking Cash Flow Report - Business
         requesterName: Decisioning API Tests
         endUser:
           name: 'ABC Apartments'
@@ -6644,6 +6730,7 @@ components:
         portfolioId: 0whcism47a34-5-port
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         institutions:
           id: 101732
           name: FinBank
@@ -6776,6 +6863,7 @@ components:
         customerId: 1003413624
         consumerId: 4089f408963dd6b90b28a935e9903c0e
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -6814,7 +6902,7 @@ components:
               value: PSC Finance
               shown: false
         customerType: active
-        title: Finicity Pay Statement Extraction Report
+        title: Mastercard Open Banking Pay Statement Extraction Report
         startDate: 1572625469
         endDate: 1588350269
         portfolioId: spd8aehuw63i-10-port
@@ -6863,9 +6951,10 @@ components:
         customerType: active
         customerId: 1000262464
         requestId: nd4b55a4bg
-        title: Finicity Statement Report
+        title: Mastercard Open Banking Statement Report
         consumerId: d15ff15ed0c8627eae61c452928d7fc3
         consumerSsn: '1111'
+        disputeStatement: 'Invalid data present.'
         requesterName: Demo
         endUser:
           name: 'ABC Apartments'
@@ -6892,11 +6981,12 @@ components:
       summary: Transactions Report
       value:
         id: '1000075473'
-        title: Finicity Transactions Report
+        title: Mastercard Open Banking Transactions Report
         customerType: testing
         customerId: 1000018865
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         type: transactions
         status: success
         createdDate: 1594678007
@@ -6966,6 +7056,110 @@ components:
                     institutionTransactionId: '0000000000'
                     category: Mobile Phone
                     memo: TMOBILE debit
+    TransactionNONCRAExample:
+      summary: Transaction NON CRA Report Example
+      value:
+        id: 0nzekfhcexxh-txnnoncra
+        gseEnabled: true
+        customerType: testing
+        customerId: 1000885874
+        requestId: zjc6kdjkjj
+        title: Mastercard Open Banking Transactions Non CRA
+        requesterName: Intuit Facade Demo (KEEP)
+        constraints:
+          fromDate: 1650715226
+          toDate: 1713873626
+          includePending: false
+        type: txnNonCra
+        status: success
+        createdDate: 1713873626
+        startDate: 1672401600
+        endDate: 1713614400
+        days: 477
+        seasoned: true
+        institutions:
+          - id: 102105
+            name: FinBank Profiles - A
+            urlHomeApp: https://finbank.stg.fini.city/FinBankProfiles/login.jsp
+            accounts:
+              - id: 1002509340
+                number: '8888'
+                name: Savings
+                type: savings
+                currency: USD
+                availableBalance: 10000
+                aggregationStatusCode: 0
+                balance: 10000
+                balanceDate: 1713873628
+                oldestTransactionDate: 1672401600
+                averageMonthlyBalance: -516.45
+                transactions:
+                  - id: 100298184206
+                    amount: 60
+                    postedDate: 1713614400
+                    description: ACH deposit CAPITAL1 P2P Bob Jones Bob Jones
+                    normalizedPayee: Capital1 Bob Jones
+                    institutionTransactionId: '0000000000'
+                    category: Deposit
+                  - id: 100298184180
+                    amount: -300
+                    postedDate: 1712923200
+                    description: Online banking xfer withdrawal from ...8888
+                    normalizedPayee: Online Banking
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                  - id: 100298184155
+                    amount: -1358.11
+                    postedDate: 1712923200
+                    description: Online banking xfer withdrawal from ...8888
+                    normalizedPayee: Online Banking
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                details:
+                  interestMarginBalance:
+                  availableCashBalance:
+                  vestedBalance:
+                  currentLoanBalance:
+                  availableBalanceAmount: 10000
+              - id: 1002509341
+                number: '7777'
+                name: Checking
+                type: checking
+                currency: USD
+                availableBalance: 10000
+                aggregationStatusCode: 0
+                balance: 10000
+                balanceDate: 1713873630
+                oldestTransactionDate: 1672401600
+                averageMonthlyBalance: -516.45
+                transactions:
+                  - id: 100298184308
+                    amount: 60
+                    postedDate: 1713614400
+                    description: ACH deposit CAPITAL1 P2P Bob Jones Bob Jones
+                    normalizedPayee: Capital1 Bob Jones
+                    institutionTransactionId: '0000000000'
+                    category: Deposit
+                  - id: 100298184282
+                    amount: -300
+                    postedDate: 1712923200
+                    description: Online banking xfer withdrawal from ...7777
+                    normalizedPayee: Online Banking
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                  - id: 100298184257
+                    amount: -1358.11
+                    postedDate: 1712923200
+                    description: Online banking xfer withdrawal from ...7777
+                    normalizedPayee: Online Banking
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                details:
+                  interestMarginBalance:
+                  availableCashBalance:
+                  vestedBalance:
+                  currentLoanBalance:
+                  availableBalanceAmount: 10000
     VOAReportExample:
       summary: VOA Report
       value:
@@ -6973,6 +7167,7 @@ components:
         customerId: 1000006677
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7010,7 +7205,7 @@ components:
               shown: false
           showNsf: false
         customerType: active
-        title: Finicity Verification of Assets
+        title: Mastercard Open Banking Verification of Assets
         startDate: 1572625469
         endDate: 1588350269
         days: 180
@@ -7084,9 +7279,12 @@ components:
         customerType: active
         customerId: 1000006677
         requestId: sfb7x1we9w
-        title: Finicity Verification of Asset and Income - Transactions
+        title:
+          Mastercard Open Banking Verification of Asset and Income -
+          Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7210,6 +7408,92 @@ components:
           sixMonthAverage: -7616.01
           beginningBalance: -17795.6
         consolidatedAvailableBalance: 2345
+    VOIEWithStatementReportExample:
+      summary: VOIE With Statement Report
+      value:
+        id: cniwx4y891fb-voietxverify
+        portfolioId: 1sei090j3wmc-8-port
+        gseEnabled: true
+        customerType: testing
+        customerId: 1000834291
+        consumerId: fbedccb8378ea2ea9017e0f083d04c3b
+        consumerSsn: '0001'
+        requesterName: Intuit Facade Demo (KEEP)
+        requestId: yfx7exq2d8
+        type: voieTxVerify
+        status: success
+        createdDate: 1711008839
+        title:
+          Mastercard Open Banking Verification of Income and Employment -
+          Paystub
+        reportStyle: voieWithStatement
+        constraints:
+        voieWithStatementData:
+          assetIds:
+            - a96cb546-41f1-4edd-bf2f-ea0840596a4e-1287200036
+          extractEarnings: true
+          extractDeductions: false
+          extractDirectDeposit: true
+        assetIds:
+          - a96cb546-41f1-4edd-bf2f-ea0840596a4e-1287200036
+        numberOfBillableAssets: 1
+        payStatements:
+          - payPeriod: Latest
+        billable: true
+        assetId: a96cb546-41f1-4edd-bf2f-ea0840596a4e-1287200036
+        payDate: 1541030399
+        startDate: 1538352000
+        endDate: 1541030399
+        netPayCurrent: 120
+        netPayYTD: 12345
+        grossPayCurrent: 342
+        grossPayYTD: 4223
+        payrollProvider:
+        employer:
+          name: John Homeowner
+          address1: 222 Street
+          address2: 345 Street
+          city: City
+          state: State
+          zip: '80001'
+        employee:
+          name: Acme Ltd
+          address1: 123 Main St
+          address2: Suite 100
+          city: City
+          state: State
+          zip: '80001'
+        payStat:
+          - name: regular statement
+            type: REGULAR
+            description: regular income
+            rate: 8
+            units: 40
+            amountCurrent: 320
+            amountYTD: 750.79
+          - name: ot statement
+            type: OVERTIME
+            description: OT income
+            rate: 10
+            units: 40
+            amountCurrent: 400
+            amountYTD: 1000.78
+          - name: Commission statement
+            type: Commission
+            description: Commission income
+            rate: 11
+            units: 40
+            amountCurrent: 440
+            amountYTD: 2435.54
+        deductions: []
+        directDeposits: []
+        monthlyIncome:
+          estimatedMonthlyBasePay: -922.94
+          estimatedMonthlyOvertimePay: 564.94
+          estimatedMonthlyCommissionPay: 200
+          estimatedMonthlyBonusPay: 41.67
+          estimatedMonthlyTotalPay: -116.33
+        institutions: []
     VOEPayrollReportExample:
       summary: VOE - Payroll Report
       value:
@@ -7232,6 +7516,7 @@ components:
         customerId: 1275320
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         type: voePayroll
         reportStyle: credentialedPayroll
         title: Mastercard Open Banking Verification of Employment - Payroll
@@ -7290,9 +7575,10 @@ components:
         customerType: active
         customerId: 1000006677
         requestId: sfb7x1we9w
-        title: Finicity Verification of Employment - Transactions
+        title: Mastercard Open Banking Verification of Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7360,6 +7646,7 @@ components:
         customerId: 1000006677
         consumerId: ac39e237c7619a4ecf014b8d399c0696
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7375,7 +7662,7 @@ components:
         status: success
         createdDate: 1588350269
         customerType: active
-        title: Finicity Verification of Income
+        title: Mastercard Open Banking Verification of Income
         startDate: 1572625469
         endDate: 1588350269
         days: 200
@@ -7455,6 +7742,7 @@ components:
         requestId: 7a7qyps2iy
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7575,6 +7863,7 @@ components:
         customerId: 1275320
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7645,6 +7934,7 @@ components:
         customerId: 1275320
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '6789'
+        disputeStatement: 'Invalid data present.'
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -7890,6 +8180,7 @@ components:
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         businessDetails:
           id: 123
           name: Name1
@@ -8062,6 +8353,7 @@ components:
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         constraints:
           analyticsReportData:
             forCraPurpose: true
@@ -8417,6 +8709,7 @@ components:
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         businessDetails:
           id: 123
           name: Name1
@@ -9249,6 +9542,7 @@ components:
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         constraints:
           analyticsReportData:
             forCraPurpose: true
@@ -9781,6 +10075,7 @@ components:
         title: Mastercard Open Banking Cashflow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         businessDetails:
           id: 123
           name: Name1
@@ -10925,6 +11220,7 @@ components:
         title: Mastercard Open Banking Cashflow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
+        disputeStatement: 'Invalid data present.'
         constraints:
           analyticsReportData:
             forCraPurpose: true
@@ -12329,6 +12625,23 @@ components:
             descriptors:
               - type: routingNumber
                 value: '091000019'
+    CustomerAuthorizationDetailsExample:
+      value:
+        institutionLoginId: 7008461438
+        authorizationStartDate: 2024-12-31T16:11:23:20Z
+        authorizationEndDate: 2024-01-01T16:11:23:20Z
+    InstitutionLoginIdNotFoundErrorResponseExample:
+      value:
+        code: '3003'
+        status: '404'
+        message: Resource Not Found.
+        user_message: 'Institution Login Id is not found'
+    InstitutionLoginIdDetailsNotFoundErrorResponseExample:
+      value:
+        code: '3004'
+        status: '404'
+        message: Resource Not Found.
+        user_message: 'Institution Login Id details are not found'
     BadRequest:
       value:
         code: 1000
@@ -12816,6 +13129,15 @@ components:
       schema:
         type: string
       example: test app
+    InstitutionLoginIdPathParam:
+      name: institution_login_id
+      description: Institution login id of the customer.
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 7008461438
   schemas:
     BusinessList:
       type: array
@@ -13576,8 +13898,6 @@ components:
               $ref: '#/components/schemas/BusinessDetails'
             reportPin:
               $ref: '#/components/schemas/ReportPin'
-            constraints:
-              $ref: '#/components/schemas/AnalyticsReportConstraintsOut'
     AnalyticsReportsAccount:
       required:
         - id
@@ -13607,8 +13927,82 @@ components:
           example: XX1111
         type:
           type: string
-          description: One of the values from account types
+          description: The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `unknown`
+
+            * `mortgage`
+
+            * `loan`
+
+            * `creditCard`
+
+            * `lineOfCredit`
+
+            * `payroll`
+
+            * `studentLoan`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: The status of the most recent aggregation attempt
@@ -13721,7 +14115,7 @@ components:
             Year to date (YTD) other pay amount for the indicated year. Other
             pay is pay that is not categorized into one of the other categories.
           example: 123.45
-        commissionPayAmount:
+        commissionPayAmountYTD:
           type: number
           description:
             Year to date (YTD) commission pay amount for the indicated year
@@ -14525,10 +14919,28 @@ components:
           $ref: '#/components/schemas/ConsumerId'
         consumerSsn:
           $ref: '#/components/schemas/SocialSecurityNumberLastDigits'
+        disputeStatement:
+          $ref: '#/components/schemas/DisputeStatement'
         type:
           $ref: '#/components/schemas/ReportType'
         status:
           $ref: '#/components/schemas/ReportStatus'
+        constraints:
+          anyOf:
+            - $ref: '#/components/schemas/AnalyticsReportConstraintsOut'
+            - $ref: '#/components/schemas/CashFlowReportConstraintsOut'
+            - $ref: '#/components/schemas/VOIEWithTXVerifyReportConstraintsOut'
+            - $ref: '#/components/schemas/VOIEReportConstraints'
+            - $ref: '#/components/schemas/StatementReportConstraints'
+            - $ref: '#/components/schemas/TransactionsReportConstraintsOut'
+            - $ref: '#/components/schemas/VOAReportConstraintsOut'
+            - $ref: '#/components/schemas/VOAWithIncomeReportConstraintsOut'
+            - $ref: '#/components/schemas/PrequalificationReportConstraintsOut'
+            - $ref: '#/components/schemas/VOIReportConstraintsOut'
+            - $ref: '#/components/schemas/PayrollReportConstraintsOut'
+            - $ref: '#/components/schemas/VOETransactionsReportConstraintsOut'
+            - $ref: '#/components/schemas/PayStatementReportConstraints'
+
         errors:
           description: In case errors occurred during the report generation
           type: array
@@ -15867,9 +16279,82 @@ components:
         type:
           type: string
           description: >-
-            CFR: `ALL` (`checking` / `savings` / `loan` / `mortgage` / `credit
-            card` / `CD` / `MM` / `investment`...)
+            The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `unknown`
+
+            * `mortgage`
+
+            * `loan`
+
+            * `creditCard`
+
+            * `lineOfCredit`
+
+            * `payroll`
+
+            * `studentLoan`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: >-
@@ -17877,15 +18362,76 @@ components:
     DirectDeposit:
       type: object
       properties:
-        amountCurrent:
+        fiName:
+          type: string
+          description: The name of the institution
+          example: FinBank
+        accountTypeCode:
+          type: string
+          description: >
+            Bank account type:
+
+
+            * `Checking`
+
+
+            * `Savings`
+
+
+            * `Loan`: Loan account employee choose to direct a portion of their
+            net pay to help pay off a loan
+          example: Savings
+        accountTypeName:
+          type: string
+          description: The name of the Account
+          example: Checking
+        description:
+          type: string
+          description: Description of deposit
+          example: Payroll
+        amount:
           type: number
-          description: The amount of the deposit
-          example: 1744.61
+          description: Direct deposit amount
+          example: 12.34
         accountLastFour:
           type: string
-          description:
-            The last four numbers of the account the deposit went into
-          example: '1234'
+          description: Last four digits of the deposit account number
+          example: 3337
+        routingNumber:
+          type: string
+          description: Routing number for the deposit account
+          example: 30207583
+
+    DirectDeposits:
+      type: object
+      properties:
+        accountTypeCode:
+          type: string
+          description: >
+            Bank account type:
+
+
+            * `Checking`
+
+
+            * `Savings`
+
+
+            * `Loan`: Loan account employee choose to direct a portion of their
+            net pay to help pay off a loan
+          example: Savings
+        amount:
+          type: number
+          description: Direct deposit amount
+          example: 12.34
+        accountLastFour:
+          type: string
+          description: Last four digits of the deposit account number
+          example: 3337
+        routingNumber:
+          type: string
+          description: Routing number for the deposit account
+          example: 30207583
     DirectPayStatements:
       required:
         - payrollPayHistoryId
@@ -18052,6 +18598,31 @@ components:
           type: string
           description: The name of the employee
           example: Patrick Purchaser
+        address1:
+          type: string
+          description:
+            Employee address as stated by the employer in the payroll system
+          example: Address 1
+        address2:
+          type: string
+          description:
+            Employee address as stated by the employer in the payroll system
+          example: Address 2
+        city:
+          type: string
+          description:
+            Employee city as stated by the employer in the payroll system
+          example: City
+        state:
+          type: string
+          description:
+            Employee state as stated by the employer in the payroll system
+          example: TX
+        zip:
+          type: string
+          description:
+            Employee zip code as stated by the employer in the payroll system
+          example: '99999'
     Employer:
       type: object
       properties:
@@ -18059,6 +18630,31 @@ components:
           type: string
           description: The name of the employer
           example: Rocket Surgery
+        address1:
+          type: string
+          description:
+            Employer address as stated by the employer in the payroll system
+          example: Address 1
+        address2:
+          type: string
+          description:
+            Employer address as stated by the employer in the payroll system
+          example: Address 2
+        city:
+          type: string
+          description:
+            Employer city as stated by the employer in the payroll system
+          example: City
+        state:
+          type: string
+          description:
+            Employer state as stated by the employer in the payroll system
+          example: TX
+        zip:
+          type: string
+          description:
+            Employer zip code as stated by the employer in the payroll system
+          example: '99999'
     EmployerName:
       type: string
       description:
@@ -18700,10 +19296,21 @@ components:
       type: boolean
       description: >-
         "true": Indicates that the Connect Session will be displayed within a
-        WebView.
-
-        Note: when the `isWebView` parameter is `true` the `redirectUri`
+        WebView. When the `isWebView` parameter is `true` the `redirectUri`
         parameter is required.
+
+
+        Note: This parameter is no longer recommended. We instead recommend
+        specifying a `redirectUrl` through our WebSDK. Please refer to the
+        following documentation:
+
+
+        -
+        [iOS](https://developer.mastercard.com/open-banking-us/documentation/connect/integrating/webviews/ios-webviews/)
+
+
+        -
+        [Android](https://developer.mastercard.com/open-banking-us/documentation/connect/integrating/webviews/android-webviews/)
       example: true
     LastName:
       type: string
@@ -19912,6 +20519,18 @@ components:
           type: string
           description: The earnings line's pay type description
           example: regular income
+        rate:
+          type: number
+          description: >-
+            The rate for the earning line paid out to the employee for the
+            specified pay period.
+          example: 10.00
+        units:
+          type: number
+          description: >-
+            The units for the earning line paid out to the employee for the
+            specified pay period.
+          example: 60.00
         amountCurrent:
           type: number
           description: >-
@@ -20115,6 +20734,11 @@ components:
             An ID to identify the data retrieved from the payroll providers for
             the report.
           example: hahvhe2k0000
+        consentMethod:
+          type: string
+          description: >-
+            Client-collected consent payroll report tagging.
+          example: Written Generic - Finicity Set
         employmentIds:
           type: array
           description: An array of employmentIds
@@ -20844,8 +21468,68 @@ components:
           example: Checking
         type:
           type: string
-          description: One of the values from account types
+          description: The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: The status of the most recent aggregation attempt
@@ -21220,7 +21904,7 @@ components:
     ReportInstitutionAccount:
       description: An account record
       type: object
-      allOf:
+      anyOf:
         - $ref: '#/components/schemas/AnalyticsReportsAccount'
         - $ref: '#/components/schemas/CashFlowReportAccount'
         - $ref: '#/components/schemas/PrequalificationReportAccount'
@@ -21234,6 +21918,10 @@ components:
       type: string
       description: A unique key returned per report for consumer Portal
       example: 2398jk
+    AccountCurrency:
+      type: string
+      description: A currency code for account
+      example: USD
     ReportRequestId:
       type: string
       description:
@@ -21483,7 +22171,9 @@ components:
 
         * `voieWithInterview`
 
-        * `paystatement`
+        * `voieWithStatement`
+
+        * `paystatement` 
 
         * `preQualVoa`
 
@@ -21514,6 +22204,16 @@ components:
         * `barbftc`
 
         * `barbnoncra`
+
+        * `cfrpcra`
+
+        * `cfrpnoncra`
+
+        * `cracfrbcra`
+
+        * `cfrbnoncra`
+
+        * `cfrbftc`
       type: string
       example: voi
     RoutingNumber:
@@ -21584,6 +22284,12 @@ components:
       type: string
       description: Last 4 digits of a SSN
       example: '9999'
+    DisputeStatement:
+      description: The dispute text
+      type: string
+      minLength: 1
+      maxLength: 2000
+      example: 'Statement dispute text'
     SocialSecurityNumberNoHyphens:
       type: string
       description: The consumer's full SSN without hyphens
@@ -22458,7 +23164,83 @@ components:
             The account number from the financial institution (obfuscated)
           example: '5015'
         type:
-          $ref: '#/components/schemas/AccountType'
+          type: string
+          description: The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `unknown`
+
+            * `mortgage`
+
+            * `loan`
+
+            * `creditCard`
+
+            * `lineOfCredit`
+
+            * `payroll`
+
+            * `studentLoan`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
+          example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: >-
@@ -22477,6 +23259,14 @@ components:
           description: A timestamp showing when the balance was captured
           format: int64
           example: 1594676289
+        oldestTransactionDate:
+          type: integer
+          description: >-
+            The oldest transaction date of this account.
+          format: int64
+          example: 1588350276
+          maximum: 2147483647
+          minimum: 0
         transactions:
           type: array
           items:
@@ -22828,8 +23618,69 @@ components:
           example: Checking
         type:
           type: string
-          description: One of the values from account types
+          description: >-
+            The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         availableBalance:
           type: number
           description: The available balance for the account
@@ -22873,6 +23724,14 @@ components:
             transaction, based on the `fromDate` of the report.
           format: int64
           example: 120
+        oldestTransactionDate:
+          type: integer
+          description: >-
+            The oldest transaction date of this account.
+          format: int64
+          example: 1588350276
+          maximum: 2147483647
+          minimum: 0
         transactions:
           type: array
           items:
@@ -22924,6 +23783,8 @@ components:
           $ref: '#/components/schemas/ReportAccountIds'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        toDate:
+          $ref: '#/components/schemas/UnixDate'
         showNsf:
           $ref: '#/components/schemas/ShowNsf'
         fromDate:
@@ -23017,6 +23878,13 @@ components:
           $ref: '#/components/schemas/ShowNsf'
         fromDate:
           $ref: '#/components/schemas/UnixDate'
+        voaiPdfDepositView:
+          type: boolean
+          nullable: true
+          description:
+            Provide an alternate PDF view of deposit transactions group by
+            income stream in PDF.
+          example: true
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
     VOEPayrollReport:
@@ -23085,8 +23953,16 @@ components:
           example: Checking
         type:
           type: string
-          description: One of the values from account types
+          description: The list of supported account types
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: The status of the most recent aggregation attempt
@@ -23263,6 +24139,31 @@ components:
           type: string
           description: The company that provides the pay stub.
           example: Finicity
+        matchType:
+          type: string
+          description: >-
+            The statement match category. Possible values:
+
+              * "NET_PAY_MATCH"
+
+
+              * "SPLIT_INTERVIEW_AMOUNT_SUM_TO_NET_PAY_MATCH"
+
+
+              * "SPLIT_DIRECT_DEPOSIT_SUM_TO_NET_PAY_MATCH"
+
+
+              * "SPLIT_LESS_THAN_NET_PAY_SUM_TO_NET_PAY_MATCH"
+
+
+              * "PARTIAL"
+
+
+              * "TRANSACTION_DATE_RANGE_INVALID"
+
+
+              * "NO_MATCH"
+          example: PARTIAL
         employer:
           $ref: '#/components/schemas/Employer'
         employee:
@@ -23567,8 +24468,82 @@ components:
           example: Checking
         type:
           type: string
-          description: One of the values from account types
+          description: The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
+            * `cd`
+
+            * `investment`
+
+            * `investmentTaxDeferred`
+
+            * `employeeStockPurchasePlan`
+
+            * `ira`
+
+            * `401k`
+
+            * `roth`
+
+            * `403b`
+
+            * `529`
+
+            * `rollover`
+
+            * `ugma`
+
+            * `utma`
+
+            * `keogh`
+
+            * `457`
+
+            * `401a`
+
+            * `unknown`
+
+            * `mortgage`
+
+            * `loan`
+
+            * `creditCard`
+
+            * `lineOfCredit`
+
+            * `payroll`
+
+            * `studentLoan`
+
+            * `brokerageAccount`
+
+            * `educationSavings`
+
+            * `healthSavingsAccount`
+
+            * `nonTaxableBrokerageAccount`
+
+            * `pension`
+
+            * `profitSharingPlan`
+
+            * `roth401k`
+
+            * `sepIRA`
+
+            * `simpleIRA`
+
+            * `thriftSavingsPlan`
+
+            * `variableAnnuity`
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: The status of the most recent aggregation attempt
@@ -23707,6 +24682,7 @@ components:
           $ref: '#/components/schemas/ExtractDeductions'
         extractDirectDeposit:
           $ref: '#/components/schemas/ExtractDirectDeposit'
+
     VOIEWithTXVerifyReportConstraints:
       required:
         - voieWithInterviewData
@@ -23791,8 +24767,17 @@ components:
           example: Checking
         type:
           type: string
-          description: One of the values from account types
+          description: The list of supported account types.
+
+            * `checking`
+
+            * `savings`
+
+            * `moneyMarket`
+
           example: checking
+        currency:
+          $ref: '#/components/schemas/AccountCurrency'
         aggregationStatusCode:
           type: integer
           description: The status of the most recent aggregation attempt
@@ -23829,6 +24814,14 @@ components:
           description:
             Beginning balance of account per the time period in the report
           example: 714.77
+        oldestTransactionDate:
+          type: integer
+          description: >-
+            The oldest transaction date of this account.
+          format: int64
+          example: 1588350276
+          maximum: 2147483647
+          minimum: 0
         miscDeposits:
           maxItems: 100
           minItems: 0
@@ -23836,6 +24829,26 @@ components:
           items:
             $ref: '#/components/schemas/ReportTransaction'
           description: A list of miscellaneous deposits
+    CustomerAuthorizationDetails:
+      type: object
+      properties:
+        institutionLoginId:
+          type: integer
+          description: Institution login id of the customer.
+          format: int64
+          example: 7009561328
+        authorizationStartDate:
+          type: string
+          description: Authorization start date and time in ISO 8601 format.
+          example: 2020-07-30T16:11:23:20Z
+        authorizationEndDate:
+          type: string
+          description: Authorization end date and time in ISO 8601 format.
+          example: 2020-07-30T16:11:23:20Z
+      required:
+        - institutionLoginId
+        - authorizationStartDate
+        - authorizationEndDate
     VOIReportAck:
       description: A VOI report being generated
       required:
