@@ -492,15 +492,17 @@ paths:
     delete:
       tags:
         - Customers
-      summary: Delete Customer by ID
+      summary: Delete Access to Customer by ID
       description: >-
-        Completely remove a customer from the system. This will remove the
-        customer and all associated accounts and transactions.
+        Delete access to a customer and all associated accounts.
 
+        This will delete access to the customer and all their linked accounts.
+        The customer data will no longer be accessible. Any customer data
+        already collected will be retained in accordance with our enterprise
+        data retention policy consistent with legal and business purposes. 
 
         ⚠️ Use this service carefully! It will not pause for confirmation before
         performing the operation!
-
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomer
@@ -725,11 +727,15 @@ paths:
     delete:
       tags:
         - Accounts
-      summary: Delete Customer Accounts by Institution Login ID
+      summary: Delete Access to Customer Accounts by Institution Login ID
       description: >-
-        Remove from Finicity aggregation the set of accounts matching the
-        institution login ID.
+        Delete access to all customer accounts for a given FI.​
 
+        This will delete access to the underlying account(s) under a given
+        Institution Login ID. The customer data will no longer be accessible.
+        Any customer data already collected will be retained in accordance with
+        our enterprise retention policy consistent with legal and business
+        purposes.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomerAccountsByInstitutionLogin
@@ -772,10 +778,17 @@ paths:
     delete:
       tags:
         - Accounts
-      summary: Delete Customer Account by ID
+      summary: Delete Access to Customer Account by ID
       description: >-
-        Remove the given account from Finicity aggregation.
+        This will delete access to a specific account only. If the given account
+        is not the last account, then partners and their customers will have the
+        flexibility to continue to access data from other connected accounts
+        using the consented (Oauth) token for the customer.
 
+        The customer data on that specific account will no longer be accessible.
+        Any customer data already collected will be retained in accordance with
+        our enterprise retention policy consistent with legal and business
+        purposes. ​
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: DeleteCustomerAccount
@@ -3990,7 +4003,7 @@ components:
     ModifyCustomerResponse:
       description: The customer was successfully updated
     DeleteCustomerResponse:
-      description: The customer was successfully deleted
+      description: Access to the customer was successfully removed
     CreateConsumerResponse:
       description: The consumer was successfully created
       content:
@@ -4038,9 +4051,9 @@ components:
     RefreshCustomerV2AccountsResponse:
       description: The account list was successfully refreshed
     DeleteCustomerAccountsByInstitutionLoginResponse:
-      description: The customer accounts were successfully deleted
+      description: Access to the customer accounts was successfully removed
     DeleteCustomerAccountResponse:
-      description: The customer account was successfully deleted
+      description: Access to the customer account was successfully removed
     LoadHistoricTransactionsForCustomerAccountResponse:
       description:
         Historic transactions have been loaded successfully. The transactions
