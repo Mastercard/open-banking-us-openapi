@@ -35,6 +35,7 @@ echo "Access token: "$token
 echo ""
 
 echo "Step 2 - Creating test customer ..."
+echo '{"username": "customer_'$RANDOM$RANDOM'" , "email":"'$RANDOM'@domain.com"}'
 customer_response=$(curl -s --location --request POST 'https://api.finicity.com/aggregation/v2/customers/testing' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
