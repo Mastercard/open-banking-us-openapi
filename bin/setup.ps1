@@ -46,7 +46,7 @@ Write-Output "`r`nStep 2 - Creating test customer ..."
 $Random = Get-Random
 $Headers["Finicity-App-Token"] = "$Token"
 $Body = @{
-    "username" = "customerusername_$Random$Random", "email" = $Random+"domain.com";
+    "username" = "customerP_$Random$Random";
 } | ConvertTo-Json
 $Res = Invoke-WebRequest -Uri https://api.finicity.com/aggregation/v2/customers/testing `
                          -Method POST `
