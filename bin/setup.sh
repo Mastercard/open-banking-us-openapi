@@ -40,7 +40,7 @@ customer_response=$(curl -s --location --request POST 'https://api.finicity.com/
 --header 'Accept: application/json' \
 --header 'Finicity-App-Key:'$3 \
 --header 'Finicity-App-Token:'$token \
---data-raw '{ "username": "customerusername_'$RANDOM$RANDOM'" , "email": '$RANDOM'"@testDomain.com"}')
+--data-raw '{"username": "customer_'$RANDOM$RANDOM'" , "email":"'$RANDOM'@domain.com"}')
 
 # {"id":"5026948632","username":"customerusername1","createdDate":"1649244189"}
 if [[ "$customer_response" != *"username"* ]]; then 
