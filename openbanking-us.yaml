@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.18.0
+  version: 1.19.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -73,6 +73,8 @@ tags:
     description: Generate asset reports asynchronously
   - name: Verify Income and Employment
     description: Generate income and employment reports asynchronously
+  - name: Customer Authorization Details
+    description: APIs to retrieve customer authorization details
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -1251,6 +1253,59 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  /applications:
+    get:
+      tags:
+        - App Registration
+      summary: Get applications details.
+      description: >-
+        This endpoint returns the status of the submitted application and
+        provides additional details.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getApplications
+      parameters:
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/ApplicationLimitParameter'
+        - $ref: '#/components/parameters/PreAppIdParameter'
+        - $ref: '#/components/parameters/ApplicationIdParameter'
+        - $ref: '#/components/parameters/AppNameParameter'
+        - $ref: '#/components/parameters/AppStatusParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/AppResponse'
+        '400':
+          $ref: '#/components/responses/GetApplicationsStatusBadErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /applications/{application_id}/institutions:
+    get:
+      tags:
+        - App Registration
+      summary:
+        Get the application registration status with the financial institutions.
+      description: >-
+        The registration status of the approved application against the
+        financial institutions.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getRegisteredInstitutions
+      parameters:
+        - $ref: '#/components/parameters/AppIdPathParameter'
+        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/InstitutionLimitParameter'
+        - $ref: '#/components/parameters/InstitutionIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/InstitutionsResponse'
+        '400':
+          $ref: '#/components/responses/GetApplicationsRegistrationStatusBadErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetApplicationRegistrationStatusResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/applications/{applicationId}':
     put:
       tags:
@@ -2662,10 +2717,16 @@ paths:
     get:
       tags:
         - Payments
-      summary: Get Available Balance - Live
+      summary: Get Available Balance
       description: >-
         Retrieve the available and cleared account balances for a single account
-        in real-time directly from a financial institution.
+        in real-time directly from a financial institution.  
+
+        You can define an additional query parameter `balance_cache_interval` to
+        specify the time interval of the last cached balance. This parameter is
+        used by the server to determine whether the cached balance is still
+        valid or if it needs to be refreshed.  
+
 
 
         Note: this is a premium service, billable per every successful API call.
@@ -2679,6 +2740,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/AllowedBalanceCacheIntervalParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetAvailableBalanceLiveResponse'
@@ -2692,7 +2754,7 @@ paths:
     get:
       tags:
         - Payments
-      summary: Get Available Balance
+      summary: Get Available Balance - Cached
       description: >-
         Retrieve the latest cached available and cleared account balances for a
         customer. Since we update and store balances throughout the day, this is
@@ -3953,6 +4015,26 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
+    AppResponse:
+      description: Response containing one or more application details.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApplicationResponse'
+          examples:
+            AppResponseExample:
+              $ref: '#/components/examples/AppResponseExample'
+    InstitutionsResponse:
+      description:
+        The requested application registration status against financial
+        institutions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstitutionResponse'
+          examples:
+            InstitutionsDetailResponseExample:
+              $ref: '#/components/examples/InstitutionResponseExample'
     SendConnectEmailResponse:
       description: The URL link was successfully generated and the email sent
       content:
@@ -4690,6 +4772,17 @@ components:
               $ref: '#/components/examples/ResourceNotFoundExample'
             NoRegisteredApplicationExample:
               $ref: '#/components/examples/NoRegisteredApplicationExample'
+    GetApplicationRegistrationStatusResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ApplicationIdNotFoundExample:
+              $ref: '#/components/examples/ApplicationIdNotFoundExample'
+            ApplicationRegistrationStatusNotFoundExample:
+              $ref: '#/components/examples/ApplicationRegistrationStatusNotFoundExample'
     ConflictErrorResponse:
       description: The resource already exists
       content:
@@ -4779,6 +4872,36 @@ components:
               $ref: '#/components/examples/GenericBadRequestExample'
             AccountTypeNotSupportedExample:
               $ref: '#/components/examples/AccountTypeNotSupportedExample'
+    GetApplicationsStatusBadErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InvalidStartValueExample:
+              $ref: '#/components/examples/InvalidStartValueExample'
+            InvalidLimitValueExample:
+              $ref: '#/components/examples/InvalidLimitValueExample'
+            LimitValueExceededExample:
+              $ref: '#/components/examples/LimitValueExceededExample'
+            InvalidQueryParametersExample:
+              $ref: '#/components/examples/InvalidQueryParametersExample'
+            InvalidQueryParametersValueExample:
+              $ref: '#/components/examples/InvalidQueryParametersValueExample'
+    GetApplicationsRegistrationStatusBadErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InvalidStartValueExample:
+              $ref: '#/components/examples/InvalidStartValueExample'
+            InvalidLimitValueExample:
+              $ref: '#/components/examples/InvalidLimitValueExample'
+            LimitValueExceededExample:
+              $ref: '#/components/examples/LimitValueExceededExample'
     GenerateBalanceAnalyticsResponse:
       description: >-
         Response given when balance analytics were generated successfully,
@@ -5167,6 +5290,41 @@ components:
           'One or more of the fields could not be validated. Please ensure you
           have entered the correct data.'
         tags: ''
+    InvalidStartValueExample:
+      value:
+        code: '3005'
+        status: '400'
+        message: 'Bad Request'
+        user_message: 'Invalid Start value'
+    InvalidLimitValueExample:
+      value:
+        code: '3006'
+        status: '400'
+        message: 'Bad Request'
+        user_message: 'Invalid Limit value'
+    LimitValueExceededExample:
+      value:
+        code: '3007'
+        status: '400'
+        message: 'Bad Request'
+        user_message:
+          'Requested Limit value is exceeded than allowed max Limit value'
+    InvalidQueryParametersExample:
+      value:
+        code: '3008'
+        status: '400'
+        message: 'Bad Request'
+        user_message:
+          'Known query parameters: [pre_app_id, application_id, status, name]
+          are allowed only'
+    InvalidQueryParametersValueExample:
+      value:
+        code: '3009'
+        status: '400'
+        message: 'Bad Request'
+        user_message:
+          'One/more of [pre_app_id, application_id, status, name] query
+          parameter values provided are invalid'
     InvalidNewPartnerSecretExample:
       value:
         code: 24437
@@ -5191,6 +5349,20 @@ components:
         message:
           'Customer does not have any accounts associated with
           institutionLoginId.'
+    ApplicationIdNotFoundExample:
+      value:
+        code: '3001'
+        status: '404'
+        message: 'Resource Not Found'
+        user_message: 'Requested Application Id is not found'
+    ApplicationRegistrationStatusNotFoundExample:
+      value:
+        code: '3002'
+        status: '404'
+        message: 'Resource Not Found'
+        user_message:
+          'Requested application registration status is not found against
+          financial institutions'
     CustomerNotFoundExample:
       value:
         code: 14001
@@ -5215,6 +5387,44 @@ components:
       value:
         code: 11000
         message: 'A consumer already exists for customer 4025024821'
+    AppResponseExample:
+      value:
+        found: 2
+        displaying: 2
+        moreAvailable: false
+        applications:
+          - preAppId: 13
+            applicationId: 234dsfdsf-535fdgdtrtr-546464564
+            status: A
+            name: Mvelopes
+            scopes: Account Info
+            note: Auto approved
+            createdDate: 2020-07-30T16:11:23Z
+            modifiedDate: 2020-07-30T16:11:23Z
+            submittedDate: 2020-07-30T16:11:23Z
+          - preAppId: 43
+            applicationId: 32edsfdsf-535dsdsrtr-546dsaes4
+            status: D
+            name: TestApp
+            scopes: Account Info
+            note: Auto approved
+            createdDate: 2020-07-30T16:11:23Z
+            modifiedDate: 2020-07-30T16:11:23Z
+            submittedDate: 2020-07-30T16:11:23Z
+    InstitutionResponseExample:
+      value:
+        found: 500
+        displaying: 2
+        moreAvailable: true
+        institutions:
+          - institutionId: 170716
+            status: true
+            createdDate: 2020-07-30T16:11:23Z
+            modifiedDate: 2020-07-30T16:11:23Z
+          - institutionId: 102224
+            status: true
+            createdDate: 2020-07-30T16:11:23Z
+            modifiedDate: 2020-07-30T16:11:23Z
     GeneratePayrollReportRequestExample:
       value:
         payrollData:
@@ -5237,7 +5447,7 @@ components:
         customerId: 1011140000
         requestId: 7a7qyps2iy
         type: voePayroll
-        reportStyle: credentialedPayroll
+        reportStyle: directAPIPayroll
         requesterName: Decisioning API
         endUser:
           name: 'ABC Apartments'
@@ -5254,6 +5464,7 @@ components:
         consumerSsn: '6789'
         constraints:
           payrollData:
+            payrollDataRetrievalId: 'uvhjy7pwa1t5'
             payrollAccountIds:
               - 018bf5c9-b542-c2ba-8f92-c5c7be6be515
           reportCustomFields:
@@ -7538,6 +7749,7 @@ components:
           payrollData:
             payrollAccountIds:
               - 018d3f0e-6c1c-fa13-7e50-0003acfcfdae
+            payrollAggregatorResponseId: '4baxktu9wdda'
         employmentHistory:
           - asOfDate: 1596175200
             employmentId: zgk6wh3urqr0gtxv
@@ -7777,6 +7989,7 @@ components:
           payrollData:
             payrollAccountIds:
               - 018b8f10-fdf8-0ef7-ded5-34a17c34d86f
+            payrollAggregatorResponseId: '4baxktu9wdda'
           reportCustomFields:
             label: loanID
             value: '12345'
@@ -12737,6 +12950,96 @@ components:
       schema:
         $ref: '#/components/schemas/IncludePending'
       example: false
+    AppIdPathParameter:
+      name: application_id
+      in: path
+      description:
+        The identifier is generated after the pre-app is approved. Pre-app is
+        the first stage of application registration. Partner first submits an
+        application registration request, then a Pre-app Id is generated for it,
+        and if all the details are correct, the sales team will approve it, and
+        then an application will be registered with the Application Id and
+        associated with the Pre-app. This Application Id is utilized throughout
+        the lifespan of an application.
+      required: true
+      schema:
+        type: string
+      example: 234dsfdsf-535fdgdtrtr-546464564
+    PreAppIdParameter:
+      name: pre_app_id
+      in: query
+      description:
+        The identifier is provided by Mastercard at the first stage of
+        application registration.
+      required: false
+      schema:
+        type: integer
+      example: 13
+    ApplicationLimitParameter:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of results per page
+      schema:
+        type: integer
+        format: int32
+        default: 50
+        minimum: 1
+        maximum: 100
+        example: 20
+    InstitutionLimitParameter:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of results per page
+      schema:
+        type: integer
+        format: int32
+        default: 25
+        minimum: 1
+        maximum: 1000
+        example: 25
+    ApplicationIdParameter:
+      name: application_id
+      in: query
+      description:
+        The identifier is generated after the pre-app is approved. Pre-app is
+        the first stage of application registration. Partner first submits an
+        application registration request, then a Pre-app Id is generated for it,
+        and if all the details are correct, the sales team will approve it, and
+        then an application will be registered with the Application Id and
+        associated with the Pre-app. This Application Id is utilized throughout
+        the lifespan of an application.
+      required: false
+      schema:
+        type: string
+      example: 00278431-b712-4f30-a044-b611f25e533d
+    AppNameParameter:
+      name: name
+      in: query
+      description: The application name provided by the partner.
+      required: false
+      schema:
+        type: string
+      example: Mvelopes
+    AppStatusParameter:
+      name: status
+      in: query
+      description:
+        The application registration status with Mastercard. 'A'=Active ,
+        'P'=Pending , 'D'=Deleted , 'R'=Rejected.
+      required: false
+      schema:
+        type: string
+      example: P
+    InstitutionIdPathParameter:
+      name: institution_id
+      in: query
+      description: The financial institution id at Mastercard.
+      required: false
+      schema:
+        type: integer
+      example: 170716
     ApplicationIdPathParameter:
       description: The application ID
       name: applicationId
@@ -13142,6 +13445,18 @@ components:
       schema:
         type: string
       example: test app
+    AllowedBalanceCacheIntervalParameter:
+      description: |-
+        `balance_cache_interval` (in minutes) is used to decide whether to return existing cached balance or retrieve from financial institution in real-time. Details explained below:
+        1. If the cached balance data at server is older than provided `balance_cache_interval` then live balance from financial institution will be retrieved.
+        2. If the cached balance data is within provided `balance_cache_interval` allowed interval then balance from cache will be returned.
+        3. If `balance_cache_interval` is 0 or not provided, then live balance from financial institution will be retrieved.
+      name: balance_cache_interval
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/AllowedBalanceCacheInterval'
+      example: 1
     InstitutionLoginIdPathParam:
       name: institution_login_id
       description: Institution login id of the customer.
@@ -14218,6 +14533,70 @@ components:
             $ref: '#/components/schemas/AppFinancialInstitutionStatus'
           description:
             A list of the registration status for each FI for the application
+    App:
+      type: object
+      properties:
+        preAppId:
+          type: integer
+          description:
+            The Pre-app Id is generated after the partner submits the request to
+            create an application using the
+            /aggregation/v1/partners/applications API.
+          example: 13
+        applicationId:
+          type: string
+          description:
+            The Application Id is assigned to the pre-app after the pre-app
+            approval.
+          example: 234dsfdsf-535fdgdtrtr-546464564
+        status:
+          type: string
+          description:
+            The application registration status with Mastercard.'A'=Active ,
+            'P'=Pending , 'D'=Deleted , 'R'=Rejected.
+          example: A
+        name:
+          type: string
+          description: The name of the application submitted by the partner.
+          example: Mvelopes
+        scopes:
+          type: string
+          description: The scope of the application for the partner.
+          example: Account Number, Account Info
+        note:
+          type: string
+          description: The note for the pre-application status.
+          example: Approved
+        createdDate:
+          type: string
+          description:
+            The application creation date and time in ISO 8601 format.
+          example: 2020-06-02T06:00:00Z
+        modifiedDate:
+          type: string
+          description:
+            The application modification date and time are in ISO 8601 format.
+          example: 2020-06-02T06:00:00Z
+        submittedDate:
+          type: string
+          description:
+            The application submitted date and time in ISO 8601 format.
+          example: 2020-06-02T06:00:00Z
+      description: 'List of applications'
+    ApplicationResponse:
+      type: object
+      properties:
+        found:
+          $ref: '#/components/schemas/FoundResults'
+        displaying:
+          $ref: '#/components/schemas/DisplayingResults'
+        moreAvailable:
+          $ref: '#/components/schemas/MoreResultsAvailable'
+        applications:
+          type: array
+          description: 'List of application details'
+          items:
+            $ref: '#/components/schemas/App'
     CustomerAccountMultipleStatement:
       description:
         Statement represents the bank statements for a given customer's account
@@ -14246,8 +14625,8 @@ components:
             Error message for the bank statement not generated
     AppStatuses:
       description: >-
-        The response for the Get App Registration Status API which returns an
-        array of status objects
+        The response for the Get App Registration Status API returns an array of
+        status objects.
       required:
         - totalRecords
         - totalPages
@@ -19157,6 +19536,50 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Institution'
+    InstitutionResponse:
+      type: object
+      properties:
+        found:
+          $ref: '#/components/schemas/FoundResults'
+        displaying:
+          $ref: '#/components/schemas/DisplayingResults'
+        moreAvailable:
+          $ref: '#/components/schemas/MoreResultsAvailable'
+        institutions:
+          type: array
+          description: 'List of institution details for an application'
+          example:
+            - institutionId: 170716
+              status: true
+              createdDate: 2020-07-30T16:11:23Z
+              modifiedDate: 2020-07-30T16:11:23Z
+          items:
+            $ref: '#/components/schemas/FinancialInstitution'
+    FinancialInstitution:
+      type: object
+      properties:
+        institutionId:
+          type: integer
+          description: The financial institution identification at Mastercard.
+          format: int64
+          example: 170716
+        status:
+          type: boolean
+          description:
+            Application registration status against the financial institution.
+          example: true
+        createdDate:
+          type: string
+          description:
+            The application creation date and time at financial institutions are
+            in ISO 8601 format.
+          example: 2020-07-30T16:11:23Z
+        modifiedDate:
+          type: string
+          description:
+            The application modification date and time at financial institutions
+            in ISO 8601 format.
+          example: 2020-07-30T16:11:23Z
     InsufficientFundsTransaction:
       properties:
         amount:
@@ -20742,11 +21165,9 @@ components:
       type: object
       properties:
         payrollDataRetrievalId:
-          type: string
-          description: >-
-            An ID to identify the data retrieved from the payroll providers for
-            the report.
-          example: hahvhe2k0000
+          $ref: '#/components/schemas/PayrollDataRetrievalId'
+        payrollAggregatorResponseId:
+          $ref: '#/components/schemas/PayrollDataRetrievalId'
         consentMethod:
           type: string
           description: >-
@@ -20764,6 +21185,19 @@ components:
             $ref: '#/components/schemas/PayrollAccountId'
         reportId:
           $ref: '#/components/schemas/ReportId'
+    PayrollDataRetrievalId:
+      type: string
+      description: >-
+        An ID to identify the data retrieved from the payroll providers for the
+        report.
+      example: hahvhe2k0000
+    PayrollAggregatorResponseId:
+      type: string
+      description: >-
+        This is an internal ID to track the retrieval of data from the internal
+        payroll aggregator service. This is not intended to be used by the
+        client.
+      example: ab1cd2ef3212
     PayrollEmployeeAddress:
       type: object
       properties:
@@ -25204,3 +25638,13 @@ components:
           $ref: '#/components/schemas/EmailAddress'
         url:
           $ref: '#/components/schemas/EndUserUrl'
+    AllowedBalanceCacheInterval:
+      type: integer
+      format: int32
+      default: 0
+      minimum: 0
+      maximum: 1440
+      description:
+        Time interval in minutes to check balance data against live balance from
+        financial institution or from latest cached
+      example: 1
