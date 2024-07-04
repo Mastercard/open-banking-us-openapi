@@ -51,7 +51,8 @@ class PaymentsApiTest extends BaseTest {
     @Test
     void getAvailableBalanceLiveTest() {
         try {
-            var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId());
+            Integer balanceCacheInterval = null;
+            var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId(), balanceCacheInterval);
             assertNotNull(balance.getAvailableBalance());
         } catch (ApiException e) {
             fail(e);
