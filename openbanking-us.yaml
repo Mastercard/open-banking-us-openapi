@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.19.0
+  version: 1.19.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -782,10 +782,10 @@ paths:
         - Accounts
       summary: Delete Access to Customer Account by ID
       description: >-
-        This will delete access to a specific account only. If the given account
-        is not the last account, then partners and their customers will have the
-        flexibility to continue to access data from other connected accounts
-        using the consented (Oauth) token for the customer.
+        This will delete access to a specific account only. If there are
+        multiple permissioned accounts, then partners and their customers will
+        have the flexibility to continue to access data from other connected
+        accounts using the consented (Oauth) token for the customer.
 
         The customer data on that specific account will no longer be accessible.
         Any customer data already collected will be retained in accordance with
@@ -13715,7 +13715,8 @@ components:
     AccountOwnerDetails:
       required:
         - ownerName
-        - addresses
+        - nameClassification
+        - nameClassificationConfidenceScore
       type: object
       properties:
         relationship:
@@ -17270,10 +17271,9 @@ components:
       example: Murray
     ClassificationConfidenceScore:
       type: number
-      description:
-        The confidence score (between zero and one) of the name classification.
-      example: 0.9
-      minimum: 0.0
+      description: The confidence score 0 – 1.0 of the name classification.
+      example: 0.90
+      minimum: 0
       maximum: 1.0
     ConnectEmailParameters:
       required:
