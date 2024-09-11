@@ -48,7 +48,7 @@ public final class ModelFactory {
         return new NewCustomer()
                 .firstName("John_" + randomStr())
                 .lastName("Smith_" + randomStr())
-                .username(username);;
+                .username(username);
     }
 
     // See: https://docs.finicity.com/test-the-apis/#test-the-apis-5
