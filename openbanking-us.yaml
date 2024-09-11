@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.19.2
+  version: 1.20.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -22267,6 +22267,8 @@ components:
           type: string
           example: Micro entries successfully initiated
           description: Micro entries successful initiation description
+        railType:
+          $ref: '#/components/schemas/RailType'
     Institution:
       description: A financial institution
       required:
@@ -23077,6 +23079,10 @@ components:
           $ref: '#/components/schemas/RoutingNumber'
         accountNumberLast4:
           $ref: '#/components/schemas/AccountNumberLast4'
+        autoVerifiedAccount:
+          $ref: '#/components/schemas/AutoVerifiedAccount'
+        railType:
+          $ref: '#/components/schemas/RailType'
     MicroDepositInitiation:
       required:
         - receiver
@@ -25097,6 +25103,19 @@ components:
         FCRA required 2-digit Permissible Purpose Code, specifying the reason
         for retrieving this report.
       example: '31'
+    RailType:
+      type: string
+      description: The Rail (ACH / RTP) used for initiating bank deposit(s).
+      example: ach
+    AutoVerifiedAccount:
+      type: integer
+      format: int64
+      description:
+        This field stores an ID for the linked bank account to verify the
+        microdeposits. It will have a value populated only when the
+        microdeposits are auto verified successfully via account aggregation,
+        otherwise this field will not be present.
+      example: 9876543210
     Receiver:
       required:
         - routingNumber
