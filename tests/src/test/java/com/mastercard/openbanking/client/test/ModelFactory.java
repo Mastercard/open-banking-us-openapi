@@ -48,7 +48,7 @@ public final class ModelFactory {
         return new NewCustomer()
                 .firstName("John_" + randomStr())
                 .lastName("Smith_" + randomStr())
-                .username(username);
+                .username(username).emailAddress((username + "@domain.com"));;
     }
 
     // See: https://docs.finicity.com/test-the-apis/#test-the-apis-5
@@ -108,7 +108,7 @@ public final class ModelFactory {
                 .receiver(new Receiver()
                         .accountNumber("5111111111")
                         .routingNumber("011000138")
-                        .accountType("Checking")
+                        .accountType("personalChecking")
                         .name("API client test"));
     }
 

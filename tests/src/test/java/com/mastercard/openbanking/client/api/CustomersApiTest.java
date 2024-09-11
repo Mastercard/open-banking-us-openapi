@@ -33,8 +33,8 @@ class CustomersApiTest extends BaseTest {
     void addCustomerTest() {
         try {
             var username = "customer_" + RandomStringUtils.randomAlphabetic(10);
-            var newCustomer = new NewCustomer()
-                    .username(username);
+            var emailAddress= username+"@test.com";
+            var newCustomer = new NewCustomer().username(username).email(emailAddress);
             var customer = api.addCustomer(newCustomer);
             assertNotNull(customer.getId());
             assertNotNull(customer.getCreatedDate());
