@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.20.0
+  version: 1.20.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -521,7 +521,7 @@ paths:
     post:
       tags:
         - Consumers
-      summary: Create Consumer
+      summary: Create consumer for the customer
       description: >-
         Create a consumer record associated with the given customer. A consumer
         persists as the owner of any reports that are generated, even after the
@@ -552,7 +552,7 @@ paths:
     get:
       tags:
         - Consumers
-      summary: Get Consumer For Customer
+      summary: Get the consumer record for the given customer.
       description: >-
         Get the details of a consumer record by customer ID.
 
@@ -1480,7 +1480,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate VOA Report
+      summary: Generate VOA Report for the customer
       description: >-
         Generate a Verification of Assets (VOA) report for all checking,
         savings, money market, and investment accounts for the given customer.
@@ -1523,7 +1523,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate VOA With Income Report
+      summary: Generate VOA With Income Report for the customer
       description: >-
         Generate a Verification of Assets with Income (VOAI) report for all
         checking, savings, money market, and investment accounts for the given
@@ -1571,7 +1571,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate Prequalification (CRA) Report
+      summary: Generate PreQualification (CRA) Report for the customer
       description: >-
         Retrieve all checking, savings, money market, and investment accounts
         for a consumer. The account, owner information, and the number of
@@ -1637,7 +1637,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOI Report
+      summary: Generate VOI Report for the customer
       description: >-
         Generate a Verification of Income (VOI) report for all checking,
         savings, and money market accounts for the given customer. This service
@@ -1676,7 +1676,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOE - Payroll Report
+      summary: Generate VOE - Payroll Report for the customer
       description: >-
         Generate or refresh a VOE - Payroll report. Often used as a
         complementary report to the VOIE-Payroll report to fulfill the pre-close
@@ -1711,7 +1711,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOE - Transactions Report
+      summary: Generate VOE - Transactions Report for the customer
       description: >-
         Premium Service: A billable event when the API response is successful.
 
@@ -1754,7 +1754,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate Pay Statement Report
+      summary: Generate Pay Statement Report for the customer
       description: >-
         Generate Pay Statement Extraction Report for the given customer. This
         service accepts asset IDs of the stored pay statements to generate a Pay
@@ -1789,7 +1789,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Paystub (with TXVerify) Report
+      summary: Generate VOIE Paystub (with TXVerify) Report for the customer
       description: >-
         Generate a VOIE - Paystub (with TXVerify) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -1834,7 +1834,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Paystub Report
+      summary: Generate VOIE - Paystub Report for the customer
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as asset IDs
@@ -1869,7 +1869,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Payroll Report
+      summary: Generate VOIE - Payroll Report for the customer
       description: >-
         Generate or refresh a VOIE - Payroll report. For clients using the
         product via a consumer permissioning experience via Connect, the
@@ -1962,7 +1962,7 @@ paths:
     post:
       tags:
         - Bank Statements
-      summary: Generate Statement Report
+      summary: Generate Statement Report for the customer
       description: >-
         Generate a Statement Report for the given accounts under the given
         customer.
@@ -2133,7 +2133,7 @@ paths:
     post:
       tags:
         - Transactions
-      summary: Generate Transactions Report
+      summary: Generate Transactions Report for the customer
       description: >-
         Generate a Transaction Report for the given accounts under the given
         customer. This service retrieves up to 24 months of transaction history
@@ -2176,7 +2176,8 @@ paths:
     post:
       tags:
         - Balance Analytics
-      summary: Generate Balance Analytics Report - Personal/Business
+      summary:
+        Generate Balance Analytics Report for the customer - Personal/Business
       description: >-
         Generate a Balance Analytics Report for a given customer. This service
         retrieves up to two years of transaction history from connected
@@ -2225,7 +2226,8 @@ paths:
     post:
       tags:
         - Cash Flow Analytics
-      summary: Generate Cashflow Analytics Report - Personal/Business
+      summary:
+        Generate Cash Flow Analytics Report for the customer - Personal/Business
       description: >-
         Generate a Cashflow Analytics Report for a given customer. This service
         retrieves up to two years of transaction history from connected
@@ -2324,7 +2326,7 @@ paths:
     get:
       tags:
         - Portfolios
-      summary: Get Portfolio by Customer
+      summary: Get Portfolio by Customer and Portfolio
       description: >
         Return a portfolio of most recently generated reports for each report
         type for the given customer. If there are multiple reports that were
@@ -2492,7 +2494,7 @@ paths:
     get:
       tags:
         - Portfolios
-      summary: Get Portfolio by Consumer
+      summary: Get Portfolio by Consumer and Portfolio
       description: >-
         Return a portfolio of most recently generated reports for each report
         type for a given consumer. If there are multiple reports that were
@@ -2789,7 +2791,7 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report - Business
+      summary: Generate Cash Flow Report for the customer (Business)
       description: >-
         Generate a Cash Flow Report (Business) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -2828,7 +2830,7 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report - Personal
+      summary: Generate Cash Flow Report for the customer (Personal)
       description: >-
         Generate a Cash Flow Report (Personal) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -4154,9 +4156,9 @@ components:
             $ref: '#/components/schemas/AccountOwner'
     MFAChallengeNeededResponse:
       description:
-        The response contains an MFA challenge in XML or JSON format. Contact
-        your Account Manager or Systems Engineers to determine the best route to
-        handle this error.
+        The request was unsuccessful due to a required Multi-Factor
+        Authentication (MFA) challenge. There is no further action that can be
+        taken to resolve this error.
     RegisterAppResponse:
       description: The app registration was successfully created
       content:
