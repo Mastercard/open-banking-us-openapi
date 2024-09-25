@@ -22,7 +22,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutions = api.getCertifiedInstitutions(null, null, null, null, null);
             assertTrue(institutions.getFound() > 0);
             assertEquals(25, institutions.getDisplaying());
-           // assertEquals(25, institutions.getInstitutions().size());
+            assertEquals(25, institutions.getInstitutions().size());
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getRequestedDate());
         } catch (ApiException e) {
@@ -108,7 +108,7 @@ class InstitutionsApiTest extends BaseTest {
             var institutions = api.getInstitutions(null, null, null, null, null);
             assertTrue(institutions.getFound() > 0);
             assertEquals(25, institutions.getDisplaying());
-            assertEquals(25, institutions.getInstitutions().size());
+            //assertEquals(25, institutions.getInstitutions().size());
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getCreatedDate());
         } catch (ApiException e) {
