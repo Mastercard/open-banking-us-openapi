@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.20.1
+  version: 1.21.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -75,6 +75,8 @@ tags:
     description: Generate income and employment reports asynchronously
   - name: Customer Authorization Details
     description: APIs to retrieve customer authorization details
+  - name: Transfer
+    description: Fetch details of the deposit and bill pay switches
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -303,6 +305,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/MicroEntryVerifyUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/generate/transfer/deposit-switch:
+    post:
+      tags:
+        - Connect 🔗
+      summary: 'Connect Transfer URL'
+      description: >-
+        Generate a Connect URL which you can use in your application to allow
+        end users to select an FI for deposit switch.
+      operationId: GenerateTransferDepositSwitchUrl
+      requestBody:
+        $ref: '#/components/requestBodies/ConnectGenerateTransferDepositSwitch'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateConnectUrlResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1529,12 +1549,11 @@ paths:
         checking, savings, money market, and investment accounts for the given
         customer. This service retrieves up to 24 months of transaction history
         for each account and uses this information to generate the VOAI report.
-        The report includes 1 - 6 months of all debit and credit transactions
-        for asset verification. By default, the history is set to 61 days,
-        however, you can change the transaction history in this section by
-        setting the `fromDate` parameter. The report also includes up to 24
-        months of income credit transactions (ordered by account and confidence
-        level) regardless of `fromDate` for income verification.
+        By default, the history is set to 61 days, however, you can change the
+        transaction history by setting the `fromDate` parameter. The report also
+        includes up to 24 months of income credit transactions (ordered by
+        account and confidence level) regardless of `fromDate` for income
+        verification.
 
 
         This is a premium service. The billable event is the successful
@@ -3636,6 +3655,53 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundResponse'
+  '/transfer/customers/{customer_id}/deposit-switches':
+    get:
+      tags:
+        - Transfer
+      summary: Get Deposit Switches by Customer ID
+      description: |-
+        Retrieve summary of deposit switches performed by given customer ID.
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getAllDepositSwitches
+      security:
+        - FinicityAppToken: []
+        - FinicityAppKey: []
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositSwitchesSummary'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/transfer/customers/{customer_id}/deposit-switches/{switch_id}':
+    get:
+      tags:
+        - Transfer
+      summary: Get Deposit Switch by ID
+      description: |-
+        Retrieve deposit switch details by switch ID.
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
+        - $ref: '#/components/parameters/SwitchIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositSwitchDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/DepositSwitchDetailsNotFoundErrorResponse'
+      operationId: getDepositSwitchDetails
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
 components:
   securitySchemes:
     FinicityAppKey:
@@ -3686,6 +3752,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FixConnectParameters'
+    ConnectGenerateTransferDepositSwitch:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransferDepositSwitchParameters'
     SendConnectEmailRequest:
       required: true
       content:
@@ -5157,6 +5229,35 @@ components:
           examples:
             ResourceNotFoundRequest:
               $ref: '#/components/examples/ResourceNotFoundRequest'
+    DepositSwitchesSummary:
+      description: Deposit switches performed by the customer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DepositSwitchesSummary'
+          examples:
+            DepositSwitchesSummaryExample:
+              $ref: '#/components/examples/DepositSwitchesSummaryExample'
+    DepositSwitchDetails:
+      description: Deposit switch details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DepositSwitchDetails'
+          examples:
+            DepositSwitchDetailsExample:
+              $ref: '#/components/examples/DepositSwitchDetailsExample'
+    DepositSwitchDetailsNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            DepositSwitchDetailsNotFoundExample:
+              $ref: '#/components/examples/DepositSwitchDetailsNotFoundExample'
+            ResourceNotFoundExample:
+              $ref: '#/components/examples/ResourceNotFoundExample'
   examples:
     BusinessIdNotFound:
       value:
@@ -15868,6 +15969,41 @@ components:
         message:
           The requested experience could not be found for the enterned app name.
         user_message: The requested entity was not found.
+    DepositSwitchesSummaryExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switches:
+          - id: 602414d84f9a1980cf5eafcc
+            status: completed
+            createdDate: '2024-01-10T11:18:27Z'
+          - id: 65cb40beec86d3bd0e8664cc
+            status: failed
+            failureReason: bad-credentials
+            createdDate: '2024-02-13T10:13:27Z'
+    DepositSwitchDetailsExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switchId: 602414d84f9a1980cf5eafcc
+        switchStatus: completed
+        failureReason: bad-credentials
+        createdDate: '2023-07-25T08:14:20Z'
+        updatedDate: '2023-07-25T08:30:20Z'
+        authenticated: true
+        provider:
+          id: 607e249736b9f053b536bde0
+          name: Paycom
+        distributions:
+          - type: percent
+            allocatedValue: 52
+            bankIdentifier: '110000000'
+            accountNumberEndsWith: '4126'
+    DepositSwitchDetailsNotFoundExample:
+      value:
+        status: '404'
+        code: '1643'
+        message: No matching record found for switch_id 65d87d2d8c831ae0f3174ed6
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -16451,6 +16587,14 @@ components:
         type: integer
         format: int64
         example: 7008461438
+    SwitchIdPathParameter:
+      name: switch_id
+      description: Deposit Switch ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 65cb40beec86d3bd0e8664cc
   schemas:
     BusinessList:
       type: array
@@ -26881,6 +27025,31 @@ components:
         - timeIntervalType
         - periods
       type: object
+    TransferDepositSwitchParameters:
+      type: object
+      required:
+        - partnerId
+        - customerId
+        - accounts
+      properties:
+        accounts:
+          $ref: '#/components/schemas/DepositSwitchAccounts'
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        language:
+          $ref: '#/components/schemas/ConnectLanguage'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        webhookContentType:
+          $ref: '#/components/schemas/WebhookContentType'
+        webhookData:
+          $ref: '#/components/schemas/WebhookData'
+        webhookHeaders:
+          $ref: '#/components/schemas/WebhookHeaders'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
@@ -28642,6 +28811,160 @@ components:
           $ref: '#/components/schemas/EmailAddress'
         url:
           $ref: '#/components/schemas/EndUserUrl'
+    DepositSwitchesSummary:
+      required:
+        - customerId
+        - customerType
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: A customer ID
+          example: '1005061234'
+        customerType:
+          type: string
+          description:
+            The type of Mastercard Open Banking customer (`active` or `testing`)
+          example: testing
+        switches:
+          type: array
+          description: Deposit switches summary
+          minItems: 0
+          maxItems: 10
+          items:
+            required:
+              - id
+              - status
+              - createdDate
+            properties:
+              id:
+                type: string
+                description: Deposit switch ID
+                example: 602414d84f9a1980cf5eafcc
+              status:
+                type: string
+                description: |
+                  Deposit switch status. Possible values include `processing`,
+                  `completed`, or `failed`.
+
+                  * processing - The deposit switch is currently being processed.
+                  * completed - The deposit switch has been completed successfully.
+                  * failed - The deposit switch has failed. Refer to failureReason for more details.
+                example: completed
+              failureReason:
+                type: string
+                description: Deposit switch failure reason
+                example: bad-credentials
+              createdDate:
+                type: string
+                description:
+                  Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when
+                  deposit switch was performed
+                example: '2023-07-25T08:14:20Z'
+    DepositSwitchDetails:
+      required:
+        - customerId
+        - customerType
+        - switchId
+        - switchStatus
+        - createdDate
+        - updatedDate
+        - provider
+        - distributions
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: A customer ID
+          example: '1005061234'
+        customerType:
+          type: string
+          description:
+            The type of Mastercard Open Banking customer (`active` or `testing`)
+          example: testing
+        switchId:
+          type: string
+          description: Deposit switch ID
+          example: 602414d84f9a1980cf5eafcc
+        switchStatus:
+          type: string
+          description: |
+            Deposit switch status. Possible values include `processing`,
+            `completed`, or `failed`.
+
+            * processing - The deposit switch is currently being processed.
+            * completed - The deposit switch has been completed successfully.
+            * failed - The deposit switch has failed. Refer to failureReason for more details.
+          example: completed
+        failureReason:
+          type: string
+          description: Deposit switch failure reason
+          example: bad-credentials
+        createdDate:
+          type: string
+          description:
+            Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when deposit
+            switch was performed
+          example: '2023-07-25T08:14:20Z'
+        updatedDate:
+          type: string
+          description:
+            Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when deposit
+            switch status was updated
+          example: '2023-07-25T08:30:20Z'
+        authenticated:
+          type: boolean
+          description:
+            Indicates whether or not the deposit switch task has successfully
+            authenticated against the payroll system
+          example: true
+        provider:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              description: Unique identifier for the service provider
+              example: 607e249736b9f053b536bde0
+            name:
+              type: string
+              description: The name of the service provider
+              example: Paycom
+        distributions:
+          type: array
+          description: Deposit switch distribution details
+          items:
+            required:
+              - type
+              - bankIdentifier
+              - accountNumberEndsWith
+            properties:
+              type:
+                type: string
+                description:
+                  The type of distribution for the account.  Possible values
+                  include `total`, `percent`, or `fixed`.
+                example: percent
+              allocatedValue:
+                type: number
+                description:
+                  The amount being distributed to the account. When distribution
+                  type is `percent`, this number represents a percentage of the
+                  total pay. When distribution type is `fixed`, this number
+                  represents a fixed dollar amount. This value is not set when
+                  distribution type is `total`.
+                example: 52
+              bankIdentifier:
+                type: string
+                description: The bank routing number
+                example: '110000000'
+              accountNumberEndsWith:
+                type: string
+                description:
+                  The trailing portion of customer's bank account number
+                example: '4126'
     AllowedBalanceCacheInterval:
       type: integer
       format: int32
@@ -28652,3 +28975,39 @@ components:
         Time interval in minutes to check balance data against live balance from
         financial institution or from latest cached
       example: 1
+    DepositSwitchAccounts:
+      type: array
+      items:
+        $ref: '#/components/schemas/DepositSwitchAccount'
+      description: List of customer accounts for Deposit Switch
+    DepositSwitchAccount:
+      description: Deposit Switch account
+      type: object
+      required:
+        - accountNumber
+        - bankIdentifier
+        - type
+      properties:
+        accountNumber:
+          type: string
+          description: The user's bank account number
+          minLength: 4
+          example: '7526894126'
+        bankIdentifier:
+          description: >-
+            Code used to identify the financial institution also known as the
+            bank routing number
+          type: string
+          pattern: '^[0-9]{9}$'
+          example: '110000000'
+        title:
+          description: >-
+            The title of the account
+          type: string
+          example: 'My savings account'
+        type:
+          description: >-
+            Financial institution account type. Options `checking`, `savings` or
+            `paycard`
+          type: string
+          example: 'checking'
