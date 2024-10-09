@@ -42,6 +42,13 @@ public final class ModelFactory {
                     .dob(470275200L)
             );
     }
+    
+  public static DepositSwitchAccount newDepositSwitchAccount(String accountNumber, String bankIdentifier, String type) {
+        return new DepositSwitchAccount()
+            .accountNumber(accountNumber)
+            .bankIdentifier(bankIdentifier)
+            .type(type);
+    }  
 
     public static NewCustomer newCustomer() {
         var username = "customer_" + randomStr();
