@@ -206,6 +206,24 @@ class ConnectApiTest extends BaseTest {
             fail(e);
         }
     }
+
+    @Test
+    void generateConnectTransferDepositUrlTest() {
+        try {
+            var params = new TransferDepositSwitchParameters()
+                    .customerId(CUSTOMER_ID)
+                    .partnerId(PARTNER_ID)
+                    .addAccountsItem(ModelFactory.newDepositSwitchAccount("7526894126", "110000000", "checking"));
+            var connectUrl = api.generateTransferDepositSwitchUrl(params);
+            var link = connectUrl.getLink();
+            assertTrue(link.contains("type=transferDepositSwitch"));
+            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
+            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+        } catch (ApiException e) {
+            fail(e);
+        }
+    }
+
     private static String createTestCustomer() throws ApiException {
         var customer = customersApi.addTestingCustomer(ModelFactory.newCustomer());
         var customerId = customer.getId();
@@ -213,3 +231,4 @@ class ConnectApiTest extends BaseTest {
         return customerId;
     }
 }
+
