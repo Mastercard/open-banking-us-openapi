@@ -85,7 +85,7 @@ class PaymentsApiTest extends BaseTest {
     @Test
     public void getAccountOwnerDetailsTest() {
         try {
-            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), true);
+            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), true,"program=OBAO");
             assertNotNull(ownerDetails);
         } catch (ApiException e) {
             fail(e);
@@ -95,7 +95,7 @@ class PaymentsApiTest extends BaseTest {
     @Test
     public void getAccountOwnerDetailsWithInsightsFalseTest() {
         try {
-            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), false);
+            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), false,"program=OBAO");
             assertNotNull(ownerDetails);
         } catch (ApiException e) {
             fail(e);
