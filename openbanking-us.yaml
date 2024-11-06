@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.21.0
+  version: 1.21.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1192,6 +1192,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
         - $ref: '#/components/parameters/WithInsightsParameter'
+        - $ref: '#/components/parameters/MetaDataParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetAccountOwnerDetailsResponse'
@@ -4823,6 +4824,8 @@ components:
               $ref: '#/components/examples/MicrodepositsProcessingFailedExample'
             TooManyRequestsExample:
               $ref: '#/components/examples/TooManyRequestsExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
     TooManyRequestsErrorResponse:
       description:
         The service can't accept more requests or is not available from the Test
@@ -4895,6 +4898,8 @@ components:
               $ref: '#/components/examples/MicrodepositVerificationAttemptsExample'
             MicrodepositAmountsDidNotMatchExample:
               $ref: '#/components/examples/MicrodepositAmountsDidNotMatchExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
     GetMicroDepositsDetailsResponse:
       description: Micro entries were successfully retrieved
       content:
@@ -16055,6 +16060,17 @@ components:
       schema:
         $ref: '#/components/schemas/WithInsights'
       example: false
+    MetaDataParameter:
+      name: Meta-Data
+      in: header
+      required: false
+      schema:
+        $ref: '#/components/schemas/MetaData'
+      description:
+        OBAO is a program that is being offered to Mastercard issuers where when
+        the new account is issued a Mastercard Debit or Prepaid account. OBAO
+        offered partners will not be charged for ACH, AOV, and Balance API.
+      example: program=OBAO
     TransactionIdParameter:
       description: A transaction ID
       name: transactionId
@@ -16928,10 +16944,16 @@ components:
           items:
             $ref: '#/components/schemas/AccountOwnerDetails'
           description: List of account owners
+        encryptedValue:
+          type: string
+          example: 'eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw=='
+          description: Encrypted response.
     AccountOwnerIdentityInsights:
       description: List of account owner Identity Insights
       type: object
       properties:
+        requestRefId:
+          $ref: '#/components/schemas/RequestRefId'
         isEmailValid:
           $ref: '#/components/schemas/EmailValid'
         emailFirstSeenDays:
@@ -16974,14 +16996,20 @@ components:
           $ref: '#/components/schemas/AddressValidityLevel'
         addressToName:
           $ref: '#/components/schemas/AddressToName'
-        identityNetworkScore:
-          $ref: '#/components/schemas/IdentityNetworkScore'
+        emailRisk:
+          $ref: '#/components/schemas/EmailRisk'
         identityRiskScore:
           $ref: '#/components/schemas/IdentityRiskScore'
+        device:
+          $ref: '#/components/schemas/DeviceInsights'
         warnings:
           type: array
           items:
             $ref: '#/components/schemas/Warnings'
+        alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alerts'
     AccountOwnerName:
       type: string
       description: >-
@@ -22108,6 +22136,18 @@ components:
         * match
         * no-match
       example: not found
+    EmailRisk:
+      type: number
+      description: >-
+        Email Risk Score assesses the risk level of an email address by
+        leveraging features from our Identity Graph and Identity Network. It
+        provides the strongest indicator of a high-risk email.
+      example: 0.8
+    RequestRefId:
+      type: string
+      description: >-
+        The generated unique web transaction identifier.
+      example: be3ad617-04ad-43e1-a438-79425b6511b6
     EmailValid:
       type: boolean
       description: True if the email address is valid.
@@ -22363,20 +22403,211 @@ components:
 
         This is a mandatory field for VOE-payroll and VOIE-payroll report types.
       example: true
-    IdentityNetworkScore:
-      type: number
-      description: >-
-        Comprehensive network score built on behavioral insights such as
-        velocity, popularity, volatility, and age of an attribute, with a higher
-        score indicating a riskier account sign-up. A number between 0 and 1
-        rounded to three decimal places.
-      example: 0.574
     IdentityRiskScore:
       type: number
       description: >-
         Comprehensive identity risk score with a higher score indicating a
         riskier account sign-up.
       example: 275
+    DeviceDetails:
+      type: object
+      description: More granular details of the device insights.
+      properties:
+        id:
+          $ref: '#/components/schemas/DeviceID'
+        deviceInfo:
+          $ref: '#/components/schemas/DeviceInfo'
+    DeviceID:
+      type: object
+      description: This field contains device identification information.
+      properties:
+        uDeviceId:
+          $ref: '#/components/schemas/UDID'
+    DeviceInfo:
+      type: object
+      description:
+        This field contains information related to the consumer device used to
+        authorize with your product or service.
+      properties:
+        browser:
+          type: string
+          description:
+            The name of the browser used to authorize your product or service.
+          example: Safari
+        platform:
+          type: string
+          description:
+            The device platform used to authorize your product or service.
+          example: iOS
+        deviceType:
+          type: string
+          description:
+            The device type used to authorize your product or service.
+          example: iPhone
+    DeviceInsightEvent:
+      type: object
+      properties:
+        insightEvent:
+          description:
+            'Event label associated with specific insight, for example: AD.'
+          type: string
+          example: AD
+        insightLevel:
+          description: Insight level value between 0-5.
+          type: integer
+          example: '2'
+        insightSignals:
+          type: array
+          description: |-
+            During the insight evaluation, risk signals are generated when a request triggers either the rules or machine learning model. Each risk signal and it's associated definition is shown below.
+              * `account_carrier_unknown` - Carrier information for account is
+            unknown
+              * `account_carrier` - Carrier velocity attempts count more than or
+            equal to 50 within 4 hours
+              * `account_city_unknown` - City information for account is unknown
+              * `account_city` - Account has not been seen using the City
+              * `account_state_unknown` - State/Province information for account
+            is unknown
+              * `account_state` - Account has not been seen using the
+            State/Province
+              * `account_country_unknown` - Country information for account is
+            unknown
+              * `account_country` - Account has not been seen using the Country
+              * `account_ip` - Account has not been seen using the IP
+              * `account_ua` - Account has not been seen using the UA
+              * `device_velocity` - Device Fingerprint velocity attempts count
+            more than 100
+              * `ip_velocity` - Current IP velocity greater than 50 in the past
+            4 hours
+              * `login_failures` - High failure rate for account login in the
+            past 30 minutes
+              * `login_velocity` - The account has +30 login attempts in the
+            past 30 minutes (overall login attempts)
+              * `account_velocity` - Account logins have exceeded 10 attempts
+              * `ip_blocklist` - IP is in block list
+
+            These risk signals are informational but may be useful for a service provider to understand a detailed view of the associated risk present in a request.
+          items:
+            type: string
+          example: '[ "accountIp", "ipVelocity" ]'
+    DeviceInsightFactor:
+      type: integer
+      description: |-
+        The calculated device risk is represented numerically using a range from 1 (no/low risk) to 5 (high risk). Each numerical value and it's associated risk representation is shown below.
+          * `1` - Represents a no or low risk request.
+          * `2` - Represents a low risk request.
+          * `3` - Represents a medium risk request.
+          * `4` - Represents a high risk request.
+          * `5` - Represents a very high risk request.
+
+        The calculated risk score is typically used to identify scenarios where a service provider may want to introduce consumer friction on the authorization process to validate the identity of the consumer. Example usage by a service provider may be to implement controls such as multifactor authentication for calculated risk factors of `3` or `4` and request blocking for risk factors of `5`.
+      minimum: 0
+      maximum: 5
+      example: 2
+    DeviceInsights:
+      type: object
+      description: Insights generated by analyzing the provided device data.
+      properties:
+        scores:
+          $ref: '#/components/schemas/DeviceScores'
+        details:
+          $ref: '#/components/schemas/DeviceDetails'
+    DeviceRiskFactor:
+      type: integer
+      minimum: 1
+      maximum: 5
+      description: |-
+        The calculated risk factor is represented numerically using a range from 1 (no/low risk) to 5 (high risk). Each numerical value and it's associated risk representation is shown below.
+          * `1` - Represents a no or low risk request.
+          * `2` - Represents a low risk request.
+          * `3` - Represents a medium risk request.
+          * `4` - Represents a high risk request.
+          * `5` - Represents a very high risk request.
+
+        The calculated risk factor is typically used to identify scenarios where a service provider may want to introduce consumer friction on the authorization process to validate the identity of the consumer. Example usage by a service provider may be to implement controls such as multifactor authentication for calculated risk factors of `3` or `4` and request blocking for risk factors of `5`.
+      example: 5
+    DeviceRiskHistoryEvent:
+      type: object
+      properties:
+        riskEvent:
+          description:
+            'Event label associated with specific risk, for example: AD or ATO.'
+          type: string
+          example: AD
+        riskEventCount:
+          description:
+            The number of times the risk insight of the given type was detected.
+          type: integer
+          minimum: 1
+          example: '8'
+        riskLevel:
+          description: Risk level value between 0-5.
+          type: integer
+          example: '2'
+        lastEventDate:
+          description:
+            The day when the risk insight of the given type was detected last.
+          type: string
+          example: '2022-09-01'
+        riskSignals:
+          description: |-
+            During the insight evaluation, risk signals are generated when a request triggers either the rules or machine learning model. Each risk signal and it's associated definition is shown below.
+              * `account_carrier_unknown` - Carrier information for account is
+            unknown
+              * `account_carrier` - Carrier velocity attempts count more than or
+            equal to 50 within 4 hours
+              * `account_city_unknown` - City information for account is unknown
+              * `account_city` - Account has not been seen using the City
+              * `account_state_unknown` - State/Province information for account
+            is unknown
+              * `account_state` - Account has not been seen using the
+            State/Province
+              * `account_country_unknown` - Country information for account is
+            unknown
+              * `account_country` - Account has not been seen using the Country
+              * `account_ip` - Account has not been seen using the IP
+              * `account_ua` - Account has not been seen using the UA
+              * `device_velocity` - Device Fingerprint velocity attempts count
+            more than 100
+              * `ip_velocity` - Current IP velocity greater than 50 in the past
+            4 hours
+              * `login_failures` - High failure rate for account login in the
+            past 30 minutes
+              * `login_velocity` - The account has +30 login attempts in the
+            past 30 minutes (overall login attempts)
+              * `account_velocity` - Account logins have exceeded 10 attempts
+              * `ip_blocklist` - IP is in block list
+
+            These risk signals are informational but may be useful for a service provider to understand a detailed view of the associated risk present in a request.
+          type: array
+          items:
+            type: string
+          example: '[ "accountIp", "ipVelocity" ]'
+    DeviceScores:
+      type: object
+      description:
+        Scores that were calculated by analyzing the provided device data.
+      properties:
+        deviceRiskFactor:
+          $ref: '#/components/schemas/DeviceRiskFactor'
+        deviceInsightFactor:
+          $ref: '#/components/schemas/DeviceInsightFactor'
+        deviceTrustFactor:
+          $ref: '#/components/schemas/DeviceTrustFactor'
+    DeviceTrustFactor:
+      type: integer
+      description:
+        An integer between 1-5 (1 being no trust and 5 being high trust). The
+        trust factor value reflects the trustworthiness of the attributes
+        associated with this device.
+      minimum: 1
+      maximum: 5
+      example: 4
+    UDID:
+      type: string
+      description: The generated unique device identifier.
+      example: UDID-9284e12b85b0d2763c13d734c70b1d62
+
     IncludePending:
       type: boolean
       description: If pending transactions must be included
@@ -23439,6 +23670,14 @@ components:
           $ref: '#/components/schemas/PhoneNumber'
         email:
           $ref: '#/components/schemas/EmailAddress'
+    MetaData:
+      type: string
+      description:
+        OBAO is a program that is being offered to Mastercard issuers where when
+        the new account is issued a Mastercard Debit or Prepaid account. OBAO
+        offered partners will not be charged for ACH, AOV, and Balance API.
+      example: program=OBAO
+
     NextPaymentDate:
       type: integer
       description: >-
@@ -28617,6 +28856,11 @@ components:
           * IP: IP address is in private range
           * Phone: Invalid country_hint value. Only Alpha-2 supported
       example: Test warnings
+    Alerts:
+      type: string
+      description: >-
+        An alert generated when processing the request.
+      example: Unable to generate IP and user insights
     Webhook:
       type: string
       description: >-
