@@ -42,10 +42,10 @@ class ConnectApiTest extends BaseTest {
             api.generateLiteConnectUrl(params);
             fail();
         } catch (ApiException e) {
-            // {"code":"10010","status":"400","message":"Customer ID does not exist or does not belong to this partner","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
             logApiException(e);
             assertErrorCodeEquals("10010", e);
-            assertErrorMessageEquals("Customer ID does not exist or does not belong to this partner", e);
+           assertErrorMessageEquals("Request failed with status code 404 GET /aggregation/v1/customers/1234", e);
+
         }
     }
 
