@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.21.1
+  version: 1.21.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2777,7 +2777,13 @@ paths:
       tags:
         - Payments
       summary: Get Available Balance - Cached
+      deprecated: true
       description: >-
+        _This endpoint will no longer be available after June 2025. You must
+        transition to using the regular Get Available Balance endpoint, which
+        can return either live or cached data depending on your requirements._
+
+
         Retrieve the latest cached available and cleared account balances for a
         customer. Since we update and store balances throughout the day, this is
         the most accurate balance information available when a connection to a
