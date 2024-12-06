@@ -5177,11 +5177,9 @@ components:
             $ref: '#/components/schemas/PaymentInstructions'
           examples:
             ACHDetailsExample:
-              $ref: >-
-                #/components/examples/ACHDetailsExample
+              $ref: '#/components/examples/ACHDetailsExample'
             ACHDetailsWithoutRTPDetailsExample:
-              $ref: >-
-                #/components/examples/ACHDetailsWithoutRTPDetailsExample
+              $ref: '#/components/examples/ACHDetailsWithoutRTPDetailsExample'
             CustomerAuthorizationDetailsExample:
               $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
     GetCustomerAuthorizationDetailsNotFoundErrorResponse:
