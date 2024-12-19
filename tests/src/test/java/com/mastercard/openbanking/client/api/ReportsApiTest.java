@@ -1,5 +1,6 @@
 package com.mastercard.openbanking.client.api;
 
+import com.google.gson.JsonObject;
 import com.mastercard.openbanking.client.ApiException;
 import com.mastercard.openbanking.client.model.*;
 import com.mastercard.openbanking.client.test.BaseTest;
@@ -211,8 +212,8 @@ class ReportsApiTest extends BaseTest {
                 // Create a report the first time
                 var constraints = new StatementReportConstraints()
                         .statementReportData(new StatementData()
-                            .statementIndex(1)
-                            .accountId(Long.valueOf(existingAccountId)));
+                                .statementIndex(1)
+                                .accountId(Long.valueOf(existingAccountId)));
                 var reportAck = bankStatementsApi.generateStatementReport(CUSTOMER_ID, constraints, null);
                 reportId = reportAck.getId();
             }
@@ -268,7 +269,8 @@ class ReportsApiTest extends BaseTest {
             if (reportId == null) {
                 // Create a report the first time
                 var toDate = LocalDateTime.now().toEpochSecond(UTC);
-                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, toDate, new TransactionsReportConstraints(), null, true);
+                var fromDate = LocalDateTime.now().minusYears(10).toEpochSecond(UTC);
+                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID,fromDate, toDate, new TransactionsReportConstraints(), null, true);
                 reportId = reportAck.getId();
             }
             fetchReport(reportId, consumerId);
@@ -331,17 +333,97 @@ class ReportsApiTest extends BaseTest {
         do {
             System.out.println("Fetching report " + reportId + " by consumer ID ...");
             Thread.sleep(5000);
-            var report = api.getReportByConsumer(consumerId, reportId, PURPOSE, ON_BEHALF_OF);
+            Report report = api.getReportByConsumer(consumerId, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
-            status = report.getStatus();
+            status = getReportStatus(report);
         } while (NON_FINAL_STATUS.contains(status));
         do {
             System.out.println("Waiting for report " + reportId + " by customer ID ...");
             Thread.sleep(5000);
             var report = api.getReportByCustomer(CUSTOMER_ID, reportId, PURPOSE, ON_BEHALF_OF);
             assertNotNull(report);
-            status = report.getStatus();
+            status = getReportStatus(report);
         } while (NON_FINAL_STATUS.contains(status));
         assertEquals(SUCCESS_STATUS, status, "Report status is: failure");
+    }
+
+
+
+    private static String getReportStatus(Report reportInstance) throws IllegalArgumentException {
+        System.out.println("reportInstance : "+reportInstance);
+        Object report = reportInstance.getActualInstance();
+        System.out.println("Report type while getReportStatus: " + report.getClass()+" END");
+        if (report instanceof CashFlowReport) {
+            return ((CashFlowReport) report).getStatus();
+        }
+
+        if (report instanceof PayStatementReport) {
+            return ((PayStatementReport) report).getStatus();
+        }
+
+        if (report instanceof PrequalificationReport) {
+            return ((PrequalificationReport) report).getStatus();
+        }
+
+        if (report instanceof StatementReport) {
+            return ((StatementReport) report).getStatus();
+        }
+
+        if (report instanceof TransactionsReport) {
+            return ((TransactionsReport) report).getStatus();
+        }
+
+        if (report instanceof VOAReport) {
+            return ((VOAReport) report).getStatus();
+        }
+
+        if (report instanceof VOAWithIncomeReport) {
+            return ((VOAWithIncomeReport) report).getStatus();
+        }
+
+        if (report instanceof VOEPayrollReport) {
+            return ((VOEPayrollReport) report).getStatus();
+        }
+
+        if (report instanceof VOETransactionsReport) {
+            return ((VOETransactionsReport) report).getStatus();
+        }
+
+        if (report instanceof VOIEPayrollReport) {
+            return ((VOIEPayrollReport) report).getStatus();
+        }
+
+        if (report instanceof VOIEPaystubReport) {
+            return ((VOIEPaystubReport) report).getStatus();
+        }
+
+        if (report instanceof VOIEPaystubWithTXVerifyReport) {
+            return ((VOIEPaystubWithTXVerifyReport) report).getStatus();
+        }
+
+        if (report instanceof VOIReport) {
+            return ((VOIReport) report).getStatus();
+        }
+
+        if (report instanceof AFBalanceAnalyticsReport) {
+            return ((AFBalanceAnalyticsReport) report).getStatus();
+        }
+
+        if (report instanceof AFCashFlowAnalyticsReport) {
+            return ((AFCashFlowAnalyticsReport) report).getStatus();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        throw new IllegalArgumentException("Invalid report type"+report.getClass()+" END");
     }
 }

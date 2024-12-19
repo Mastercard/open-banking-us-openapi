@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.21.2
+  version: 1.21.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -521,7 +521,7 @@ paths:
         This will delete access to the customer and all their linked accounts.
         The customer data will no longer be accessible. Any customer data
         already collected will be retained in accordance with our enterprise
-        data retention policy consistent with legal and business purposes. 
+        data retention policy consistent with legal and business purposes.
 
         ⚠️ Use this service carefully! It will not pause for confirmation before
         performing the operation!
@@ -2018,10 +2018,14 @@ paths:
     get:
       tags:
         - Bank Statements
-      summary: Get Customer Account Multiple Statements
+      summary: Get Customer Account Multiple Statement Details
       description: >-
-        This endpoint retrieves account statements for a given customer. The
-        maximum number of statements that can be returned is 24.
+        This endpoint retrieves details of the account statements available for
+        a given customer (up to a maximum of 24 statements).
+
+
+        Use the asset ID of the statement you are interested in to obtain the
+        statement report using Get Asset by Customer and ID.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2177,6 +2181,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/RequiredFromDateParameter'
         - $ref: '#/components/parameters/RequiredToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       requestBody:
@@ -2721,6 +2726,10 @@ paths:
         Retrieve a binary file for the given asset ID.
 
 
+        This is a premium service. The billable event is the successful download
+        of an asset.
+
+
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetAssetByCustomerID
       parameters:
@@ -2742,12 +2751,12 @@ paths:
       summary: Get Available Balance
       description: >-
         Retrieve the available and cleared account balances for a single account
-        in real-time directly from a financial institution.  
+        in real-time directly from a financial institution.
 
         You can define an additional query parameter `balance_cache_interval` to
         specify the time interval of the last cached balance. This parameter is
         used by the server to determine whether the cached balance is still
-        valid or if it needs to be refreshed.  
+        valid or if it needs to be refreshed.
 
 
 
@@ -3617,7 +3626,7 @@ paths:
         payment along with the supported payment instruction details. If the RTP
         (Real Time Payment) value for “transferInEnabled” is true, then the
         account can receive RTPs. If the value for “transferOutEnabled” is true,
-        then the account can send RTPs  
+        then the account can send RTPs
 
 
         Note: this is a premium service, billable per every successful API call.
@@ -16377,10 +16386,11 @@ components:
       in: query
       required: false
       description:
-        Request statements with comma-separated indexes between 1-24. The
-        default value is 1 and it will return the most recent statement.
-        Increasing the index will return older statements, for example, setting
-        the index value to 6 will return the sixth most recent statement.
+        Request details of statements with comma-separated indexes between 1-24.
+        The default value is 1 which will return details of the most recent
+        statement. Increasing the index will return details of older statements,
+        for example, setting the index value to 6 will return data on the sixth
+        most recent statement.
       schema:
         type: string
         default: '1'
@@ -20929,8 +20939,8 @@ components:
     CustomerAccountBalanceDate:
       type: integer
       description: >-
-        A timestamp showing when the balance was captured. A date in Unix epoch
-        time (in seconds). See: [Handling Epoch Dates and
+        A timestamp showing when the balance was captured by the FI . A date in
+        Unix epoch time (in seconds). See: [Handling Epoch Dates and
         Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
@@ -25584,7 +25594,7 @@ components:
         - title
         - type
         - status
-      allOf:
+      anyOf:
         - $ref: '#/components/schemas/AFBalanceAnalyticsReport'
         - $ref: '#/components/schemas/AFCashFlowAnalyticsReport'
         - $ref: '#/components/schemas/CashFlowReport'
@@ -26011,7 +26021,7 @@ components:
 
         * `voieWithStatement`
 
-        * `paystatement` 
+        * `paystatement`
 
         * `preQualVoa`
 
@@ -27094,7 +27104,8 @@ components:
           example: 100000
         balanceDate:
           type: integer
-          description: A timestamp showing when the balance was captured
+          description:
+            A timestamp showing when the balance was captured by the FI
           format: int64
           example: 1594676289
         oldestTransactionDate:
@@ -27139,6 +27150,8 @@ components:
         accountIds:
           $ref: '#/components/schemas/ReportAccountIdsString'
         fromDate:
+          $ref: '#/components/schemas/UnixDate'
+        toDate:
           $ref: '#/components/schemas/UnixDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
@@ -27559,7 +27572,8 @@ components:
           example: 501.24
         balanceDate:
           type: integer
-          description: A timestamp showing when the balance was captured
+          description:
+            A timestamp showing when the balance was captured by the FI
           format: int64
           example: 1588350276
         averageMonthlyBalance:
