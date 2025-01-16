@@ -31,7 +31,23 @@ jobs:
       - name: Checkout
 
         uses: actions/checkout@v3
-
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install
+      - name: Run Puppeteer tests
+        run: |
+          node -e "const puppeteer = require('puppeteer'); (async () => {
+          const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+          });
+          const page = await browser.newPage();
+          await page.goto('https://example.com');
+          console.log(await page.title());
+          await browser.close();
+          })();"
       - name: Validate OpenAPI definition
 
         uses: char0n/swagger-editor-validate@v1.3.2
