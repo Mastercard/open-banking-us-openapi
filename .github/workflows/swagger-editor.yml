@@ -1,45 +1,41 @@
-# name: Swagger Editor
+name: Swagger Editor
 
-# 'on':
+'on':
 
-#   push:
+  push:
 
-#     branches:
+    branches:
 
-#       - '**'
+      - '**'
 
-#   pull_request:
+  pull_request:
 
-#     branches:
+    branches:
 
-#       - '**'
+      - '**'
 
-#   schedule:
+  schedule:
 
-#     - cron: 0 1 * * *
+    - cron: 0 1 * * *
 
-#   workflow_dispatch: null
+  workflow_dispatch: null
 
-# jobs:
+jobs:
 
-#   validate:
+  validate:
 
-#     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-#     steps:
+    steps:
 
-#       - name: Checkout
+      - name: Checkout
 
-#         uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
-#       - name: Install dependencies
+      - name: Validate OpenAPI definition
 
-#         run: sudo apt-get install -y libxkbcommon-x11-0
+        uses: char0n/swagger-editor-validate@v1.4.2
 
-#       - name: Validate OpenAPI definition
+        with:
 
-#         uses: char0n/swagger-editor-validate@v1.3.2
-
-#         with:
-
-#           definition-file: openbanking-us.yaml
+          definition-file: openbanking-us.yaml
