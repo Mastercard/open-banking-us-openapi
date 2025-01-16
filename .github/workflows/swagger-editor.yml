@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libxss1 libnss3 libasound2
+          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libxss1 libnss3
           npm install
 
       - name: Run Puppeteer tests
