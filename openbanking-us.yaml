@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.21.3
+  version: 1.21.4
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2181,8 +2181,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ReportCallbackUrlParameter'
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/RequiredFromDateParameter'
-        - $ref: '#/components/parameters/RequiredToDateParameter'
+        - $ref: '#/components/parameters/RequiredTransactionReportFromDateParameter'
+        - $ref: '#/components/parameters/RequiredTransactionReportToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateTransactionsReportRequest'
@@ -5861,6 +5861,7 @@ components:
             value: PSC Finance
             shown: false
         fromDate: 1580558400
+        toDate: 1643720017
     GenerateBalanceBusinessCraAnalyticsReportRequestExample:
       value:
         analyticsReportData:
@@ -16504,7 +16505,26 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/UnixDate'
+      example: 1670504017
+    RequiredTransactionReportFromDateParameter:
+      description:
+        Transactions starting from this date will be included in the report.
+      name: fromDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
       example: 1607450357
+    RequiredTransactionReportToDateParameter:
+      description:
+        Transactions up to and including this date will be incorporated into the
+        report. It should be later than the fromDate.
+      name: toDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1670504017
     ReportCallbackUrlParameter:
       name: callbackUrl
       in: query
@@ -20916,6 +20936,8 @@ components:
           $ref: '#/components/schemas/DisplayPosition'
         parentAccount:
           $ref: '#/components/schemas/CustomerAccountParentAccountId'
+        linkedAccountDate:
+          $ref: '#/components/schemas/LinkedAccountDate'
     CustomerAccountAggregationAttemptDate:
       type: integer
       description: >-
@@ -21712,6 +21734,8 @@ components:
           $ref: '#/components/schemas/DisplayPosition'
         parentAccount:
           $ref: '#/components/schemas/AccountId'
+        linkedAccountDate:
+          $ref: '#/components/schemas/LinkedAccountDate'
     CustomerAccounts:
       description: A list of customer accounts
       required:
@@ -22777,7 +22801,7 @@ components:
           type: string
           description: >-
             Status for the institution: "online", "offline", "maintenance",
-            "testing"
+            "testing", "beta", "validated", "migrating"
           example: online
         newInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
@@ -29273,3 +29297,11 @@ components:
             `paycard`
           type: string
           example: 'checking'
+    LinkedAccountDate:
+      type: integer
+      description: >-
+        A timestamp showing when the account was last linked to the system. A
+        date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
+        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+      format: int64
+      example: 1607450357
