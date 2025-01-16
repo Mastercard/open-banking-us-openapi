@@ -37,8 +37,10 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: |
-          cd /home/runner/work/open-banking-us-openapi/open-banking-us-openapi
+          sudo apt-get update
+          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libxss1 libnss3 libasound2
           npm install
+
       - name: Run Puppeteer tests
         run: |
           node -e "const puppeteer = require('puppeteer'); (async () => {
