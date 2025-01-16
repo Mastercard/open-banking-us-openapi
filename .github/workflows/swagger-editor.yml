@@ -36,7 +36,9 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd /home/runner/work/open-banking-us-openapi/open-banking-us-openapi
+          npm install
       - name: Run Puppeteer tests
         run: |
           node -e "const puppeteer = require('puppeteer'); (async () => {
