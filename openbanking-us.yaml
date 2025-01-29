@@ -27221,7 +27221,7 @@ components:
           description:
             The number of units (individual shares) in the transaction
           format: int32
-          example: 150.42
+          example: 150
         unitPrice:
           type: number
           description:
