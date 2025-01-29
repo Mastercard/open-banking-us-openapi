@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Generate OpenAPI Generator Client
-        uses: openapi-generators/openapitools-generator-action@v1.3.0
+        uses: openapi-generators/openapitools-generator-action@v1.5.0
         with:
           generator: java
           openapi-file: openbanking-us.yaml
