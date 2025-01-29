@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.21.4
+  version: 1.22.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -77,6 +77,10 @@ tags:
     description: APIs to retrieve customer authorization details
   - name: Transfer
     description: Fetch details of the deposit and bill pay switches
+  - name: Payment Success Indicator
+    description: Predict a transaction's likelihood to settle
+  - name: FCRA Payment Success Indicator
+    description: Predict a transaction's likelihood to settle (FCRA-compliant)
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -315,8 +319,8 @@ paths:
         - Connect 🔗
       summary: 'Connect Transfer URL'
       description: >-
-        Generate a Connect URL which you can use in your application to allow
-        end users to select an FI for deposit switch.
+        Generate a Connect Transfer URL which you can use in your application to
+        allow end users to select an FI for deposit switch.
       operationId: GenerateTransferDepositSwitchUrl
       requestBody:
         $ref: '#/components/requestBodies/ConnectGenerateTransferDepositSwitch'
@@ -1200,6 +1204,76 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /aggregation/v2/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator:
+    get:
+      tags:
+        - Payment Success Indicator
+      summary: Get payment success indicator
+      description: >-
+        Payment Success Indicator (PSI) is a Payment Intelligence solution that
+        uses Financial Institution (FI) data to help payment originators
+        evaluate a consumer's ability to pay now and in the future within a
+        given time period. PSI is for payment originators to assess a consumer's
+        real-time FI account balance and historical FI account activities to
+        help minimize ACH declines and enable payment originators to gracefully
+        transition to alternative payment methods or schedules when payment
+        settlement using ACH / Account-based payment is less likely. PSI may not
+        be used for credit or insurance underwriting, employment or rental
+        screening, or any other purpose(s) that would implicate the Fair Credit
+        Reporting Act or other consumer reporting law.
+
+
+         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetPaymentSuccessIndicator
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/SettlementAmountParameter'
+        - $ref: '#/components/parameters/SettleByDateParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
+        '400':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorNotFoundResponse'
+  /aggregation/v1/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator/fcra:
+    get:
+      tags:
+        - FCRA Payment Success Indicator
+      summary: Get payment success indicator
+      description: >-
+        Payment Success Indicator (PSI) allows the user to evaluate the
+        likelihood of a specific ACH transaction resulting in an insufficient
+        funds return (NSF). PSI is powered by a machine learning model trained
+        on Finicity’s consumer-permissioned data network. PSI provides a risk
+        assessment, which includes a real-time balance check, a predictive risk
+        score for the up to the next 9 days, and 8 risk attributes to explain
+        and enhance decisioning. Provision and use of this report is subject to
+        all applicable obligations of the FCRA and any applicable analogous
+        state law. This product may only be used for the stated permissible
+        purpose under the FCRA.
+
+
+         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetFCRAPaymentSuccessIndicator
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/SettlementAmountParameter'
+        - $ref: '#/components/parameters/SettleByDateParameter'
+        - $ref: '#/components/parameters/PurposeCodeParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
+        '400':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorNotFoundResponse'
   /aggregation/v1/partners/applications:
     post:
       tags:
@@ -4214,6 +4288,43 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CustomerAccounts'
+    GetPaymentSuccessIndicatorBadRequestResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            MissingSettleByDateExample:
+              $ref: '#/components/examples/MissingSettleByDateExample'
+            MissingSettlementAmountExample:
+              $ref: '#/components/examples/MissingSettlementAmountExample'
+            PSIAccountErrorBadRequestExample:
+              $ref: '#/components/examples/PSIAccountErrorBadRequestExample'
+    GetPaymentSuccessIndicatorNotFoundResponse:
+      description: Required details not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+            InvalidAccountIdExample:
+              $ref: '#/components/examples/InvalidAccountIdExample'
+    GetPaymentSuccessIndicatorResponse:
+      description: The payment success indicator was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentSuccessIndicator'
+          examples:
+            PaymentSuccessIndicatorExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorExample'
+            PaymentSuccessIndicatorWarningExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorWarningExample'
     RefreshCustomerAccountsResponse:
       description: The account list was successfully refreshed
       content:
@@ -5331,6 +5442,12 @@ components:
       value:
         code: 3000001
         message: 'Invalid account number'
+    InvalidAccountIdExample:
+      value:
+        code: 38003
+        message:
+          customer does not have given account (customerId =
+          6018989036,    accountId = [6024048234])
     AccountAlreadyExistsExample:
       value:
         code: 3100001
@@ -7025,6 +7142,114 @@ components:
                     normalizedPayee: T-Mobile
                     institutionTransactionId: '0000000000'
                     category: Mobile Phone
+    PaymentSuccessIndicatorExample:
+      value:
+        customerId: '453752752892'
+        accountId: '453752772892'
+        payReqId: '484265782033818817'
+        settleByDate: '2023-06-07'
+        settlementAmount: 10.05
+        availableBalance: 823.32
+        indicatorsByDay:
+          - potentialSettlementDate: '2023-06-07'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+          - potentialSettlementDate: '2023-06-08'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+          - potentialSettlementDate: '2023-06-09'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+    PaymentSuccessIndicatorWarningExample:
+      value:
+        code: '2000'
+        message:
+          'Successful Warning - settlement amount exceeds available balance'
+        customerId: '453752752892'
+        accountId: '453752772892'
+        payReqId: '484265782033818817'
+        settleByDate: '2023-06-07'
+        settlementAmount: 102.05
+        availableBalance: 82.32
+        indicatorsByDay:
+          - potentialSettlementDate: '2023-06-07'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+          - potentialSettlementDate: '2023-06-08'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+          - potentialSettlementDate: '2023-06-09'
+            compositeScore: 7
+            scoreIndicator: Less Likely to Settle
+            reasons:
+              recentBalance: 12
+              balanceHistory: 23
+              nsfHistory: 40
+              recentNsfHistory: 78
+              recurringNsf: 34
+              spendHistory: 44
+              depositHistory: 10
+              transactionAmount: 65
+    MissingSettleByDateExample:
+      summary: Missing parameter (settleByDate)
+      value:
+        code: 10005
+        message: Missing parameter (settleByDate)
+    MissingSettlementAmountExample:
+      summary: Missing parameter (settlementAmount)
+      value:
+        code: 10005
+        message: Missing parameter (settlementAmount)
+    PSIAccountErrorBadRequestExample:
+      summary: PSI Bad Request
+      value:
+        code: 1001
+        message: Account Error - use different account
     PrequalificationCRAReportExample:
       summary: Prequalification CRA Report
       value:
@@ -16345,6 +16570,15 @@ components:
       schema:
         type: string
       example: '3F'
+    PurposeCodeParameter:
+      description:
+        FCRA required 2-digit Permissible Purpose Code, specifying the reason
+        for retrieving this report
+      name: purposeCode
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/PurposeCode'
     PurposeParameter:
       name: purpose
       in: query
@@ -16457,6 +16691,29 @@ components:
         format: int32
         default: 1
         example: 20
+    SettlementAmountParameter:
+      description:
+        settlementAmount is the amount the merchant uses to evaluate the
+        consumer's banking profile.
+      name: settlementAmount
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/SettlementAmount'
+      example: 10.05
+    SettleByDateParameter:
+      description: |-
+        `settleByDate` in ISO 8601 date format (YYYY-MM-DD).
+        `settleByDate` dictates the number of days the model responds with. The response can range from 3-10 days, including `day0`. Details explained below:
+        1. If `settleByDate` is 9 or more days out from today, the response includes 10 days of data, `day0` through `day9`.
+        2. If `settleByDate` is between 3 and 8 days out from today, the response includes 4-9 days of data, `day3-8`.
+        3. If `settleByDate` is between today and 2 days out from today, the response includes 3 days of data, `day0` through `day2`.
+      name: settleByDate
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/SettleByDate'
+      example: '2023-03-30'
     ProductTypeParameter:
       name: type
       in: query
@@ -16978,10 +17235,6 @@ components:
           items:
             $ref: '#/components/schemas/AccountOwnerDetails'
           description: List of account owners
-        encryptedValue:
-          type: string
-          example: 'eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw=='
-          description: Encrypted response.
     AccountOwnerIdentityInsights:
       description: List of account owner Identity Insights
       type: object
@@ -20859,6 +21112,17 @@ components:
           $ref: '#/components/schemas/StringUnixDate'
         lastModifiedDate:
           $ref: '#/components/schemas/StringUnixDate'
+    CompositeScore:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 100
+      description: |-
+        A confidence indicator that provides a 0-100 score per day (day 0-9)
+        1. If a `compositeScore` is > 30 and <=100 for a given day, this conveys a high likelihood for settlement. 
+        2. If a `compositeScore` is > 10 and <=30 for a given day, this conveys likelihood for settlement. 
+        3. If a `compositeScore` is > 0 and <=10 for a given day, this conveys a low likelihood for settlement.
+      example: 6
     CustomerAccount:
       description: >-
         An account represents a bank account such as a checking or savings that
@@ -22447,6 +22711,181 @@ components:
         Comprehensive identity risk score with a higher score indicating a
         riskier account sign-up.
       example: 275
+    Indicator:
+      type: object
+      properties:
+        potentialSettlementDate:
+          $ref: '#/components/schemas/PotentialSettlementDate'
+        compositeScore:
+          $ref: '#/components/schemas/CompositeScore'
+        scoreIndicator:
+          $ref: '#/components/schemas/ScoreIndicator'
+        reasons:
+          $ref: '#/components/schemas/ReasonItem'
+      required:
+        - potentialSettlementDate
+        - compositeScore
+        - scoreIndicator
+        - reasons
+    IndicatorsByDay:
+      type: array
+      description:
+        Array of 3-10 days, providing the potential settlement date, the score
+        of how likely the transaction would settle on that date, and the reasons
+        behind the score.
+      items:
+        $ref: '#/components/schemas/Indicator'
+      minItems: 3
+      maxItems: 10
+    PaymentSuccessIndicator:
+      type: object
+      properties:
+        code:
+          type: string
+          description: PSI error code for this scenario
+          example: '10001'
+        message:
+          type: string
+          description: Detailed reason about the source of the error
+          example: Account Error - use different account
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        payReqId:
+          type: string
+          description:
+            A unique ID generated per request. Used to identify the request.
+          example: '453752752892280957'
+        settleByDate:
+          type: string
+          format: date
+          description:
+            The date the transaction settled (The date in YYYY-MM-DD format).
+          example: '2023-01-04'
+        settlementAmount:
+          type: number
+          format: double
+          description: >-
+            The settlement amount the merchant will use to evaluate the
+            consumer's banking profile
+          example: 10.05
+        availableBalance:
+          type: number
+          description: >-
+            The current balance reflects the posted transactions. Also known as
+            cleared balance
+          example: 315.01
+        indicatorsByDay:
+          $ref: '#/components/schemas/IndicatorsByDay'
+      required:
+        - customerId
+        - accountId
+        - payReqId
+        - settleByDate
+        - settlementAmount
+        - availableBalance
+        - indicatorsByDay
+    ReasonItem:
+      type: object
+      description: The reasoning behind a given PSI score
+      properties:
+        recentBalance:
+          description:
+            Evaluates the available balance in the consumer's permissioned
+            account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 78
+        balanceHistory:
+          description:
+            Evaluates the trends of the consumer's permissioned account balance
+            over a period of time.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 23
+        nsfHistory:
+          description:
+            Evaluates the number of insufficient balance fee occurrences in a
+            consumer's permissioned account over a period of time.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 40
+        recentNsfHistory:
+          description:
+            Evaluates the recency of insufficient balance fee occurrences in a
+            consumer's permissioned account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 34
+        recurringNsf:
+          description:
+            Evaluates the frequency of insufficient balance fee occurrences for
+            recurring transactions in a consumer's permissioned account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 34
+        spendHistory:
+          description:
+            Evaluates the trends of the consumer's permissioned account spend
+            over a period of time.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 44
+        depositHistory:
+          description:
+            Evaluates the trends of the consumer's permissioned account deposit
+            over a period of time.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 10
+        transactionAmount:
+          description: Evaluates the settlementAmount.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 65
+      required:
+        - balanceHistory
+        - depositHistory
+        - nsfHistory
+        - recentBalance
+        - recentNsfHistory
+        - recurringNsf
+        - spendHistory
+        - transactionAmount
+    PotentialSettlementDate:
+      type: string
+      format: date
+      description:
+        '`potentialSettlementDate` is the date that depicts the expected
+        settlement date. Note that the date excludes NACHA banking holidays.
+        Same-Day ACH and Next-Day ACH occur on weekdays only (Monday-Friday).
+        potentialSettlementDate in ISO 8601 date format (YYYY-MM-DD).'
+      example: '2023-03-30'
+    SettleByDate:
+      type: string
+      format: date
+      description: |-
+        `settleByDate` in ISO 8601 date format (YYYY-MM-DD).
+        `settleByDate` dictates the number of days the model responds with. The response can range from 3-10 days, including `day0`. Details explained below:
+        1. If `settleByDate` is 9 or more days out from today, PRO responds with 10 days of data, `day0` through `day9`.
+        2. If `settleByDate` is between 3 and 8 days out from today, PRO responds with 4-9 days of data, `day3-8`.
+        3. If `settleByDate` is between today and 2 days out from today, PRO responds with 3 days of data, `day0` through `day2`.
+      example: '2023-03-30'
+    SettlementAmount:
+      type: number
+      description: >-
+        The payment originator is using settlement amount to evaluate the
+        account profile of the consumer
+      example: 10.05
     DeviceDetails:
       type: object
       description: More granular details of the device insights.
@@ -26100,6 +26539,15 @@ components:
         institution, it cannot exceed 10 numerical digits.
       format: int64
       example: 490535
+    ScoreIndicator:
+      type: string
+      description:
+        '`scoreIndicator` conveys the `compositeScore`, projecting 3 possible
+        values: "Highly Likely to Settle", "Likely to Settle", and "Less Likely
+        to Settle"'
+      example: Likely to Settle
+      minLength: 1
+      maxLength: 50
     SecurityIdType:
       type: string
       description: >-
@@ -26769,11 +27217,11 @@ components:
           description: The strike price of the option contract
           example: 32560
         unitQuantity:
-          type: integer
+          type: number
           description:
             The number of units (individual shares) in the transaction
           format: int32
-          example: 150
+          example: 150.42
         unitPrice:
           type: number
           description:
