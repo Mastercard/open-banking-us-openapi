@@ -12,6 +12,8 @@ name: OpenAPI Generator
 jobs:
   generate:
     runs-on: ubuntu-latest
+    env: 
+      _JAVA_OPTIONS: DmaxYamlCodePoints=99999999
     steps:
       - name: Checkout
         uses: actions/checkout@v3
