@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.23.0
+  version: 1.23.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2685,7 +2685,8 @@ paths:
         Note: this is a premium service, billable per every successful API call.
 
 
-        _Supported account types_: "checking", "savings", "moneyMarket"
+        _Supported account types_: "checking", "savings",
+        "moneyMarket","certificateOfDeposit"
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
