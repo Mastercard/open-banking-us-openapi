@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.23.1
+  version: 1.23.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -4859,11 +4859,11 @@ components:
               $ref: '#/components/examples/PrequalificationCRAReportExample'
             PrequalificationNonCRAReportExample:
               $ref: '#/components/examples/PrequalificationNonCRAReportExample'
-            PaymentHistyoryBusinessCraAnalyticsReportResponseExample:
+            PaymentHistoryBusinessCraAnalyticsReportResponseExample:
               $ref: '#/components/examples/PaymentHistoryBusinessCraAnalyticsReportResponseExample'
-            PaymentHistyoryBusinessNonCraAnalyticsReportResponseExample:
+            PaymentHistoryBusinessNonCraAnalyticsReportResponseExample:
               $ref: '#/components/examples/PaymentHistoryBusinessNonCraAnalyticsReportResponseExample'
-            PaymentHistyoryBusinessFtcAnalyticsReportResponseExample:
+            PaymentHistoryBusinessFtcAnalyticsReportResponseExample:
               $ref: '#/components/examples/PaymentHistoryBusinessFtcAnalyticsReportResponseExample'
             PayStatementReportExample:
               $ref: '#/components/examples/PayStatementReportExample'
@@ -25269,6 +25269,24 @@ components:
         of day of birth.
       format: int64
       example: 1607450357
+    ConsumerPayrollDateOfBirth:
+      type: integer
+      description: >-
+        The consumer's date of birth in Unix epoch time (in seconds). See:
+               [Handling Epoch Dates and
+               Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+        The
+               timestamp should be set at the start of day of birth.  Only
+        required for
+               the Direct API Payroll solution, not required for the
+        Credentialed
+               Payroll solution. A date in Unix epoch time (in seconds). See:
+        [Handling
+               Epoch Dates and
+               Times](https://docs.finicity.com/endpoint-syntax-and-format/).
+
+      format: int64
+      example: 1607450357
     ConsumerId:
       type: string
       description:
@@ -29280,17 +29298,18 @@ components:
       format: int64
       example: 1607450357
     PayrollData:
-      required:
-        - ssn
-        - dob
       type: object
       properties:
         ssn:
-          $ref: '#/components/schemas/SocialSecurityNumberNoHyphens'
+          $ref: '#/components/schemas/SSNPayroll'
         dob:
           $ref: '#/components/schemas/ConsumerDateOfBirth'
         reportId:
           $ref: '#/components/schemas/OriginalPayrollReportId'
+        payrollAccountIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayrollAccountId'
     PayrollDataOut:
       type: object
       properties:
@@ -30889,6 +30908,13 @@ components:
       minLength: 1
       maxLength: 2000
       example: 'Statement dispute text'
+    SSNPayroll:
+      type: string
+      description:
+        The consumer's full SSN without hyphens. Only required for the Direct
+        API Payroll solution, not required for the Credentialed Payroll
+        solution.
+      example: '999999999'
     SocialSecurityNumberNoHyphens:
       type: string
       description: The consumer's full SSN without hyphens
@@ -33680,8 +33706,15 @@ components:
     PayrollAccountId:
       type: string
       description: >-
-        The payroll accountId associated with the payroll account (employer or
-        payroll provider).
+        The payrollAccountIds for the Credentialed Payroll accounts the consumer
+                has connected.  Will be used to constrain the report to only
+        include the
+                specified accounts.  Required if the consumer has connected
+        their
+                accounts previously and report generation was intentionally
+        delayed for
+                later.
+
       example: 018b8f10-fdf8-0ef7-ded5-34a17c34d86f
     ReportStyle:
       type: string
