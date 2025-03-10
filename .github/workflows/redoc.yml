@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Generate Redoc static HTML
         run: |
           npx @redocly/cli build-docs openbanking-us.yaml --output openbanking-us.html
       - name: Create artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openbanking-us.html
           path: ./openbanking-us.html
