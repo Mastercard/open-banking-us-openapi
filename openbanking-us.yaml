@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.23.2
+  version: 1.24.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -42,7 +42,7 @@ tags:
     description: Generate cash flow reports asynchronously
   - name: Cash Flow Analytics
     description: Cash Flow Analytics for business
-  - name: Connect 🔗
+  - name: Connect
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
@@ -86,6 +86,8 @@ tags:
     description: Predict a transaction's likelihood to settle
   - name: FCRA Payment Success Indicator
     description: Predict a transaction's likelihood to settle (FCRA-compliant)
+  - name: Transaction Data Enrichment
+    description: Enhance the data set based on the provided transaction details.
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -157,7 +159,7 @@ paths:
   /connect/v2/generate:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Generate Connect URL
       description: >-
         Generate a Connect URL link to add within your own applications.
@@ -196,7 +198,7 @@ paths:
   /connect/v2/generate/lite:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Generate Lite Connect URL
       description: >-
         Connect Lite is a variation of Connect Full (`POST
@@ -226,7 +228,7 @@ paths:
   /connect/v2/generate/fix:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Generate Fix Connect URL
       description: >-
         Use the Connect Fix API when the following conditions occur:
@@ -254,7 +256,7 @@ paths:
   /connect/v2/send/email:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Send Connect Email
       description: >-
         Same as Connect Full (`POST /connect/v2/generate`) but send a Connect
@@ -275,7 +277,7 @@ paths:
   /connect/v2/generate/jointBorrower:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Generate Connect URL - Joint Borrower
       description: >-
         Same as Connect Full (`POST /connect/v2/generate`) but for joint
@@ -300,7 +302,7 @@ paths:
   /connect/v2/generate/microentry/verify:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: 'Account Validation Assistant User verification of microdeposits'
       description: >-
         The UI re-engages the consumer to enter two microdeposit amounts found
@@ -321,7 +323,7 @@ paths:
   /connect/generate/transfer/deposit-switch:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: 'Connect Transfer URL'
       description: >-
         Generate a Connect Transfer URL which you can use in your application to
@@ -331,7 +333,7 @@ paths:
         $ref: '#/components/requestBodies/ConnectGenerateTransferDepositSwitch'
       responses:
         '200':
-          $ref: '#/components/responses/GenerateConnectUrlResponse'
+          $ref: '#/components/responses/ConnectGenerateTransferDepositSwitchResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -340,7 +342,7 @@ paths:
   /connect/v2/send/email/jointBorrower:
     post:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Send Connect Email - Joint Borrower
       description: >-
         Same as Connect Joint Borrower (`POST
@@ -1269,7 +1271,7 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
         - $ref: '#/components/parameters/SettlementAmountParameter'
         - $ref: '#/components/parameters/SettleByDateParameter'
-        - $ref: '#/components/parameters/PurposeCodeParameter'
+        - $ref: '#/components/parameters/PayPurposeCodeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
@@ -3846,7 +3848,7 @@ paths:
   '/connect/experiences':
     get:
       tags:
-        - Connect 🔗
+        - Connect
       summary: Get Experience IDs
       description:
         Retrieve Connect experiences by application name. Optionally, filter the
@@ -3909,6 +3911,30 @@ paths:
         '404':
           $ref: '#/components/responses/DepositSwitchDetailsNotFoundErrorResponse'
       operationId: getDepositSwitchDetails
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+  '/data-enrichment/transactions':
+    post:
+      tags:
+        - Transaction Data Enrichment
+      summary: Performs enrichment of the provided transactions
+      description: >-
+        The operation processes the enclosed transactions for enrichment with
+        categorization and entity recognition. Accepts a batch of 1000
+        transactions.
+      operationId: enrichTransactions
+      requestBody:
+        $ref: '#/components/requestBodies/EnrichTransactionsPayload'
+      responses:
+        '200':
+          $ref: '#/components/responses/EnrichedTransactions'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorTransactionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
       security:
         - FinicityAppKey: []
           FinicityAppToken: []
@@ -4255,6 +4281,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ThirdPartyAccessKeyData'
+    EnrichTransactionsPayload:
+      required: true
+      description:
+        A list of maximum of 1000 transactions to submit for transaction
+        enrichment
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EnrichTransactionsPayload'
+          examples:
+            EnrichTransactionsPayload:
+              $ref: '#/components/examples/EnrichTransactionsPayloadExample'
   responses:
     AccountOwnerVerificationErrorResponse:
       description: The customer or account does not exist
@@ -4359,6 +4397,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
+    ConnectGenerateTransferDepositSwitchResponse:
+      description: Successful response. Returns Connect URL.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectTransferDepositSwitchLink'
     AppResponse:
       description: Response containing one or more application details.
       content:
@@ -4483,6 +4527,20 @@ components:
               $ref: '#/components/examples/MissingSettlementAmountExample'
             PSIAccountErrorBadRequestExample:
               $ref: '#/components/examples/PSIAccountErrorBadRequestExample'
+            InvalidPurposeCodeExample:
+              $ref: '#/components/examples/InvalidPurposeCodeExample'
+            InvalidSettleByDateExample:
+              $ref: '#/components/examples/InvalidSettleByDateExample'
+            IncorrectFieldTypeExample:
+              $ref: '#/components/examples/IncorrectFieldTypeExample'
+            AccountHasNoTransactionExample:
+              $ref: '#/components/examples/AccountHasNoTransactionExample'
+            RequiredFieldParameterExample:
+              $ref: '#/components/examples/RequiredFieldParameterExample'
+            InactiveAccountExample:
+              $ref: '#/components/examples/InactiveAccountExample'
+            ProvideEmailIdExample:
+              $ref: '#/components/examples/ProvideEmailIdExample'
     GetPaymentSuccessIndicatorNotFoundResponse:
       description: Required details not found
       content:
@@ -5118,10 +5176,21 @@ components:
               $ref: '#/components/examples/InvalidFinicityAppTokenExample'
             ExpiredFinicityAppTokenExample:
               $ref: '#/components/examples/ExpiredFinicityAppTokenExample'
+            BadCredentialsExample:
+              $ref: '#/components/examples/BadCredentialsExample'
         text/plain:
           schema:
             type: string
             example: 'Invalid (Finicity-App-Key)'
+    BadRequestErrorTransactionResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestError:
+              $ref: '#/components/examples/GenericBadRequestError'
     BadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -5601,6 +5670,25 @@ components:
               $ref: '#/components/examples/DepositSwitchDetailsNotFoundExample'
             ResourceNotFoundExample:
               $ref: '#/components/examples/ResourceNotFoundExample'
+    EnrichedTransactions:
+      description: Enriched Transactions Response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EnrichedTransactions'
+          examples:
+            EnrichedTransactionsExample:
+              $ref: '#/components/examples/EnrichedTransactionsExample'
+    NotFoundErrorResponse:
+      description: Authentication information was missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            DataNotFoundError:
+              $ref: '#/components/examples/DataNotFoundError'
+
   examples:
     TimedOutRequestErrorMessage:
       value:
@@ -5675,6 +5763,11 @@ components:
       value:
         code: 14020
         message: Bad request.
+    GenericBadRequestError:
+      value:
+        code: 14020
+        message: Bad request.
+        externalTransactionId: MAC1005061234
     AccountTypeNotSupportedExample:
       value:
         code: 14020
@@ -5697,6 +5790,39 @@ components:
         message:
           customer does not have given account (customerId =
           6018989036,    accountId = [6024048234])
+    InvalidPurposeCodeExample:
+      value:
+        code: 10005
+        message: invalid purpose code
+    InvalidSettleByDateExample:
+      value:
+        code: 10006
+        message: settleByDate must not be in the past
+    IncorrectFieldTypeExample:
+      value:
+        code: 10007
+        message: '[FIELD] is the incorrect type'
+    AccountHasNoTransactionExample:
+      value:
+        code: 10008
+        message: account has no transactions
+    RequiredFieldParameterExample:
+      value:
+        code: 10009
+        message: '[FIELD] is a required parameter'
+    InactiveAccountExample:
+      value:
+        code: 10013
+        message:
+          Only active accounts can be used, please use a different account
+    ProvideEmailIdExample:
+      value:
+        code: 12022
+        message: An email is required when registering a customer for PSI-FCRA
+    BadCredentialsExample:
+      value:
+        code: 24302
+        message: Bad credentials
     AccountAlreadyExistsExample:
       value:
         code: 3100001
@@ -7487,7 +7613,7 @@ components:
               depositHistory: 10
               transactionAmount: 65
           - potentialSettlementDate: '2023-06-08'
-            compositeScore: 7
+            compositeScore: 6
             scoreIndicator: Less Likely to Settle
             reasons:
               recentBalance: 12
@@ -7499,7 +7625,7 @@ components:
               depositHistory: 10
               transactionAmount: 65
           - potentialSettlementDate: '2023-06-09'
-            compositeScore: 7
+            compositeScore: 5
             scoreIndicator: Less Likely to Settle
             reasons:
               recentBalance: 12
@@ -7535,7 +7661,7 @@ components:
               depositHistory: 10
               transactionAmount: 65
           - potentialSettlementDate: '2023-06-08'
-            compositeScore: 7
+            compositeScore: 6
             scoreIndicator: Less Likely to Settle
             reasons:
               recentBalance: 12
@@ -7547,7 +7673,7 @@ components:
               depositHistory: 10
               transactionAmount: 65
           - potentialSettlementDate: '2023-06-09'
-            compositeScore: 7
+            compositeScore: 5
             scoreIndicator: Less Likely to Settle
             reasons:
               recentBalance: 12
@@ -20179,6 +20305,110 @@ components:
         status: '404'
         code: '1643'
         message: No matching record found for switch_id 65d87d2d8c831ae0f3174ed6
+    DataNotFoundError:
+      value:
+        code: 14001
+        message: Resource not found.
+    EnrichTransactionsPayloadExample:
+      value:
+        transactions:
+          - externalCustomerId: '1005061234'
+            externalAccountId: '1005061234'
+            accountType: 'checking'
+            externalTransactionId: 'MAC1005061233'
+            postedTimestamp: '2024-07-26T11:00:00Z'
+            transactionTimestamp: '2024-07-26T11:00:00Z'
+            description: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+            memo: 'debit'
+            amount: -13.26
+            transactionFee: 0.00
+            type: 'DEBIT'
+            directionIndicator: 'Debit'
+            additionalDetails:
+              key1: 'value1'
+          - externalCustomerId: '1005061234'
+            externalAccountId: '1005061234'
+            accountType: 'checking'
+            externalTransactionId: 'MAC1005061234'
+            postedTimestamp: '2024-07-26T11:00:00Z'
+            transactionTimestamp: '2024-07-26T11:00:00Z'
+            description: 'PAYPAL *GRUBHUBFOOD MCDONAL402-935-7733 UT'
+            memo: 'debit'
+            amount: -37.52
+            transactionFee: 0.00
+            type: 'DEBIT'
+            directionIndicator: 'Debit'
+            additionalDetails:
+              key1: 'value1'
+              key2: 'value2'
+    EnrichedTransactionsExample:
+      value:
+        transactions:
+          - externalCustomerId: '1005061234'
+            externalAccountId: '1005061234'
+            accountType: 'checking'
+            externalTransactionId: 'MAC1005061233'
+            postedTimestamp: '2024-07-26T11:00:00Z'
+            transactionTimestamp: '2024-07-26T11:00:00Z'
+            description: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+            memo: 'debit'
+            amount: -13.26
+            transactionFee: 0.00
+            transactionCategory: 'Coffee Shops'
+            transactionCategoryScore: 45.0
+            transactionCategoryGroup: 'Dining'
+            type: 'DEBIT'
+            directionIndicator: 'Debit'
+            entities:
+              - id: 'MTc1ODA5NDU0MTYwNjM1OTA0MA== '
+                name: 'Starbucks'
+                category: 'Coffee Shops'
+                group: 'Cafe'
+                website: 'https://starbucks.com'
+                logoUrl: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5NDU0MTYwNjM1OTA0MA==/logo.svg'
+                entityStandardizationConfidenceScore: 91.0
+            address:
+              line1: '10278 W'
+              line2: 'Centennial Rd'
+              city: 'Littleton'
+              state: 'CO'
+              postalCode: '80127'
+              country: 'USA'
+              latitude: 39.567229
+              longitude: -105.11126
+            additionalDetails:
+              key1: 'value1'
+          - externalCustomerId: '1005061234'
+            externalAccountId: '1005061234'
+            accountType: 'checking'
+            externalTransactionId: 'MAC1005061234'
+            postedTimestamp: '2024-07-26T11:00:00Z'
+            transactionTimestamp: '2024-07-26T11:00:00Z'
+            description: 'PAYPAL *GRUBHUBFOOD MCDONAL402-935-7733 UT'
+            memo: 'debit'
+            amount: -37.52
+            transactionFee: 0.00
+            transactionCategory: 'Food & Dining'
+            transactionCategoryScore: 39.87
+            transactionCategoryGroup: 'Dining'
+            type: 'DEBIT'
+            directionIndicator: 'Debit'
+            entities:
+              - id: 'MTc1ODA5Mzc1Mzc1MjQ4OTk4NA=='
+                name: "McDonald's"
+                category: 'Fast Food'
+                website: 'https://mcdonalds.com'
+                logoUrl: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5Mzc1Mzc1MjQ4OTk4NA==/logo.svg'
+                entityStandardizationConfidenceScore: 96.77
+              - name: 'PayPal'
+                category: 'Payment Processor'
+                entityStandardizationConfidenceScore: 99.05
+              - name: 'GrubHub'
+                category: 'Platform'
+                entityStandardizationConfidenceScore: 83.90
+            additionalDetails:
+              key1: 'value1'
+              key2: 'value2'
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -20511,15 +20741,18 @@ components:
       schema:
         type: string
       example: '3F'
-    PurposeCodeParameter:
-      description:
-        FCRA required 2-digit Permissible Purpose Code, specifying the reason
-        for retrieving this report
+    PayPurposeCodeParameter:
+      description: >-
+        The 2-digit code (1P) assigned to indicate the intended purpose. 1P
+        represents the following permissible purpose: “Determine whether a
+        consumers payment method may be accepted or authorized”, which falls
+        under the “Legitimate Business Need” permissible purpose under section
+        604 of the FCRA.
       name: purposeCode
       in: query
       required: true
       schema:
-        $ref: '#/components/schemas/PurposeCode'
+        $ref: '#/components/schemas/PayPurposeCode'
     PurposeParameter:
       name: purpose
       in: query
@@ -20633,9 +20866,7 @@ components:
         default: 1
         example: 20
     SettlementAmountParameter:
-      description:
-        settlementAmount is the amount the merchant uses to evaluate the
-        consumer's banking profile.
+      description: The transaction amount in USD $.
       name: settlementAmount
       in: query
       required: true
@@ -20644,6 +20875,8 @@ components:
       example: 10.05
     SettleByDateParameter:
       description: |-
+        The expected date that the funds, from the consumer’s account, will be moved to the receiving account.
+
         `settleByDate` in ISO 8601 date format (YYYY-MM-DD).
         `settleByDate` dictates the number of days the model responds with. The response can range from 3-10 days, including `day0`. Details explained below:
         1. If `settleByDate` is 9 or more days out from today, the response includes 10 days of data, `day0` through `day9`.
@@ -25207,6 +25440,14 @@ components:
       properties:
         link:
           $ref: '#/components/schemas/ConnectLink'
+    ConnectTransferDepositSwitchLink:
+      type: object
+      description: contains url to launch connect session
+      properties:
+        link:
+          type: string
+          description: web url to launch a connect session
+          example: 'https://connect2.finicity.com?customerId=6007761187&origin=url&partnerId=2445582695152&signature=f4d278f9d0b4a54f6bc2e71aa00607900365a2625bdb5bc9ca0eaec1c4158de8&timestamp=1660164260516&ttl=1660171460516type=transferDepositSwitch'
     ConsentReceiptId:
       type: string
       description: >-
@@ -25415,10 +25656,7 @@ components:
       minimum: 0
       maximum: 100
       description: |-
-        A confidence indicator that provides a 0-100 score per day (day 0-9)
-        1. If a `compositeScore` is > 30 and <=100 for a given day, this conveys a high likelihood for settlement. 
-        2. If a `compositeScore` is > 10 and <=30 for a given day, this conveys likelihood for settlement. 
-        3. If a `compositeScore` is > 0 and <=10 for a given day, this conveys a low likelihood for settlement.
+        A risk score from 0-100 that indicates the likelihood of return risk, where a higher score indicates a higher likelihood of settlement or lower likelihood of return.
       example: 6
     CustomerAccount:
       description: >-
@@ -26858,6 +27096,14 @@ components:
           $ref: '#/components/schemas/AssetId'
         accountId:
           $ref: '#/components/schemas/AccountId'
+        externalTransactionId:
+          type: string
+          description:
+            A unique identifier for the transaction that assists in linking data
+            back to your systems.
+          example: 'MAC1005061234'
+          minLength: 0
+          maxLength: 511
     EstimateInclusion:
       description: 'Possible values: "HIGH", "MODERATE", "LOW", "NO"'
       type: string
@@ -27027,9 +27273,8 @@ components:
     IndicatorsByDay:
       type: array
       description:
-        Array of 3-10 days, providing the potential settlement date, the score
-        of how likely the transaction would settle on that date, and the reasons
-        behind the score.
+        An Array of 3-10 days, providing the potentialSettlementDate,
+        compositeScore, scoreIndicator, and reasons.
       items:
         $ref: '#/components/schemas/Indicator'
       minItems: 3
@@ -27052,26 +27297,18 @@ components:
         payReqId:
           type: string
           description:
-            A unique ID generated per request. Used to identify the request.
+            The unique ID that represents the response generated for that
+            specific, customer, account, and transaction.
           example: '453752752892280957'
         settleByDate:
-          type: string
-          format: date
-          description:
-            The date the transaction settled (The date in YYYY-MM-DD format).
-          example: '2023-01-04'
+          $ref: '#/components/schemas/SettleByDate'
         settlementAmount:
-          type: number
-          format: double
-          description: >-
-            The settlement amount the merchant will use to evaluate the
-            consumer's banking profile
-          example: 10.05
+          $ref: '#/components/schemas/SettlementAmount'
         availableBalance:
           type: number
           description: >-
-            The current balance reflects the posted transactions. Also known as
-            cleared balance
+            The available balance provided, by the consumer’s financial
+            institution, at the time of the request.
           example: 315.01
         indicatorsByDay:
           $ref: '#/components/schemas/IndicatorsByDay'
@@ -27085,52 +27322,43 @@ components:
         - indicatorsByDay
     ReasonItem:
       type: object
-      description: The reasoning behind a given PSI score
+      description:
+        A collection of 8 reason codes, with a score ranging from 0-100, that
+        explains the drivers that caused the score.
       properties:
         recentBalance:
-          description:
-            Evaluates the available balance in the consumer's permissioned
-            account.
+          description: Evaluates the available balance in an account.
           type: integer
           minimum: 0
           maximum: 100
           example: 78
         balanceHistory:
-          description:
-            Evaluates the trends of the consumer's permissioned account balance
-            over a period of time.
+          description: Evaluates balance trends in the account.
           type: integer
           minimum: 0
           maximum: 100
           example: 23
         nsfHistory:
-          description:
-            Evaluates the number of insufficient balance fee occurrences in a
-            consumer's permissioned account over a period of time.
+          description: Evaluates the number of NSF occurrences in the account.
           type: integer
           minimum: 0
           maximum: 100
           example: 40
         recentNsfHistory:
-          description:
-            Evaluates the recency of insufficient balance fee occurrences in a
-            consumer's permissioned account.
+          description: Evaluates the recent NSF occurrences in the account.
           type: integer
           minimum: 0
           maximum: 100
           example: 34
         recurringNsf:
           description:
-            Evaluates the frequency of insufficient balance fee occurrences for
-            recurring transactions in a consumer's permissioned account.
+            Evaluates the frequency of NSF occurrences in the account.
           type: integer
           minimum: 0
           maximum: 100
           example: 34
         spendHistory:
-          description:
-            Evaluates the trends of the consumer's permissioned account spend
-            over a period of time.
+          description: Evaluates the trends in spend activity in the account.
           type: integer
           minimum: 0
           maximum: 100
@@ -27161,16 +27389,14 @@ components:
     PotentialSettlementDate:
       type: string
       format: date
-      description:
-        '`potentialSettlementDate` is the date that depicts the expected
-        settlement date. Note that the date excludes NACHA banking holidays.
-        Same-Day ACH and Next-Day ACH occur on weekdays only (Monday-Friday).
-        potentialSettlementDate in ISO 8601 date format (YYYY-MM-DD).'
+      description: The date for all days included in the response.
       example: '2023-03-30'
     SettleByDate:
       type: string
       format: date
       description: |-
+        The expected date that the funds, from the consumer’s account, will be moved to the receiving account.
+
         `settleByDate` in ISO 8601 date format (YYYY-MM-DD).
         `settleByDate` dictates the number of days the model responds with. The response can range from 3-10 days, including `day0`. Details explained below:
         1. If `settleByDate` is 9 or more days out from today, PRO responds with 10 days of data, `day0` through `day9`.
@@ -27180,9 +27406,17 @@ components:
     SettlementAmount:
       type: number
       description: >-
-        The payment originator is using settlement amount to evaluate the
-        account profile of the consumer
+        The transaction amount in USD $.
       example: 10.05
+    PayPurposeCode:
+      type: string
+      description: >-
+        The 2-digit code (1P) assigned to indicate the intended purpose. 1P
+        represents the following permissible purpose: “Determine whether a
+        consumers payment method may be accepted or authorized”, which falls
+        under the “Legitimate Business Need” permissible purpose under section
+        604 of the FCRA.
+      example: '24'
     DeviceDetails:
       type: object
       description: More granular details of the device insights.
@@ -28360,6 +28594,13 @@ components:
         page of results by increasing the value of the start parameter in your
         next request:"...&start=6&limit=5"
       example: true
+    MoreResultsAvailableForTransactions:
+      type: string
+      description: >-
+        If the value of `moreAvailable` is "true", you can retrieve the next
+        page of results by increasing the value of the start parameter in your
+        next request:"...&start=6&limit=5"
+      example: 'true'
     Name:
       type: string
       description: The account name from the institution
@@ -29000,6 +29241,25 @@ components:
               type: string
               description: A new value for the Partner Secret
               example: OrU7tjiA3tIspCgb85xV
+    ServiceAgreement:
+      description: 'User service agreement acceptance details'
+      type: object
+      required:
+        - acceptedDate
+        - language
+      properties:
+        acceptedDate:
+          description:
+            'Date when the service agreement was accepted by the user (ISO-8601)'
+          type: string
+          format: date-time
+          example: '2023-05-04T15:25:21.856Z'
+        language:
+          description:
+            'Language in which the service agreement was displayed to the user
+            including country code (ISO 639-1-ISO 3166-1)'
+          type: string
+          example: 'en-US'
     PartnerId:
       type: string
       description: >-
@@ -31725,7 +31985,7 @@ components:
         displaying:
           $ref: '#/components/schemas/DisplayingResults'
         moreAvailable:
-          $ref: '#/components/schemas/MoreResultsAvailable'
+          $ref: '#/components/schemas/MoreResultsAvailableForTransactions'
         fromDate:
           $ref: '#/components/schemas/TransactionsFromDate'
         toDate:
@@ -31741,11 +32001,11 @@ components:
           items:
             $ref: '#/components/schemas/Transaction'
     TransactionsFromDate:
-      type: integer
+      type: string
       description:
-        Value of the `fromDate` request parameter that generated this response
-      format: int64
-      example: 1607450357
+        Value of the `fromDate` request parameter that generated this response.
+        This date is in Unix epoch time (in seconds).
+      example: '1607450357'
     TransactionsReport:
       description: A Transactions report
       type: object
@@ -31946,11 +32206,11 @@ components:
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
     TransactionsToDate:
-      type: integer
+      type: string
       description:
-        Value of the `toDate` request parameter that generated this response
-      format: int64
-      example: 1607450357
+        Value of the `toDate` request parameter that generated this response.
+        This date is in Unix epoch time (in seconds).
+      example: '1607450357'
     TransactionalAttribute:
       description: 'An attribute which represents some
         categorization/classification of
@@ -32065,6 +32325,8 @@ components:
         - customerId
         - accounts
       properties:
+        serviceAgreement::
+          $ref: '#/components/schemas/ServiceAgreement'
         accounts:
           $ref: '#/components/schemas/DepositSwitchAccounts'
         partnerId:
@@ -32083,6 +32345,9 @@ components:
           $ref: '#/components/schemas/WebhookHeaders'
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
+        experience:
+          $ref: '#/components/schemas/Experience'
+
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
@@ -34029,7 +34294,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/DepositSwitchAccount'
-      description: List of customer accounts for Deposit Switch
+      description: List of customer accounts (one or more) for Deposit Switch.
     DepositSwitchAccount:
       description: Deposit Switch account
       type: object
@@ -34069,3 +34334,409 @@ components:
         Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
+    EnrichTransactionsPayload:
+      type: object
+      description: Request body that contains transactions to be enriched.
+      properties:
+        transactions:
+          type: array
+          description: A list of transactions requested to be enriched.
+          items:
+            $ref: '#/components/schemas/TransactionPayload'
+          minItems: 1
+          maxItems: 1000
+      required:
+        - transactions
+    TransactionPayload:
+      type: object
+      properties:
+        externalCustomerId:
+          type: string
+          description:
+            A unique identifier assigned to the customer for a particular
+            institution.
+          minLength: 1
+          maxLength: 100
+          example: '1005061234'
+        externalAccountId:
+          type: string
+          description:
+            A unique identifier assigned to the accounts for a particular
+            institution.
+          minLength: 0
+          maxLength: 100
+          example: '1005061234'
+        accountType:
+          type: string
+          description: |
+            Indicates the type of account associated with the transaction.
+            Listed below are the current account types supported: 
+
+            "checking",  
+            "savings",   
+            "creditCard",  
+            "brokerageAccount",   
+            "investment",   
+            "healthSavingsAccount",   
+            "unknown" 
+
+            NOTE : If "unknown" is provided, the enrichment service will assume it is a "checking" account. An incorrect assumption could impact the results from the enrichment service.
+          minLength: 1
+          maxLength: 511
+          example: 'checking'
+        externalTransactionId:
+          description:
+            A unique identifier for the transaction that assists in linking data
+            back to your systems.
+          type: string
+          minLength: 0
+          maxLength: 511
+          example: 'MAC1005061233'
+        postedTimestamp:
+          type: string
+          description: |
+            The date and time when the transaction was officially recorded in the account.
+
+            Supported formats are yyyy-MM-dd'T'HH:mm:ss.SSS'Z', yyyy-MM-dd'T'HH:mm:ss'Z', yyyy-MM-dd HH:mm:ss.0, yyyy-MM-dd.
+          minLength: 3
+          maxLength: 32
+          example: '2024-07-26T11:00:00Z'
+        transactionTimestamp:
+          type: string
+          description: |
+            The exact date and time when the transaction was initiated or occurred.
+
+            Supported formats are yyyy-MM-dd'T'HH:mm:ss.SSS'Z', yyyy-MM-dd'T'HH:mm:ss'Z', yyyy-MM-dd HH:mm:ss.0, yyyy-MM-dd.
+          minLength: 3
+          maxLength: 32
+          example: '2024-07-26T11:00:00Z'
+        description:
+          type: string
+          description: Description of the transaction.
+          minLength: 1
+          maxLength: 1024
+          example: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+        memo:
+          type: string
+          description: Memo of the transaction.
+          minLength: 0
+          maxLength: 511
+          example: 'debit'
+        amount:
+          type: number
+          format: double
+          description: Value amount for transaction.
+          minimum: -1.7976931348623157E+308
+          maximum: 1.7976931348623157E+308
+          example: -13.26
+        transactionFee:
+          type: number
+          format: double
+          description: A charge applied to the transaction.
+          minimum: -1.7976931348623157E+308
+          maximum: 1.7976931348623157E+308
+          example: 0
+        type:
+          type: string
+          description: Type of the transaction.
+          minLength: 0
+          maxLength: 32
+          example: 'DEBIT'
+        directionIndicator:
+          type: string
+          description: |
+            - The directionIndicator should be from the perspective of the account holder.
+            - If you always send us positive amount values, you MUST send us corresponding directionIndicator values to ensure the categorization logic works as intended.
+            - If you have internal logic to provide the amount field as either positive or negative, do not send us data in the directionIndicator.
+
+            - Listed below are the current directionIndicator types supported: 
+              - "Debit"
+              - "Credit"
+
+          minLength: 0
+          maxLength: 32
+          example: 'Debit'
+        additionalDetails:
+          type: object
+          description: |
+            A dictionary containing additional details of the transaction
+            being returned in the enrichment response.  
+            - This object should not contain any PII. 
+            - The max number of allowed keys are 30.
+            - The key max length should be 100. 
+            - The value max length should be 255.
+          additionalProperties:
+            $ref: '#/components/schemas/AdditionalDetails'
+          example:
+            key1: 'value1'
+            key2: 'value2'
+      required:
+        - externalCustomerId
+        - accountType
+        - description
+        - amount
+    EnrichedTransactions:
+      type: object
+      description: Request body that contains transactions to be enriched.
+      properties:
+        transactions:
+          type: array
+          description: List of input transactions to be enriched.
+          items:
+            $ref: '#/components/schemas/EnrichedTransaction'
+    EnrichedTransaction:
+      type: object
+      properties:
+        externalCustomerId:
+          type: string
+          description:
+            A unique identifier assigned to the customer for a particular
+            institution.
+          minLength: 1
+          maxLength: 100
+          example: '1005061234'
+        externalAccountId:
+          type: string
+          description:
+            A unique identifier assigned to the accounts for a particular
+            institution.
+          minLength: 0
+          maxLength: 100
+          example: '1005061234'
+        accountType:
+          type: string
+          description: |
+            Indicates the type of account associated with the transaction.
+            Listed below are the current account types supported: 
+
+            "checking",  
+            "savings",   
+            "creditCard",  
+            "brokerageAccount",   
+            "investment",   
+            "healthSavingsAccount",   
+            "unknown" 
+
+            NOTE : If "unknown" is provided, the enrichment service will assume it is a "checking" account. An incorrect assumption could impact the results from the enrichment service.
+          minLength: 1
+          maxLength: 511
+          example: 'checking'
+        externalTransactionId:
+          description:
+            A unique identifier for the transaction that assists in linking data
+            back to your systems.
+          type: string
+          minLength: 0
+          maxLength: 511
+          example: 'MAC1005061233'
+        postedTimestamp:
+          type: string
+          description: |
+            The date and time when the transaction was officially recorded in the account. 
+
+            Supported formats are yyyy-MM-dd'T'HH:mm:ss.SSS'Z', yyyy-MM-dd'T'HH:mm:ss'Z', yyyy-MM-dd HH:mm:ss.0, yyyy-MM-dd.
+          minLength: 3
+          maxLength: 32
+          example: '2024-07-26T11:00:00Z'
+        transactionTimestamp:
+          type: string
+          description: |
+            The exact date and time when the transaction was initiated or occurred.
+
+            Supported formats are yyyy-MM-dd'T'HH:mm:ss.SSS'Z', yyyy-MM-dd'T'HH:mm:ss'Z', yyyy-MM-dd HH:mm:ss.0, yyyy-MM-dd.
+          minLength: 3
+          maxLength: 32
+          example: '2024-07-26T11:00:00Z'
+        description:
+          type: string
+          description: Description of the transaction.
+          minLength: 1
+          maxLength: 1024
+          example: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+        memo:
+          type: string
+          description: Memo of the transaction.
+          minLength: 0
+          maxLength: 511
+          example: 'debit'
+        amount:
+          type: number
+          format: double
+          description: Value amount for transaction.
+          minimum: -1.7976931348623157E+308
+          maximum: 1.7976931348623157E+308
+          example: -13.26
+        transactionFee:
+          type: number
+          format: double
+          description: A charge applied to the transaction.
+          minimum: -1.7976931348623157E+308
+          maximum: 1.7976931348623157E+308
+          example: 0
+        transactionCategory:
+          type: string
+          description: Transaction Category for the transaction.
+          minLength: 0
+          maxLength: 256
+          example: 'Coffee Shops'
+        transactionCategoryScore:
+          type: number
+          format: double
+          description:
+            A confidence score between 0 – 100.0 for the transaction category.
+          minimum: 0
+          maximum: 100.0
+          example: 16
+        transactionCategoryGroup:
+          type: string
+          description: The parent group that a transaction category belongs to.
+          minLength: 0
+          maxLength: 256
+          example: 'Dining'
+        type:
+          type: string
+          description: Type for transaction.
+          minLength: 0
+          maxLength: 32
+          example: 'DEBIT'
+        directionIndicator:
+          type: string
+          description: |
+            - The directionIndicator should be from the perspective of the account holder.
+            - If you always send us positive amount values, you MUST send us corresponding directionIndicator values to ensure the categorization logic works as intended.
+            - If you have internal logic to provide the amount field as either positive or negative, do not send us data in the directionIndicator.
+
+            - Listed below are the current directionIndicator types supported: 
+              - "Debit"
+              - "Credit"
+
+          minLength: 0
+          maxLength: 32
+          example: 'Debit'
+        entities:
+          $ref: '#/components/schemas/Entities'
+        address:
+          $ref: '#/components/schemas/DESAddress'
+        additionalDetails:
+          type: object
+          description: |
+            A dictionary containing additional details of the transaction
+            being returned in the enrichment response.  
+            - This object should not contain any PII.
+            - The max number of allowed keys are 30.
+            - The key max length should be 100.  
+            - The value max length should be 255.
+          additionalProperties:
+            $ref: '#/components/schemas/AdditionalDetails'
+          example:
+            key1: 'value1'
+            key2: 'value2'
+    AdditionalDetails:
+      type: string
+    DESAddress:
+      description: Address source of the transactions.
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Line 1 of the transaction address.
+          minLength: 1
+          maxLength: 100
+          example: '10278 W'
+        line2:
+          type: string
+          description: Line 2 of the transaction address.
+          minLength: 1
+          maxLength: 100
+          example: 'Centennial Rd'
+        city:
+          type: string
+          description: City of the transaction.
+          minLength: 1
+          maxLength: 100
+          example: 'Littleton'
+        state:
+          type: string
+          description: State of the transaction.
+          minLength: 1
+          maxLength: 100
+          example: 'CO'
+        postalCode:
+          type: string
+          description: Postal Code of the transaction.
+          minLength: 1
+          maxLength: 100
+          example: '80127'
+        country:
+          type: string
+          description: Country of the transaction.
+          minLength: 1
+          maxLength: 100
+          example: 'USA'
+        latitude:
+          type: number
+          description: Latitude of the transaction.
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 39.56722
+        longitude:
+          type: number
+          description: Longitude of the transaction.
+          format: double
+          minimum: -180
+          maximum: 180
+          example: -105.11126
+    Entities:
+      description:
+        Entities refer to the distinct parties involved in the transaction.
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'MTc1ODA5NDU0MTYwNjM1OTA0MA=='
+          name:
+            type: string
+            description: Name of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Starbucks'
+          group:
+            type: string
+            description: Group of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Cafe'
+          category:
+            type: string
+            description: Category of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Coffee Shops'
+          website:
+            type: string
+            description: Website of the involved entity.
+            minLength: 1
+            maxLength: 100
+            example: 'https://starbucks.com'
+          logoUrl:
+            type: string
+            description: Logo of the involved entity.
+            minLength: 1
+            maxLength: 500
+            example: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5NDU0MTYwNjM1OTA0MA==/logo.svg'
+          entityStandardizationConfidenceScore:
+            type: number
+            format: double
+            description:
+              A confidence score indicating the entity name returned is
+              correctly standardized to a standard entity name. If no score is
+              returned, the entity has not been standardized.
+            minimum: 0
+            maximum: 100.0
+            example: 18.95
