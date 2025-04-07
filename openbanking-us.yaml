@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.25.0
+  version: 1.25.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -4320,7 +4320,7 @@ paths:
         '404':
           $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
 
-  '/institutions/{institution_id}/oauth-urls':
+  '/connect-components/institutions/{institution_id}/oauth-urls':
     parameters:
       - $ref: '#/components/parameters/InstitutionIdPathParameter'
     post:
@@ -4345,7 +4345,7 @@ paths:
         body.
       requestBody:
         $ref: '#/components/requestBodies/OauthUrl'
-  '/institutions/{institution_id}/login-forms':
+  '/connect-components/institutions/{institution_id}/login-forms':
     parameters:
       - $ref: '#/components/parameters/InstitutionIdPathParameter'
     post:
@@ -4367,7 +4367,7 @@ paths:
         language.
       requestBody:
         $ref: '#/components/requestBodies/LoginForm'
-  '/customers/{customer_id}/institution-login-ids/{institution_login_id}/reconnections':
+  '/connect-components/customers/{customer_id}/institution-login-ids/{institution_login_id}/reconnections':
     parameters:
       - $ref: '#/components/parameters/CustomerIdPathParameter'
       - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
@@ -4392,7 +4392,7 @@ paths:
           * The user's MFA challenge has expired.
       requestBody:
         $ref: '#/components/requestBodies/NoBody'
-  /configurations:
+  /connect-components/configurations:
     post:
       summary: Create Components Configuration
       operationId: post-configurations
@@ -4423,7 +4423,7 @@ paths:
           $ref: '#/components/responses/Configurations'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /configurations/{configuration_id}:
+  /connect-components/configurations/{configuration_id}:
     parameters:
       - $ref: '#/components/parameters/ConfigurationIdPathParameter'
     get:
