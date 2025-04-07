@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.24.0
+  version: 1.25.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -27,7 +27,7 @@ tags:
   - name: App Registration
     description: Register and assign apps to customers
   - name: Assets
-    description: Download asset files
+    description: Download asset filOes
   - name: Authentication
     description: Generate authentication tokens and manage credentials
   - name: Balance Analytics
@@ -43,6 +43,10 @@ tags:
   - name: Cash Flow Analytics
     description: Cash Flow Analytics for business
   - name: Connect
+    description:
+      Allow customers to log into their financial institutions and grant
+      Finicity authorization
+  - name: Connect Components
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
@@ -82,12 +86,14 @@ tags:
     description: APIs to retrieve customer authorization details
   - name: Transfer
     description: Fetch details of the deposit and bill pay switches
+  - name: Webhook Subscription
+    description: APIs for Managing Partner Webhook Event Subscriptions
   - name: Payment Success Indicator
     description: Predict a transaction's likelihood to settle
   - name: FCRA Payment Success Indicator
     description: Predict a transaction's likelihood to settle (FCRA-compliant)
   - name: Transaction Data Enrichment
-    description: Enhance the data set based on the provided transaction details.
+    description: Enhance the data set based on
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
@@ -316,6 +322,22 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/MicroEntryVerifyUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/generate/transfer/bill-pay-switch:
+    post:
+      tags:
+        - Connect
+      summary: Connect Transfer URL
+      description: Generate a Connect Transfer Bill Pay Switch URL
+      operationId: GenerateTransferBillPaySwitchUrl
+      requestBody:
+        $ref: '#/components/requestBodies/ConnectGenerateTransferBillPaySwitch'
+      responses:
+        '200':
+          $ref: '#/components/responses/ConnectGenerateTransferBillPaySwitchResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1398,7 +1420,7 @@ paths:
         - $ref: '#/components/parameters/AppIdPathParameter'
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/InstitutionLimitParameter'
-        - $ref: '#/components/parameters/InstitutionIdPathParameter'
+        - $ref: '#/components/parameters/InstitutionIdQueryParameter'
       responses:
         '200':
           $ref: '#/components/responses/InstitutionsResponse'
@@ -1578,6 +1600,32 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/institution/v1/institutions/routingNumber/{routing_number}':
+    get:
+      summary: Search for financial institution connections by routing number
+      description: >-
+        Get institution details for a given routing number. The endpoint will
+        return an error if it is unable to find a match for the routing number
+        or if the routing number provided is not the correct length.  <br><br>
+        Please note, this endpoint only returns FIs that are mapped to
+        Mastercard Financial institutions.  Not every institution can be mapped
+        as not every institution type has a routing number.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: get-institutions-by-routing-number
+      tags:
+        - Institutions
+      parameters:
+        - $ref: '#/components/parameters/RoutingNumberParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetInstitutionsByRoutingNumberResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   '/decisioning/v2/customers/{customerId}/voa':
     post:
       tags:
@@ -2382,8 +2430,7 @@ paths:
     post:
       tags:
         - Payment History Report
-      summary:
-        Generate Payment History Report for the customer - Personal/Business
+      summary: Generate Payment History Report for the customer - Business
       description: >-
         Generate a Payment History Report for a given customer. This service
         retrieves up to two years of transaction history from connected
@@ -3909,11 +3956,504 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/DepositSwitchDetailsNotFoundErrorResponse'
+          $ref: '#/components/responses/SwitchDetailsNotFoundErrorResponse'
       operationId: getDepositSwitchDetails
       security:
         - FinicityAppKey: []
           FinicityAppToken: []
+
+  /notification-subscriptions/webhooks:
+    post:
+      tags:
+        - Webhook Subscription
+      summary: Create Webhook Subscription
+      description: >-
+        Creates a new webhook subscription for receiving event notifications.
+        You can specify the URL for receiving notifications and select the
+        events to subscribe to, including any conditions for filtering. Each
+        partner can have multiple subscriptions, and each subscription can cover
+        multiple events. The API supports URL overrides at the event level,
+        ensuring that each subscription is tailored to specific events and their
+        respective requirements.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: createWebhookSubscription
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSubscriptionRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/SubscriptionCreatedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+
+    get:
+      tags:
+        - Webhook Subscription
+      summary: List Webhook Subscriptions
+      description: >-
+        Retrieves a list of all webhook subscriptions. The response includes
+        details of each subscription, such as the subscription ID, URL, events,
+        and their conditions. This API provides an overview of all active and
+        inactive subscriptions.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: listWebhookSubscriptions
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/ObwmsOffsetParameter'
+        - $ref: '#/components/parameters/ObwmsLimitParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/SubscriptionsResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/{subscription_id}:
+    get:
+      tags:
+        - Webhook Subscription
+      summary: Get Webhook Subscription Details
+      description: >-
+        Retrieves detailed information about a specific webhook subscription
+        using the provided subscription ID. The response includes subscription
+        details such as the events, conditions, and current status.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getWebhookSubscriptionById
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/SubscriptionDetail'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+    put:
+      tags:
+        - Webhook Subscription
+      summary: Update Webhook Subscription
+      description: >-
+        Updates an existing webhook subscription with the specified subscription
+        ID. You can modify the subscription URL and the events associated with
+        it.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: updateWebhookSubscription
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSubscriptionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SubscriptionUpdatedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+    delete:
+      tags:
+        - Webhook Subscription
+      summary: Delete Webhook Subscription
+      description: >-
+        Deletes a subscription specified by its ID. Once deleted, the
+        subscription and its associated events will no longer be active or
+        receive notifications
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: deleteWebhookSubscription
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/SubscriptionDeletedResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/{subscription_id}/events/{webhook_event_id}:
+    put:
+      tags:
+        - Webhook Subscription
+      summary: Update Webhook Subscription Event
+
+      description: >-
+        Updates a specific webhook event in a subscription. Use subscription Id
+        and webhook Event Id to identify the event and modify its details.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: updateWebhookSubscriptionEvent
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+        - $ref: '#/components/parameters/WebhookEventIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEventRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/EventUpdatedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+    delete:
+      tags:
+        - Webhook Subscription
+      summary: Delete Webhook Subscription Event
+      description: >-
+        Deletes a specific webhook event from a subscription identified by
+        subscription Id and webhook Event Id.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: deleteWebhookSubscriptionEvent
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+        - $ref: '#/components/parameters/WebhookEventIdPathParameter'
+      responses:
+        '204':
+          $ref: '#/components/responses/EventDeletedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/{subscription_id}/events/{webhook_event_id}/status:
+    put:
+      tags:
+        - Webhook Subscription
+      summary: Enable or disable Webhook Subscription Event
+      description: >-
+        Enables or disables a specific webhook event within a subscription
+        identified by subscription ID and webhook event ID. Update the event's
+        status to either active or inactive.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: changeWebhookSubscriptionEventStatus
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+        - $ref: '#/components/parameters/WebhookEventIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/EventStatusUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/EventStatusUpdatedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/events:
+    get:
+      tags:
+        - Webhook Subscription
+      summary: List Available Webhook Subscription Events
+      description: >-
+        Allows partners to retrieve a list of all event subscriptions supported
+        by the Open Banking system.  This endpoint provides information about
+        each subscription, including the webhook URL and associated events,
+        enabling partners to understand all available subscription options.
+
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: listAvailableWebhookSubscriptionEvents
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/AvailableEventsResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+  /notification-subscriptions/webhooks/{subscription_id}/status:
+    put:
+      tags:
+        - Webhook Subscription
+      summary:
+        Enable or disable all the webhook event under a given webhook
+        subscription
+      description: >-
+        Enables or disables all webhook subscription event for partner. Update
+        the  status to either active or inactive. _Supported regions_:
+        ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: changeWebhookSubscriptionStatus
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/EventStatusUpdateRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/EventStatusUpdatedResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/{subscription_id}/test-subscriptions:
+    get:
+      tags:
+        - Webhook Subscription
+      summary: Test Webhook Subscripton Based on Subscription id
+      description: >-
+        Test all the webhook event under the given webhook subscription using
+        subscription_id. _Supported regions_:
+        ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: testWebhookSubscription
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/TestWebhookSubscriptionResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  /notification-subscriptions/webhooks/{subscription_id}/events/{webhook_event_id}/test-subscriptions:
+    get:
+      tags:
+        - Webhook Subscription
+      summary:
+        Test Webhook Subscripton Based on Subscription id & Webhook event id.
+      description: >-
+        Test the webhook event under the given webhook subscription using
+        subscription_id & webhook event id. _Supported regions_:
+        ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: testWebhookSubscriptionBasedOnEventId
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      parameters:
+        - $ref: '#/components/parameters/RequestIdHeader'
+        - $ref: '#/components/parameters/SubscriptionIdPathParameter'
+        - $ref: '#/components/parameters/WebhookEventIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/TestWebhookSubscriptionResponse'
+        '400':
+          $ref: '#/components/responses/ObwmsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/ObwmsUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ObwmsResourceNotFounderrorResponse'
+
+  '/institutions/{institution_id}/oauth-urls':
+    parameters:
+      - $ref: '#/components/parameters/InstitutionIdPathParameter'
+    post:
+      summary: Create OAuth URL
+      operationId: post-institutions-institutionId-oauth-urls
+      tags:
+        - 'Connect Components'
+      responses:
+        '201':
+          $ref: '#/components/responses/GenerateOAuthUrl'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+      description: >-
+        Generates a new OAuth URL that can be used to connect an end-user into
+        their direct-connection institution. The `redirectURI` will be called
+        when the oauth session has completed. An optional configuration object
+        can be applied by including a valid `configurationId` in the request
+        body.
+      requestBody:
+        $ref: '#/components/requestBodies/OauthUrl'
+  '/institutions/{institution_id}/login-forms':
+    parameters:
+      - $ref: '#/components/parameters/InstitutionIdPathParameter'
+    post:
+      summary: Create Login Form
+      operationId: post-institutions-institutionId-login-forms
+      tags:
+        - 'Connect Components'
+      responses:
+        '201':
+          $ref: '#/components/responses/LoginForms'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+      description: >-
+        Generate a new login form for a given institution, customer, and
+        language.
+      requestBody:
+        $ref: '#/components/requestBodies/LoginForm'
+  '/customers/{customer_id}/institution-login-ids/{institution_login_id}/reconnections':
+    parameters:
+      - $ref: '#/components/parameters/CustomerIdPathParameter'
+      - $ref: '#/components/parameters/InstitutionLoginIdPathParam'
+    post:
+      summary: Initiate Reconnection
+      operationId: post-reconnections
+      tags:
+        - 'Connect Components'
+      responses:
+        '201':
+          $ref: '#/components/responses/LoginForms'
+        '203':
+          $ref: '#/components/responses/MfaChallenge'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      description: >-
+        Use the Connect Fix API when the following conditions occur: 
+          * The connection to the user's financial institution is lost. 
+          * The user's credentials were updated (for any number of reasons). 
+          * The user's MFA challenge has expired.
+      requestBody:
+        $ref: '#/components/requestBodies/NoBody'
+  /configurations:
+    post:
+      summary: Create Components Configuration
+      operationId: post-configurations
+      tags:
+        - 'Connect Components'
+      responses:
+        '201':
+          $ref: '#/components/responses/Configuration'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      description: >-
+        Optional endpoint. This endpoint is use to generate a
+        configuration  object, which an then be passed in during the login flow.
+        If used, the ID provided will need to be passed in the Create
+        Login  Form or Create OAuth URL.
+      requestBody:
+        $ref: '#/components/requestBodies/CreateConfiguration'
+    get:
+      summary: Get All Configurations for Current Partner
+      description: Get all previously saved Connect Component configurations.
+      operationId: get-configurations
+      tags:
+        - 'Connect Components'
+      responses:
+        '200':
+          $ref: '#/components/responses/Configurations'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /configurations/{configuration_id}:
+    parameters:
+      - $ref: '#/components/parameters/ConfigurationIdPathParameter'
+    get:
+      summary: Get Configuration Details
+      tags:
+        - 'Connect Components'
+      responses:
+        '200':
+          $ref: '#/components/responses/Configuration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+      operationId: get-configurations-configurationId
+      description: >-
+        Returns the configuration with the specified id if the configuration
+        exists and belongs to the partner calling this endpoint
+    delete:
+      summary: Delete Configuration
+      tags:
+        - 'Connect Components'
+      operationId: delete-configurations-configurationId
+      responses:
+        '204':
+          $ref: '#/components/responses/NoBody'
+        '401':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+      description: Removes the configuration from the database
   '/data-enrichment/transactions':
     post:
       tags:
@@ -3935,6 +4475,54 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/NotFoundErrorResponse'
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+
+  '/transfer/customers/{customer_id}/bill-pay-switches':
+    get:
+      tags:
+        - Transfer
+      summary: Get Pay Switches by Customer ID
+      description: |-
+        Retrieve summary of bill pay switches performed by given customer ID.
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getAllPaySwitches
+      security:
+        - FinicityAppToken: []
+        - FinicityAppKey: []
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/PaySwitchesSummary'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/transfer/customers/{customer_id}/bill-pay-switches/{switch_id}':
+    get:
+      tags:
+        - Transfer
+      summary: Get Pay Switch by ID
+      description: |-
+        Retrieve bill pay switch details by switch ID.
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdPathParameter'
+        - $ref: '#/components/parameters/SwitchIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/PaySwitchDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/SwitchDetailsNotFoundErrorResponse'
+      operationId: getBillPaySwitchDetails
       security:
         - FinicityAppKey: []
           FinicityAppToken: []
@@ -3994,6 +4582,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FixConnectParameters'
+    ConnectGenerateTransferBillPaySwitch:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectGenerateTransferBillPaySwitchParameters'
     ConnectGenerateTransferDepositSwitch:
       required: true
       content:
@@ -4281,6 +4875,145 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ThirdPartyAccessKeyData'
+
+    LoginForm:
+      required: true
+      description: >-
+        An optional configuration object can be applied by including a valid
+        `configurationId` in the request body. <br><br> The preferred language
+        translation for the login form is request with the `language` property
+        in the request body. Supported languages are: 
+          * English: `en`
+          * English-United States:'en-us`
+          * Spanish: `es`
+          * Spanish-United States: `es-us` 
+          * French: `fr`
+          * French-Canada: `fr-ca`
+      content:
+        application/json:
+          schema:
+            type: object
+            description: Object used to generate a new session'ed login form.
+            required:
+              - language
+              - customerId
+              - serviceAgreement
+            properties:
+              language:
+                type: string
+                description: >-
+                  The preferred language translation of the requested login
+                  form. Supported languages are English:'en', English-United
+                  States:'en-us', Spanish:'es', Spanish-United States:'es-us',
+                  French:'fr', French-Canada:'fr-ca'
+                example: 'en'
+              customerId:
+                $ref: '#/components/schemas/CustomerId'
+              configurationId:
+                $ref: '#/components/schemas/ConfigurationId'
+              serviceAgreement:
+                $ref: '#/components/schemas/ServiceAgreement'
+
+    CreateSubscriptionRequest:
+      description: Request body for creating event subscription.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Subscription'
+          examples:
+            CreateSubscriptionRequestExample:
+              $ref: '#/components/examples/SubscriptionRequestExample'
+    UpdateSubscriptionRequest:
+      description: Request body for updating event subscription.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Subscription'
+          examples:
+            CreateSubscriptionRequestExample:
+              $ref: '#/components/examples/SubscriptionRequestExample'
+    UpdateEventRequest:
+      description: Request body to update Event
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WebhookEvent'
+          examples:
+            UpdateEventRequestExample:
+              $ref: '#/components/examples/UpdateEventRequestExample'
+    EventStatusUpdateRequest:
+      description: Request body to an event active or inactive.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventStatusUpdate'
+
+    OauthUrl:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: >-
+              Used to request an oauth url for a given a given institution and
+              customer.
+            required:
+              - customerId
+              - serviceAgreement
+              - redirectURI
+            properties:
+              redirectURI:
+                description:
+                  The `redirectURI` will be called when the oauth session has
+                  completed.
+                type: string
+                format: uri
+                example: 'https://oauth.example.com/redirect'
+                minLength: 1
+                maxLength: 1024
+              customerId:
+                $ref: '#/components/schemas/CustomerId'
+              configurationId:
+                $ref: '#/components/schemas/ConfigurationId'
+              serviceAgreement:
+                $ref: '#/components/schemas/ServiceAgreement'
+    CreateConfiguration:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - filterAccounts
+            description: >-
+              Used to generate a new configuration, which can be used during the
+              login flow
+            example:
+              filterAccounts:
+                - Checking
+                - Savings
+            properties:
+              filterAccounts:
+                type: array
+                description:
+                  'A filter to apply during account activation. Allowed values:
+                  checking, savings'
+                items:
+                  type: string
+                  example: Checking
+                  minLength: 1
+                  maxLength: 512
+    NoBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            nullable: true
     EnrichTransactionsPayload:
       required: true
       description:
@@ -4293,6 +5026,7 @@ components:
           examples:
             EnrichTransactionsPayload:
               $ref: '#/components/examples/EnrichTransactionsPayloadExample'
+
   responses:
     AccountOwnerVerificationErrorResponse:
       description: The customer or account does not exist
@@ -4403,6 +5137,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectTransferDepositSwitchLink'
+    ConnectGenerateTransferBillPaySwitchResponse:
+      description: Successful response. Returns Connect URL.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectTransferBillPaySwitchLink'
     AppResponse:
       description: Response containing one or more application details.
       content:
@@ -4640,6 +5380,29 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Institutions'
+    GetInstitutionsByRoutingNumberResponse:
+      description: >-
+        Successful response will contain institution connections that were
+        associated with the provided routing number.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              found:
+                $ref: '#/components/schemas/FoundResults'
+              displaying:
+                $ref: '#/components/schemas/DisplayingResults'
+              moreAvailable:
+                $ref: '#/components/schemas/MoreResultsAvailable'
+              createdDate:
+                $ref: '#/components/schemas/UnixDate'
+              institutions:
+                description: List of institutions with matching routing numbers
+                type: array
+                items:
+                  $ref: >-
+                    #/components/schemas/InstitutionsWithRoutingNumber
     GetInstitutionBrandingResponse:
       description: Institution branding was successfully retrieved
       content:
@@ -5648,8 +6411,8 @@ components:
           schema:
             $ref: '#/components/schemas/DepositSwitchesSummary'
           examples:
-            DepositSwitchesSummaryExample:
-              $ref: '#/components/examples/DepositSwitchesSummaryExample'
+            SwitchesSummaryExample:
+              $ref: '#/components/examples/SwitchesSummaryExample'
     DepositSwitchDetails:
       description: Deposit switch details
       content:
@@ -5659,17 +6422,357 @@ components:
           examples:
             DepositSwitchDetailsExample:
               $ref: '#/components/examples/DepositSwitchDetailsExample'
-    DepositSwitchDetailsNotFoundErrorResponse:
+    PaySwitchesSummary:
+      description: Pay switches performed by the customer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaySwitchesSummary'
+          examples:
+            PaySwitchesSummaryExample:
+              $ref: '#/components/examples/SwitchesSummaryExample'
+    PaySwitchDetails:
+      description: Pay switch details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaySwitchDetails'
+          examples:
+            PaySwitchDetailsExample:
+              $ref: '#/components/examples/PaySwitchDetailsExample'
+    SwitchDetailsNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            DepositSwitchDetailsNotFoundExample:
-              $ref: '#/components/examples/DepositSwitchDetailsNotFoundExample'
+            SwitchDetailsNotFoundExample:
+              $ref: '#/components/examples/SwitchDetailsNotFoundExample'
             ResourceNotFoundExample:
               $ref: '#/components/examples/ResourceNotFoundExample'
+    ObwmsUnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check "App-Key" or
+        "App-Token".
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorWrapper'
+          examples:
+            ExpiredTokenExample:
+              $ref: '#/components/examples/ObwmsExpiredTokenExample'
+            MissingAppKeyExample:
+              $ref: '#/components/examples/MissingAppKeyExample'
+    ObwmsResourceNotFounderrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorWrapper'
+          examples:
+            ResourceNotFoundExample:
+              $ref: '#/components/examples/ObmwsResourceNotFoundExample'
+    ObwmsBadRequestErrorResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorWrapper'
+          examples:
+            BadRequestErrorResponseExample:
+              $ref: '#/components/examples/BadRequestErrorResponseExample'
+    SubscriptionCreatedResponse:
+      description: Subscription created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubscriptionDetail'
+          examples:
+            SubscriptionCreatedResponseExample:
+              $ref: '#/components/examples/SubscriptionCreatedResponseExample'
+    SubscriptionUpdatedResponse:
+      description: Subscription updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubscriptionDetail'
+          examples:
+            SubscriptionCreatedResponseExample:
+              $ref: '#/components/examples/SubscriptionCreatedResponseExample'
+    EventUpdatedResponse:
+      description: Event updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WebhookEvent'
+          examples:
+            SubscriptionCreatedResponseExample:
+              $ref: '#/components/examples/EventUpdatedResponseExample'
+    EventStatusUpdatedResponse:
+      description: Event updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventStatusUpdate'
+    SubscriptionDeletedResponse:
+      description: Subscription deleted successfully
+    EventDeletedResponse:
+      description: Event deleted successfully
+    SubscriptionsResponse:
+      description:
+        List of all subscriptions with pagination and availability details.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Subscriptions'
+          examples:
+            SubscriptionsResponseExample:
+              $ref: '#/components/examples/SubscriptionsResponseExample'
+    SubscriptionDetail:
+      description: Subscription detail by ID
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubscriptionDetail'
+          examples:
+            SubscriptionDetailExample:
+              $ref: '#/components/examples/SubscriptionDetailResponseExample'
+
+    MfaChallenge:
+      description: MFA challenges required to log in
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                mfaChallenges:
+                  type: array
+                  minItems: 1
+                  description:
+                    The required MFA Challenges required in order to log in.
+                  items:
+                    type: object
+                    required:
+                      - id
+                      - prompt
+                      - mfaType
+                      - choiceIds
+                      - eventStreamId
+                    properties:
+                      id:
+                        type: string
+                        description: The unique identifier for the MFA challenge
+                        format: uuid
+                        example: 9082affa-d965-40be-a3ed-a320bb3467ff
+                        minLength: 36
+                        maxLength: 36
+                      mfaType:
+                        type: string
+                        description: >-
+                          The type of MFA challenge:
+                            * TFA_TEXT:  This challenge type will present a
+                          single input box to the customer and is commonly used
+                          for things like One-Time Passwords.
+                            * TFA_CHOICE: The TFA_CHOICE object represents a
+                          multiple choice question and answer selection.
+                            * TFA_MULTI: The TFA_MULTI challenge type will
+                          present the customer with multiple images to select
+                          from.
+                            * TFA_IMAGE: A TFA_IMAGE challenge will present a
+                          captcha-style image the customer will need to
+                          decipher.
+                        example: TFA_TEXT
+                      prompt:
+                        type: string
+                        description: The MFA prompt text
+                        example: 'Which high school did you attend'
+                      choiceIds:
+                        type: array
+                        description:
+                          An array of unique identifiers for the MFA choices
+                        items:
+                          type: string
+                          description: The unique identifier for the MFA choice
+                          format: uuid
+                          example: '9082affa-d965-40be-a3ed-a320bb3467ff'
+                          minLength: 36
+                          maxLength: 36
+
+    AvailableEventsResponse:
+      description: List of all available events.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - events
+            properties:
+              events:
+                type: array
+                description: List of available events.
+                items:
+                  $ref: '#/components/schemas/AvailableEvent'
+          examples:
+            AvailableEventsResponseExample:
+              $ref: '#/components/examples/AvailableEventsResponseExample'
+
+    TestWebhookSubscriptionResponse:
+      description: test subscription submitted successfully.
+    NoBody:
+      description: Empty Response Body
+    GenerateOAuthUrl:
+      description: >-
+        The returned oauth url, as well as a reference back to this resource in
+        case modifications are needed
+      content:
+        application/json:
+          schema:
+            type: object
+            description: The response object for requests to generate OAuth URLs
+            required:
+              - id
+              - url
+              - eventStreamId
+            example:
+              id: 8d9d8f5e-2c5f-4f49-bf9b-276a7df0367f
+              url: 'https://example.com'
+              eventStreamId: 208a1170-875e-4656-85d0-27dfc3ee7137
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: 8d9d8f5e-2c5f-4f49-bf9b-276a7df0367f
+                minLength: 36
+                maxLength: 36
+                description: Unique reference to the login session
+              url:
+                type: string
+                format: uri
+                example: 'https://example.com'
+                minLength: 1
+                maxLength: 1024
+                description: The oauth url to direct the user to
+              eventStreamId:
+                $ref: '#/components/schemas/EventStreamId'
+
+    LoginForms:
+      description: Generate a new login form entry
+      content:
+        application/json:
+          schema:
+            type: object
+            description:
+              The data used by the calling application to render a login form
+            example:
+              id: 8d9d8f5e-2c5f-4f49-bf9b-276a7df0367f
+              eventStreamId: 208a1170-875e-4656-85d0-27dfc3ee7137
+              elements:
+                - id: 26410b1f-0347-4d57-bb03-f44d00e785e2
+                  label: username
+                  sortOrder: 0
+                - id: f2ce62c2-877f-4c26-9935-d1ab6084e6d0
+                  label: password
+                  sortOrder: 1
+            properties:
+              id:
+                type: string
+                minLength: 36
+                maxLength: 36
+                example: 8d9d8f5e-2c5f-4f49-bf9b-276a7df0367f
+                format: uuid
+                description:
+                  The unique identifier associated with this session'ed form
+              eventStreamId:
+                $ref: '#/components/schemas/EventStreamId'
+              elements:
+                type: array
+                description: An array of elements that is to be rendered
+                items:
+                  type: object
+                  minProperties: 1
+                  maxProperties: 10
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      minLength: 36
+                      maxLength: 36
+                      example: 26410b1f-0347-4d57-bb03-f44d00e785e2
+                      description:
+                        The session specific identifier for the login form
+                        element
+                    label:
+                      type: string
+                      description: The human-readable name of the element
+                      example: Username
+                      minLength: 1
+                      maxLength: 512
+                    sortOrder:
+                      type: integer
+                      default: 0
+                      example: 0
+                      minimum: 0
+                      maximum: 10
+                      description:
+                        A hint to indicate what order to render the elements in
+                  required:
+                    - id
+                    - label
+                    - sortOrder
+            required:
+              - id
+              - elements
+              - eventStreamId
+    Configuration:
+      description: An object used to modify the login behavior
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Configuration'
+    Configurations:
+      description: Array of available configurations
+      content:
+        application/json:
+          schema:
+            type: array
+            description:
+              The array of configuration objects associated with this partner
+            items:
+              $ref: '#/components/schemas/Configuration'
+    Unauthorized:
+      description: >-
+        The request lacks valid authentication credentials. Check
+        "Finicity-App-Key" or "Finicity-App-Token".
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GoldStandardErrorMessage'
+          examples:
+            ExpiredTokenExample:
+              $ref: '#/components/examples/GoldStandardExpiredToken'
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/GoldStandardMissingFinicityAppKey'
+    BadRequest:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GoldStandardErrorMessage'
+          examples:
+            InvalidFieldExample:
+              $ref: '#/components/examples/GoldStandardInvalidField'
+    ResourceNotFound:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GoldStandardErrorMessage'
+          examples:
+            ResourceNotFoundExample:
+              $ref: '#/components/examples/GoldStandardResourceNotFound'
     EnrichedTransactions:
       description: Enriched Transactions Response.
       content:
@@ -20270,7 +21373,7 @@ components:
         message:
           The requested experience could not be found for the enterned app name.
         user_message: The requested entity was not found.
-    DepositSwitchesSummaryExample:
+    SwitchesSummaryExample:
       value:
         customerId: '1005061234'
         customerType: testing
@@ -20288,7 +21391,7 @@ components:
         customerType: testing
         switchId: 602414d84f9a1980cf5eafcc
         switchStatus: completed
-        failureReason: bad-credentials
+        failureReason: distribution-not-supported
         createdDate: '2023-07-25T08:14:20Z'
         updatedDate: '2023-07-25T08:30:20Z'
         authenticated: true
@@ -20300,11 +21403,252 @@ components:
             allocatedValue: 52
             bankIdentifier: '110000000'
             accountNumberEndsWith: '4126'
-    DepositSwitchDetailsNotFoundExample:
+    SwitchDetailsNotFoundExample:
       value:
         status: '404'
         code: '1643'
         message: No matching record found for switch_id 65d87d2d8c831ae0f3174ed6
+    PaySwitchDetailsExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switchId: 602414d84f9a1980cf5eafcc
+        switchStatus: completed
+        failureReason: connection-error
+        createdDate: '2023-07-25T08:14:20Z'
+        updatedDate: '2023-07-25T08:30:20Z'
+        authenticated: true
+        provider:
+          id: 607e249736b9f053b536bde0
+          name: CashApp
+        paymentMethods:
+          - type: 'card'
+            title: 'Sample Card'
+            brand: 'Mastercard'
+            bankIdentifier: '110000000'
+            accountNumberEndsWith: '4126'
+    ObmwsResourceNotFoundExample:
+      value:
+        Errors:
+          Error:
+            - source: 'Event Subscription Service'
+              reasonCode: 1501
+              description: 'Resource not found.'
+              recoverable: false
+              details: null
+    BadRequestErrorResponseExample:
+      value:
+        Errors:
+          Error:
+            - source: 'Event Subscription Service'
+              reasonCode: 1502
+              description: 'Bad Request.'
+              recoverable: false
+              details: null
+    ObwmsExpiredTokenExample:
+      value:
+        Errors:
+          Error:
+            - source: 'Event Subscription Service'
+              reasonCode: 1503
+              description: 'Expired (App-Token)'
+              recoverable: false
+              details: null
+    MissingAppKeyExample:
+      value:
+        Errors:
+          Error:
+            - source: 'Event Subscription Service'
+              reasonCode: 1504
+              description: 'Missing parameter (App-Key)'
+              recoverable: false
+              details: null
+    SubscriptionRequestExample:
+      value:
+        url: 'https://example.com/example_webhook/expiry'
+        events:
+          - name: 'authorization.accesstoken.expiry'
+            condition:
+              subscribeFor: 'institutionId'
+              excludes:
+                - '170718'
+                - '170788'
+                - '188797'
+          - name: 'manage.txpush.account.created'
+            condition:
+              subscribeFor: 'accountId'
+              includes:
+                - '100010'
+                - '100011'
+                - '100012'
+          - url: 'https://example.com/overrident_webhookurl'
+            name: 'mastercard.openbanking.customer.consent'
+    UpdateEventRequestExample:
+      summary: Example of updating an event in a subscription
+      value:
+        name: 'authorization.accesstoken.expiry'
+        condition:
+          subscribeFor: 'institutionId'
+          excludes:
+            - '170718'
+            - '170788'
+            - '188797'
+    SubscriptionCreatedResponseExample:
+      value:
+        subscriptionId: '661f3c48-f596-423b-81f5-d275d4dd1345'
+        url: 'https://example.com/example_webhook'
+        events:
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1346'
+            name: 'authorization.accesstoken.expiry'
+            condition:
+              subscribeFor: 'institutionId'
+              excludes:
+                - '170718'
+                - '170788'
+                - '188797'
+            status: 'pending'
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1347'
+            name: 'manage.txpush.account.created'
+            condition:
+              subscribeFor: 'accountId'
+              includes:
+                - '100010'
+                - '100011'
+                - '100012'
+            status: 'pending'
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1348'
+            url: 'https://example.com/overrident_webhookurl'
+            name: 'mastercard.openbanking.customer.consent'
+            status: 'pending'
+        status: 'pending'
+        createdDate: '2024-03-16T06:06:20Z'
+        lastUpdatedDate: '2024-03-16T06:06:20Z'
+    EventUpdatedResponseExample:
+      value:
+        name: 'authorization.accesstoken.expiry'
+        condition:
+          subscribeFor: 'institutionId'
+          excludes:
+            - '170718'
+            - '170788'
+            - '188797'
+    SubscriptionsResponseExample:
+      value:
+        count: 3
+        offset: 0
+        limit: 10
+        total: 3
+        subscriptions:
+          - subscriptionId: '661f3c48-f596-423b-81f5-d275d4dd1345'
+            url: 'https://example.com/example_webhook/token'
+            events:
+              - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1346'
+                name: 'authorization.accesstoken.expiry'
+                condition:
+                  subscribeFor: 'institutionId'
+                  excludes:
+                    - '170718'
+                    - '170788'
+                    - '188797'
+                status: 'active'
+              - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1347'
+                name: 'manage.txpush.account.created'
+                condition:
+                  subscribeFor: 'accountId'
+                  includes:
+                    - '100010'
+                    - '100011'
+                status: 'active'
+              - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1348'
+                name: 'mastercard.openbanking.customer.consent'
+                status: 'active'
+            status: 'active'
+            createdDate: '2024-03-16T06:06:20Z'
+            lastUpdatedDate: '2024-03-16T06:06:20Z'
+    SubscriptionDetailResponseExample:
+      value:
+        subscriptionId: '661f3c48-f596-423b-81f5-d275d4dd1345'
+        url: 'https://example.com/example_webhook/token'
+        events:
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1346'
+            name: 'authorization.accesstoken.expiry'
+            condition:
+              subscribeFor: 'institutionId'
+              excludes:
+                - '170718'
+                - '170788'
+                - '188797'
+            status: 'active'
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1347'
+            name: 'manage.txpush.account.created'
+            condition:
+              subscribeFor: 'accountId'
+              includes:
+                - '100010'
+                - '100011'
+                - '100012'
+            status: 'active'
+          - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1348'
+            name: 'mastercard.openbanking.customer.consent'
+            status: 'active'
+        status: 'active'
+        createdDate: '2024-03-16T06:06:20Z'
+        lastUpdatedDate: '2024-03-16T06:06:20Z'
+    AvailableEventsResponseExample:
+      value:
+        events:
+          - name: 'manage.txpush.account.created'
+            description: 'notification will be sent when accounts are created'
+            conditionalSubscription:
+              applicable: true
+              fields: 'accountid,customerId'
+              mandatory: false
+          - name: 'mastercard.openbanking.customer.consent'
+            description: 'Customer consent information'
+            conditionalSubscription:
+              applicable: false
+
+    GoldStandardMissingFinicityAppKey:
+      value:
+        Errors:
+          Error:
+            - Source: Connect-Components,
+              ReasonCode: 10026,
+              Description: Missing parameter (Finicity-App-Key)
+              Recoverable: false,
+              Details: Missing parameter (Finicity-App-Key)
+    GoldStandardInvalidField:
+      value:
+        Errors:
+          Error:
+            - Source: Connect-Components,
+              ReasonCode: 10010,
+              Description:
+                All request parameters could not be validated. Ensure you are
+                sending the correct data in your headers, query parameters, and
+                request body.
+              Recoverable: false,
+              Details:
+                One or more of the fields could not be validated. Please ensure
+                you have entered the correct data.
+    GoldStandardExpiredToken:
+      value:
+        Errors:
+          Error:
+            - Source: Connect-Components,
+              ReasonCode: 10023,
+              Description: Expired (Finicity-App-Token),
+              Recoverable: false,
+              Details: Expired (Finicity-App-Token)
+    GoldStandardResourceNotFound:
+      value:
+        Errors:
+          Error:
+            - Source: Connect-Components,
+              ReasonCode: 4041,
+              Description: The requested entity was not found,
+              Recoverable: false,
+              Details: The requested entity was not found
     DataNotFoundError:
       value:
         code: 14001
@@ -20409,6 +21753,7 @@ components:
             additionalDetails:
               key1: 'value1'
               key2: 'value2'
+
   parameters:
     AssetIdParameter:
       description: The asset ID
@@ -20581,6 +21926,14 @@ components:
       example: P
     InstitutionIdPathParameter:
       name: institution_id
+      in: path
+      description: The financial institution id at Mastercard.
+      required: true
+      schema:
+        type: integer
+      example: 170716
+    InstitutionIdQueryParameter:
+      name: institution_id
       in: query
       description: The financial institution id at Mastercard.
       required: false
@@ -20729,6 +22082,14 @@ components:
       schema:
         $ref: '#/components/schemas/NumericInstitutionId'
       example: 4222
+    RoutingNumberParameter:
+      name: routing_number
+      in: path
+      required: true
+      example: 847392234
+      schema:
+        $ref: '#/components/schemas/RoutingNumberInteger'
+      description: Institution routing number
     RequiredPurposeParameter:
       name: purpose
       in: query
@@ -21076,7 +22437,169 @@ components:
       schema:
         type: string
         example: 65cb40beec86d3bd0e8664cc
+
+    RequestIdHeader:
+      in: header
+      name: X-External-Request-Id
+      required: false
+      description: A unique identifier for the request.
+      schema:
+        type: string
+        example: 'f6250b41-8632-4fe1-9353-899f419ae67b'
+    SubscriptionIdPathParameter:
+      name: subscription_id
+      in: path
+      description: A unique UUID identifier of a webhook subscription.
+      required: true
+      schema:
+        type: string
+      example: '661f3c48-f596-423b-81f5-d275d4dd1345'
+    WebhookEventIdPathParameter:
+      name: webhook_event_id
+      in: path
+      description: A unique UUID identifier of a webhook event.
+      required: true
+      schema:
+        type: string
+      example: '661f3c48-f596-423b-81f5-d275d4dd1346'
+    ObwmsOffsetParameter:
+      name: offset
+      in: query
+      required: false
+      description: Index of the page of results to return.
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+        example: 1
+    ObwmsLimitParameter:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of results per page.
+      schema:
+        type: integer
+        format: int32
+        default: 10
+        minimum: 1
+        maximum: 100
+        example: 20
+
+    ConfigurationIdPathParameter:
+      name: configuration_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 9082affa-d965-40be-a3ed-a320bb3467ff
+        minLength: 36
+        maxLength: 36
+      description: The unique identifier for a configuration object
+
   schemas:
+    GoldStandardErrorMessage:
+      required:
+        - Errors
+      type: object
+      properties:
+        Errors:
+          type: object
+          required:
+            - Error
+          properties:
+            Error:
+              description: Mastercard standard error message.
+              type: array
+              items:
+                type: object
+                properties:
+                  Source:
+                    type: string
+                    description: The applications that generated the error.
+                  ReasonCode:
+                    type: string
+                    description:
+                      A unique constant identifying the error case encountered
+                      during processing.
+                  Description:
+                    type: string
+                    description: Short description of the ReasonCode field.
+                  Recoverable:
+                    type: boolean
+                    description:
+                      Indicates whether this error will always be returned for
+                      this request, or retrying could change the outcome.
+                  Details:
+                    type: string
+                    description:
+                      Where appropriate, indicates detailed information about
+                      data received and calculated during request processing, to
+                      help the user with diagnosing errors.
+    ServiceAgreement:
+      description:
+        An object that contains the language the terms and conditions were
+        present in and the date the customer accepted the terms and conditions.
+      type: object
+      required:
+        - language
+        - acceptedDate
+      properties:
+        language:
+          description:
+            The language translation of the terms and conditions as presented to
+            the customer.
+          type: string
+          example: en
+        acceptedDate:
+          description:
+            The date the customer accepted the terms and conditions. Must be a
+            valid ISO-8601 date time.
+          type: string
+          format: date-time
+          example: '2024-11-28T18:25:32+00:00'
+    ConfigurationId:
+      description:
+        Unique identifier of the configuration object to apply to this request
+      type: string
+      format: uuid
+      example: 605543e1-f507-48ad-8127-95c40566597b
+      minLength: 36
+      maxLength: 36
+    Configuration:
+      title: Configuration
+      type: object
+      description: Used to modify behavior during the login flow
+      example:
+        id: 2eb3033c-9153-4c06-bd8c-2f1cc24774a1
+        filterAccounts:
+          - Checking
+          - Savings
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2eb3033c-9153-4c06-bd8c-2f1cc24774a1
+          minLength: 36
+          maxLength: 36
+          description: The unique identifier for this configuration object
+        filterAccounts:
+          type: array
+          description: An optional filter to apply during account activation
+          items:
+            type: string
+            example: Checking
+            minLength: 1
+            maxLength: 512
+    EventStreamId:
+      type: string
+      format: uuid
+      description:
+        Unique reference to the event stream used to send events to the SDK
+      minLength: 36
+      maxLength: 36
+      example: 208a1170-875e-4656-85d0-27dfc3ee7137
     NameScore:
       required:
         - ownerName
@@ -22128,6 +23651,34 @@ components:
                 individual accounts used in this report
             customerAnalytics:
               $ref: '#/components/schemas/CustomerAnalytics'
+    AFPaymentHistoryAnalyticsReport:
+      description: A Cash Flow Analytics Report
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsReportAck'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 730
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 365 days'
+              example: true
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: >-
+                A list of institution records, including information about the
+                individual accounts used in this report
+            customerAnalytics:
+              $ref: '#/components/schemas/CustomerAnalytics'
     AggregationStatus:
       type: string
       description: |-
@@ -22313,7 +23864,7 @@ components:
           description: a list of transaction records
         details:
           $ref: '#/components/schemas/AccountDetails'
-        accountAnalytics:
+        analytics:
           $ref: '#/components/schemas/AccountAnalytics'
     AnalyticsReportConstraints:
       type: object
@@ -25440,6 +26991,14 @@ components:
       properties:
         link:
           $ref: '#/components/schemas/ConnectLink'
+    ConnectTransferBillPaySwitchLink:
+      type: object
+      description: contains url to launch connect session
+      properties:
+        link:
+          type: string
+          description: web url to launch a connect session
+          example: 'https://connect2.finicity.com?customerId=6007761187&origin=url&partnerId=2445582695152&signature=f4d278f9d0b4a54f6bc2e71aa00607900365a2625bdb5bc9ca0eaec1c4158de8&timestamp=1660164260516&ttl=1660171460516type=transferBillPaySwitch'
     ConnectTransferDepositSwitchLink:
       type: object
       description: contains url to launch connect session
@@ -27123,6 +28682,43 @@ components:
         Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
       format: int64
       example: 1607450357
+    Card:
+      type: object
+      description: Structure of the user card
+      required:
+        - title
+        - number
+        - expiry
+        - cvv
+      properties:
+        title:
+          type: string
+          description: The user title for the card in use
+          example: 'Mastercard super card'
+        number:
+          type: string
+          description:
+            The card number used for bill payment. Should be between 15-19
+            digits
+          example: '4242424242424242'
+          minLength: 15
+          maxLength: 19
+        expiry:
+          type: string
+          description: The expiry date for the card in mm/yy format
+          example: '12/27'
+        cvv:
+          type: string
+          description: The CVV / CVC number associated to the card
+          example: '123'
+          minLength: 3
+          maxLength: 4
+        brand:
+          type: string
+          description:
+            The Brand of card in use. Possible values include mastercard, visa,
+            american-express, or discover.
+          example: 'Mastercard'
     Experience:
       type: string
       description: >-
@@ -27906,6 +29502,224 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Institution'
+    InstitutionsWithRoutingNumber:
+      description: List of institutions with matching routing numbers
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/NumericInstitutionId'
+        name:
+          $ref: '#/components/schemas/InstitutionName'
+        transAgg:
+          $ref: '#/components/schemas/InstitutionTransAgg'
+        ach:
+          $ref: '#/components/schemas/InstitutionAch'
+        stateAgg:
+          $ref: '#/components/schemas/InstitutionStateAgg'
+        voi:
+          $ref: '#/components/schemas/InstitutionVoi'
+        voa:
+          $ref: '#/components/schemas/InstitutionVoa'
+        aha:
+          $ref: '#/components/schemas/InstitutionAha'
+        availBalance:
+          $ref: '#/components/schemas/InstitutionAvailableBalance'
+        accountOwner:
+          $ref: '#/components/schemas/InstitutionAccountOwner'
+        studentLoanData:
+          $ref: '#/components/schemas/StudentLoanDataCertification'
+        loanPaymentDetails:
+          $ref: '#/components/schemas/LoanPaymentDetailCertification'
+        paymentInitiation:
+          description: Institution connection is certified for paymentInitiation
+          type: boolean
+          default: false
+          example: true
+        billPayData:
+          description: billPayData is certified
+          type: boolean
+          default: false
+          example: true
+        liabilityData:
+          description: liabilityData is certified
+          type: boolean
+          default: false
+          example: true
+        accountTypeDescription:
+          type: string
+          description: >-
+            Values: Banking, Investments, Credit Cards/Accounts, Workplace
+            Retirement, Mortgages and Loans, Insurance
+          example: Workplace Retirement
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        urlHomeApp:
+          type: string
+          description: The URL of the institution's primary home page
+          example: 'https://www.example.com/home'
+        urlLogonApp:
+          type: string
+          description: The URL of the institution's login page
+          example: 'https://www.example.com/login'
+        oauthEnabled:
+          type: boolean
+          description: |-
+            "true": The institution is an OAuth connection
+
+            "false": The institution isn't an OAuth connection
+          example: true
+        urlForgotPassword:
+          type: string
+          description: Institution's forgot password page
+          example: 'https://www.example.com/forgotPassword.do'
+        urlOnlineRegistration:
+          type: string
+          description: Institution's signup page
+          example: 'https://www.example.com/signup'
+        class:
+          type: string
+          description: Institution's class
+          example: retirement
+        specialText:
+          type: string
+          description: Special instructions given to customers for login
+          example: >-
+            Please enter your Principal Financial - Retirement (Personal)
+            Username and Password.
+        timeZone:
+          type: string
+          description: The time zone of the institution.
+          example: America/Denver
+        specialInstructions:
+          type: array
+          items:
+            type: string
+          description: >-
+            Instructions given to the customer before they are sent to the
+            institution website to login for OAuth institutions.
+
+
+            Note: this helps the customer to provide the proper permission for
+            data needed for the application.
+          example:
+            - Account details
+            - Balances and transactions
+            - Personal and account ownership info
+        specialInstutionsTitle:
+          type: string
+          description:
+            'The title of the special instructions, if one exists or is
+            required.'
+          example: Special OAuth Login Instructions
+        address:
+          $ref: '#/components/schemas/InstitutionAddress'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        email:
+          $ref: '#/components/schemas/EmailAddress'
+        status:
+          type: string
+          description: >-
+            Status for the institution: "online", "offline", "maintenance",
+            "testing", "beta", "validated", "migrating"
+          example: online
+        newInstitutionId:
+          $ref: '#/components/schemas/NumericInstitutionId'
+        branding:
+          $ref: '#/components/schemas/Branding'
+        displayName:
+          description:
+            A version of the institution connection name that is more user
+            friendly
+          type: string
+          minLength: 0
+          maxLength: 255
+          example: Finbank
+        oauthInstitutionId:
+          $ref: '#/components/schemas/NumericInstitutionId'
+        countryCodes:
+          type: array
+          items:
+            description: Countries for which this connection is valid
+            type: object
+            properties:
+              countryCode:
+                description: 'Two character country code'
+                type: string
+                minLength: 2
+                maxLength: 2
+                example: US
+        overallStatusTemp:
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The overall status for the institution: 
+              - online - Connection is active, financial institution is available and functioning
+              - offline - Connection is inactive due to an issue. Financial institution is not available in Connect search
+              - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
+              - testing (Limited Availability)  - A new connection with the financial institution is still undergoing development and is only available to some select partners
+              - investigating - Connection is new and/or under monitoring due to instability
+          type: string
+          example: online
+        transAgg_status:
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Transaction Aggregation product for the
+            institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
+        voa_status:
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the VOA  product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
+        voi_status:
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the VOI product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
+        stateAgg_status:
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Statement Aggregation product for the
+            institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
+        ach_status:
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the ACH product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
+        aha_status:
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Account History Aggregation product for
+            the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
     InstitutionResponse:
       type: object
       properties:
@@ -29241,25 +31055,6 @@ components:
               type: string
               description: A new value for the Partner Secret
               example: OrU7tjiA3tIspCgb85xV
-    ServiceAgreement:
-      description: 'User service agreement acceptance details'
-      type: object
-      required:
-        - acceptedDate
-        - language
-      properties:
-        acceptedDate:
-          description:
-            'Date when the service agreement was accepted by the user (ISO-8601)'
-          type: string
-          format: date-time
-          example: '2023-05-04T15:25:21.856Z'
-        language:
-          description:
-            'Language in which the service agreement was displayed to the user
-            including country code (ISO 639-1-ISO 3166-1)'
-          type: string
-          example: 'en-US'
     PartnerId:
       type: string
       description: >-
@@ -30618,6 +32413,7 @@ components:
       anyOf:
         - $ref: '#/components/schemas/AFBalanceAnalyticsReport'
         - $ref: '#/components/schemas/AFCashFlowAnalyticsReport'
+        - $ref: '#/components/schemas/AFPaymentHistoryAnalyticsReport'
         - $ref: '#/components/schemas/CashFlowReport'
         - $ref: '#/components/schemas/PrequalificationReport'
         - $ref: '#/components/schemas/PayStatementReport'
@@ -31083,12 +32879,25 @@ components:
         * `cfrbnoncra`
 
         * `cfrbftc`
+
+        * `phrbcra`
+
+        * `phrbnoncra`
+
+        * `phrbftc`
+
       type: string
       example: voi
     RoutingNumber:
       type: string
       example: '123456789'
       description: Routing number of receiving bank
+    RoutingNumberInteger:
+      description: Routing number
+      type: integer
+      example: 9713824
+      maximum: 2147483647
+      minimum: 1
     Rssd:
       type: integer
       description: >-
@@ -32318,6 +34127,62 @@ components:
         - timeIntervalType
         - periods
       type: object
+    ConnectGenerateTransferBillPaySwitchParameters:
+      type: object
+      required:
+        - cards
+        - customerId
+        - identity
+        - partnerId
+        - singleUseUrl
+      properties:
+        serviceAgreement:
+          $ref: '#/components/schemas/ServiceAgreement'
+        accounts:
+          $ref: '#/components/schemas/DepositSwitchAccounts'
+        partnerId:
+          $ref: '#/components/schemas/PartnerId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        experience:
+          type: string
+          description: >-
+            The `experience` field allows you to customize:
+
+             * To toggle landing screen visibility
+
+             Note: the Finicity sales engineers (SE) help you set up a default
+             experience for your company. For each additional experience you
+            create
+             thereafter, they'll give you a unique ID. See [Configure the
+            Connect
+             Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
+
+
+             Experience values options:
+
+             * GUID: the code for a different experience
+          example: '03099618-8a28-41f6-b891-83af336626d6'
+        language:
+          description: |
+            By default, the Connect application is in English. You don't need to pass this parameter unless
+            you want to translate Connect into one of our supported languages.
+
+            * Spanish (United States): `es`
+          type: string
+          example: 'es'
+        singleUseUrl:
+          $ref: '#/components/schemas/SingleUseUrl'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        cards:
+          description: List of the user cards. Mandatory when use case is BPS.
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Card'
+        identity:
+          $ref: '#/components/schemas/BillPaySwitchIdentity'
     TransferDepositSwitchParameters:
       type: object
       required:
@@ -32325,7 +34190,7 @@ components:
         - customerId
         - accounts
       properties:
-        serviceAgreement::
+        serviceAgreement:
           $ref: '#/components/schemas/ServiceAgreement'
         accounts:
           $ref: '#/components/schemas/DepositSwitchAccounts'
@@ -32334,7 +34199,13 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         language:
-          $ref: '#/components/schemas/ConnectLanguage'
+          description: |
+            By default, the Connect application is in English. You don't need to pass this parameter unless
+            you want to translate Connect into one of our supported languages.
+
+            * Spanish (United States): `es`
+          type: string
+          example: 'es'
         webhook:
           $ref: '#/components/schemas/Webhook'
         webhookContentType:
@@ -32346,7 +34217,25 @@ components:
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
         experience:
-          $ref: '#/components/schemas/Experience'
+          type: string
+          description: >-
+            The `experience` field allows you to customize:
+
+             * To toggle landing screen visibility
+
+             Note: the Finicity sales engineers (SE) help you set up a default
+             experience for your company. For each additional experience you
+            create
+             thereafter, they'll give you a unique ID. See [Configure the
+            Connect
+             Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
+
+
+             Experience values options:
+
+             * GUID: the code for a different experience
+
+          example: '03099618-8a28-41f6-b891-83af336626d6'
 
     TxPushCallbackUrl:
       type: string
@@ -34280,6 +36169,180 @@ components:
                 description:
                   The trailing portion of customer's bank account number
                 example: '4126'
+    PaySwitchesSummary:
+      required:
+        - customerId
+        - customerType
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: A customer ID
+          example: '1005061234'
+        customerType:
+          type: string
+          description:
+            The type of Mastercard Open Banking customer (`active` or `testing`)
+          example: testing
+        switches:
+          type: array
+          description: Pay switches summary
+          minItems: 0
+          maxItems: 10
+          items:
+            required:
+              - id
+              - status
+              - createdDate
+            properties:
+              id:
+                type: string
+                description: Pay switch ID
+                example: 602414d84f9a1980cf5eafcc
+              status:
+                type: string
+                description: |
+                  Pay switch status. Possible values include `processing`,
+                  `completed`, or `failed`.
+
+                  * processing - The pay switch is currently being processed.
+                  * completed - The pay switch has been completed successfully.
+                  * failed - The pay switch has failed. Refer to failureReason for more details.
+                example: completed
+              failureReason:
+                type: string
+                description: |-
+                  Pay switch failure reason. Possible values include -
+                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts.
+                  * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional information from the user.
+                  * account-unusable - The user's bank account is unusable for the selected product or use case.
+                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason.
+                  * connection-error - A network error occurred which caused the connection between our system and the payroll system to be lost.
+                  * distribution-not-supported - The payroll system did not support the type of distribution requested. For example, the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net balance.
+                  * device-disconnected - The device used to start the task is no longer connected.
+                  * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via their bank.
+                  * expired - The user's password has expired and they must create a new one.
+                  * no-data-found - No verify data was found for the user.
+                  * product-not-supported - The payroll system did not allow the action to be taken. Many payroll systems allow HR to customize what is allowed in their system. Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee of that company goes to set up Direct Deposit it is rejected, resulting in this error code.
+                  * routing-number-not-supported - The account did not support the routing number entered.
+                  * session-timeout - The user's session timed out.
+                  * system-unavailable - The system was unavailable. For example, the site is undergoing maintenance or it is outside the window of scheduled availability for the site.
+                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed.
+                  * unknown-failure - We encountered an unexpected error.
+                  * user-abandon - The user was asked an MFA question, but did not answer the question.
+                  * work-status-terminated - The task could not be completed because the user's employment has been terminated.
+                example: connection-error
+              createdDate:
+                type: string
+                description:
+                  Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when
+                  deposit switch was performed
+                example: '2023-07-25T08:14:20Z'
+    PaySwitchDetails:
+      required:
+        - customerId
+        - customerType
+        - switchId
+        - switchStatus
+        - createdDate
+        - updatedDate
+        - provider
+        - paymentMethods
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: A customer ID
+          example: '1005061234'
+        customerType:
+          type: string
+          description:
+            The type of Mastercard Open Banking customer (`active` or `testing`)
+          example: testing
+        switchId:
+          type: string
+          description: Pay switch ID
+          example: 602414d84f9a1980cf5eafcc
+        switchStatus:
+          type: string
+          description: |
+            Pay switch status. Possible values include `processing`,
+            `completed`, or `failed`.
+
+            * processing - The pay switch is currently being processed.
+            * completed - The pay switch has been completed successfully.
+            * failed - The pay switch has failed. Refer to failureReason for more details.
+          example: completed
+        failureReason:
+          type: string
+          description: Pay switch failure reason
+          example: unknown-failure
+        createdDate:
+          type: string
+          description:
+            Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when deposit
+            switch was performed
+          example: '2023-07-25T08:14:20Z'
+        updatedDate:
+          type: string
+          description:
+            Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when deposit
+            switch status was updated
+          example: '2023-07-25T08:30:20Z'
+        authenticated:
+          type: boolean
+          description:
+            Indicates whether or not the pay switch task has successfully
+            authenticated against the payroll system
+          example: true
+        provider:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              description: Unique identifier for the service provider
+              example: 607e249736b9f053b536bde0
+            name:
+              type: string
+              description: The name of the service provider
+              example: Netflix
+        paymentMethods:
+          type: array
+          description: Pay switch payment details
+          items:
+            required:
+              - type
+            properties:
+              type:
+                type: string
+                description:
+                  The type of payment method used for the bill payment. Possible
+                  values include `card` or `bank`.
+                example: 'card'
+              title:
+                type: string
+                description: The title of the card / account
+                example: 'Sample Card'
+              brand:
+                type: string
+                description: The co-branding for customer's card
+                example: 'Mastercard'
+              bankIdentifier:
+                type: string
+                description: The bank routing number
+                example: '110000000'
+              endsWith:
+                type: string
+                description:
+                  The trailing portion of customer's bank account number or card
+                example: '4126'
+              bankAccountType:
+                type: string
+                description: The type of account used when payment type is bank
+                example: 'Checking'
     AllowedBalanceCacheInterval:
       type: integer
       format: int32
@@ -34290,11 +36353,79 @@ components:
         Time interval in minutes to check balance data against live balance from
         financial institution or from latest cached
       example: 1
+    BillPaySwitchIdentity:
+      description:
+        Identity information for the user. Mandatory when use case is BPS.
+      type: object
+      required:
+        - address
+        - city
+        - firstName
+        - lastName
+        - zipCode
+        - state
+        - phone
+      properties:
+        firstName:
+          type: string
+          description: User first name
+          example: 'Jane'
+          maxLength: 50
+        lastName:
+          type: string
+          description: User last name
+          example: 'Doe'
+          maxLength: 50
+        zipCode:
+          type: string
+          description: Postal / zip code of the user
+          example: '12345'
+          minLength: 5
+          maxLength: 10
+        address:
+          type: string
+          description: First line of user address
+          example: '123 Lane'
+          maxLength: 100
+        address2:
+          type: string
+          description: Second line of user address
+          example: 'Apt 987'
+          maxLength: 100
+        city:
+          type: string
+          description: City in which user is located
+          example: 'Purchase'
+          maxLength: 100
+        state:
+          type: string
+          description: State in which user is located
+          example: 'NY'
+          maxLength: 2
+        phone:
+          type: string
+          description: User phone number
+          example: '2121234567'
+          maxLength: 15
+        email:
+          type: string
+          description: User email address
+          example: 'jane.doe@example.com'
+          maxLength: 100
     DepositSwitchAccounts:
       type: array
       items:
         $ref: '#/components/schemas/DepositSwitchAccount'
       description: List of customer accounts (one or more) for Deposit Switch.
+      example:
+        - accountNumber: '7526894126'
+          bankIdentifier: '110000000'
+          title: 'My savings account'
+          type: 'savings'
+        - accountNumber: '3740238560'
+          bankIdentifier: '110000000'
+          title: 'Checking account 8560'
+          type: 'checking'
     DepositSwitchAccount:
       description: Deposit Switch account
       type: object
@@ -34326,6 +36457,317 @@ components:
             `paycard`
           type: string
           example: 'checking'
+
+    ErrorWrapper:
+      description: A top level object for errors.
+      type: object
+      required:
+        - Errors
+      properties:
+        Errors:
+          $ref: '#/components/schemas/Errors'
+    Errors:
+      description: Object that contains the list of errors.
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          $ref: '#/components/schemas/ErrorList'
+    ErrorList:
+      description: The list of errors.
+      type: array
+      minItems: 1
+      items:
+        $ref: '#/components/schemas/Error'
+    Error:
+      description: A single error.
+      type: object
+      properties:
+        Source:
+          type: string
+          minLength: 0
+          maxLength: 512
+          description: The application that generated this error
+          example: 'Event Subscription Service'
+        ReasonCode:
+          type: string
+          minLength: 0
+          maxLength: 512
+          description: >-
+            A unique constant identifying the error case encountered during
+            transaction processing
+          example: '10001'
+        Description:
+          type: string
+          minLength: 0
+          maxLength: 512
+          description:
+            Description of the ReasonCode field with additional details.
+          example: Resource Not Found.
+        Recoverable:
+          type: boolean
+          description:
+            Indicates whether this error will always be returned for this
+            request, or retrying could change the outcome
+          example: false
+        Details:
+          type: string
+          minLength: 0
+          maxLength: 512
+          description: Details for backwards compatibility.
+          example: Invalid JSON payload
+
+    WebhookUrl:
+      type: string
+      description:
+        The webhook Url where the event notifications will be sent. The URL must
+        be aligned with RFC 2396.
+      minLength: 1
+      maxLength: 2048
+      example: 'https://example.com/example_webhook'
+    Status:
+      type: string
+      description:
+        The status of the event (e.g. active, inactive, pending, removed).
+      minLength: 1
+      maxLength: 10
+      example: 'active'
+    Condition:
+      type: object
+      required:
+        - subscribeFor
+      properties:
+        subscribeFor:
+          type: string
+          description:
+            The field or entity that the event is subscribed for, such as an
+            institution or account ID.
+          minLength: 1
+          maxLength: 50
+          example: 'institutionId'
+        includes:
+          type: array
+          description:
+            A list of specific IDs or values to include in the subscription
+            condition.
+          items:
+            type: string
+          example:
+            - '100010'
+            - '100011'
+        excludes:
+          type: array
+          description:
+            A list of specific IDs or values to exclude from the subscription
+            condition.
+          items:
+            type: string
+          example:
+            - '170718'
+            - '170788'
+    WebhookEvent:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the webhook subscription event.
+          minLength: 1
+          maxLength: 255
+          example: 'authorization.accesstoken.expiry'
+        url:
+          $ref: '#/components/schemas/WebhookUrl'
+        condition:
+          $ref: '#/components/schemas/Condition'
+    Event:
+      type: object
+      required:
+        - webhookEventId
+        - name
+        - status
+      properties:
+        webhookEventId:
+          type: string
+          description: A unique UUID identifier for the webhook event.
+          minLength: 36
+          maxLength: 36
+          example: '661f3c48-f596-423b-81f5-d275d4dd1346'
+        name:
+          type: string
+          description: The name of the event.
+          minLength: 1
+          maxLength: 255
+          example: 'authorization.accesstoken.expiry'
+        url:
+          $ref: '#/components/schemas/WebhookUrl'
+        status:
+          $ref: '#/components/schemas/Status'
+        condition:
+          $ref: '#/components/schemas/Condition'
+    SubscriptionDetail:
+      type: object
+      required:
+        - subscriptionId
+        - events
+        - status
+        - createdDate
+        - lastUpdatedDate
+      properties:
+        subscriptionId:
+          type: string
+          description: A unique UUID identifier for the subscription.
+          minLength: 36
+          maxLength: 36
+          example: '661f3c48-f596-423b-81f5-d275d4dd1345'
+        url:
+          $ref: '#/components/schemas/WebhookUrl'
+        events:
+          $ref: '#/components/schemas/Events'
+        status:
+          $ref: '#/components/schemas/Status'
+        createdDate:
+          type: string
+          format: date-time
+          minLength: 1
+          maxLength: 255
+          description: Subcription creation date.
+          example: '2024-01-01T11:18:50Z'
+        lastUpdatedDate:
+          type: string
+          format: date-time
+          minLength: 1
+          maxLength: 255
+          description: Subcription last updated date.
+          example: '2024-01-01T11:18:50Z'
+    Events:
+      type: array
+      description: List of events for the subscription.
+      items:
+        $ref: '#/components/schemas/Event'
+    WebhookEvents:
+      type: array
+      description: List of webhook subscription event.
+      items:
+        $ref: '#/components/schemas/WebhookEvent'
+    CountResults:
+      type: integer
+      description:
+        The number of subscriptions currently displayed in the response.
+      minimum: 1
+      maximum: 2147483647
+      example: 10
+    OffsetResults:
+      type: integer
+      description:
+        The number of items you asked the start of the list to be offset.
+      minimum: 1
+      maximum: 2147483647
+      example: 5
+    LimitResults:
+      type: integer
+      description: The number of items you asked the list to be limited.
+      minimum: 1
+      maximum: 2147483647
+      example: 10
+    TotalResults:
+      type: integer
+      description: The total number of items in the collection.
+      minimum: 1
+      maximum: 2147483647
+      example: 10
+    Subscriptions:
+      type: object
+      required:
+        - count
+        - offset
+        - limit
+        - total
+        - subscriptions
+      properties:
+        count:
+          $ref: '#/components/schemas/CountResults'
+        offset:
+          $ref: '#/components/schemas/OffsetResults'
+        limit:
+          $ref: '#/components/schemas/LimitResults'
+        total:
+          $ref: '#/components/schemas/TotalResults'
+        subscriptions:
+          type: array
+          description: List of subscription objects returned by the API.
+          items:
+            $ref: '#/components/schemas/SubscriptionDetail'
+    AvailableEvent:
+      type: object
+      required:
+        - name
+        - description
+        - status
+      properties:
+        name:
+          type: string
+          description: The name of the event that is available for subscription.
+          minLength: 1
+          maxLength: 100
+          example: 'manage.txpush.account.created'
+        description:
+          type: string
+          description: A brief description of the event.
+          minLength: 1
+          maxLength: 500
+          example: 'Triggered when an account is created.'
+        conditionalSubscription:
+          type: object
+          required:
+            - applicable
+            - mandatory
+          properties:
+            applicable:
+              type: boolean
+              description:
+                Indicates whether conditional subscription is applicable for
+                this event.
+              example: true
+            fields:
+              type: string
+              description:
+                The fields that are applicable for conditional subscription,
+                such as `accountId` or `customerId`.
+              minLength: 1
+              maxLength: 200
+              example: 'accountId, customerId'
+            mandatory:
+              type: boolean
+              description:
+                Indicates whether the fields in the conditional subscription are
+                mandatory.
+              example: false
+    Subscription:
+      type: object
+      required:
+        - events
+      description: Request body to create or update a subscription.
+      properties:
+        url:
+          $ref: '#/components/schemas/WebhookUrl'
+        events:
+          $ref: '#/components/schemas/WebhookEvents'
+    EventStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description:
+            The status to set for the event. Can be `active`,`inactive` ,
+            `pending` or `removed`.
+          minLength: 1
+          maxLength: 10
+          example: active
+
     LinkedAccountDate:
       type: integer
       description: >-
@@ -34377,7 +36819,7 @@ components:
             "creditCard",  
             "brokerageAccount",   
             "investment",   
-            "healthSavingsAccount",   
+            "healthSavingsAccount",
             "unknown" 
 
             NOTE : If "unknown" is provided, the enrichment service will assume it is a "checking" account. An incorrect assumption could impact the results from the enrichment service.
