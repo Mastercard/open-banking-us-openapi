@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
@@ -42,10 +44,10 @@ class ConnectApiTest extends BaseTest {
             api.generateLiteConnectUrl(params);
             fail();
         } catch (ApiException e) {
+            // {"code":"10010","status":"400","message":"Customer ID does not exist or does not belong to this partner","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
             logApiException(e);
             assertErrorCodeEquals("10010", e);
            assertErrorMessageEquals("Request failed with status code 404 GET /aggregation/v1/customers/1234", e);
-
         }
     }
 
@@ -206,7 +208,27 @@ class ConnectApiTest extends BaseTest {
             fail(e);
         }
     }
+    
+    @Test
+    void generateConnectTransferBillPaySwitchUrlTest() {
+        try {
+            var params = new ConnectGenerateTransferBillPaySwitchParameters()
+                    .customerId(CUSTOMER_ID)
+                    .partnerId(PARTNER_ID)
+                    .singleUseUrl(true)
+                    .identity(ModelFactory.newBillPaySwitchIdentity("master", "card", "434 Ascension way", "Salt Lake City", "UT", "84123", "2121234567"))
+                    .cards(Arrays.asList(ModelFactory.newCard("Mastercard Super Card", "4242424242424242", "12/27", "123", "mastercard")));
+            var connectUrl = api.generateTransferBillPaySwitchUrl(params);
+            var link = connectUrl.getLink();
+            assertTrue(link.contains("type=transferBillPaySwitch"));
+            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
+            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+        } catch (ApiException e) {
+            fail(e);
+        }
+    }
 
+    
     @Test
     void generateConnectTransferDepositUrlTest() {
         try {
@@ -231,4 +253,3 @@ class ConnectApiTest extends BaseTest {
         return customerId;
     }
 }
-

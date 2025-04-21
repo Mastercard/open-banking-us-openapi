@@ -61,8 +61,8 @@ class AppRegistrationApiTest extends BaseTest {
             Assertions.fail(e);
         }
     }
-
-
+    
+    
     @Test
     void getApplicationsTest() throws ApiException {
     	try {
@@ -108,7 +108,7 @@ class AppRegistrationApiTest extends BaseTest {
             assertErrorMessageEquals("invalid application id", e);
         }
     }
-
+    
     @Test
     void migrateInstitutionLoginAccountsTest() {
         try {
@@ -123,6 +123,6 @@ class AppRegistrationApiTest extends BaseTest {
         }
     }
 
-
+   
 
 }
