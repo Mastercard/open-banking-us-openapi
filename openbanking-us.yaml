@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.25.1
+  version: 1.25.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -19,7 +19,7 @@ tags:
     description: Fetch or refresh customer accounts
   - name: 'Accounts (Simple)'
     description: Fetch simple customer accounts
-  - name: Account Owner Matching
+  - name: Identity
     description:
       Match the request details to the Institution account holder details
   - name: Account Validation Assistance
@@ -1602,19 +1602,19 @@ paths:
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/institution/v1/institutions/routingNumber/{routing_number}':
     get:
-      summary: Search for financial institution connections by routing number
+      summary: Get Institutions by Routing Number
       description: >-
         Get institution details for a given routing number. The endpoint will
         return an error if it is unable to find a match for the routing number
         or if the routing number provided is not the correct length.  <br><br>
         Please note, this endpoint only returns FIs that are mapped to
-        Mastercard Financial institutions.  Not every institution can be mapped
+        Mastercard financial institutions.  Not every institution can be mapped
         as not every institution type has a routing number.
 
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: get-institutions-by-routing-number
+      operationId: GetInstitutionsByRoutingNumber
       tags:
         - Institutions
       parameters:
@@ -3836,7 +3836,7 @@ paths:
     post:
       x-internal: true
       tags:
-        - Account Owner Matching
+        - Identity
       summary: Account Owner Match
       description: "This service returns a confidence score measuring if the
         values provided in the request match the account holder details
@@ -5401,8 +5401,7 @@ components:
                 description: List of institutions with matching routing numbers
                 type: array
                 items:
-                  $ref: >-
-                    #/components/schemas/InstitutionsWithRoutingNumber
+                  $ref: '#/components/schemas/InstitutionsWithRoutingNumber'
     GetInstitutionBrandingResponse:
       description: Institution branding was successfully retrieved
       content:
@@ -22611,8 +22610,9 @@ components:
           minimum: 0
           maximum: 100
           description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
+            'This score represent the matching between user input "name"
+            sub-attributes (firstName, middleName, lastName, suffix) along with
+            the account owner details fetch ownerName'
           example: 0
         firstName:
           type: integer
@@ -22747,8 +22747,6 @@ components:
     AccountOwnerVerificationMatchingRequestAddress:
       type: object
       properties:
-        ownerAddress:
-          $ref: '#/components/schemas/SingleLineAddress'
         line1:
           $ref: '#/components/schemas/AddressLine1'
         line2:
@@ -22781,9 +22779,9 @@ components:
         phone:
           type: string
           description: 'A valid phone number. It may only include digits.'
-          maxLength: 15
+          maxLength: 10
           pattern: '^\d+$'
-          example: '18005551234'
+          example: '8005551234'
         email:
           $ref: '#/components/schemas/EmailAddress'
     BusinessList:
@@ -23011,8 +23009,9 @@ components:
           minimum: 0
           maximum: 100
           description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
+            'This score represent the matching between user input "addresss"
+            sub-attributes (line1,line2, line3, city, state, country,
+            postalCode) with the account owner details fetch ownerAddress'
           example: 0
         type:
           type: integer
