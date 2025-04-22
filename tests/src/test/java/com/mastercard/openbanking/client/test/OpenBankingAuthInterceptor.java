@@ -3,6 +3,8 @@ package com.mastercard.openbanking.client.test;
 import com.mastercard.openbanking.client.ApiException;
 import com.mastercard.openbanking.client.api.AuthenticationApi;
 import com.mastercard.openbanking.client.model.PartnerCredentials;
+
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +46,15 @@ public class OpenBankingAuthInterceptor implements Interceptor {
                 // No "App-Token" header needed for /authentication
                 return chain.proceed(requestBuilder.build());
             }
-
             if (this.tokenExpiryTime == null || this.tokenExpiryTime.isBefore(LocalDateTime.now())) {
                 this.refreshToken();
             }
 
             // Add access token to the "Finicity-App-Token" header
             requestBuilder = requestBuilder
-                    .addHeader("Finicity-App-Token", this.token);
+                    .addHeader("Finicity-App-Token", this.token)
+                    .addHeader("App-Token", this.token)
+                    .addHeader("App-Key", this.appKey);
             return chain.proceed(requestBuilder.build());
         } catch (Exception e) {
             throw new IOException(e.getMessage());
