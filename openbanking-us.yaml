@@ -330,8 +330,10 @@ paths:
     post:
       tags:
         - Connect
-      summary: Connect Transfer URL
-      description: Generate a Connect Transfer Bill Pay Switch URL
+      summary: Connect Transfer URL for Bill Pay Switch
+      description: >-
+        Generate a Connect Transfer URL which you can use in your application to
+        allow end users to set up a bill pay switch.
       operationId: GenerateTransferBillPaySwitchUrl
       requestBody:
         $ref: '#/components/requestBodies/ConnectGenerateTransferBillPaySwitch'
@@ -346,10 +348,10 @@ paths:
     post:
       tags:
         - Connect
-      summary: 'Connect Transfer URL'
+      summary: Connect Transfer URL for Deposit Switch
       description: >-
         Generate a Connect Transfer URL which you can use in your application to
-        allow end users to select an FI for deposit switch.
+        allow end users to set up a deposit switch.
       operationId: GenerateTransferDepositSwitchUrl
       requestBody:
         $ref: '#/components/requestBodies/ConnectGenerateTransferDepositSwitch'
@@ -7132,11 +7134,13 @@ components:
         displaying: 2
         moreAvailable: true
         institutions:
-          - institutionId: 170716
+          - institutionId: 170881
+            institutionName: Citi
             status: true
             createdDate: 2020-07-30T16:11:23Z
             modifiedDate: 2020-07-30T16:11:23Z
           - institutionId: 102224
+            institutionName: Chase
             status: true
             createdDate: 2020-07-30T16:11:23Z
             modifiedDate: 2020-07-30T16:11:23Z
@@ -29732,7 +29736,8 @@ components:
           type: array
           description: 'List of institution details for an application'
           example:
-            - institutionId: 170716
+            - institutionId: 102224
+              institutionName: Chase
               status: true
               createdDate: 2020-07-30T16:11:23Z
               modifiedDate: 2020-07-30T16:11:23Z
@@ -29745,7 +29750,11 @@ components:
           type: integer
           description: The financial institution identification at Mastercard.
           format: int64
-          example: 170716
+          example: 102224
+        institutionName:
+          type: string
+          description: The financial institution name.
+          example: Chase
         status:
           type: boolean
           description:
