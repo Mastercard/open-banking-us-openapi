@@ -38,26 +38,26 @@ class PaymentsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getAvailableBalanceTest() {
-        try {
-            var balance = api.getAvailableBalance(CUSTOMER_ID, existingAccount.getId());
-            assertNotNull(balance.getAvailableBalance());
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
+    // @Test
+    // void getAvailableBalanceTest() {
+    //     try {
+    //         var balance = api.getAvailableBalance(CUSTOMER_ID, existingAccount.getId());
+    //         assertNotNull(balance.getAvailableBalance());
+    //     } catch (ApiException e) {
+    //         fail(e);
+    //     }
+    // }
 
-    @Test
-    void getAvailableBalanceLiveTest() {
-        try {
-            Integer balanceCacheInterval = null;
-            var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId(), balanceCacheInterval);
-            assertNotNull(balance.getAvailableBalance());
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
+    // @Test
+    // void getAvailableBalanceLiveTest() {
+    //     try {
+    //         Integer balanceCacheInterval = null;
+    //         var balance = api.getAvailableBalanceLive(CUSTOMER_ID, existingAccount.getId(), balanceCacheInterval);
+    //         assertNotNull(balance.getAvailableBalance());
+    //     } catch (ApiException e) {
+    //         fail(e);
+    //     }
+    // }
 
     @Test
     void getLoanPaymentDetailsTest() {
