@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.26.0
+  version: 1.27.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1300,7 +1300,7 @@ paths:
         '200':
           $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
         '400':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorBadRequestResponse'
+          $ref: '#/components/responses/GetPaymentSuccessIndicatorFcraBadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -1355,6 +1355,7 @@ paths:
       tags:
         - App Registration
       summary: Get App Registration Status
+      deprecated: true
       description: >-
         Get the status of your application registration(s).
 
@@ -2753,6 +2754,42 @@ paths:
           $ref: '#/components/responses/GetAccountACHDetailsBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/v1/reports/{reportId}/partners':
+    post:
+      tags:
+        - Reports
+      summary: Get report by ID and Lender v1
+      description: >-
+        This service is for partners who are looking to pay for copies of
+        reports as part of a process to evaluate loans for purchase by financing
+        entities.  The partner that would like the report will need the report
+        ID and the partner ID from the lender who generated the report in order
+        to retrieve the report.
+
+
+        Report data can either be retrieved as a JSON document or a PDF file. To
+        specify the format required, set the Accept request header to either
+        **application/json** or **application/pdf**. If neither is set, the
+        report format will be returned as a JSON document.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetReportByIdLender
+      parameters:
+        - $ref: '#/components/parameters/ReportIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/LenderRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v3/customers/{customerId}/reports/{reportId}':
@@ -4585,6 +4622,15 @@ components:
       in: header
       description: A token returned by the `/authentication` API
   requestBodies:
+    LenderRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Lender'
+          examples:
+            LenderRequestExample:
+              $ref: '#/components/examples/LenderRequestExample'
     AccountOwnerVerificationMatchingRequest:
       required: true
       content:
@@ -5343,8 +5389,29 @@ components:
               $ref: '#/components/examples/MissingSettleByDateExample'
             MissingSettlementAmountExample:
               $ref: '#/components/examples/MissingSettlementAmountExample'
-            PSIAccountErrorBadRequestExample:
-              $ref: '#/components/examples/PSIAccountErrorBadRequestExample'
+            InvalidSettleByDateExample:
+              $ref: '#/components/examples/InvalidSettleByDateExample'
+            IncorrectFieldTypeExample:
+              $ref: '#/components/examples/IncorrectFieldTypeExample'
+            AccountHasNoTransactionExample:
+              $ref: '#/components/examples/AccountHasNoTransactionExample'
+            RequiredFieldParameterExample:
+              $ref: '#/components/examples/RequiredFieldParameterExample'
+            InactiveAccountExample:
+              $ref: '#/components/examples/InactiveAccountExample'
+    GetPaymentSuccessIndicatorFcraBadRequestResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            MissingSettleByDateExample:
+              $ref: '#/components/examples/MissingSettleByDateExample'
+            MissingSettlementAmountExample:
+              $ref: '#/components/examples/MissingSettlementAmountExample'
             InvalidPurposeCodeExample:
               $ref: '#/components/examples/InvalidPurposeCodeExample'
             InvalidSettleByDateExample:
@@ -5357,8 +5424,8 @@ components:
               $ref: '#/components/examples/RequiredFieldParameterExample'
             InactiveAccountExample:
               $ref: '#/components/examples/InactiveAccountExample'
-            ProvideEmailIdExample:
-              $ref: '#/components/examples/ProvideEmailIdExample'
+            MissingEmailExample:
+              $ref: '#/components/examples/MissingEmailExample'
     GetPaymentSuccessIndicatorNotFoundResponse:
       description: Required details not found
       content:
@@ -6499,8 +6566,10 @@ components:
           schema:
             $ref: '#/components/schemas/DepositSwitchDetails'
           examples:
-            DepositSwitchDetailsExample:
-              $ref: '#/components/examples/DepositSwitchDetailsExample'
+            DepositSwitchDetailsSuccessExample:
+              $ref: '#/components/examples/DepositSwitchDetailsSuccessExample'
+            DepositSwitchDetailsFailureExample:
+              $ref: '#/components/examples/DepositSwitchDetailsFailureExample'
     PaySwitchesSummary:
       description: Pay switches performed by the customer
       content:
@@ -6517,8 +6586,12 @@ components:
           schema:
             $ref: '#/components/schemas/PaySwitchDetails'
           examples:
-            PaySwitchDetailsExample:
-              $ref: '#/components/examples/PaySwitchDetailsExample'
+            PaySwitchDetailsCardSuccessExample:
+              $ref: '#/components/examples/PaySwitchDetailsCardSuccessExample'
+            PaySwitchDetailsAccountSuccessExample:
+              $ref: '#/components/examples/PaySwitchDetailsAccountSuccessExample'
+            PaySwitchDetailsFailureExample:
+              $ref: '#/components/examples/PaySwitchDetailsFailureExample'
     SwitchDetailsNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -7035,7 +7108,7 @@ components:
         code: 10013
         message:
           Only active accounts can be used, please use a different account
-    ProvideEmailIdExample:
+    MissingEmailExample:
       value:
         code: 12022
         message: An email is required when registering a customer for PSI-FCRA
@@ -7260,6 +7333,14 @@ components:
             status: true
             createdDate: 2020-07-30T16:11:23Z
             modifiedDate: 2020-07-30T16:11:23Z
+    LenderRequestExample:
+      value:
+        id: 2345654326978
+        name: Test Lender
+        purpose: 31
+        brokerInstitutionId: 12345
+        brokerInstitutionName: Finbank
+        lenderPartnerId: 2345654326978
     GeneratePayrollReportRequestExample:
       value:
         payrollData:
@@ -8913,12 +8994,12 @@ components:
     MissingSettleByDateExample:
       summary: Missing parameter (settleByDate)
       value:
-        code: 10005
+        code: 10009
         message: Missing parameter (settleByDate)
     MissingSettlementAmountExample:
       summary: Missing parameter (settlementAmount)
       value:
-        code: 10005
+        code: 10009
         message: Missing parameter (settlementAmount)
     PSIAccountErrorBadRequestExample:
       summary: PSI Bad Request
@@ -23574,13 +23655,12 @@ components:
             status: failed
             failureReason: bad-credentials
             createdDate: '2024-02-13T10:13:27Z'
-    DepositSwitchDetailsExample:
+    DepositSwitchDetailsSuccessExample:
       value:
         customerId: '1005061234'
         customerType: testing
         switchId: 602414d84f9a1980cf5eafcc
         switchStatus: completed
-        failureReason: distribution-not-supported
         createdDate: '2023-07-25T08:14:20Z'
         updatedDate: '2023-07-25T08:30:20Z'
         authenticated: true
@@ -23592,18 +23672,34 @@ components:
             allocatedValue: 52
             bankIdentifier: '110000000'
             accountNumberEndsWith: '4126'
+    DepositSwitchDetailsFailureExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switchId: 602414d84f9a1980cf5eafcc
+        switchStatus: failed
+        failureReason: distribution-not-supported
+        createdDate: '2023-07-25T08:14:20Z'
+        updatedDate: '2023-07-25T08:30:20Z'
+        authenticated: true
+        provider:
+          id: 607e249736b9f053b536bde0
+          name: Paycom
+        distributions:
+          - type: total
+            bankIdentifier: '110000000'
+            accountNumberEndsWith: '4125'
     SwitchDetailsNotFoundExample:
       value:
         status: '404'
         code: '1643'
         message: No matching record found for switch_id 65d87d2d8c831ae0f3174ed6
-    PaySwitchDetailsExample:
+    PaySwitchDetailsCardSuccessExample:
       value:
         customerId: '1005061234'
         customerType: testing
         switchId: 602414d84f9a1980cf5eafcc
         switchStatus: completed
-        failureReason: connection-error
         createdDate: '2023-07-25T08:14:20Z'
         updatedDate: '2023-07-25T08:30:20Z'
         authenticated: true
@@ -23614,8 +23710,34 @@ components:
           - type: 'card'
             title: 'Sample Card'
             brand: 'Mastercard'
+            endsWith: '4126'
+    PaySwitchDetailsAccountSuccessExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switchId: 602414d84f9a1980cf5eafcc
+        switchStatus: completed
+        createdDate: '2023-07-25T08:14:20Z'
+        updatedDate: '2023-07-25T08:30:20Z'
+        authenticated: true
+        provider:
+          id: 607e249736b9f053b536bde0
+          name: CashApp
+        paymentMethods:
+          - type: 'bank'
+            title: 'Sample Account'
             bankIdentifier: '110000000'
             accountNumberEndsWith: '4126'
+    PaySwitchDetailsFailureExample:
+      value:
+        customerId: '1005061234'
+        customerType: testing
+        switchId: 602414d84f9a1980cf5eafcc
+        switchStatus: failed
+        failureReason: connection-error
+        createdDate: '2023-07-25T08:14:20Z'
+        updatedDate: '2023-07-25T08:30:20Z'
+        authenticated: false
     ObmwsResourceNotFoundExample:
       value:
         Errors:
@@ -25093,6 +25215,29 @@ components:
         minLength: 7
       maxLength: 12
       example: '8042221111'
+    Lender:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id
+          example: 2345654326978
+        name:
+          type: string
+          description: Name of the Lender
+          example: Test Lender
+        purpose:
+          $ref: '#/components/schemas/PurposeCode'
+        brokerInstitutionId:
+          $ref: '#/components/schemas/NumericInstitutionId'
+        brokerInstitutionName:
+          type: string
+          description: Institution name of the Broker
+          example: FinBank
+        lenderPartnerId:
+          type: string
+          description: PartnerId of the Lender
+          example: 2345654326978
     NewBusiness:
       type: object
       required:
@@ -38382,7 +38527,37 @@ components:
                 example: completed
               failureReason:
                 type: string
-                description: Deposit switch failure reason
+                description: |
+                  Deposit switch failure reason. Possible values include - 
+                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
+                  * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional
+                  information from the user. 
+                  * account-unusable - The user's bank account is unusable for the selected product or use case.
+                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+                  * connection-error - A network error occurred which caused the connection between our system and the payroll system to be
+                  lost. 
+                  * distribution-not-supported - The payroll system did not support the type of distribution requested. For example,
+                  the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net
+                  balance. 
+                  * device-disconnected - The device used to start the task is no longer connected. 
+                  * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via
+                  their bank. 
+                  * expired - The user's password has expired and they must create a new one. 
+                  * no-data-found - No verify data was found for the user. 
+                  * product-not-supported - The payroll system did not allow the action to be taken. Many payroll
+                  systems allow HR to customize what is allowed in their system.
+                  Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee
+                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code. 
+                  * routing-number-not-supported - The account did not support the routing number entered. 
+                  * session-timeout - The user's session timed out. 
+                  * system-unavailable - The system was unavailable. For example,
+                  the site is undergoing maintenance or it is outside the window
+                  of scheduled availability for the site. 
+                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. 
+                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed. 
+                  * unknown-failure - We encountered an unexpected error. 
+                  * user-abandon - The user was asked an MFA question, but did not answer the question. 
+                  * work-status-terminated - The task could not be completed because the user's employment has been terminated.
                 example: bad-credentials
               createdDate:
                 type: string
@@ -38427,7 +38602,45 @@ components:
           example: completed
         failureReason:
           type: string
-          description: Deposit switch failure reason
+          description: |
+            Deposit switch failure reason. Possible values include - 
+            * account-lockout - The account is locked out, most likely the end
+            user has had too many failed attempts. 
+            * account-setup-incomplete - The user's account in the payroll system is not fully set up and
+            will require additional information from the user. 
+            * account-unusable - The user's bank account is unusable for the
+            selected product or use case. 
+            * bad-credentials - Either the username or password was incorrect. This is our most common fail
+            reason. 
+            * connection-error - A network error occurred which caused
+            the connection between our system and the payroll system to be lost.
+            * distribution-not-supported - The payroll system did not support
+            the type of distribution requested. For example, the user attempted
+            to allocate a percentage of their paycheck, but is only eligible for
+            fixed amounts and remainder/net balance. 
+            * device-disconnected - The device used to start the task is no longer connected. 
+            * enrolled-in-paycard - The user is enrolled in a paycard program
+            instead of direct deposit via their bank. 
+            * expired - The user's password has expired and they must create a new one. * no-data-found
+            - No verify data was found for the user. 
+            * product-not-supported - The payroll system did not allow the action to be taken. Many
+            payroll systems allow HR to customize what is allowed in their
+            system. Direct Deposit may be allowed by a payroll system, but may
+            be disallowed by a specific employer. Therefore, when an employee of
+            that company goes to set up Direct Deposit it is rejected, resulting
+            in this error code. 
+            * routing-number-not-supported - The account did not support the routing number entered. 
+            * session-timeout - The user's session timed out. 
+            * system-unavailable - The system was unavailable. For example, the site is undergoing maintenance or it
+            is outside the window of scheduled availability for the site. 
+            * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. For
+            example, if an employer has an approval process in place, they may
+            disallow modifications until the update has been processed. 
+            * unknown-failure - We encountered an unexpected error. 
+            * user-abandon - The user was asked an MFA question, but did not answer the
+            question. 
+            * work-status-terminated - The task could not be completed
+            because the user's employment has been terminated.
           example: bad-credentials
         createdDate:
           type: string
@@ -38539,23 +38752,18 @@ components:
                 description: |-
                   Pay switch failure reason. Possible values include -
                   * account-lockout - The account is locked out, most likely the end user has had too many failed attempts.
-                  * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional information from the user.
                   * account-unusable - The user's bank account is unusable for the selected product or use case.
                   * bad-credentials - Either the username or password was incorrect. This is our most common fail reason.
-                  * connection-error - A network error occurred which caused the connection between our system and the payroll system to be lost.
-                  * distribution-not-supported - The payroll system did not support the type of distribution requested. For example, the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net balance.
+                  * connection-error - A network error occurred which caused the connection between our system and the bank/payroll system to be lost.
                   * device-disconnected - The device used to start the task is no longer connected.
-                  * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via their bank.
                   * expired - The user's password has expired and they must create a new one.
                   * no-data-found - No verify data was found for the user.
-                  * product-not-supported - The payroll system did not allow the action to be taken. Many payroll systems allow HR to customize what is allowed in their system. Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee of that company goes to set up Direct Deposit it is rejected, resulting in this error code.
                   * routing-number-not-supported - The account did not support the routing number entered.
                   * session-timeout - The user's session timed out.
                   * system-unavailable - The system was unavailable. For example, the site is undergoing maintenance or it is outside the window of scheduled availability for the site.
-                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed.
+                  * transaction-pending - There is an allocation already in progress and additional updates cannot be made at this time.
                   * unknown-failure - We encountered an unexpected error.
                   * user-abandon - The user was asked an MFA question, but did not answer the question.
-                  * work-status-terminated - The task could not be completed because the user's employment has been terminated.
                 example: connection-error
               createdDate:
                 type: string
@@ -38600,7 +38808,24 @@ components:
           example: completed
         failureReason:
           type: string
-          description: Pay switch failure reason
+          description: |
+            Pay switch failure reason. Possible values include - 
+            * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
+            * account-unusable - The user's bank account is unusable for the selected product or use case. 
+            * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+            * connection-error - A network error occurred which caused the connection between our
+            system and the bank/payroll system to be lost. 
+            * device-disconnected - The device used to start the task is no longer connected. 
+            * expired - The user's password has expired and they must create a new one. 
+            * no-data-found - No verify data was found for the user. 
+            * routing-number-not-supported - The account did not support the routing number entered. 
+            * session-timeout - The user's session timed out. 
+            * system-unavailable - The system was unavailable. For example, the site is undergoing 
+            maintenance or it is outside the window of scheduled availability for the site. 
+            * transaction-pending - There is an allocation already in progress and additional updates cannot
+            be made at this time. 
+            * unknown-failure - We encountered an unexpected error. 
+            * user-abandon - The user was asked an MFA question, but did not answer the question.
           example: unknown-failure
         createdDate:
           type: string
