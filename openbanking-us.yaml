@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.27.0
+  version: 1.27.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2277,6 +2277,7 @@ paths:
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
+        - $ref: '#/components/parameters/ShowDailyBalanceParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionsResponse'
@@ -23593,11 +23594,13 @@ components:
         paymentInstruction:
           - type: ach
             accountNumber: '1000001111'
+            tanEnabled: true
             descriptors:
               - type: routingNumber
                 value: '091000019'
           - type: rtp
-            accountNumber: '1000001111'
+            accountNumber: '1000001112'
+            tanEnabled: false
             descriptors:
               - type: routingNumber
                 value: '091000019'
@@ -23608,6 +23611,7 @@ components:
         paymentInstruction:
           - type: ach
             accountNumber: '1000001111'
+            tanEnabled: true
             descriptors:
               - type: routingNumber
                 value: '091000019'
@@ -24162,6 +24166,16 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/IncludePending'
+      example: false
+    ShowDailyBalanceParameter:
+      description:
+        Request daily beginning and ending account balances for each day
+        transactions are recorded (query parameter)
+      name: showDailyBalance
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ShowDailyBalance'
       example: false
     AppIdPathParameter:
       name: application_id
@@ -29403,6 +29417,8 @@ components:
           $ref: '#/components/schemas/ConnectFromDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        isHostedInMobileApp:
+          $ref: '#/components/schemas/isHostedInMobileApp'
         isWebView:
           $ref: '#/components/schemas/IsWebView'
     ConnectUrl:
@@ -31243,6 +31259,8 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
+        isHostedInMobileApp:
+          $ref: '#/components/schemas/isHostedInMobileApp'
         isWebView:
           $ref: '#/components/schemas/IsWebView'
     FoundResults:
@@ -32356,6 +32374,12 @@ components:
         score indicating a riskier IP address. A number between 0 and 1 rounded
         to three decimal places.
       example: 0.123
+    isHostedInMobileApp:
+      description:
+        Indicates whether Connect is hosted in a web view / secure container of
+        the partner mobile app. It is only required for NON SDK integrations.
+      type: boolean
+      example: false
     IsWebView:
       type: boolean
       description: >-
@@ -32433,6 +32457,8 @@ components:
           $ref: '#/components/schemas/Experience'
         singleUseUrl:
           $ref: '#/components/schemas/SingleUseUrl'
+        isHostedInMobileApp:
+          $ref: '#/components/schemas/isHostedInMobileApp'
         isWebView:
           $ref: '#/components/schemas/IsWebView'
     LoanPaymentDetailCertification:
@@ -34814,8 +34840,10 @@ components:
       type: string
       description: >-
         The URL that customers will be redirected to after completing Finicity
-        Connect. Required unless Connect is embedded inside our application
-        (iframe).
+        Connect.  Required unless Connect is embedded inside our application
+        (iframe). Required for NON SDK integrations, should be iOS universal
+        link OR Android app link  when Connect is hosted in a web view / secure
+        container of the partner mobile app.
       example: 'https://www.finicity.com/connect/'
     RegisteredApplication:
       required:
@@ -36257,6 +36285,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Transaction'
+        dailyBalances:
+          description:
+            Array of daily beginning and ending account balances for each day
+            that transactions are recorded
+          type: array
+          items:
+            $ref: '#/components/schemas/DailyBalance'
+    DailyBalance:
+      required:
+        - date
+        - beginning
+        - ending
+      type: object
+      properties:
+        date:
+          $ref: '#/components/schemas/UnixDate'
+        beginning:
+          $ref: '#/components/schemas/Beginning'
+        ending:
+          $ref: '#/components/schemas/Ending'
+    Beginning:
+      type: number
+      description: Beginning daily account balance
+      example: 1000.00
+    Ending:
+      type: number
+      description: Ending daily account balance.
+      example: 983.96
     TransactionsFromDate:
       type: string
       description:
@@ -36593,24 +36649,7 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         experience:
-          type: string
-          description: >-
-            The `experience` field allows you to customize:
-
-             * To toggle landing screen visibility
-
-             Note: the Finicity sales engineers (SE) help you set up a default
-             experience for your company. For each additional experience you
-            create
-             thereafter, they'll give you a unique ID. See [Configure the
-            Connect
-             Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
-
-
-             Experience values options:
-
-             * GUID: the code for a different experience
-          example: '03099618-8a28-41f6-b891-83af336626d6'
+          $ref: '#/components/schemas/Experience'
         language:
           description: |
             By default, the Connect application is in English. You don't need to pass this parameter unless
@@ -36665,26 +36704,7 @@ components:
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
         experience:
-          type: string
-          description: >-
-            The `experience` field allows you to customize:
-
-             * To toggle landing screen visibility
-
-             Note: the Finicity sales engineers (SE) help you set up a default
-             experience for your company. For each additional experience you
-            create
-             thereafter, they'll give you a unique ID. See [Configure the
-            Connect
-             Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
-
-
-             Experience values options:
-
-             * GUID: the code for a different experience
-
-          example: '03099618-8a28-41f6-b891-83af336626d6'
-
+          $ref: '#/components/schemas/Experience'
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
@@ -38363,6 +38383,13 @@ components:
           type: string
           description: 'The account number from the institution'
           example: '124344454'
+        tanEnabled:
+          type: boolean
+          default: false
+          description:
+            This field indicates whether the FI uses a tokenized account number
+            for origination purposes.
+          example: true
         descriptors:
           type: array
           description: List of descriptors
@@ -38466,7 +38493,6 @@ components:
         - state
         - zip
         - phone
-        - url
       type: object
       properties:
         name:
@@ -39732,3 +39758,7 @@ components:
             minimum: 0
             maximum: 100.0
             example: 18.95
+    ShowDailyBalance:
+      type: boolean
+      example: true
+      default: false
