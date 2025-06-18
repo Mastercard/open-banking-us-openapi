@@ -33,7 +33,7 @@ class TransactionsApiTest extends BaseTest {
             existingAccountId = account.getId();
 
             // Find an existing transaction ID
-            var transaction = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true, false)
+            var transaction = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true)
                     .getTransactions()
                     .stream()
                     .findFirst();
@@ -75,7 +75,7 @@ class TransactionsApiTest extends BaseTest {
     @Test
     void getCustomerAccountTransactionsTest() {
         try {
-            var transactions = api.getCustomerAccountTransactions(CUSTOMER_ID, existingAccountId, fromDate, toDate, null, null, null, true);
+            var transactions = api.getCustomerAccountTransactions(CUSTOMER_ID, existingAccountId, fromDate, toDate, null, null, null, true,false);
             assertTrue(transactions.getTransactions().size() > 0);
         } catch (ApiException e) {
             Assertions.fail(e);
