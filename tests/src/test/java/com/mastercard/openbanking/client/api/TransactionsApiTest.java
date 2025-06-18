@@ -33,7 +33,7 @@ class TransactionsApiTest extends BaseTest {
             existingAccountId = account.getId();
 
             // Find an existing transaction ID
-            var transaction = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true)
+            var transaction = api.getAllCustomerTransactions(CUSTOMER_ID, fromDate, toDate, null, null, null, true, false)
                     .getTransactions()
                     .stream()
                     .findFirst();
