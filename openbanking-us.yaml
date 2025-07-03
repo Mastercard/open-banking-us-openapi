@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.27.1
+  version: 1.28.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -7164,6 +7164,7 @@ components:
           One or more of the fields could not be validated. Please ensure you
           have entered the correct data.
         tags: ''
+        title: 'Incomplete submission'
     PermissiblePurposeCodeExample:
       value:
         code: '10100'
@@ -7241,7 +7242,9 @@ components:
         code: '10022'
         status: '401'
         message: Invalid authorization credentials
-        user_message: The session has expired or is invalid
+        user_message:
+          Your connection timed out due to inactivity. Please log in again to
+          complete your account linking.
         tags: ''
     NoAccountForInstitutionLoginIdExample:
       value:
@@ -24253,8 +24256,8 @@ components:
       name: status
       in: query
       description:
-        The application registration status with Mastercard. 'A'=Active ,
-        'P'=Pending , 'D'=Deleted , 'R'=Rejected.
+        The application registration status with Mastercard. ('A'=Approved,
+        'P'=Pending, 'D'=Deleted, 'R'=Rejected, 'S'=Skipped)
       required: false
       schema:
         type: string
@@ -26429,7 +26432,9 @@ components:
         The status of an app registration request. "A" means approved. "P" means
         pending which is the status when initially submitted or when the app is
         modified and awaiting approval. "R" means rejected. If it is rejected
-        there will be a note with the rejected reason.
+        there will be a note with the rejected reason. "S" stands for "Skipped"
+        and indicates that app registration with the data provider will not be
+        required.
       type: string
       example: P
     AppStatus:
@@ -26492,8 +26497,8 @@ components:
         status:
           type: string
           description:
-            The application registration status with Mastercard.'A'=Active ,
-            'P'=Pending , 'D'=Deleted , 'R'=Rejected.
+            The application registration status with Mastercard ('A'=Approved,
+            'P'=Pending, 'D'=Deleted, 'R'=Rejected, 'S'=Skipped)
           example: A
         name:
           type: string
@@ -31110,6 +31115,10 @@ components:
           example: 'MAC1005061234'
           minLength: 0
           maxLength: 511
+        tags:
+          type: string
+          description: Categories that the error belongs to
+          example: AGG
     EstimateInclusion:
       description: 'Possible values: "HIGH", "MODERATE", "LOW", "NO"'
       type: string
@@ -31198,6 +31207,26 @@ components:
         Connect's out of the box default experience (add accounts but no
         branding) is used, and the MVS modules will not run.
       example: default
+    TransferExperience:
+      type: string
+      description: >-
+        The `experience` field allows you to customize:
+
+          * To toggle landing screen visibility
+
+          Note: the Finicity sales engineers (SE) help you set up a default
+          experience for your company. For each additional experience you
+        create
+          thereafter, they'll give you a unique ID. See [Configure the
+        Connect
+          Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
+
+
+          Experience values options:
+
+          * "default": your default experience (must be defined)
+          * GUID: the code for a different experience
+      example: '03099618-8a28-41f6-b891-83af336626d6'
     ExtractDeductions:
       type: boolean
       description:
@@ -36649,7 +36678,7 @@ components:
         customerId:
           $ref: '#/components/schemas/CustomerId'
         experience:
-          $ref: '#/components/schemas/Experience'
+          $ref: '#/components/schemas/TransferExperience'
         language:
           description: |
             By default, the Connect application is in English. You don't need to pass this parameter unless
@@ -36704,7 +36733,7 @@ components:
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
         experience:
-          $ref: '#/components/schemas/Experience'
+          $ref: '#/components/schemas/TransferExperience'
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
@@ -39014,6 +39043,7 @@ components:
           type: string
           description: The user's bank account number
           minLength: 4
+          maxLength: 17
           example: '7526894126'
         bankIdentifier:
           description: >-
@@ -39029,11 +39059,9 @@ components:
           example: 'My savings account'
         type:
           description: >-
-            Financial institution account type. Options `checking`, `savings` or
-            `paycard`
+            Financial institution account type. Options `checking` or `savings`
           type: string
           example: 'checking'
-
     ErrorWrapper:
       description: A top level object for errors.
       type: object
