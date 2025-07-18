@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.29.0
+  version: 1.29.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -24155,7 +24155,7 @@ components:
             transactionFee: 0.00
             transactionCategory: 'Coffee Shops'
             transactionCategoryScore: 45.0
-            transactionCategoryGroup: 'Dining'
+            transactionCategoryGroup: 'Groceries & Dining'
             type: 'DEBIT'
             directionIndicator: 'Debit'
             entities:
@@ -24190,7 +24190,7 @@ components:
             transactionFee: 0.00
             transactionCategory: 'Food & Dining'
             transactionCategoryScore: 39.87
-            transactionCategoryGroup: 'Dining'
+            transactionCategoryGroup: 'Groceries & Dining'
             type: 'DEBIT'
             directionIndicator: 'Debit'
             entities:
@@ -24200,12 +24200,6 @@ components:
                 website: 'https://mcdonalds.com'
                 logoUrl: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5Mzc1Mzc1MjQ4OTk4NA==/logo.svg'
                 entityStandardizationConfidenceScore: 96.77
-              - name: 'PayPal'
-                category: 'Payment Processor'
-                entityStandardizationConfidenceScore: 99.05
-              - name: 'GrubHub'
-                category: 'Platform'
-                entityStandardizationConfidenceScore: 83.90
             address:
               line1: '101 S Broad St'
               line2: ''
@@ -24236,7 +24230,7 @@ components:
             isRecurringTransaction: false
             locationId: '876875444777'
             isEcommerce: false
-            isBrickAndMortar: false
+            isBrickAndMortar: true
             matchConfidenceScore: 97
     PaymentEnablementBundleResponseExample:
       value:
@@ -39857,7 +39851,11 @@ components:
         cardAcceptorId:
           type: string
           description:
-            A unique identifier for a merchant assigned by the acquirer.
+            Also known as CAID, Merchant ID, or DE42, cardAcceptorId is an
+            alphanumeric string assigned by the acquiring bank (Acquirer) to a
+            merchant or merchant location. It serves as a unique identifier for
+            the point of transaction origin, such as a physical store, payment
+            terminal, or online checkout page.
           minLength: 0
           maxLength: 15
           example: '234523095820935'
@@ -40032,6 +40030,59 @@ components:
           example:
             key1: 'value1'
             key2: 'value2'
+        cardAcceptorId:
+          type: string
+          description:
+            Also known as CAID, Merchant ID, or DE42, cardAcceptorId is an
+            alphanumeric string assigned by the acquiring bank (Acquirer) to a
+            merchant or merchant location. It serves as a unique identifier for
+            the point of transaction origin, such as a physical store, payment
+            terminal, or online checkout page.
+          minLength: 0
+          maxLength: 15
+          example: '234523095820935'
+        inputIsRecurringTransaction:
+          type: boolean
+          description:
+            A flag in the input indicating whether the transaction is recurring
+            or not.
+          example: false
+        inputMerchantInformation:
+          $ref: '#/components/schemas/InputMerchantInformation'
+        isRecurringTransaction:
+          type: boolean
+          description:
+            A flag indicating whether the transaction is recurring or not.
+          example: false
+        locationId:
+          type: number
+          description:
+            The Mastercard assigned location id representing this merchant
+            location.
+          example: 876875444777
+          minLength: 0
+          maxLength: 32
+        isEcommerce:
+          type: boolean
+          description:
+            A flag indicating whether the business location is ecommerce or not.
+          example: false
+        isBrickAndMortar:
+          type: boolean
+          description:
+            A boolean value indicating if the identified merchant is a brick and
+            mortar location.
+          example: false
+        matchConfidenceScore:
+          type: number
+          minimum: 0
+          maximum: 100
+          description:
+            If the merchantDescriptor is used to select the locationId and
+            location details, a matchConfidenceScore is returned, indicating the
+            score between the merchantDescriptor and the selected information
+            from our internal data on merchants.
+          example: 97
     AdditionalDetails:
       type: string
     DESAddress:
