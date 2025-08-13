@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.30.0
+  version: 1.30.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2359,7 +2359,7 @@ paths:
 
 
         This is a premium service, billable per every successful API call for
-        non-testing customers. A successful call to this API will generate
+        non-testing customers. A successful call to this API will generate an
         analytics report which can be retrieved via Get Report by Customer or
         Get Report by Consumer.
 
@@ -2409,7 +2409,7 @@ paths:
 
 
         This is a premium service, billable per every successful API call for
-        non-testing customers. A successful call to this API will generate
+        non-testing customers. A successful call to this API will generate an
         analytics report which can be retrieved via Get Report by Customer or
         Get Report by Consumer.
 
@@ -2458,7 +2458,7 @@ paths:
 
 
         This is a premium service, billable per every successful API call for
-        non-testing customers. A successful call to this API will generate
+        non-testing customers. A successful call to this API will generate an
         analytics report which can be retrieved via Get Report by Customer or
         Get Report by Consumer.
 
@@ -7076,7 +7076,7 @@ components:
             EnrichedTransactionsExample:
               $ref: '#/components/examples/EnrichedTransactionsExample'
     NotFoundErrorResponse:
-      description: Authentication information was missing or invalid
+      description: Resource not found.
       content:
         application/json:
           schema:
@@ -24282,17 +24282,17 @@ components:
             cardAcceptorId: '006952800649MDF'
             inputIsRecurringTransaction: false
             inputMerchantInformation:
-              - merchantDescriptor: 'MCDONALDS10649CLINTONSC'
-                name: 'McDonalds'
-                line1: '101 S Broad St'
-                city: 'Clinton'
-                state: 'SC'
-                postalCode: '29325'
-                country: 'US'
-                phoneNumber: '8648334816'
-                website: 'https://www.mcdonalds.com'
-                merchantCategoryCode: '5814'
-                merchantCategoryName: 'FAST FOOD RESTAURANTS'
+              merchantDescriptor: 'MCDONALDS10649CLINTONSC'
+              name: 'McDonalds'
+              line1: '101 S Broad St'
+              city: 'Clinton'
+              state: 'SC'
+              postalCode: '29325'
+              country: 'US'
+              phoneNumber: '8648334816'
+              website: 'https://www.mcdonalds.com'
+              merchantCategoryCode: '5814'
+              merchantCategoryName: 'FAST FOOD RESTAURANTS'
     EnrichedTransactionsExample:
       value:
         transactions:
@@ -24369,17 +24369,17 @@ components:
             cardAcceptorId: '006952800649MDF'
             inputIsRecurringTransaction: false
             inputMerchantInformation:
-              - merchantDescriptor: 'MCDONALDS10649CLINTONSC'
-                name: 'McDonalds'
-                line1: '101 S Broad St'
-                city: 'Clinton'
-                state: 'SC'
-                postalCode: '29325'
-                country: 'US'
-                phoneNumber: '8648334816'
-                website: 'https://www.mcdonalds.com'
-                merchantCategoryCode: '5814'
-                merchantCategoryName: 'FAST FOOD RESTAURANTS'
+              merchantDescriptor: 'MCDONALDS10649CLINTONSC'
+              name: 'McDonalds'
+              line1: '101 S Broad St'
+              city: 'Clinton'
+              state: 'SC'
+              postalCode: '29325'
+              country: 'US'
+              phoneNumber: '8648334816'
+              website: 'https://www.mcdonalds.com'
+              merchantCategoryCode: '5814'
+              merchantCategoryName: 'FAST FOOD RESTAURANTS'
             isRecurringTransaction: false
             locationId: '876875444777'
             isEcommerce: false
@@ -40460,86 +40460,84 @@ components:
       description:
         InputMerchantInformation is an object containing merchant details in the
         request body.
-      type: array
-      items:
-        type: object
-        properties:
-          merchantDescriptor:
-            type: string
-            description:
-              This is a concatenated combination of DE43 merchant name, DE43
-              merchant city and DE43 merchant state. Spaces should be excluded
-              when concatenating these fields. If merchant state is not provided
-              by the acquirer, use merchant name and city only. If the acquirer
-              provides a country code instead of a state, use a combination of
-              merchant name, city, and country.
-            minLength: 0
-            maxLength: 50
-            example: 'MCDONALDS10649CLINTONSC'
-          name:
-            type: string
-            description: Name of the merchant.
-            minLength: 0
-            maxLength: 256
-            example: 'McDonalds'
-          line1:
-            type: string
-            description: Line 1 of the transaction address.
-            minLength: 0
-            maxLength: 100
-            example: '101 S Broad St'
-          city:
-            type: string
-            description: City of the transaction.
-            minLength: 0
-            maxLength: 50
-            example: 'Clinton'
-          state:
-            type: string
-            description: State of the transaction.
-            minLength: 0
-            maxLength: 3
-            example: 'SC'
-          postalCode:
-            type: string
-            description: PostalCode of the transaction.
-            minLength: 0
-            maxLength: 10
-            example: '29325'
-          country:
-            type: string
-            description: Country of the transaction.
-            minLength: 0
-            maxLength: 3
-            example: 'US'
-          phoneNumber:
-            type: string
-            description: The phone number of the merchant
-            minLength: 0
-            maxLength: 20
-            example: '8648334816'
-          website:
-            type: string
-            description: Website of the involved entity.
-            minLength: 0
-            maxLength: 256
-            example: 'https://www.mcdonalds.com'
-          merchantCategoryCode:
-            type: string
-            description:
-              This code represents the category that a merchant location may be
-              under and is supported by most payment providers.
-            minLength: 0
-            maxLength: 128
-            example: '5814'
-          merchantCategoryName:
-            type: string
-            description:
-              This is the name of the Merchant Category that accompanies the MCC
-              Code which identifies the category a merchant falls under.
-            minLength: 0
-            maxLength: 256
-            example: 'FAST FOOD RESTAURANTS'
+      type: object
+      properties:
+        merchantDescriptor:
+          type: string
+          description:
+            This is a concatenated combination of DE43 merchant name, DE43
+            merchant city and DE43 merchant state. Spaces should be excluded
+            when concatenating these fields. If merchant state is not provided
+            by the acquirer, use merchant name and city only. If the acquirer
+            provides a country code instead of a state, use a combination of
+            merchant name, city, and country.
+          minLength: 0
+          maxLength: 50
+          example: 'MCDONALDS10649CLINTONSC'
+        name:
+          type: string
+          description: Name of the merchant.
+          minLength: 0
+          maxLength: 256
+          example: 'McDonalds'
+        line1:
+          type: string
+          description: Line 1 of the transaction address.
+          minLength: 0
+          maxLength: 100
+          example: '101 S Broad St'
+        city:
+          type: string
+          description: City of the transaction.
+          minLength: 0
+          maxLength: 50
+          example: 'Clinton'
+        state:
+          type: string
+          description: State of the transaction.
+          minLength: 0
+          maxLength: 3
+          example: 'SC'
+        postalCode:
+          type: string
+          description: PostalCode of the transaction.
+          minLength: 0
+          maxLength: 10
+          example: '29325'
+        country:
+          type: string
+          description: Country of the transaction.
+          minLength: 0
+          maxLength: 3
+          example: 'US'
+        phoneNumber:
+          type: string
+          description: The phone number of the merchant
+          minLength: 0
+          maxLength: 20
+          example: '8648334816'
+        website:
+          type: string
+          description: Website of the involved entity.
+          minLength: 0
+          maxLength: 256
+          example: 'https://www.mcdonalds.com'
+        merchantCategoryCode:
+          type: string
+          description:
+            This code represents the category that a merchant location may be
+            under and is supported by most payment providers.
+          minLength: 0
+          maxLength: 128
+          example: '5814'
+        merchantCategoryName:
+          type: string
+          description:
+            This is the name of the Merchant Category that accompanies the MCC
+            Code which identifies the category a merchant falls under.
+          minLength: 0
+          maxLength: 256
+          example: 'FAST FOOD RESTAURANTS'
     ShowDailyBalance:
       type: boolean
       example: true
