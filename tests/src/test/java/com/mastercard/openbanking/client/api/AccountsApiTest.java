@@ -43,7 +43,7 @@ class AccountsApiTest extends BaseTest {
     @Test
     void refreshCustomerAccountsByInstitutionLoginTest() {
         try {
-            CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId);
+            CustomerAccounts accounts = api.refreshCustomerAccountsByInstitutionLogin(CUSTOMER_ID, existingInstitutionLoginId,null, null);
             assertTrue(accounts.getAccounts().size() > 0);
         } catch (ApiException e) {
             Assertions.fail(e);
