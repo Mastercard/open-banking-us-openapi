@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.30.1
+  version: 1.30.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -736,6 +736,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/InstitutionLoginIdParameter'
+        - $ref: '#/components/parameters/ToDateParameterForRefreshAccounts'
+        - $ref: '#/components/parameters/FromDateParameterForRefreshAccounts'
       responses:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
@@ -2759,6 +2761,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+
   '/decisioning/v1/reports/{reportId}/partners':
     post:
       tags:
@@ -2992,6 +2995,7 @@ paths:
             types.
           schema:
             type: boolean
+            default: false
       responses:
         '200':
           $ref: '#/components/responses/GetBillingResellerReportResponse'
@@ -2999,6 +3003,8 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
@@ -6250,8 +6256,6 @@ components:
               $ref: '#/components/examples/AccountTypeNotSupportedExample'
             ResellerPartnerNotAuthorizedExample:
               $ref: '#/components/examples/ResellerPartnerNotAuthorizedExample'
-            ResellerNoDataForPartnerExample:
-              $ref: '#/components/examples/ResellerNoDataForPartnerExample'
             ResellerInvalidDateRangeExample:
               $ref: '#/components/examples/ResellerInvalidDateRangeExample'
             ResellerInvalidDateRangeLessThanZeroExample:
@@ -6308,6 +6312,10 @@ components:
               $ref: '#/components/examples/ResourceNotFoundExample'
             NoRegisteredApplicationExample:
               $ref: '#/components/examples/NoRegisteredApplicationExample'
+            ResellerNoDataForPartnerExample:
+              $ref: '#/components/examples/ResellerNoDataForPartnerExample'
+            ResellerNoReportForPartnerExample:
+              $ref: '#/components/examples/ResellerNoReportForPartnerExample'
     GetApplicationRegistrationStatusResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -7262,6 +7270,10 @@ components:
         message:
           'RESELLER_BILLING_REPORT: Reports not found 2445583947903
           resellerBilling reports'
+    ResellerNoReportForPartnerExample:
+      value:
+        code: 10100
+        message: 'Cannot find resellerBilling reports with id 2445581559892.'
     ResellerInvalidDateRangeExample:
       value:
         code: 10100
@@ -7890,6 +7902,13 @@ components:
             shown: false
         fromDate: 1580558400
         toDate: 1643720017
+        findTransaction:
+          - findTransactionDescriptionMemo: 'Payment to PSC Finance'
+            findTransactionAmountFrom: 100.00
+            findTransactionAmountTo: 200.00
+            findTransactionCategory:
+              - 'Payment'
+              - 'Transfer'
     GenerateBalanceBusinessCraAnalyticsReportRequestExample:
       value:
         analyticsReportData:
@@ -8251,6 +8270,13 @@ components:
             - label: vendorName
               value: PSC Finance
               shown: false
+          findTransaction:
+            - findTransactionDescriptionMemo: 'Payment to PSC Finance'
+              findTransactionAmountFrom: 100.01
+              findTransactionAmountTo: 200.00
+              findTransactionCategory:
+                - 'Payment'
+                - 'Transfer'
         type: transactions
         status: inProgress
     GenerateVOAReportRequestExample:
@@ -9583,6 +9609,13 @@ components:
             - label: vendorName
               value: PSC Finance
               shown: false
+          findTransaction:
+            - findTransactionDescriptionMemo: Payment to PSC Finance
+              findTransactionAmountFrom: -100.01
+              findTransactionAmountTo: 200.00
+              findTransactionCategory:
+                - Payment
+                - Transfer
         startDate: 1579348800
         endDate: 1594382400
         days: 174
@@ -9601,22 +9634,23 @@ components:
                 aggregationStatusCode: 0
                 balance: 1000
                 balanceDate: 1594676289
+                transactionsCount: 2
                 transactions:
                   - id: 100001490719
-                    amount: -224
+                    amount: -99
                     postedDate: 1594382400
                     description: ACH Withdrawal AMERICA FIRST CR
                     normalizedPayee: America First Cr
                     institutionTransactionId: '0000000000'
-                    category: Income
-                    memo: AMERICA FIRST CR
+                    category: Transfer
+                    memo: Payment to PSC Finance
                   - id: 100001490897
-                    amount: -81.7
+                    amount: 199.7
                     postedDate: 1594123200
-                    description: TMOBILE*AUTO PAY
+                    description: Payment to PSC Finance
                     normalizedPayee: T-Mobile
                     institutionTransactionId: '0000000000'
-                    category: Mobile Phone
+                    category: Payment
                     memo: TMOBILE debit
     TransactionNONCRAExample:
       summary: Transaction NON CRA Report Example
@@ -9632,6 +9666,12 @@ components:
           fromDate: 1650715226
           toDate: 1713873626
           includePending: false
+          findTransaction:
+            - findTransactionAmountFrom: -100.01
+              findTransactionAmountTo: 200.00
+              findTransactionCategory:
+                - Payment
+                - Transfer
         type: txnNonCra
         status: success
         createdDate: 1713873626
@@ -9655,23 +9695,25 @@ components:
                 balanceDate: 1713873628
                 oldestTransactionDate: 1672401600
                 averageMonthlyBalance: -516.45
+                transactionsCount: 3
                 transactions:
                   - id: 100298184206
                     amount: 60
                     postedDate: 1713614400
-                    description: ACH deposit CAPITAL1 P2P Bob Jones Bob Jones
+                    description:
+                      Payment deposit CAPITAL1 P2P Bob Jones Bob Jones
                     normalizedPayee: Capital1 Bob Jones
                     institutionTransactionId: '0000000000'
-                    category: Deposit
+                    category: Payment
                   - id: 100298184180
-                    amount: -300
+                    amount: 200
                     postedDate: 1712923200
                     description: Online banking xfer withdrawal from ...8888
                     normalizedPayee: Online Banking
                     institutionTransactionId: '0000000000'
-                    category: Transfer
+                    category: Payment
                   - id: 100298184155
-                    amount: -1358.11
+                    amount: -158.11
                     postedDate: 1712923200
                     description: Online banking xfer withdrawal from ...8888
                     normalizedPayee: Online Banking
@@ -9694,23 +9736,25 @@ components:
                 balanceDate: 1713873630
                 oldestTransactionDate: 1672401600
                 averageMonthlyBalance: -516.45
+                transactionsCount: 3
                 transactions:
                   - id: 100298184308
                     amount: 60
                     postedDate: 1713614400
-                    description: ACH deposit CAPITAL1 P2P Bob Jones Bob Jones
+                    description:
+                      Payment deposit CAPITAL1 P2P Bob Jones Bob Jones
                     normalizedPayee: Capital1 Bob Jones
                     institutionTransactionId: '0000000000'
-                    category: Deposit
+                    category: Payment
                   - id: 100298184282
-                    amount: -300
+                    amount: -30
                     postedDate: 1712923200
                     description: Online banking xfer withdrawal from ...7777
                     normalizedPayee: Online Banking
                     institutionTransactionId: '0000000000'
                     category: Transfer
                   - id: 100298184257
-                    amount: -1358.11
+                    amount: -138.11
                     postedDate: 1712923200
                     description: Online banking xfer withdrawal from ...7777
                     normalizedPayee: Online Banking
@@ -24381,7 +24425,7 @@ components:
               merchantCategoryCode: '5814'
               merchantCategoryName: 'FAST FOOD RESTAURANTS'
             isRecurringTransaction: false
-            locationId: '876875444777'
+            locationId: 876875444777
             isEcommerce: false
             isBrickAndMortar: true
             matchConfidenceScore: 97
@@ -24501,6 +24545,7 @@ components:
               - fieldName: accountIdentity
                 code: '102'
                 description: FI Down for maintenance
+
     InvalidFieldParameterExample:
       value:
         code: 12019
@@ -25092,6 +25137,24 @@ components:
       schema:
         $ref: '#/components/schemas/UnixDate'
       example: 1670504017
+    ToDateParameterForRefreshAccounts:
+      description:
+        Transactions up to and including this date will be included. It should
+        be later than the fromDate.
+      name: toDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1670504017
+    FromDateParameterForRefreshAccounts:
+      description: Transactions starting from this date will be included.
+      name: fromDate
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/UnixDate'
+      example: 1607450357
     RequiredTransactionReportFromDateParameter:
       description:
         Transactions starting from this date will be included in the report.
@@ -36342,8 +36405,8 @@ components:
         Country specific tax ID associated with the customer.
 
         * **United States**: Social Security number (SSN) or Taxpayer
-        Identification Number (TIN)
-
+                Identification Number (TIN)
+                
           * Format: 123-45-7890
 
         * **Canada**: Social Insurance Number (SIM) or Numero d'assurance
@@ -37064,6 +37127,15 @@ components:
           example: 1588350276
           maximum: 2147483647
           minimum: 0
+        transactionsCount:
+          type: integer
+          description: >-
+            A number detailing the total number of transactions for a given
+            account.
+          format: int64
+          example: 3
+          maximum: 2147483647
+          minimum: 0
         transactions:
           type: array
           items:
@@ -37103,6 +37175,8 @@ components:
           $ref: '#/components/schemas/UnixDate'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        findTransaction:
+          $ref: '#/components/schemas/FindTransactionConstraints'
     TransactionsReportConstraintsOut:
       type: object
       properties:
@@ -37116,6 +37190,67 @@ components:
           $ref: '#/components/schemas/IncludePending'
         reportCustomFields:
           $ref: '#/components/schemas/ReportCustomFields'
+        findTransaction:
+          $ref: '#/components/schemas/FindTransactionConstraints'
+    FindTransactionConstraints:
+      description: >-
+        An array of parameters used to return transactions matching the given
+        criteria. The presence of multiple parameters will be treated as an
+        **AND**  function.
+      type: array
+      items:
+        type: object
+        properties:
+          findTransactionDescriptionMemo:
+            $ref: '#/components/schemas/FindTransactionDescriptionMemo'
+          findTransactionAmountFrom:
+            $ref: '#/components/schemas/FindTransactionAmountFrom'
+          findTransactionAmountTo:
+            $ref: '#/components/schemas/FindTransactionAmountTo'
+          findTransactionCategory:
+            $ref: '#/components/schemas/FindTransactionCategory'
+    FindTransactionAmountTo:
+      type: number
+      description: >
+        A decimal value to return transactions with **amount** less than or
+        equal to **findTransactionAmountTo**/br>
+
+        - If both **findTransactionAmountFrom** and **findTransactionAmountTo**
+        are present. Then transactions with  **amount** between (inclusive) both
+        values will be returned.
+      example: 100
+    FindTransactionCategory:
+      type: array
+      description: >
+        An array of **categories** to return transactions with an exact match to
+        the array of **category**. Limit of 10.
+      maxItems: 10
+      items:
+        type: string
+      example:
+        - 'Paycheck'
+        - 'Groceries'
+    FindTransactionAmountFrom:
+      type: number
+      description: >
+        A decimal value to return transactions with **amount** greater than or
+        equal to **findTransactionAmountFrom**.</br>
+
+        - If both **findTransactionAmountFrom** and **findTransactionAmountTo**
+        are present. Then transactions with  **amount** between (inclusive) both
+        values will be returned.
+      example: 100
+    FindTransactionDescriptionMemo:
+      type: string
+      description: >
+        A string to return transactions that have an exact match to
+        Description/Memo.</br>
+
+        - Description/Memo</br>
+          - Found in the PDF report for reach transactions.</br>
+          - A combination of **description** and **memo** from the JSON version
+        of the report.</br>
+      example: 'Paycheck'
     TransactionsToDate:
       type: string
       description:
@@ -39988,17 +40123,27 @@ components:
       properties:
         externalCustomerId:
           type: string
-          description:
-            A unique identifier assigned to the customer for a particular
-            institution.
+          description: A unique identifier assigned to the customer for a
+            particular institution.
+
+            __Note:__ The externalCustomerId and externalAccountId fields are to
+            allow you to map the transactions back to your data. __Do not send
+            Mastercard plaintext representations of customer or account IDs.__
+            The representative IDs must be obfuscated through cryptographically
+            strong hashing (we recommend using SHA-2 or SHA-3 methods).
           minLength: 1
           maxLength: 100
           example: '1005061234'
         externalAccountId:
           type: string
-          description:
-            A unique identifier assigned to the accounts for a particular
-            institution.
+          description: A unique identifier assigned to the accounts for a
+            particular institution.
+
+            __Note:__ The externalCustomerId and externalAccountId fields are to
+            allow you to map the transactions back to your data. __Do not send
+            Mastercard plaintext representations of customer or account IDs.__
+            The representative IDs must be obfuscated through cryptographically
+            strong hashing (we recommend using SHA-2 or SHA-3 methods).
           minLength: 1
           maxLength: 100
           example: '1005061234'
