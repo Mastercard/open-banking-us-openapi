@@ -1,16 +1,16 @@
 openapi: 3.0.3
 info:
-  title: Open Banking
+  title: Open Finance
   description: |-
     OpenAPI specification for Finicity APIs.
 
-    Open Banking solutions in the US are provided by Finicity, a Mastercard
-    company.
+    Open Finance (formerly Open Banking) solutions in the US are provided by
+    Finicity, a Mastercard company.
   contact:
     name: API Support
     email: apisupport@mastercard.com
-    url: 'https://developer.mastercard.com/open-banking-us/documentation/support/'
-  version: 1.30.2
+    url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
+  version: 1.31.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -71,6 +71,10 @@ tags:
   - name: Payment Success Indicator
     description: Predict a transaction's likelihood to settle
   - name: FCRA Payment Success Indicator
+    description: Predict a transaction's likelihood to settle FCRA compliant
+  - name: Payment Success Indicator (Legacy)
+    description: Predict a transaction's likelihood to settle
+  - name: FCRA Payment Success Indicator (Legacy)
     description: Predict a transaction's likelihood to settle FCRA compliant
   - name: Payment Enablement Bundle
     description: Any or all of the Payments endpoints in one API call
@@ -1242,8 +1246,8 @@ paths:
   /aggregation/v2/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator:
     get:
       tags:
-        - Payment Success Indicator
-      summary: Get payment success indicator
+        - Payment Success Indicator (Legacy)
+      summary: Get payment success indicator (Legacy)
       description: >-
         Payment Success Indicator (PSI) is a Payment Intelligence solution that
         uses Financial Institution (FI) data to help payment originators
@@ -1277,8 +1281,8 @@ paths:
   /aggregation/v1/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator/fcra:
     get:
       tags:
-        - FCRA Payment Success Indicator
-      summary: Get FCRA-compliant payment success indicator
+        - FCRA Payment Success Indicator (Legacy)
+      summary: Get FCRA-compliant payment success indicator (Legacy)
       description: >-
         Payment Success Indicator (PSI) allows the user to evaluate the
         likelihood of a specific ACH transaction resulting in an insufficient
@@ -1309,6 +1313,139 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/GetPaymentSuccessIndicatorNotFoundResponse'
+  /payments/customers/{customerId}/accounts/{accountId}/fcra-payment-success-indicators:
+    post:
+      tags:
+        - FCRA Payment Success Indicator
+      summary: Generate FCRA Payment Success Indicators
+      description: >-
+        Payment Success Indicator (PSI) allows the user to evaluate the
+        likelihood of a specific ACH transaction resulting in either an
+        insufficient funds return (NSF) or an unauthorized return due to first-
+        or third-party fraud. PSI is powered by a machine learning model trained
+        on consumer-permissioned data. PSI provides a risk assessment, which
+        includes a real-time balance check, predictive risk scores forecasting a
+        consumer’s likelihood of having sufficient funds over a 10-day period, a
+        real-time score predicting the likelihood of an unauthorized return, and
+        risk attributes to explain and enhance decisioning. Provision and use of
+        this report is subject to all applicable obligations of the FCRA and any
+        applicable analogous state law. This product may only be used for the
+        stated permissible purpose under the FCRA.
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateFcraPaymentSuccessIndicators
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/PurposeParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GeneratePaymentSuccessIndicatorsRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GeneratePaymentSuccessIndicatorsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
+  /payments/customers/{customerId}/accounts/{accountId}/fcra-payment-success-indicators/{payRequestId}:
+    get:
+      tags:
+        - FCRA Payment Success Indicator
+      summary: Get FCRA Payment Success Indicators by Pay Request ID
+      description: >-
+        Get the FCRA Payment Success Indicator scores that have been generated
+        by a previous call to Generate FCRA Payment Success Indicators.
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetFcraPaymentSuccessIndicators
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/PayRequestIdParameter'
+        - $ref: '#/components/parameters/IncludeReasonsParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/RetrieveFcraPaymentSuccessIndicatorsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
+  /payments/customers/{customerId}/accounts/{accountId}/payment-success-indicators:
+    post:
+      tags:
+        - Payment Success Indicator
+      summary: Generate Payment Success Indicators
+      description: >-
+        Payment Success Indicator (PSI) allows the user to evaluate the
+        likelihood of a specific ACH transaction resulting in either an
+        insufficient funds return (NSF) or an unauthorized return due to first-
+        or third-party fraud. PSI is powered by a machine learning model trained
+        on consumer-permissioned data. PSI provides a risk assessment, which
+        includes a real-time balance check, predictive risk scores forecasting a
+        consumer’s likelihood of having sufficient funds over a 10-day period, a
+        real-time score predicting the likelihood of an unauthorized return, and
+        risk attributes to explain and enhance decisioning. This product may not
+        be used for uses subject to the FCRA.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GeneratePaymentSuccessIndicators
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GeneratePaymentSuccessIndicatorsRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GeneratePaymentSuccessIndicatorsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
+  /payments/customers/{customerId}/accounts/{accountId}/payment-success-indicators/{payRequestId}:
+    get:
+      tags:
+        - Payment Success Indicator
+      summary: Get Payment Success Indicators by Pay Request ID
+      description: >-
+        Get the Payment Success Indicator scores that have been generated by a
+        previous call to Generate Payment Success Indicators.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetPaymentSuccessIndicators
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+        - $ref: '#/components/parameters/PayRequestIdParameter'
+        - $ref: '#/components/parameters/IncludeReasonsParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/RetrievePaymentSuccessIndicatorsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
   /aggregation/v1/partners/applications:
     post:
       tags:
@@ -4325,7 +4462,7 @@ paths:
       summary: List Available Webhook Subscription Events
       description: >-
         Allows partners to retrieve a list of all event subscriptions supported
-        by the Open Banking system.  This endpoint provides information about
+        by the Open Finance system.  This endpoint provides information about
         each subscription, including the webhook URL and associated events,
         enabling partners to understand all available subscription options.
 
@@ -4495,9 +4632,9 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
       description: >-
-        Use the Connect Fix API when the following conditions occur: 
-          * The connection to the user's financial institution is lost. 
-          * The user's credentials were updated (for any number of reasons). 
+        Use the Connect Fix API when the following conditions occur:
+          * The connection to the user's financial institution is lost.
+          * The user's credentials were updated (for any number of reasons).
           * The user's MFA challenge has expired.
       requestBody:
         $ref: '#/components/requestBodies/NoBody'
@@ -4686,12 +4823,12 @@ paths:
         This bundled API returns any or all of the Payments endpoints in one API
         call using institution login ID. This includes, Account Simple details,
         ACH details, Account Owner, and Account Balance. This requires initial
-        setup to determine which endpoints are included in the API response.  
+        setup to determine which endpoints are included in the API response.
 
         For Account Balance, You can define an additional query parameter
         `balance_cache_interval` to specify the time interval of the last cached
         balance.  This parameter is used by the server to determine whether the
-        cached balance is still valid or if it needs to be refreshed.  
+        cached balance is still valid or if it needs to be refreshed.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4719,12 +4856,12 @@ paths:
         This bundled API will return any or all of the Payments endpoints in one
         API call using account ID. This includes, Account Simple details, ACH
         details, Account Owner, and Account Balance. This requires initial setup
-        to determine which endpoints are included in the API response.  
+        to determine which endpoints are included in the API response.
 
         For Account Balance, You can define an additional query parameter
         `balance_cache_interval` to specify the time interval of the last cached
         balance.  This parameter will be used by the server to determine whether
-        the cached balance is still valid or if it needs to be refreshed.  
+        the cached balance is still valid or if it needs to be refreshed.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -5110,11 +5247,11 @@ components:
         An optional configuration object can be applied by including a valid
         `configurationId` in the request body. <br><br> The preferred language
         translation for the login form is request with the `language` property
-        in the request body. Supported languages are: 
+        in the request body. Supported languages are:
           * English: `en`
           * English-United States:'en-us`
           * Spanish: `es`
-          * Spanish-United States: `es-us` 
+          * Spanish-United States: `es-us`
           * French: `fr`
           * French-Canada: `fr-ca`
       content:
@@ -5253,7 +5390,12 @@ components:
           examples:
             EnrichTransactionsPayload:
               $ref: '#/components/examples/EnrichTransactionsPayloadExample'
-
+    GeneratePaymentSuccessIndicatorsRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentSuccessIndicatorsProperties'
   responses:
     GenerateForesightAnalyticsNonCraReportResponse:
       description: >-
@@ -5574,6 +5716,48 @@ components:
               $ref: '#/components/examples/PaymentSuccessIndicatorExample'
             PaymentSuccessIndicatorWarningExample:
               $ref: '#/components/examples/PaymentSuccessIndicatorWarningExample'
+    GeneratePaymentSuccessIndicatorsResponse:
+      description:
+        Successfully requested to generate a Payment Success Indicators score
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentSuccessIndicators'
+          examples:
+            PaymentSuccessIndicatorsInProgressResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsInProgressResponseExample'
+    RetrieveFcraPaymentSuccessIndicatorsResponse:
+      description:
+        Successfully requested to retrieve a Payment Success Indicators score
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FcraPaymentSuccessIndicators'
+          examples:
+            PaymentSuccessIndicatorsNoReasonsSuccessResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsNoReasonsSuccessResponseExample'
+            PaymentSuccessIndicatorsSuccessResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsSuccessResponseExample'
+            PaymentSuccessIndicatorsInProgressResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsInProgressResponseExample'
+            PaymentSuccessIndicatorsFailureResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsFailureResponseExample'
+    RetrievePaymentSuccessIndicatorsResponse:
+      description:
+        Successfully requested to retrieve a Payment Success Indicators score
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaymentSuccessIndicators'
+          examples:
+            PaymentSuccessIndicatorsNoReasonsSuccessResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsNoReasonsSuccessResponseExample'
+            PaymentSuccessIndicatorsSuccessResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsSuccessResponseExample'
+            PaymentSuccessIndicatorsInProgressResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsInProgressResponseExample'
+            PaymentSuccessIndicatorsFailureResponseExample:
+              $ref: '#/components/examples/PaymentSuccessIndicatorsFailureResponseExample'
     RefreshCustomerAccountsResponse:
       description: The account list was successfully refreshed
       content:
@@ -6316,6 +6500,24 @@ components:
               $ref: '#/components/examples/ResellerNoDataForPartnerExample'
             ResellerNoReportForPartnerExample:
               $ref: '#/components/examples/ResellerNoReportForPartnerExample'
+    ForbiddenErrorResponse:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ForbiddenErrorResponseExample:
+              $ref: '#/components/examples/ForbiddenErrorResponseExample'
+    NotAllowedErrorResponse:
+      description: Not allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NotAllowedErrorResponseExample:
+              $ref: '#/components/examples/NotAllowedErrorResponseExample'
     GetApplicationRegistrationStatusResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -7530,6 +7732,16 @@ components:
       value:
         code: 14001
         message: 'Resource not found.'
+    ForbiddenErrorResponseExample:
+      value:
+        code: 10405
+        status: '403'
+        message: 'An active security freeze for this customer exists.'
+    NotAllowedErrorResponseExample:
+      value:
+        code: 20000
+        status: '406'
+        message: "Only 'application/json' is supported."
     NoRegisteredApplicationExample:
       value:
         code: 50051
@@ -9265,6 +9477,115 @@ components:
       value:
         code: 1001
         message: Account Error - use different account
+    PaymentSuccessIndicatorsInProgressResponseExample:
+      value:
+        payRequestId: '476412776235977427'
+        status: 'IN PROGRESS'
+        customerId: '1005061234'
+        accountId: '20050961233'
+        requestDate: '2025-04-24'
+        transaction:
+          settleByDate: '2025-04-25'
+          amount: 12.98
+    PaymentSuccessIndicatorsFailureResponseExample:
+      value:
+        payRequestId: '476412776235977427'
+        status: 'FAILURE'
+        customerId: '1005061234'
+        accountId: '20050961233'
+        requestDate: '2025-04-24'
+        transaction:
+          settleByDate: '2025-04-25'
+          amount: 12.98
+        nsfReturnRisk:
+          error:
+            code: 185
+            status: '500'
+            message: 'MFA Required'
+        unauthorizedReturnRisk:
+          error:
+            code: 185
+            status: '500'
+            message: 'MFA Required'
+    PaymentSuccessIndicatorsNoReasonsSuccessResponseExample:
+      value:
+        payRequestId: '476412776235977427'
+        status: 'SUCCESS'
+        customerId: '1005061234'
+        accountId: '20050961233'
+        requestDate: '2025-04-24'
+        transaction:
+          settleByDate: '2025-04-25'
+          amount: 12.98
+        nsfReturnRisk:
+          result:
+            availableBalance: 82.32
+            dailyResults:
+              - potentialSettlementDate: '2024-04-24'
+                score: 7
+                indicator: 'High Risk'
+              - potentialSettlementDate: '2024-04-25'
+                score: 6
+                indicator: 'High Risk'
+              - potentialSettlementDate: '2024-04-26'
+                score: 8
+                indicator: 'High Risk'
+          unauthorizedReturnRisk:
+            score: 89
+            indicator: 'Low Risk'
+    PaymentSuccessIndicatorsSuccessResponseExample:
+      value:
+        payRequestId: '476412776235977427'
+        status: 'SUCCESS'
+        customerId: '1005061234'
+        accountId: '20050961233'
+        requestDate: '2025-04-24'
+        transaction:
+          settleByDate: '2025-04-25'
+          amount: 12.98
+        nsfReturnRisk:
+          result:
+            availableBalance: 82.32
+            dailyResults:
+              - potentialSettlementDate: '2024-04-24'
+                score: 7
+                indicator: 'High Risk'
+                reasons:
+                  recentBalance: 12
+                  balanceHistory: 23
+                  nsfHistory: 40
+                  recentNsfHistory: 78
+                  recurringNsf: 34
+                  spendHistory: 44
+                  depositHistory: 10
+                  transactionAmount: 65
+              - potentialSettlementDate: '2024-04-25'
+                score: 6
+                indicator: 'High Risk'
+                reasons:
+                  recentBalance: 12
+                  balanceHistory: 23
+                  nsfHistory: 40
+                  recentNsfHistory: 78
+                  recurringNsf: 34
+                  spendHistory: 44
+                  depositHistory: 10
+                  transactionAmount: 65
+              - potentialSettlementDate: '2024-04-26'
+                score: 8
+                indicator: 'High Risk'
+                reasons:
+                  recentBalance: 12
+                  balanceHistory: 23
+                  nsfHistory: 40
+                  recentNsfHistory: 78
+                  recurringNsf: 34
+                  spendHistory: 44
+                  depositHistory: 10
+                  transactionAmount: 65
+          unauthorizedReturnRisk:
+            score: 89
+            indicator: 'Low Risk'
     PrequalificationCRAReportExample:
       summary: Prequalification CRA Report
       value:
@@ -24770,7 +25091,7 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ApplicationId'
-      example: '123456789'
+      example: '00278431-b712-4f30-a044-b611f25e533d'
     ApplicationIdQueryParameter:
       description: The application ID
       name: applicationId
@@ -24778,7 +25099,7 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/ApplicationId'
-      example: '123456789'
+      example: '00278431-b712-4f30-a044-b611f25e533d'
     AppRegistrationStatusParameter:
       description: Look up app registration requests by status
       name: status
@@ -24945,6 +25266,25 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/PayPurposeCode'
+    PayRequestIdParameter:
+      name: payRequestId
+      in: path
+      required: true
+      description: Unique identifier of the Payments request
+      schema:
+        $ref: '#/components/schemas/PayRequestId'
+      example: '476412776235977427'
+    IncludeReasonsParameter:
+      name: include_reasons
+      in: query
+      required: false
+      description:
+        If this parameter is true, the reasons codes will be provided in the
+        results. Otherwise, the reasons will be omitted.
+      schema:
+        type: boolean
+        example: true
+      allowEmptyValue: true
     PurposeParameter:
       name: purpose
       in: query
@@ -25241,7 +25581,7 @@ components:
       name: productCode
       description:
         Filter the results by product code (a unique billing code assigned to
-        each open banking product used). Specify either one single product or
+        each Open Finance product used). Specify either one single product or
         multiple products separated by commas.
       in: query
       required: false
@@ -27264,7 +27604,7 @@ components:
         set. Only applicable in cases of partners with multiple registered
         applications. If the partner only has one app, this can usually be
         omitted. This field is populated after the app is in a status approved.
-      example: '123456789'
+      example: '00278431-b712-4f30-a044-b611f25e533d'
     ApplicationName:
       type: string
       description: The name of the application assigned to the customer
@@ -31865,7 +32205,7 @@ components:
     GseEnabled:
       type: boolean
       description: >-
-        Mastercard Open Banking internal use only to flag reports that should
+        Mastercard Open Finance internal use only to flag reports that should
         not be retrieved by the GSE's (Government-Sponsored Enterprise).
 
 
@@ -32026,6 +32366,386 @@ components:
         2. If `settleByDate` is between 3 and 8 days out from today, the response includes 4-9 days of data, `day3-8`.
         3. If `settleByDate` is between today and 2 days out from today, the response includes 3 days of data, `day0` through `day2`.
       example: '2023-03-30'
+    PayRequestId:
+      description: Unique identifier of the Payments request
+      type: string
+      example: '476412776235977427'
+      minLength: 18
+      maxLength: 18
+    PaymentSuccessIndicatorsTransactionAmount:
+      description: The transaction amount
+      example: 12.45
+      type: number
+      minimum: 0
+      exclusiveMinimum: true
+    PaymentSuccessIndicatorsTransaction:
+      description: An object containing the requested transaction info.
+      type: object
+      properties:
+        settleByDate:
+          $ref: '#/components/schemas/SettleByDate'
+        amount:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsTransactionAmount'
+      required:
+        - settleByDate
+        - amount
+    PaymentSuccessIndicatorsAddress:
+      description: The customer's address
+      type: object
+      properties:
+        streetLine1:
+          description:
+            The first line of the street part in the structured address.
+          example: '434 Ascension Way'
+          type: string
+          minLength: 0
+          maxLength: 1000
+        streetLine2:
+          description:
+            The second line of the street part in the structured address.
+          example: 'Suite 200'
+          type: string
+          minLength: 0
+          maxLength: 1000
+        city:
+          description: The name of the city in the structured address.
+          example: 'Salt Lake City'
+          type: string
+          minLength: 0
+          maxLength: 500
+        state:
+          description:
+            The state/province/parent subdivision code of the structured
+            address.
+          example: 'UT'
+          type: string
+          minLength: 1
+          maxLength: 3
+        postalCode:
+          description: The postal code of the structured address.
+          example: '84124'
+          type: string
+          minLength: 0
+          maxLength: 100
+        country:
+          description: 'The ISO-3166 alpha-2 country code of the address.'
+          example: 'US'
+          type: string
+          pattern: ^[A-Za-z]+$
+          format: ISO-3166-2
+          minLength: 2
+          maxLength: 2
+    PaymentSuccessIndicatorsPhone:
+      description: The phone information
+      type: object
+      properties:
+        countryHint:
+          description: 'The ISO-3166 alpha-2 country code of the phone number.'
+          format: ISO-3166-2
+          example: 'US'
+          type: string
+        number:
+          description:
+            'The phone number in E.164 or local format. The default country
+            calling code is +1 (USA). Note: This field is required only if email
+            is not provided.'
+          example: '7785732875'
+          pattern: ^\+?[\d-]*(x\d*)?
+          type: string
+    PaymentSuccessIndicatorsUser:
+      description: The user's information
+      type: object
+      properties:
+        name:
+          description: The name provided by the customer for the transaction.
+          example: 'Jane Doe'
+          type: string
+        email:
+          description: The email provided by the customer for the transaction.
+          example: 'Jane.Doe@mastercard.com'
+          type: string
+        address:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsAddress'
+        phone:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsPhone'
+    PaymentSuccessIndicatorsProperties:
+      description: Properties to request a Payment Success Indicator score
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsTransaction'
+        user:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsUser'
+      required:
+        - transaction
+    FcraPaymentSuccessIndicators:
+      description:
+        A Payment Success Indicators score response, indicating how likely a
+        transaction is to be returned. NSF and Unauthorized return risks are
+        provided if the score has a status of SUCCESS, or the captured errors
+        are listed if the score has a status of FAILURE.
+      type: object
+      properties:
+        payRequestId:
+          $ref: '#/components/schemas/PayRequestId'
+        status:
+          description:
+            'Current status of the score generation. Possible values are "IN
+            PROGRESS", "SUCCESS", "FAILURE"'
+          type: string
+          example: 'IN PROGRESS'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        requestDate:
+          type: string
+          description: The ISO 8601 format (YYYY-MM-DD) date of the request.
+          example: '2024-04-01'
+          format: date
+        transaction:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsTransaction'
+        nsfReturnRisk:
+          $ref: '#/components/schemas/FcraNsfReturnRisk'
+        unauthorizedReturnRisk:
+          $ref: '#/components/schemas/UnauthorizedReturnRisk'
+      required:
+        - payRequestId
+        - status
+        - customerId
+        - accountId
+        - requestDate
+        - transaction
+    PaymentSuccessIndicators:
+      description:
+        A Payment Success Indicators score response, indicating how likely a
+        transaction is to be returned. NSF and Unauthorized return risks are
+        provided if the score has a status of SUCCESS, or the captured errors
+        are listed if the score has a status of FAILURE.
+      type: object
+      properties:
+        payRequestId:
+          $ref: '#/components/schemas/PayRequestId'
+        status:
+          description:
+            'Current status of the score generation. Possible values are "IN
+            PROGRESS", "SUCCESS", "FAILURE"'
+          type: string
+          example: 'IN PROGRESS'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        requestDate:
+          type: string
+          description: The ISO 8601 format (YYYY-MM-DD) date of the request.
+          example: '2024-04-01'
+          format: date
+        transaction:
+          $ref: '#/components/schemas/PaymentSuccessIndicatorsTransaction'
+        nsfReturnRisk:
+          $ref: '#/components/schemas/NsfReturnRisk'
+        unauthorizedReturnRisk:
+          $ref: '#/components/schemas/UnauthorizedReturnRisk'
+      required:
+        - payRequestId
+        - status
+        - customerId
+        - accountId
+        - requestDate
+        - transaction
+    FcraNsfReturnRisk:
+      description:
+        The result or error occurred during the execution of the nsf return risk
+        prediction
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/FcraNsfReturnRiskResult'
+        error:
+          $ref: '#/components/schemas/ErrorMessage'
+    NsfReturnRisk:
+      description:
+        The result or error occurred during the execution of the nsf return risk
+        prediction
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/NsfReturnRiskResult'
+        error:
+          $ref: '#/components/schemas/ErrorMessage'
+    FcraNsfReturnRiskResult:
+      description: The successful result of the execution of the nsf return risk
+      type: object
+      properties:
+        disputeStatement:
+          type: string
+          description:
+            A message mentioning if/what type of dispute exists for the
+            customer"
+          example: 'An active dispute exists'
+        availableBalance:
+          type: number
+          description: >-
+            The available balance provided, by the consumer’s financial
+            institution, at the time of the request.
+          example: 315.01
+        dailyResults:
+          $ref: '#/components/schemas/NsfDailyResults'
+      required:
+        - availableBalance
+        - dailyResults
+    NsfReturnRiskResult:
+      description: The successful result of the execution of the nsf return risk
+      type: object
+      properties:
+        availableBalance:
+          type: number
+          description: >-
+            The available balance provided, by the consumer’s financial
+            institution, at the time of the request.
+          example: 315.01
+        dailyResults:
+          $ref: '#/components/schemas/NsfDailyResults'
+      required:
+        - availableBalance
+        - dailyResults
+    NsfDailyResults:
+      type: array
+      description:
+        An Array of 3-10 days, providing the potentialSettlementDate, score,
+        indicator, and reasons.
+      items:
+        $ref: '#/components/schemas/NsfIndicator'
+      minItems: 3
+      maxItems: 10
+    NsfIndicator:
+      type: object
+      properties:
+        potentialSettlementDate:
+          type: string
+          description: The date for a potential settlement date
+          example: '2024-04-24'
+          format: date
+        score:
+          type: integer
+          description: |-
+            A risk score from 0-100 that indicates the likelihood of a nsf return risk, where a higher score indicates a higher likelihood of settlement or lower likelihood of return.
+          example: 6
+          minimum: 0
+          maximum: 100
+          format: int32
+        indicator:
+          type: string
+          description:
+            '`indicator` conveys the `score`, projecting 3 possible values: "Low
+            Risk", "Medium Risk", or "High Risk"'
+          example: Low Risk
+          minLength: 1
+          maxLength: 50
+        reasons:
+          $ref: '#/components/schemas/NsfReasonItem'
+      required:
+        - potentialSettlementDate
+        - score
+        - indicator
+    NsfReasonItem:
+      type: object
+      description:
+        A collection of 8 reason codes, with a score ranging from 0-100, that
+        explains the drivers that caused the nsf score.
+      properties:
+        recentBalance:
+          description: Evaluates the available balance in an account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 78
+        balanceHistory:
+          description: Evaluates balance trends in the account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 23
+        nsfHistory:
+          description: Evaluates the number of NSF occurrences in the account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 40
+        recentNsfHistory:
+          description: Evaluates the recent NSF occurrences in the account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 34
+        recurringNsf:
+          description:
+            Evaluates the frequency of NSF occurrences in the account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 34
+        spendHistory:
+          description: Evaluates the trends in spend activity in the account.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 44
+        depositHistory:
+          description:
+            Evaluates the trends of the consumer's permissioned account deposit
+            over a period of time.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 10
+        transactionAmount:
+          description: Evaluates the settlementAmount.
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 65
+      required:
+        - balanceHistory
+        - depositHistory
+        - nsfHistory
+        - recentBalance
+        - recentNsfHistory
+        - recurringNsf
+        - spendHistory
+        - transactionAmount
+    UnauthorizedReturnRisk:
+      description:
+        The result or error occurred during the execution of the unauthorized
+        return risk prediction
+      type: object
+      properties:
+        result:
+          description:
+            The result object containing the unauthoried return risk score
+          properties:
+            score:
+              description:
+                A risk score from 0-100 that indicates the likelihood of an
+                unauthorized return risk, where a higher score indicates a
+                higher likelihood of settlement or lower likelihood of return.
+              example: 89
+              type: integer
+              minimum: 0
+              maximum: 100
+            indicator:
+              description:
+                '`indicator` conveys the `score`, projecting 3 possible values:
+                "Low Risk", "Medium Risk", or "High Risk"'
+              example: 'Low Risk'
+              type: string
+          required:
+            - score
+            - indicator
+          type: object
+        error:
+          $ref: '#/components/schemas/ErrorMessage'
     StatementCloseDate:
       type: integer
       description: >-
@@ -32687,7 +33407,7 @@ components:
         overallStatusTemp:
           description: |-
             Beta Data - Can be ignored. Should use `status` field instead.
-            The overall status for the institution: 
+            The overall status for the institution:
               - online - Connection is active, financial institution is available and functioning
               - offline - Connection is inactive due to an issue. Financial institution is not available in Connect search
               - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
@@ -33421,36 +34141,36 @@ components:
         estimatedMonthlyBasePay:
           type: number
           description: >-
-            Mastercard Open Banking estimated monthly base pay amount for the
+            Mastercard Open Finance estimated monthly base pay amount for the
             employment
           example: 123.45
         estimatedMonthlyOvertimePay:
           type: number
           description: >-
-            Mastercard Open Banking estimated monthly overtime pay amount for
+            Mastercard Open Finance estimated monthly overtime pay amount for
             the employment
           example: 123.45
         estimatedMonthlyBonusPay:
           type: number
           description: >-
-            Mastercard Open Banking estimated monthly bonus pay amount for the
+            Mastercard Open Finance estimated monthly bonus pay amount for the
             employment
           example: 123.45
         estimatedMonthlyOtherPay:
           type: number
           description: >-
-            Mastercard Open Banking estimated monthly other pay amount for the
+            Mastercard Open Finance estimated monthly other pay amount for the
             employment
           example: 123.45
         estimatedMonthlyTotalPay:
           type: number
           description:
-            Sum of all Mastercard Open Banking estimated monthly pay amounts
+            Sum of all Mastercard Open Finance estimated monthly pay amounts
           example: 123.45
         estimatedMonthlyCommissionPay:
           type: number
           description: >-
-            Mastercard Open Banking estimated monthly commission pay amount for
+            Mastercard Open Finance estimated monthly commission pay amount for
             the employment
           example: 123.45
     MoreResultsAvailable:
@@ -36406,7 +37126,7 @@ components:
 
         * **United States**: Social Security number (SSN) or Taxpayer
                 Identification Number (TIN)
-                
+
           * Format: 123-45-7890
 
         * **Canada**: Social Insurance Number (SIM) or Numero d'assurance
@@ -36446,7 +37166,7 @@ components:
         * `customerId`: This is recipient's customer identifier
         * `partnerId`: This is recipient partner identifier
         * `thirdPartyPartnerId`: This is requester's partner identifier
-        * `products`: Array of values representing the Mastercard Open Banking APIs for
+        * `products`: Array of values representing the Mastercard Open Finance APIs for
         which access needs to be generated.
       type: object
       required:
@@ -37213,7 +37933,7 @@ components:
       type: number
       description: >
         A decimal value to return transactions with **amount** less than or
-        equal to **findTransactionAmountTo**/br>
+        equal to **findTransactionAmountTo**.</br>
 
         - If both **findTransactionAmountFrom** and **findTransactionAmountTo**
         are present. Then transactions with  **amount** between (inclusive) both
@@ -39224,7 +39944,7 @@ components:
           example: Test Application Name
         productCode:
           type: array
-          description: A unique code assigned to each open banking product used.
+          description: A unique code assigned to each open finance product used.
           example:
             - ABC
             - AO
@@ -39278,7 +39998,7 @@ components:
         customerType:
           type: string
           description:
-            The type of Mastercard Open Banking customer (`active` or `testing`)
+            The type of Mastercard Open Finance customer (`active` or `testing`)
           example: testing
         switches:
           type: array
@@ -39308,35 +40028,35 @@ components:
               failureReason:
                 type: string
                 description: |
-                  Deposit switch failure reason. Possible values include - 
-                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
+                  Deposit switch failure reason. Possible values include -
+                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts.
                   * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional
-                  information from the user. 
+                  information from the user.
                   * account-unusable - The user's bank account is unusable for the selected product or use case.
-                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason.
                   * connection-error - A network error occurred which caused the connection between our system and the payroll system to be
-                  lost. 
+                  lost.
                   * distribution-not-supported - The payroll system did not support the type of distribution requested. For example,
                   the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net
-                  balance. 
-                  * device-disconnected - The device used to start the task is no longer connected. 
+                  balance.
+                  * device-disconnected - The device used to start the task is no longer connected.
                   * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via
-                  their bank. 
-                  * expired - The user's password has expired and they must create a new one. 
-                  * no-data-found - No verify data was found for the user. 
+                  their bank.
+                  * expired - The user's password has expired and they must create a new one.
+                  * no-data-found - No verify data was found for the user.
                   * product-not-supported - The payroll system did not allow the action to be taken. Many payroll
                   systems allow HR to customize what is allowed in their system.
                   Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee
-                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code. 
-                  * routing-number-not-supported - The account did not support the routing number entered. 
-                  * session-timeout - The user's session timed out. 
+                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code.
+                  * routing-number-not-supported - The account did not support the routing number entered.
+                  * session-timeout - The user's session timed out.
                   * system-unavailable - The system was unavailable. For example,
                   the site is undergoing maintenance or it is outside the window
-                  of scheduled availability for the site. 
-                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. 
-                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed. 
-                  * unknown-failure - We encountered an unexpected error. 
-                  * user-abandon - The user was asked an MFA question, but did not answer the question. 
+                  of scheduled availability for the site.
+                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time.
+                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed.
+                  * unknown-failure - We encountered an unexpected error.
+                  * user-abandon - The user was asked an MFA question, but did not answer the question.
                   * work-status-terminated - The task could not be completed because the user's employment has been terminated.
                 example: bad-credentials
               createdDate:
@@ -39364,7 +40084,7 @@ components:
         customerType:
           type: string
           description:
-            The type of Mastercard Open Banking customer (`active` or `testing`)
+            The type of Mastercard Open Finance customer (`active` or `testing`)
           example: testing
         switchId:
           type: string
@@ -39383,42 +40103,42 @@ components:
         failureReason:
           type: string
           description: |
-            Deposit switch failure reason. Possible values include - 
+            Deposit switch failure reason. Possible values include -
             * account-lockout - The account is locked out, most likely the end
-            user has had too many failed attempts. 
+            user has had too many failed attempts.
             * account-setup-incomplete - The user's account in the payroll system is not fully set up and
-            will require additional information from the user. 
+            will require additional information from the user.
             * account-unusable - The user's bank account is unusable for the
-            selected product or use case. 
+            selected product or use case.
             * bad-credentials - Either the username or password was incorrect. This is our most common fail
-            reason. 
+            reason.
             * connection-error - A network error occurred which caused
             the connection between our system and the payroll system to be lost.
             * distribution-not-supported - The payroll system did not support
             the type of distribution requested. For example, the user attempted
             to allocate a percentage of their paycheck, but is only eligible for
-            fixed amounts and remainder/net balance. 
-            * device-disconnected - The device used to start the task is no longer connected. 
+            fixed amounts and remainder/net balance.
+            * device-disconnected - The device used to start the task is no longer connected.
             * enrolled-in-paycard - The user is enrolled in a paycard program
-            instead of direct deposit via their bank. 
+            instead of direct deposit via their bank.
             * expired - The user's password has expired and they must create a new one. * no-data-found
-            - No verify data was found for the user. 
+            - No verify data was found for the user.
             * product-not-supported - The payroll system did not allow the action to be taken. Many
             payroll systems allow HR to customize what is allowed in their
             system. Direct Deposit may be allowed by a payroll system, but may
             be disallowed by a specific employer. Therefore, when an employee of
             that company goes to set up Direct Deposit it is rejected, resulting
-            in this error code. 
-            * routing-number-not-supported - The account did not support the routing number entered. 
-            * session-timeout - The user's session timed out. 
+            in this error code.
+            * routing-number-not-supported - The account did not support the routing number entered.
+            * session-timeout - The user's session timed out.
             * system-unavailable - The system was unavailable. For example, the site is undergoing maintenance or it
-            is outside the window of scheduled availability for the site. 
+            is outside the window of scheduled availability for the site.
             * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. For
             example, if an employer has an approval process in place, they may
-            disallow modifications until the update has been processed. 
-            * unknown-failure - We encountered an unexpected error. 
+            disallow modifications until the update has been processed.
+            * unknown-failure - We encountered an unexpected error.
             * user-abandon - The user was asked an MFA question, but did not answer the
-            question. 
+            question.
             * work-status-terminated - The task could not be completed
             because the user's employment has been terminated.
           example: bad-credentials
@@ -39500,7 +40220,7 @@ components:
         customerType:
           type: string
           description:
-            The type of Mastercard Open Banking customer (`active` or `testing`)
+            The type of Mastercard Open Finance customer (`active` or `testing`)
           example: testing
         switches:
           type: array
@@ -39570,7 +40290,7 @@ components:
         customerType:
           type: string
           description:
-            The type of Mastercard Open Banking customer (`active` or `testing`)
+            The type of Mastercard Open Finance customer (`active` or `testing`)
           example: testing
         switchId:
           type: string
@@ -39589,22 +40309,22 @@ components:
         failureReason:
           type: string
           description: |
-            Pay switch failure reason. Possible values include - 
-            * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
-            * account-unusable - The user's bank account is unusable for the selected product or use case. 
-            * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+            Pay switch failure reason. Possible values include -
+            * account-lockout - The account is locked out, most likely the end user has had too many failed attempts.
+            * account-unusable - The user's bank account is unusable for the selected product or use case.
+            * bad-credentials - Either the username or password was incorrect. This is our most common fail reason.
             * connection-error - A network error occurred which caused the connection between our
-            system and the bank/payroll system to be lost. 
-            * device-disconnected - The device used to start the task is no longer connected. 
-            * expired - The user's password has expired and they must create a new one. 
-            * no-data-found - No verify data was found for the user. 
-            * routing-number-not-supported - The account did not support the routing number entered. 
-            * session-timeout - The user's session timed out. 
-            * system-unavailable - The system was unavailable. For example, the site is undergoing 
-            maintenance or it is outside the window of scheduled availability for the site. 
+            system and the bank/payroll system to be lost.
+            * device-disconnected - The device used to start the task is no longer connected.
+            * expired - The user's password has expired and they must create a new one.
+            * no-data-found - No verify data was found for the user.
+            * routing-number-not-supported - The account did not support the routing number entered.
+            * session-timeout - The user's session timed out.
+            * system-unavailable - The system was unavailable. For example, the site is undergoing
+            maintenance or it is outside the window of scheduled availability for the site.
             * transaction-pending - There is an allocation already in progress and additional updates cannot
-            be made at this time. 
-            * unknown-failure - We encountered an unexpected error. 
+            be made at this time.
+            * unknown-failure - We encountered an unexpected error.
             * user-abandon - The user was asked an MFA question, but did not answer the question.
           example: unknown-failure
         createdDate:
@@ -40151,15 +40871,15 @@ components:
           type: string
           description: |
             Indicates the type of account associated with the transaction.
-            Listed below are the current account types supported: 
+            Listed below are the current account types supported:
 
-            "checking",  
-            "savings",   
-            "creditCard",  
-            "brokerageAccount",   
-            "investment",   
+            "checking",
+            "savings",
+            "creditCard",
+            "brokerageAccount",
+            "investment",
             "healthSavingsAccount",
-            "unknown" 
+            "unknown"
 
             NOTE : If "unknown" is provided, the enrichment service will assume it is a "checking" account. An incorrect assumption could impact the results from the enrichment service.
           minLength: 1
@@ -40230,7 +40950,7 @@ components:
             - If you always send us positive amount values, you MUST send us corresponding directionIndicator values to ensure the categorization logic works as intended.
             - If you have internal logic to provide the amount field as either positive or negative, do not send us data in the directionIndicator.
 
-            - Listed below are the current directionIndicator types supported: 
+            - Listed below are the current directionIndicator types supported:
               - "Debit"
               - "Credit"
 
@@ -40241,10 +40961,10 @@ components:
           type: object
           description: |
             A dictionary containing additional details of the transaction
-            being returned in the enrichment response.  
-            - This object should not contain any PII. 
+            being returned in the enrichment response.
+            - This object should not contain any PII.
             - The max number of allowed keys are 30.
-            - The key max length should be 100. 
+            - The key max length should be 100.
             - The value max length should be 255.
           additionalProperties:
             $ref: '#/components/schemas/AdditionalDetails'
@@ -40309,15 +41029,15 @@ components:
           type: string
           description: |
             Indicates the type of account associated with the transaction.
-            Listed below are the current account types supported: 
+            Listed below are the current account types supported:
 
-            "checking",  
-            "savings",   
-            "creditCard",  
-            "brokerageAccount",   
-            "investment",   
-            "healthSavingsAccount",   
-            "unknown" 
+            "checking",
+            "savings",
+            "creditCard",
+            "brokerageAccount",
+            "investment",
+            "healthSavingsAccount",
+            "unknown"
 
             NOTE : If "unknown" is provided, the enrichment service will assume it is a "checking" account. An incorrect assumption could impact the results from the enrichment service.
           minLength: 1
@@ -40334,7 +41054,7 @@ components:
         postedTimestamp:
           type: string
           description: |
-            The date and time when the transaction was officially recorded in the account. 
+            The date and time when the transaction was officially recorded in the account.
 
             Supported formats are yyyy-MM-dd'T'HH:mm:ss.SSS'Z', yyyy-MM-dd'T'HH:mm:ss'Z', yyyy-MM-dd HH:mm:ss.0, yyyy-MM-dd.
           minLength: 3
@@ -40408,7 +41128,7 @@ components:
             - If you always send us positive amount values, you MUST send us corresponding directionIndicator values to ensure the categorization logic works as intended.
             - If you have internal logic to provide the amount field as either positive or negative, do not send us data in the directionIndicator.
 
-            - Listed below are the current directionIndicator types supported: 
+            - Listed below are the current directionIndicator types supported:
               - "Debit"
               - "Credit"
 
@@ -40423,10 +41143,10 @@ components:
           type: object
           description: |
             A dictionary containing additional details of the transaction
-            being returned in the enrichment response.  
+            being returned in the enrichment response.
             - This object should not contain any PII.
             - The max number of allowed keys are 30.
-            - The key max length should be 100.  
+            - The key max length should be 100.
             - The value max length should be 255.
           additionalProperties:
             $ref: '#/components/schemas/AdditionalDetails'
