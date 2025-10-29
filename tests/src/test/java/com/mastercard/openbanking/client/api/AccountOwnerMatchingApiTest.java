@@ -86,4 +86,29 @@
          }
      }
 
+
+     @Test
+     public void accountMatchingScoreOwnerNameFieldValidation() {
+         try {
+             var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
+
+             // Set only the optional ownerName field
+             accountownerverificationmatchingrequest.ownerName("Test Owner Name");
+
+             Boolean withInsights = false;
+
+             var response = IdentityApi.accountMatchingScoreDetails(
+                     CUSTOMER_ID,
+                     existingAccountId,
+                     accountownerverificationmatchingrequest,
+                     withInsights
+             );
+
+             assertNotNull(response);
+             // Optionally, assert specific fields in the response if needed
+         } catch (ApiException e) {
+             logApiException(e);
+         }
+     }
+
  }
