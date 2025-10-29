@@ -235,9 +235,14 @@ class ConnectApiTest extends BaseTest {
             var params = new TransferDepositSwitchParameters()
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID)
-                    .addAccountsItem(ModelFactory.newDepositSwitchAccount("7526894126", "110000000", "checking"));
+                    .addAccountsItem(ModelFactory.newDepositSwitchAccount("7526894126", "110000000", "checking"))
+                    .external(new ExternalTransferDetails()
+                        .id("external-123")
+                        .context(Context.EMAIL));
+
             var connectUrl = api.generateTransferDepositSwitchUrl(params);
             var link = connectUrl.getLink();
+
             assertTrue(link.contains("type=transferDepositSwitch"));
             assertTrue(link.contains("customerId=" + CUSTOMER_ID));
             assertTrue(link.contains("partnerId=" + PARTNER_ID));
