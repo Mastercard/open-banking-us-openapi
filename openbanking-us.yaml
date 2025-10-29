@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.31.2
+  version: 1.32.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -127,7 +127,7 @@ paths:
         '200':
           $ref: '#/components/responses/CreateTokenResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GeneralBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
       security:
@@ -307,7 +307,7 @@ paths:
     post:
       tags:
         - Connect
-      summary: 'Account Validation Assistant User verification of microdeposits'
+      summary: 'Account Validation Assistant User Verification of Microdeposits'
       description: >-
         The UI re-engages the consumer to enter two microdeposit amounts found
         in their account and validates them.
@@ -346,7 +346,7 @@ paths:
     post:
       tags:
         - Connect
-      summary: Connect Transfer URL for Deposit Switch
+      summary: Generate Connect Transfer URL for Deposit Switch
       description: >-
         Generate a Connect Transfer URL which you can use in your application to
         allow end users to set up a deposit switch.
@@ -414,9 +414,11 @@ paths:
         '201':
           $ref: '#/components/responses/AddCustomerResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GeneralBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '409':
+          $ref: '#/components/responses/AddCustomerConflictErrorResponse'
   /aggregation/v2/customers/active:
     post:
       tags:
@@ -439,11 +441,11 @@ paths:
         '201':
           $ref: '#/components/responses/AddCustomerResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GeneralBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '429':
-          $ref: '#/components/responses/TooManyRequestsErrorResponse'
+        '409':
+          $ref: '#/components/responses/AddCustomerConflictErrorResponse'
   /aggregation/v1/customers:
     get:
       tags:
@@ -574,7 +576,7 @@ paths:
     post:
       tags:
         - Consumers
-      summary: Create consumer for the customer
+      summary: Create Consumer for the Customer
       description: >-
         Create a consumer record associated with the given customer. A consumer
         persists as the owner of any reports that are generated, even after the
@@ -605,7 +607,7 @@ paths:
     get:
       tags:
         - Consumers
-      summary: Get the consumer record for the given customer.
+      summary: Get the Consumer Record for the Given Customer
       description: >-
         Get the details of a consumer record by customer ID.
 
@@ -717,14 +719,15 @@ paths:
         for further clarification.
 
 
-        The recommended timeout setting for this request is 120 seconds in order
+        The recommended timeout setting for this request is 180 seconds in order
+        The recommended timeout setting for this request is 180 seconds in order
         to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
 
 
-        Note: This service is not available for all Data Access Tiers.
+        Note: Do not use this service if you use Data Access Tiers.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -738,7 +741,7 @@ paths:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -748,10 +751,10 @@ paths:
       tags:
         - Accounts
       summary:
-        Refresh Customer Account by Institution Login ID for Data Access Tiers
+        Refresh Customer Accounts by Institution Login ID for Data Access Tiers
       description: >-
         Refresh account and transaction data for all accounts associated with a
-        given 'institutionLoginId` with a connection to the institution. Client
+        given `institutionLoginId` with a connection to the institution. Client
         apps are not permitted to automate calls to the Refresh services. Active
         accounts are automatically refreshed by Finicity once per day.
 
@@ -762,7 +765,7 @@ paths:
         for further clarification.
 
 
-        Note: This service will be used for Data Access Tiers ASD, AFD and ATD.
+        Note: Use this service for Data Access Tiers ASD, AFD and ATD.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -774,7 +777,7 @@ paths:
         '204':
           $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -786,8 +789,6 @@ paths:
         - Accounts
       summary: Delete Access to Customer Accounts by Institution Login ID
       description: >-
-        Delete access to all customer accounts for a given FI.​
-
         This will delete access to the underlying account(s) under a given
         Institution Login ID. The customer data will no longer be accessible.
         Any customer data already collected will be retained in accordance with
@@ -907,14 +908,14 @@ paths:
         for further clarification.
 
 
-        The recommended timeout setting for this request is 120 seconds in order
+        The recommended timeout setting for this request is 180 seconds in order
         to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
         the account records to check for an updated aggregation attempt date to
         know when the refresh is complete.
 
 
-        Note: This service is not available for all Data Access Tiers.
+        Note: Do not use this service if you use Data Access Tiers.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -925,7 +926,7 @@ paths:
         '200':
           $ref: '#/components/responses/RefreshCustomerAccountsResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -949,7 +950,7 @@ paths:
         for further clarification.
 
 
-        Note: This service will be used for Data Access Tiers ASD, AFD and ATD.
+        Note: Use this service for Data Access Tiers ASD, AFD and ATD.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -960,7 +961,7 @@ paths:
         '204':
           $ref: '#/components/responses/RefreshCustomerV2AccountsResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -1767,7 +1768,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate VOA Report for the customer
+      summary: Generate VOA Report for the Customer
       description: >-
         Generate a Verification of Assets (VOA) report for all checking,
         savings, money market, and investment accounts for the given customer.
@@ -1810,7 +1811,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate VOA With Income Report for the customer
+      summary: Generate VOA With Income Report for the Customer
       description: >-
         Generate a Verification of Assets with Income (VOAI) report for all
         checking, savings, money market, and investment accounts for the given
@@ -1864,7 +1865,7 @@ paths:
     post:
       tags:
         - Verify Assets
-      summary: Generate PreQualification (CRA) Report for the customer
+      summary: Generate Prequalification (CRA) Report for the Customer
       description: >-
         Retrieve all checking, savings, money market, and investment accounts
         for a consumer. The account, owner information, and the number of
@@ -1930,7 +1931,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOI Report for the customer
+      summary: Generate VOI Report for the Customer
       description: >-
         Generate a Verification of Income (VOI) report for all checking,
         savings, and money market accounts for the given customer. This service
@@ -1969,7 +1970,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOE - Payroll Report for the customer
+      summary: Generate VOE - Payroll Report for the Customer
       description: >-
         Generate or refresh a VOE - Payroll report. Often used as a
         complementary report to the VOIE-Payroll report to fulfill the pre-close
@@ -2004,7 +2005,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOE - Transactions Report for the customer
+      summary: Generate VOE - Transactions Report for the Customer
       description: >-
         Premium Service: A billable event when the API response is successful.
 
@@ -2047,7 +2048,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate Pay Statement Report for the customer
+      summary: Generate Pay Statement Report for the Customer
       description: >-
         Generate Pay Statement Extraction Report for the given customer. This
         service accepts asset IDs of the stored pay statements to generate a Pay
@@ -2082,7 +2083,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE Paystub (with TXVerify) Report for the customer
+      summary: Generate VOIE Paystub (With TXVerify) Report for the Customer
       description: >-
         Generate a VOIE - Paystub (with TXVerify) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -2127,7 +2128,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Paystub Report for the customer
+      summary: Generate VOIE - Paystub Report for the Customer
       description: >-
         Generate a VOIE - Paystub report. This service uses the provided
         paystub(s), which are passed into the request body as asset IDs
@@ -2162,7 +2163,7 @@ paths:
     post:
       tags:
         - Verify Income and Employment
-      summary: Generate VOIE - Payroll Report for the customer
+      summary: Generate VOIE - Payroll Report for the Customer
       description: >-
         Generate or refresh a VOIE - Payroll report. For clients using the
         product via a consumer permissioning experience via Connect, the
@@ -2255,7 +2256,7 @@ paths:
     post:
       tags:
         - Bank Statements
-      summary: Generate Statement Report for the customer
+      summary: Generate Statement Report for Customer
       description: >-
         Generate a Statement Report for the given accounts under the given
         customer.
@@ -2313,7 +2314,7 @@ paths:
         '203':
           $ref: '#/components/responses/MFAChallengeNeededResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -2396,10 +2397,7 @@ paths:
 
 
         Standard consumer aggregation provides up to 180 days of transactions
-        prior to the date each account was added to the Finicity system. To
-        access older transactions, you must first call the Cash Flow
-        Verification service Load Historic Transactions for Account.
-
+        prior to the date each account was added to the Finicity system.
 
         There is no limit for the size of the window between `fromDate` and
         `toDate`, however, the maximum number of transactions returned on one
@@ -2431,7 +2429,7 @@ paths:
     post:
       tags:
         - Transactions
-      summary: Generate Transactions Report for the customer
+      summary: Generate Transactions Report for the Customer
       description: >-
         Generate a Transaction Report for the given accounts under the given
         customer. This service retrieves up to 24 months of transaction history
@@ -2575,7 +2573,7 @@ paths:
     post:
       tags:
         - Payment History Report
-      summary: Generate Payment History Report for the customer - Business
+      summary: Generate Payment History Report for the Customer - Business
       description: >-
         Generate a Payment History Report for a given customer. This service
         retrieves up to two years of transaction history from connected
@@ -2725,7 +2723,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
+        Service](https://developer.mastercard.com/open-finance-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2756,7 +2754,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
+        Service](https://developer.mastercard.com/open-finance-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2789,7 +2787,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
+        Service](https://developer.mastercard.com/open-finance-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2821,7 +2819,7 @@ paths:
 
 
         For additional details on this process, see [TxPush Listener
-        Service](https://developer.mastercard.com/open-banking-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
+        Service](https://developer.mastercard.com/open-finance-us/documentation/products/manage/tx-push/#setting-up-the-txpush-listener-service).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -3087,7 +3085,7 @@ paths:
     get:
       tags:
         - Reports
-      summary: Get billing summary for partner
+      summary: Get Billing Summary for Partner
       operationId: getResellerBillingReport
       description:
         Use the Partner ID to fetch all reports generated by a partner. A
@@ -3168,7 +3166,7 @@ paths:
         '200':
           $ref: '#/components/responses/GetAssetByCustomerIDResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -3255,7 +3253,7 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report for the customer (Business)
+      summary: Generate Cash Flow Report for the Customer (Business)
       description: >-
         Generate a Cash Flow Report (Business) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -3294,7 +3292,7 @@ paths:
     post:
       tags:
         - Cash Flow
-      summary: Generate Cash Flow Report for the customer (Personal)
+      summary: Generate Cash Flow Report for the Customer (Personal)
       description: >-
         Generate a Cash Flow Report (Personal) report for all checking and
         savings under the given customer. This service retrieves up to two years
@@ -3733,6 +3731,29 @@ paths:
           $ref: '#/components/responses/ResourceNotFoundResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  '/transfer/externals/{external_id}/deposit-switches':
+    get:
+      tags:
+        - Transfer
+      summary: Get Deposit Switches by External ID
+      description: |-
+        Retrieve summary of deposit switches performed by given external ID.
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: getAllExternalDepositSwitches
+      security:
+        - FinicityAppToken: []
+        - FinicityAppKey: []
+      parameters:
+        - $ref: '#/components/parameters/ExternalIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExternalDepositSwitchesSummary'
+        '400':
+          $ref: '#/components/responses/GetExternalSwitchesBadRequestResponse'
+        '404':
+          $ref: '#/components/responses/ExternalSwitchesResourceNotFoundResponse'
+        '401':
+          $ref: '#/components/responses/ExternalSwitchesUnauthorizedErrorResponse'
   '/transfer/customers/{customer_id}/deposit-switches/{switch_id}':
     get:
       tags:
@@ -3976,7 +3997,7 @@ paths:
     put:
       tags:
         - Webhook Subscription
-      summary: Enable or disable Webhook Subscription Event
+      summary: Enable or Disable Webhook Subscription Event
       description: >-
         Enables or disables a specific webhook event within a subscription
         identified by subscription ID and webhook event ID. Update the event's
@@ -4066,7 +4087,7 @@ paths:
     get:
       tags:
         - Webhook Subscription
-      summary: Test Webhook Subscription Based on Subscription id
+      summary: Test Webhook Subscription Based on Subscription ID
       description: >-
         Test all the webhook event under the given webhook subscription using
         subscription_id. _Supported regions_:
@@ -4254,7 +4275,7 @@ paths:
     post:
       tags:
         - Transaction Data Enrichment
-      summary: Performs enrichment of the provided transactions
+      summary: Performs Enrichment of the Provided Transactions
       description: >-
         The operation processes the enclosed transactions for enrichment with
         categorization and entity recognition. Accepts a batch of 1000
@@ -4942,7 +4963,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/AnalyticsReportAck'
+            $ref: '#/components/schemas/ForesightAnalyticsReportAck'
           examples:
             GenerateForesightAnalyticsNonCraReportResponseExample:
               $ref: '#/components/examples/GenerateForesightAnalyticsNonCraReportResponseExample'
@@ -5936,6 +5957,21 @@ components:
           schema:
             type: string
             example: 'Invalid (Finicity-App-Key)'
+    ExternalSwitchesUnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check
+        "Finicity-App-Key" or "Finicity-App-Token".
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/MissingFinicityAppKeyExample'
+        text/plain:
+          schema:
+            type: string
+            example: 'Invalid (Finicity-App-Key)'
     BadRequestErrorTransactionResponse:
       description: The request was rejected
       content:
@@ -5945,6 +5981,26 @@ components:
           examples:
             GenericBadRequestError:
               $ref: '#/components/examples/GenericBadRequestError'
+    GeneralBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+    GenericBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
     BadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -6066,6 +6122,15 @@ components:
           examples:
             ConsumerExistsConflictExample:
               $ref: '#/components/examples/ConsumerExistsConflictExample'
+    AddCustomerConflictErrorResponse:
+      description: The resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            UsernameNotAvailableExample:
+              $ref: '#/components/examples/UsernameNotAvailableExample'
     InitiateMicroAmountDepositsResponse:
       description: Micro entries were successfully initiated
       content:
@@ -6269,6 +6334,15 @@ components:
           examples:
             BadRequest:
               $ref: '#/components/examples/BadRequest'
+    GetExternalSwitchesBadRequestResponse:
+      description: The request was rejected.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NoMatchingExternalIdFoundErrorResponseExample:
+              $ref: '#/components/examples/NoMatchingExternalIdFoundErrorResponseExample'
     ResourceNotFoundResponse:
       description: The requested entity was not found
       content:
@@ -6278,6 +6352,15 @@ components:
           examples:
             ResourceNotFoundRequest:
               $ref: '#/components/examples/ResourceNotFoundRequest'
+    ExternalSwitchesResourceNotFoundResponse:
+      description: The requested entity was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ResourceNotFoundRequest:
+              $ref: '#/components/examples/GetExternalSwitchesResourceNotFoundErrorExample'
     DepositSwitchesSummary:
       description: Deposit switches performed by the customer
       content:
@@ -6287,6 +6370,15 @@ components:
           examples:
             SwitchesSummaryExample:
               $ref: '#/components/examples/SwitchesSummaryExample'
+    ExternalDepositSwitchesSummary:
+      description: In-branch deposit switches performed by the external ID
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExternalDepositSwitchesSummary'
+          examples:
+            SwitchesSummaryExample:
+              $ref: '#/components/examples/ExternalSwitchesSummaryExample'
     DepositSwitchDetails:
       description: Deposit switch details
       content:
@@ -6745,6 +6837,7 @@ components:
         requesterName: Intuit Facade Demo (KEEP)
         createdDate: 1739824892
         title: Mastercard Open Banking Foresight Analytics
+        reportPin: XYeyLA
         type: farpbfnoncra
         status: inProgress
         constraints:
@@ -7132,6 +7225,10 @@ components:
       value:
         code: 11000
         message: 'A consumer already exists for customer 4025024821'
+    UsernameNotAvailableExample:
+      value:
+        code: 110002
+        message: Username is not available.
     AppResponseExample:
       value:
         found: 2
@@ -7206,8 +7303,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Verification of Employment - Payroll
         consumerId: 656cf7083c5c06e0c125a698579f0000
@@ -7260,8 +7357,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 7a7qyps2iy
         type: voiePayroll
         reportStyle: credentialedPayroll
@@ -7319,8 +7416,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Mastercard Open Banking Pay Statement Extraction Report
         consumerId: 4089f408963dd6b90b28a935e9903c0e
@@ -7386,8 +7483,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1596226182
         title: Mastercard Open Banking Statement Report
         consumerId: 555595ec74c8ec57adf44dadddb6a35
@@ -7450,8 +7547,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Report - Business
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7503,8 +7600,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Report - Personal
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -7564,12 +7661,12 @@ components:
         fromDate: 1580558400
         toDate: 1643720017
         findTransaction:
-          - findTransactionDescriptionMemo: 'Payment to PSC Finance'
-            findTransactionAmountFrom: 100.00
-            findTransactionAmountTo: 200.00
-            findTransactionCategory:
-              - 'Payment'
-              - 'Transfer'
+          findTransactionDescriptionMemo: 'Payment to PSC Finance'
+          findTransactionAmountFrom: 100.00
+          findTransactionAmountTo: 200.00
+          findTransactionCategory:
+            - 'Payment'
+            - 'Transfer'
     GenerateBalanceBusinessCraAnalyticsReportRequestExample:
       value:
         analyticsReportData:
@@ -7903,8 +8000,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1594678007
         title: Mastercard Open Banking Transactions Report
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
@@ -7944,12 +8041,12 @@ components:
               value: PSC Finance
               shown: false
           findTransaction:
-            - findTransactionDescriptionMemo: 'Payment to PSC Finance'
-              findTransactionAmountFrom: 100.01
-              findTransactionAmountTo: 200.00
-              findTransactionCategory:
-                - 'Payment'
-                - 'Transfer'
+            findTransactionDescriptionMemo: 'Payment to PSC Finance'
+            findTransactionAmountFrom: 100.01
+            findTransactionAmountTo: 200.00
+            findTransactionCategory:
+              - 'Payment'
+              - 'Transfer'
         type: transactions
         status: inProgress
     GenerateVOAReportRequestExample:
@@ -7988,8 +8085,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Assets
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -8068,8 +8165,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Verification of Asset and Income - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -8147,8 +8244,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Asset Ready Report (CRA)
         consumerId: cb619e10185177cd92271c4da2df3fa3
@@ -8204,8 +8301,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Asset Ready Report (NON-CRA)
         constraints:
@@ -8269,8 +8366,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Mastercard Open Banking Verification Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -8334,8 +8431,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Verification of Income and Employment - Paystub
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -8404,8 +8501,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: inProgress
@@ -8465,8 +8562,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Income
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -8522,8 +8619,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         consumerId: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn: '1111'
         consumerDetails:
@@ -8741,8 +8838,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         type: cfrb
         status: success
         createdDate: 1575666823
@@ -9158,8 +9255,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: sfb7xacr9w
         type: preQualVoa
         status: success
@@ -9261,8 +9358,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: sfb7xp4iui
         type: assetSummary
         status: success
@@ -9364,8 +9461,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 8wy5htqg8u
         type: paystatement
         status: success
@@ -9467,8 +9564,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         constraints:
           statementReportData:
             accountId: 1000076901
@@ -9513,8 +9610,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         constraints:
           accountIds:
             - '1000075473'
@@ -9538,12 +9635,12 @@ components:
               value: PSC Finance
               shown: false
           findTransaction:
-            - findTransactionDescriptionMemo: Payment to PSC Finance
-              findTransactionAmountFrom: -100.01
-              findTransactionAmountTo: 200.00
-              findTransactionCategory:
-                - Payment
-                - Transfer
+            findTransactionDescriptionMemo: Payment to PSC Finance
+            findTransactionAmountFrom: -100.01
+            findTransactionAmountTo: 200.00
+            findTransactionCategory:
+              - Payment
+              - Transfer
         startDate: 1579348800
         endDate: 1594382400
         days: 174
@@ -9595,11 +9692,11 @@ components:
           toDate: 1713873626
           includePending: false
           findTransaction:
-            - findTransactionAmountFrom: -100.01
-              findTransactionAmountTo: 200.00
-              findTransactionCategory:
-                - Payment
-                - Transfer
+            findTransactionAmountFrom: -100.01
+            findTransactionAmountTo: 200.00
+            findTransactionCategory:
+              - Payment
+              - Transfer
         type: txnNonCra
         status: success
         createdDate: 1713873626
@@ -9722,8 +9819,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: sfb7xp439w
         type: voa
         status: success
@@ -9852,8 +9949,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         constraints:
           accountIds:
             - '1000535275'
@@ -10082,8 +10179,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 7a7qyps2iy
         customerType: active
         customerId: 1275320
@@ -10173,8 +10270,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         constraints:
           reportId: j7k8qbgwsa7d-voietxverify
           reportCustomFields:
@@ -10254,8 +10351,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: sfb7xp4wer
         type: voi
         status: success
@@ -10363,8 +10460,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         type: voiePayroll
         reportStyle: credentialedPayroll
         status: success
@@ -10497,8 +10594,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -10580,8 +10677,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -10860,8 +10957,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -10932,8 +11029,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
@@ -10988,8 +11085,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
@@ -11045,8 +11142,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -11105,8 +11202,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         constraints:
@@ -11150,8 +11247,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -11221,8 +11318,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         businessDetails:
@@ -11277,8 +11374,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         businessDetails:
@@ -11334,8 +11431,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -11393,8 +11490,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         constraints:
@@ -11438,8 +11535,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '1-801-443-7288'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         createdDate: 1579819592
         title: Mastercard Open Banking Payment History Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -11578,6 +11675,7 @@ components:
         requesterName: Intuit Facade Demo (KEEP)
         createdDate: 1739824892
         title: Mastercard Open Banking Foresight Analytics
+        reportPin: XYeyLA
         type: farpbfnoncra
         status: success
         constraints:
@@ -13614,8 +13712,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -13908,8 +14006,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
           id: 123
@@ -14186,8 +14284,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Balance Analytics
         businessDetails:
           id: 123
@@ -14465,8 +14563,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -14747,8 +14845,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '555-2106'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Balance Analytics
         constraints:
           analyticsReportData:
@@ -18522,8 +18620,8 @@ components:
           state: UT
           zip: '84123'
           phone: 555-2106
-          email: customerservice@abcapartments.com
-          url: abcapartments.com
+          email: customerservice@example.com
+          url: example.com
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 8d510370aae83d459da0b905ee59e714
         consumerSsn: '1147'
@@ -19944,8 +20042,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '1-801-443-7288'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Payment History Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -21122,8 +21220,8 @@ components:
           state: 'UT'
           zip: '84123'
           phone: '1-801-443-7288'
-          email: 'customerservice@abcapartments.com'
-          url: 'abcapartments.com'
+          email: 'customerservice@example.com'
+          url: 'example.com'
         title: Mastercard Open Banking Payment History Analytics
         businessDetails:
           id: 123
@@ -23474,17 +23572,38 @@ components:
         user_message:
           One or more of the fields could not be validated. Please ensure you
           have entered the correct data.
+    NoMatchingExternalIdFoundErrorResponseExample:
+      value:
+        code: '1643'
+        status: '400'
+        message: No matching record found for external_id 123456789.
     ResourceNotFoundRequest:
       value:
         code: '4004'
         status: '404'
         message:
-          The requested experience could not be found for the enterned app name.
+          The requested experience could not be found for the enternal app name.
         user_message: The requested entity was not found.
+    GetExternalSwitchesResourceNotFoundErrorExample:
+      value:
+        code: '14001'
+        status: '404'
+        message: Resource not found
     SwitchesSummaryExample:
       value:
         customerId: '1005061234'
         customerType: testing
+        switches:
+          - id: 602414d84f9a1980cf5eafcc
+            status: completed
+            createdDate: '2024-01-10T11:18:27Z'
+          - id: 65cb40beec86d3bd0e8664cc
+            status: failed
+            failureReason: bad-credentials
+            createdDate: '2024-02-13T10:13:27Z'
+    ExternalSwitchesSummaryExample:
+      value:
+        externalId: '123456789'
         switches:
           - id: 602414d84f9a1980cf5eafcc
             status: completed
@@ -24111,6 +24230,14 @@ components:
       schema:
         $ref: '#/components/schemas/CustomerId'
       example: '1005061234'
+    ExternalIdPathParameter:
+      description: Unique identifier of the external ID
+      name: external_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ExternalId'
+      example: '123456789'
     AccountStatusParameter:
       description: A filter to fetch account in the given status
       name: status
@@ -24348,7 +24475,7 @@ components:
       description: >-
         The text you wish to match. Leave this empty if you wish to return all
         customers. Must be URL-encoded (see: [Handling Spaces in
-        Queries](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/)).
+        Queries](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/)).
       schema:
         type: string
         example: 'Search Value'
@@ -24438,7 +24565,7 @@ components:
       required: true
       description: >-
         2-digit code from [Permissible Purpose
-        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
+        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
         specifying the reason for retrieving this report. Required for
         retrieving some reports.
       schema:
@@ -24481,7 +24608,7 @@ components:
       required: false
       description: >-
         2-digit code from [Permissible Purpose
-        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
+        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
         specifying the reason for retrieving this report. Required for
         retrieving some reports.
       schema:
@@ -24953,6 +25080,7 @@ components:
           example:
             - benchmarking
             - forecasting
+          minItems: 2
           maxItems: 2
           items:
             $ref: '#/components/schemas/AnalyticsType'
@@ -25271,6 +25399,8 @@ components:
       required:
         - name
       properties:
+        ownerName:
+          $ref: '#/components/schemas/AccountOwnerName'
         name:
           $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestName'
         address:
@@ -26098,6 +26228,34 @@ components:
         are valid, but the subpremise of the input address was missing and thus
         unable to be confirmed as valid or invalid.
       example: valid
+    ForesightAnalyticsReport:
+      description: A Foresight Analytics Report
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ForesightAnalyticsReportAck'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 730
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 365 days'
+              example: true
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: >-
+                A list of institution records, including information about the
+                individual accounts used in this report
+            customerAnalytics:
+              $ref: '#/components/schemas/CustomerAnalytics'
     AFBalanceAnalyticsReport:
       description: A Balance Analytics Report
       type: object
@@ -26214,9 +26372,30 @@ components:
       description: >-
         The status of the most recent aggregation attempt (see [Aggregation
         Status
-        Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/account-aggregation/#aggregation-status-codes)).
+        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/account-aggregation/#aggregation-status-codes)).
         Won't be present until you have run your first aggregation for the
         account.
+    ForesightAnalyticsReportAck:
+      required:
+        - id
+        - customerType
+        - customerId
+        - requestId
+        - requesterName
+        - createdDate
+        - title
+        - type
+        - status
+        - reportPin
+        - constraints
+      allOf:
+        - $ref: '#/components/schemas/BaseReportAck'
+        - type: object
+          properties:
+            reportPin:
+              $ref: '#/components/schemas/ReportPin'
+            constraints:
+              $ref: '#/components/schemas/ForesightAnalyticsReportConstraints'
     AnalyticsReportAck:
       required:
         - id
@@ -29317,7 +29496,7 @@ components:
       description: >-
         (Student Loan) The date the loan enters into repayment. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     Country:
@@ -29486,7 +29665,7 @@ components:
         not. This will not be present until you have run your first aggregation
         for the account. A date in Unix epoch time (in seconds). See: [Handling
         Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountAggregationSuccessDate:
@@ -29496,7 +29675,7 @@ components:
         will not be present until you have run your first aggregation for the
         account. A date in Unix epoch time (in seconds). See: [Handling Epoch
         Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountBalanceDate:
@@ -29504,7 +29683,7 @@ components:
       description: >-
         A timestamp showing when the balance was captured by the FI . A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountCreatedDate:
@@ -29512,7 +29691,7 @@ components:
       description: >-
         A timestamp showing when the account was added to the system. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerLastUpdatedDate:
@@ -29520,7 +29699,7 @@ components:
       description: >-
         A timestamp showing when the account was last modified to the system. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountMarketSegment:
@@ -30061,7 +30240,7 @@ components:
         The date of the latest transaction on the account. This will not be
         present until you have run your first aggregation for the account. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountOldestTransactionDate:
@@ -30069,7 +30248,7 @@ components:
       description: >-
         The date of the oldest transaction in the transactions for the account.
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     CustomerAccountParentAccountId:
@@ -30336,6 +30515,12 @@ components:
       description:
         A customer ID. See Add Customer API for how to create a customer ID.
       example: '1005061234'
+    ExternalId:
+      type: string
+      description:
+        An external ID that was shared by the partner to distinguish switches.
+        For example, BranchID.
+      example: 'b73af28c-0878djs3'
     CustomerType:
       type: string
       description:
@@ -30404,7 +30589,7 @@ components:
       description: >-
         (All Account Types) Most recent date of the following information. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     DateTimeWithZone:
@@ -30819,9 +31004,9 @@ components:
           description: >-
             An error code (can be returned as a number or a string). Useful
             links: [Common API Status
-            Codes](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/#common-api-status-codes),
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/#common-api-status-codes),
             [Aggregation Status
-            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/account-aggregation/#aggregation-status-codes).
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/account-aggregation/#aggregation-status-codes).
           example: '10001'
         status:
           type: string
@@ -30875,7 +31060,7 @@ components:
       description: >-
         (Student Loan) The expected date of the payoff date. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     Card:
@@ -30934,7 +31119,7 @@ components:
         Note: the Finicity sales engineers (SE) help you set up a default
         experience for your company. For each additional experience you create
         thereafter, they'll give you a unique ID. See [Configure the Connect
-        Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
+        Experience](https://developer.mastercard.com/open-finance-us/documentation/connect/configure-connect-experience/).
 
 
         Experience values options:
@@ -30959,7 +31144,7 @@ components:
         create
           thereafter, they'll give you a unique ID. See [Configure the
         Connect
-          Experience](https://developer.mastercard.com/open-banking-us/documentation/connect/configure-connect-experience/).
+          Experience](https://developer.mastercard.com/open-finance-us/documentation/connect/configure-connect-experience/).
 
 
           Experience values options:
@@ -30996,7 +31181,7 @@ components:
       description: >-
         (Mortgage/Loan) First payment due date. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     FixConnectParameters:
@@ -31836,7 +32021,7 @@ components:
       description: >-
         (Mortgage/Loan) Original date of loan. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     InitiatedMicroDeposit:
@@ -32044,7 +32229,7 @@ components:
       description: >-
         Advanced options for configuration of which institutions to display in.
         See [Institution
-        Settings](https://developer.mastercard.com/open-banking-us/documentation/connect/connect-institutions-settings/).
+        Settings](https://developer.mastercard.com/open-finance-us/documentation/connect/connect-institutions-settings/).
     InstitutionStateAgg:
       type: boolean
       description: >-
@@ -32543,11 +32728,11 @@ components:
 
 
         -
-        [iOS](https://developer.mastercard.com/open-banking-us/documentation/connect/integrating/webviews/ios-webviews/)
+        [iOS](https://developer.mastercard.com/open-finance-us/documentation/connect/integrating/webviews/ios-webviews/)
 
 
         -
-        [Android](https://developer.mastercard.com/open-banking-us/documentation/connect/integrating/webviews/android-webviews/)
+        [Android](https://developer.mastercard.com/open-finance-us/documentation/connect/integrating/webviews/android-webviews/)
       example: true
     LastName:
       type: string
@@ -32558,7 +32743,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) The date of the last payment. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     LastPaymentDueDate:
@@ -32566,7 +32751,7 @@ components:
       description: >-
         (Mortgage/Loan) Due date of last payment. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     LastPaymentReceiveDate:
@@ -32574,7 +32759,7 @@ components:
       description: >-
         (Mortgage/Loan) The date of the last payment. A date in Unix epoch time
         (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     LiteConnectParameters:
@@ -32765,7 +32950,7 @@ components:
       description: >-
         (Student Loan) The end date of the current status. A date in Unix epoch
         time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     LoanStatusStartDate:
@@ -32773,7 +32958,7 @@ components:
       description: >-
         (Student Loan) The start date of the current status. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     MainPayStatementFields:
@@ -32875,14 +33060,14 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Maturity date of account type. A date
         in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     MicroDepositCallbackUrl:
       type: string
       format: uri
       description: A callback URL where to receive micro deposit notifications
-      example: 'https://www.mydomain.com/listener'
+      example: 'https://www.example.com/listener'
     MicroDepositCount:
       type: integer
       format: int32
@@ -33135,7 +33320,7 @@ components:
       description: >-
         (Mortgage/Loan) Due date for the next payment. A date in Unix epoch time
         (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     NoZoneDateTime:
@@ -33615,7 +33800,7 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Date when account was opened. A date
         in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     OriginalMaturityDate:
@@ -33623,7 +33808,7 @@ components:
       description: >-
         (Mortgage/Loan) Original date of loan maturity. A date in Unix epoch
         time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     OriginalPayrollReportId:
@@ -33639,7 +33824,7 @@ components:
         (Student Loan) The date the borrower graduated or dropped below
         half-time enrollment in school. A date in Unix epoch time (in seconds).
         See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     PartnerCredentials:
@@ -33693,9 +33878,9 @@ components:
           type: integer
           description: >-
             An error code for dispute statement. Useful links: [API
-            Errors](https://developer.mastercard.com/open-banking-us/documentation/errors/),
+            Errors](https://developer.mastercard.com/open-finance-us/documentation/errors/),
             [Aggregation Status
-            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/aggregation-status-codes/).
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/aggregation-status-codes/).
           format: int32
           example: 10406
         status:
@@ -33716,9 +33901,9 @@ components:
           type: integer
           description: >-
             An error code for security freeze. Useful links: [API
-            Errors](https://developer.mastercard.com/open-banking-us/documentation/errors/),
+            Errors](https://developer.mastercard.com/open-finance-us/documentation/errors/),
             [Aggregation Status
-            Codes](https://developer.mastercard.com/open-banking-us/documentation/products/manage/aggregation-status-codes/).
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/aggregation-status-codes/).
           format: int32
           example: 10405
         status:
@@ -33963,7 +34148,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) Due date for the next payment. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     PayoffAmountDate:
@@ -33971,7 +34156,7 @@ components:
       description: >-
         (Mortgage/Loan) Date of final payment. A date in Unix epoch time (in
         seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     PayrollData:
@@ -34494,7 +34679,7 @@ components:
       description: >-
         End date of period. A date in Unix epoch time (in seconds). See:
         [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     PeriodStartDate:
@@ -34502,7 +34687,7 @@ components:
       description: >-
         (Checking/Savings/CD/MoneyMarket) Start date of period. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     PhoneCarrier:
@@ -35012,7 +35197,7 @@ components:
       description: >-
         (Student Loan) The end date of the current repayment plan. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     RepaymentPlanStartDate:
@@ -35020,7 +35205,7 @@ components:
       description: >-
         (Student Loan) The start date of the current repayment plan. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     Report:
@@ -35039,6 +35224,7 @@ components:
       anyOf:
         - $ref: '#/components/schemas/AFBalanceAnalyticsReport'
         - $ref: '#/components/schemas/AFCashFlowAnalyticsReport'
+        - $ref: '#/components/schemas/ForesightAnalyticsReport'
         - $ref: '#/components/schemas/AFPaymentHistoryAnalyticsReport'
         - $ref: '#/components/schemas/CashFlowReport'
         - $ref: '#/components/schemas/PrequalificationReport'
@@ -35197,7 +35383,7 @@ components:
       description: >-
         The `postedDate` of the latest transaction analyzed for the report. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     ReportId:
@@ -35306,7 +35492,7 @@ components:
       description: >-
         The `postedDate` of the earliest transaction analyzed for the report. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     ReportStatus:
@@ -35726,7 +35912,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) End date of statement period. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     StatementReport:
@@ -35774,7 +35960,7 @@ components:
       description: >-
         (Credit Card/Line Of Credit) Start date of statement period. A date in
         Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     StatementType:
@@ -35923,7 +36109,7 @@ components:
       type: string
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: '1607450357'
     StudentLoanDataCertification:
@@ -36237,7 +36423,7 @@ components:
           type: string
           description: >-
             One of "active", "pending", or "shadow" (see [Transaction
-            Status](https://developer.mastercard.com/open-banking-us/documentation/products/manage/transaction-data/#transaction-status))
+            Status](https://developer.mastercard.com/open-finance-us/documentation/products/manage/transaction-data/understanding-transaction-data/#transaction-status))
           example: active
         description:
           type: string
@@ -36268,7 +36454,9 @@ components:
           $ref: '#/components/schemas/TransactionOptionExpireDate'
         checkNum:
           type: string
-          description: The check number of the transaction
+          description:
+            The reference for the transaction provided by the originating
+            institution.
           example: 299
         escrowAmount:
           type: number
@@ -36375,7 +36563,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it was added to our platform. See: [Handling Epoch
         Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionDate:
@@ -36383,7 +36571,7 @@ components:
       description: >-
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it occurred. See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionEffectiveDate:
@@ -36392,7 +36580,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction when it became effective on an account by an institution.
         See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionFirstEffectiveDate:
@@ -36401,7 +36589,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the first timestamp
         of the transaction recorded in the `effectiveDate` field. See: [Handling
         Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionId:
@@ -36415,7 +36603,7 @@ components:
         A date in Unix epoch time (in seconds). Represents the timestamp of the
         transaction expiration date when it became expires on an account by an
         institution. See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionPostedDate:
@@ -36425,7 +36613,7 @@ components:
         transaction when it was posted or cleared by the institution. This value
         isn't required for student loan transaction data. See: [Handling Epoch
         Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     TransactionType:
@@ -36764,21 +36952,18 @@ components:
           $ref: '#/components/schemas/FindTransactionConstraints'
     FindTransactionConstraints:
       description: >-
-        An array of parameters used to return transactions matching the given
-        criteria. The presence of multiple parameters will be treated as an
-        **AND**  function.
-      type: array
-      items:
-        type: object
-        properties:
-          findTransactionDescriptionMemo:
-            $ref: '#/components/schemas/FindTransactionDescriptionMemo'
-          findTransactionAmountFrom:
-            $ref: '#/components/schemas/FindTransactionAmountFrom'
-          findTransactionAmountTo:
-            $ref: '#/components/schemas/FindTransactionAmountTo'
-          findTransactionCategory:
-            $ref: '#/components/schemas/FindTransactionCategory'
+        Parameters used to return transactions matching the given criteria. The
+        presence of multiple parameters will be treated as an **AND**  function.
+      type: object
+      properties:
+        findTransactionDescriptionMemo:
+          $ref: '#/components/schemas/FindTransactionDescriptionMemo'
+        findTransactionAmountFrom:
+          $ref: '#/components/schemas/FindTransactionAmountFrom'
+        findTransactionAmountTo:
+          $ref: '#/components/schemas/FindTransactionAmountTo'
+        findTransactionCategory:
+          $ref: '#/components/schemas/FindTransactionCategory'
     FindTransactionAmountTo:
       type: number
       description: >
@@ -36973,6 +37158,30 @@ components:
             $ref: '#/components/schemas/Card'
         identity:
           $ref: '#/components/schemas/BillPaySwitchIdentity'
+    ExternalIdentity:
+      type: string
+      description: The identifier for your employee or branch.
+      example: '1234583871234'
+    Context:
+      type: string
+      description: The context in which you are using the Data Connect link.
+      enum:
+        - EMAIL
+        - SMS
+        - WEB
+        - MOBILE
+      example: 'EMAIL'
+    ExternalTransferDetails:
+      type: object
+      description: The context type.
+      required:
+        - id
+        - context
+      properties:
+        id:
+          $ref: '#/components/schemas/ExternalIdentity'
+        context:
+          $ref: '#/components/schemas/Context'
     TransferDepositSwitchParameters:
       type: object
       required:
@@ -36982,6 +37191,8 @@ components:
       properties:
         serviceAgreement:
           $ref: '#/components/schemas/ServiceAgreement'
+        external:
+          $ref: '#/components/schemas/ExternalTransferDetails'
         accounts:
           $ref: '#/components/schemas/DepositSwitchAccounts'
         partnerId:
@@ -37002,7 +37213,7 @@ components:
           description: >-
             The publicly available URL you want to be notified with events as
             the user progresses through the application. See [Connect Webhook
-            Event](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-connect/)
+            Event](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-connect/)
             for event details.
           example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
         webhookContentType:
@@ -37019,14 +37230,14 @@ components:
           description: >-
             Allows additional identifiable information to be inserted into the
             payload of connect webhook events. See: [Custom
-            Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
+            Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
         webhookHeaders:
           type: object
           deprecated: true
           description: >-
             Allows additional identifiable information to be included as headers
             of connect webhook event. See: [Custom
-            Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
+            Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
         experience:
@@ -37034,7 +37245,7 @@ components:
     TxPushCallbackUrl:
       type: string
       description: A callback URL where to receive TxPush notifications
-      example: 'https://www.mydomain.com/txpush/listener'
+      example: 'https://www.example.com/txpush/listener'
     TxPushSubscriptionParameters:
       required:
         - callbackUrl
@@ -37064,7 +37275,7 @@ components:
       type: integer
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
 
 
         By default, the income history is set to 24 months, however, a partner
@@ -37076,7 +37287,7 @@ components:
       type: integer
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     UserType:
@@ -37087,7 +37298,7 @@ components:
       type: integer
       description: >-
         A date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
         Note: If the report is retrieved on a day other than the day it was
         generated, on the header of the PDF version of the report there will be
         a "Retrieved Date" populated.
@@ -38633,7 +38844,7 @@ components:
       description: >-
         The publicly available URL you want to be notified with events as the
         user progresses through the application. See [Connect Webhook
-        Event](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-connect/)
+        Event](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-connect/)
         for event details.
       example: 'https://webhook.site/8d4421a7-d1d1-4f01-bb08-5370aff0321b'
     WebhookContentType:
@@ -38648,13 +38859,13 @@ components:
       description: >-
         Allows additional identifiable information to be inserted into the
         payload of connect webhook events. See: [Custom
-        Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
+        Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
     WebhookHeaders:
       type: object
       description: >-
         Allows additional identifiable information to be included as headers of
         connect webhook event. See: [Custom
-        Webhooks](https://developer.mastercard.com/open-banking-us/documentation/webhooks/webhooks-custom/).
+        Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
     WithInsights:
       type: boolean
       description: If Identity Insights data must be returned or not
@@ -38789,7 +39000,7 @@ components:
         prior report that had that same account, the information from that prior
         report will be used and this field will be populated. A date in Unix
         epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/errors/error-list/#handling-epoch-dates-and-times).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1596175200
     Experiences:
@@ -38923,6 +39134,80 @@ components:
                   For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed.
                   * unknown-failure - We encountered an unexpected error.
                   * user-abandon - The user was asked an MFA question, but did not answer the question.
+                  * work-status-terminated - The task could not be completed because the user's employment has been terminated.
+                example: bad-credentials
+              createdDate:
+                type: string
+                description:
+                  Date and time in ISO 8601 format (YYYY-MM-DDThh:mm:ssZ) when
+                  deposit switch was performed
+                example: '2023-07-25T08:14:20Z'
+    ExternalDepositSwitchesSummary:
+      required:
+        - externalId
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: An external ID
+          example: 'b73af28c-0878djs3'
+        switches:
+          type: array
+          description: Deposit switches summary
+          minItems: 0
+          maxItems: 10
+          items:
+            required:
+              - id
+              - status
+              - createdDate
+            properties:
+              id:
+                type: string
+                description: Deposit switch ID
+                example: 602414d84f9a1980cf5eafcc
+              status:
+                type: string
+                description: |
+                  Deposit switch status. Possible values include `processing`,
+                  `completed`, or `failed`.
+
+                  * processing - The deposit switch is currently being processed.
+                  * completed - The deposit switch has been completed successfully.
+                  * failed - The deposit switch has failed. Refer to failureReason for more details.
+                example: completed
+              failureReason:
+                type: string
+                description: |
+                  Deposit switch failure reason. Possible values include - 
+                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
+                  * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional
+                  information from the user. 
+                  * account-unusable - The user's bank account is unusable for the selected product or use case.
+                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+                  * connection-error - A network error occurred which caused the connection between our system and the payroll system to be
+                  lost. 
+                  * distribution-not-supported - The payroll system did not support the type of distribution requested. For example,
+                  the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net
+                  balance. 
+                  * device-disconnected - The device used to start the task is no longer connected. 
+                  * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via
+                  their bank. 
+                  * expired - The user's password has expired and they must create a new one. 
+                  * no-data-found - No verify data was found for the user. 
+                  * product-not-supported - The payroll system did not allow the action to be taken. Many payroll
+                  systems allow HR to customize what is allowed in their system.
+                  Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee
+                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code. 
+                  * routing-number-not-supported - The account did not support the routing number entered. 
+                  * session-timeout - The user's session timed out. 
+                  * system-unavailable - The system was unavailable. For example,
+                  the site is undergoing maintenance or it is outside the window
+                  of scheduled availability for the site. 
+                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. 
+                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed. 
+                  * unknown-failure - We encountered an unexpected error. 
+                  * user-abandon - The user was asked an MFA question, but did not answer the question. 
                   * work-status-terminated - The task could not be completed because the user's employment has been terminated.
                 example: bad-credentials
               createdDate:
@@ -39688,7 +39973,7 @@ components:
       description: >-
         A timestamp showing when the account was last linked to the system. A
         date in Unix epoch time (in seconds). See: [Handling Epoch Dates and
-        Times](https://developer.mastercard.com/open-banking-us/documentation/codes-and-formats/).
+        Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
     EnrichTransactionsPayload:
