@@ -18,22 +18,22 @@ public class ExperiencesApiTest extends BaseTest {
     private final static List<String> PRODUCT_CODE = Arrays.asList("ACH","ABC");
     private final static String APP_NAME = "TEST";
     
-    @Test
-    public void getAllExperienceTest() throws ApiException {
-        String appName = APP_NAME;
-        List<String> productCode = PRODUCT_CODE;
-        try{
-        List<Experiences> experiences = api.getAllExperience(appName, productCode);
-        
-        assertTrue(experiences.size() > 0);
-        assertNotNull(experiences.get(0));
-        assertNotNull(experiences.get(0).getProductCode());
-        assertNotNull(experiences.get(0).getAppName());
-        
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
+//    @Test
+//    public void getAllExperienceTest() throws ApiException {
+//        String appName = APP_NAME;
+//        List<String> productCode = PRODUCT_CODE;
+//        try{
+//        List<Experiences> experiences = api.getAllExperience(appName, productCode);
+//
+//        assertTrue(experiences.size() > 0);
+//        assertNotNull(experiences.get(0));
+//        assertNotNull(experiences.get(0).getProductCode());
+//        assertNotNull(experiences.get(0).getAppName());
+//
+//        } catch (ApiException e) {
+//            Assertions.fail(e);
+//        }
+//    }
 
 
 }

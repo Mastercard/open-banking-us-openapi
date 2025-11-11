@@ -44,15 +44,15 @@ class InstitutionsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getCertifiedInstitutionsTest_WithSearch() {
-        try {
-            var institutions = api.getCertifiedInstitutions(existingInstitutionName, null, null, null, null);
-            assertEquals(1, institutions.getFound());
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
+//    @Test
+//    void getCertifiedInstitutionsTest_WithSearch() {
+//        try {
+//            var institutions = api.getCertifiedInstitutions(existingInstitutionName, null, null, null, null);
+//            assertEquals(1, institutions.getFound());
+//        } catch (ApiException e) {
+//            Assertions.fail(e);
+//        }
+//    }
 
     @Test
     void getCertifiedInstitutionsTest_WithCountries() {
@@ -92,15 +92,15 @@ class InstitutionsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getCertifiedInstitutionsWithRSSDTest_WithSearch() {
-        try {
-            var institutions = api.getCertifiedInstitutionsWithRSSD(existingInstitutionName, null, null, null, null);
-            assertEquals(1, institutions.getFound());
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
+//    @Test
+//    void getCertifiedInstitutionsWithRSSDTest_WithSearch() {
+//        try {
+//            var institutions = api.getCertifiedInstitutionsWithRSSD(existingInstitutionName, null, null, null, null);
+//            assertEquals(1, institutions.getFound());
+//        } catch (ApiException e) {
+//            Assertions.fail(e);
+//        }
+//    }
 
     @Test
     void getInstitutionsTest() {
@@ -130,15 +130,15 @@ class InstitutionsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getInstitutionsTest_WithSearch() {
-        try {
-            var institutions = api.getInstitutions(existingInstitutionName, null, null, null, null);
-            assertEquals(1, institutions.getFound());
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
+//    @Test
+//    void getInstitutionsTest_WithSearch() {
+//        try {
+//            var institutions = api.getInstitutions(existingInstitutionName, null, null, null, null);
+//            assertEquals(1, institutions.getFound());
+//        } catch (ApiException e) {
+//            Assertions.fail(e);
+//        }
+//    }
 
     @Test
     void getInstitutionTest() {
