@@ -235,7 +235,7 @@ class ConnectApiTest extends BaseTest {
             var params = new TransferDepositSwitchParameters()
                     .customerId(CUSTOMER_ID)
                     .partnerId(PARTNER_ID)
-                    .addAccountsItem(ModelFactory.newDepositSwitchAccount("7526894126", "110000000", "checking"))
+                    .addAccountsItem(ModelFactory.newBankAccount("7526894126", "110000000", "checking"))
                     .external(new ExternalTransferDetails()
                         .id("external-123")
                         .context(Context.EMAIL));

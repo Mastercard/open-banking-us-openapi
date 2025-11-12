@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.32.0
+  version: 1.32.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -164,20 +164,20 @@ paths:
     post:
       tags:
         - Connect
-      summary: Generate Connect URL
+      summary: Generate Data Connect URL
       description: >-
-        Generate a Connect URL link to add within your own applications.
+        Generate a Data Connect URL link to add within your own applications.
 
 
         Optional Parameters:
 
-        * `experience`: Configure different customer experiences per Connect
-        session by changing the brand, color, logo, icon, the type of credit
-        decisioning report to generate after the session ends, and more.
+        * `experience`: Configure different customer experiences per Data
+        Connect session by changing the brand, color, logo, icon, the type of
+        credit decisioning report to generate after the session ends, and more.
 
-        * `language`: By default, the Connect application is in English. You
-        don't need to pass  this parameter unless you want to translate Connect
-        into one of our supported languages.
+        * `language`: By default, the Data Connect application is in English.
+        You don't need to pass  this parameter unless you want to translate Data
+        Connect into one of our supported languages.
 
           * Spanish (United States)
           * French (Canada)
@@ -203,9 +203,9 @@ paths:
     post:
       tags:
         - Connect
-      summary: Generate Lite Connect URL
+      summary: Generate Lite Data Connect URL
       description: >-
-        Connect Lite is a variation of Connect Full (`POST
+        Data Connect Lite is a variation of Data Connect Full (`POST
         /connect/v2/generate`), which has a limited set of features.
 
         * Sign in, user's credentials, and Multi-Factor Authentication (MFA)
@@ -213,9 +213,9 @@ paths:
         * No user account management
 
 
-        The Connect Web SDK isn't a requirement when using Connect lite.
-        However, if you want to use the SDK events, routes, and user events,
-        then you must integrate with the Connect Web SDK.
+        The Data Connect Web SDK isn't a requirement when using Data Connect
+        lite. However, if you want to use the SDK events, routes, and user
+        events, then you must integrate with the Data Connect Web SDK.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -233,9 +233,9 @@ paths:
     post:
       tags:
         - Connect
-      summary: Generate Fix Connect URL
+      summary: Generate Fix Data Connect URL
       description: >-
-        Use the Connect Fix API when the following conditions occur:
+        Use the Data Connect Fix API when the following conditions occur:
 
         * The connection to the user's financial institution is lost
 
@@ -261,10 +261,10 @@ paths:
     post:
       tags:
         - Connect
-      summary: Send Connect Email
+      summary: Send Data Connect Email
       description: >-
-        Same as Connect Full (`POST /connect/v2/generate`) but send a Connect
-        email to a consumer.
+        Same as Data Connect Full (`POST /connect/v2/generate`) but send a
+        Connect email to a consumer.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -282,14 +282,15 @@ paths:
     post:
       tags:
         - Connect
-      summary: Generate Connect URL - Joint Borrower
+      summary: Generate Data Connect URL - Joint Borrower
       description: >-
-        Same as Connect Full (`POST /connect/v2/generate`) but for joint
+        Same as Data Connect Full (`POST /connect/v2/generate`) but for joint
         borrowers.
 
 
         MVS prompts both the primary and joint borrower to enter each of their
-        financial, payroll, and paystub information in the same Connect session.
+        financial, payroll, and paystub information in the same Data Connect
+        session.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -328,7 +329,7 @@ paths:
     post:
       tags:
         - Connect
-      summary: Connect Transfer URL for Bill Pay Switch
+      summary: Generate Connect Transfer URL for Bill Pay Switch
       description: >-
         Generate a Connect Transfer URL which you can use in your application to
         allow end users to set up a bill pay switch.
@@ -365,16 +366,16 @@ paths:
     post:
       tags:
         - Connect
-      summary: Send Connect Email - Joint Borrower
+      summary: Send Data Connect Email - Joint Borrower
       description: >-
-        Same as Connect Joint Borrower (`POST
-        /connect/v2/generate/jointBorrower`) but send a Connect email  to at
-        least one of the joint borrower's email addresses.
+        Same as Data Connect Joint Borrower (`POST
+        /connect/v2/generate/jointBorrower`) but send a Data Connect email  to
+        at least one of the joint borrower's email addresses.
 
 
         When the consumer opens the email, MVS prompts both the primary and
         joint borrower to enter each of their financial, payroll, and paystub
-        information in the same Connect session.
+        information in the same Data Connect session.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1815,7 +1816,7 @@ paths:
       description: >-
         Generate a Verification of Assets with Income (VOAI) report for all
         checking, savings, money market, and investment accounts for the given
-        customer. 
+        customer.
 
 
         This service retrieves up to 24 months of transaction history for each
@@ -2168,7 +2169,7 @@ paths:
         Generate or refresh a VOIE - Payroll report. For clients using the
         product via a consumer permissioning experience via Connect, the
         original VOIE - Payroll report generates when the consumer completes the
-        Connect experience, and this API is only used for future report
+        Data Connect experience, and this API is only used for future report
         refreshes without reengaging the consumer.
 
 
@@ -2240,7 +2241,6 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/AccountIdParameter'
         - $ref: '#/components/parameters/StatementIndexParameter'
-        - $ref: '#/components/parameters/StatementTypeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountStatementResponse'
@@ -2906,7 +2906,7 @@ paths:
         Report Reissue is a billable service that enables authorized third
         parties - such as investors, mortgage insurers, QC agencies, and loan
         management systems - to securely access an existing CRA report
-        originally generated by another Mastercard partner. 
+        originally generated by another Mastercard partner.
 
         To retrieve a report, the requesting partner must provide the report ID
         which should be obtained from the partner who originally generated the
@@ -2917,7 +2917,7 @@ paths:
         Report data can either be retrieved as a JSON document or a PDF file. To
         specify the format required, set the Accept request header to either
         application/json or application/pdf. If neither is set, the report
-        format will be returned as a JSON document. 
+        format will be returned as a JSON document.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -3692,8 +3692,8 @@ paths:
         - Connect
       summary: Get Experience IDs
       description:
-        Retrieve Connect experiences by application name. Optionally, filter the
-        experiences by product codes.
+        Retrieve Data Connect experiences by application name. Optionally,
+        filter the experiences by product codes.
       operationId: GetAllExperience
       security:
         - FinicityAppToken: []
@@ -4203,7 +4203,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
       description: >-
-        Use the Connect Fix API when the following conditions occur:
+        Use the Data Connect Fix API when the following conditions occur:
           * The connection to the user's financial institution is lost.
           * The user's credentials were updated (for any number of reasons).
           * The user's MFA challenge has expired.
@@ -4231,7 +4231,8 @@ paths:
         $ref: '#/components/requestBodies/CreateConfiguration'
     get:
       summary: Get All Configurations for Current Partner
-      description: Get all previously saved Connect Component configurations.
+      description:
+        Get all previously saved Data Connect Component configurations.
       operationId: get-configurations
       tags:
         - 'Connect Components'
@@ -5071,13 +5072,13 @@ components:
           schema:
             $ref: '#/components/schemas/ConnectUrl'
     ConnectGenerateTransferDepositSwitchResponse:
-      description: Successful response. Returns Connect URL.
+      description: Successful response. Returns Connect Transfer URL.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectTransferDepositSwitchLink'
     ConnectGenerateTransferBillPaySwitchResponse:
-      description: Successful response. Returns Connect URL.
+      description: Successful response. Returns Connect Transfer URL.
       content:
         application/json:
           schema:
@@ -6281,10 +6282,17 @@ components:
           schema:
             $ref: '#/components/schemas/PaymentInstructions'
           examples:
-            ACHDetailsExample:
-              $ref: '#/components/examples/ACHDetailsExample'
-            ACHDetailsWithoutRTPDetailsExample:
-              $ref: '#/components/examples/ACHDetailsWithoutRTPDetailsExample'
+            ACHDetailsV3Example:
+              $ref: '#/components/examples/ACHDetailsV3Example'
+            ACHDetailsWithoutRTPDetailsV3Example:
+              $ref: >-
+                #/components/examples/ACHDetailsWithoutRTPDetailsV3Example
+            ACHDetailsExampleWithoutFedNowV3Example:
+              $ref: >-
+                #/components/examples/ACHDetailsExampleWithoutFedNowV3Example
+            ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example:
+              $ref: >-
+                #/components/examples/ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example
             CustomerAuthorizationDetailsExample:
               $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
     GetCustomerAuthorizationDetailsNotFoundErrorResponse:
@@ -23521,7 +23529,7 @@ components:
                 - '29'
                 - '3'
                 - '30'
-    ACHDetailsExample:
+    ACHDetailsV3Example:
       value:
         paymentInstruction:
           - type: ach
@@ -23538,6 +23546,14 @@ components:
                 value: '091000019'
             transferInEnabled: true
             transferOutEnabled: true
+          - type: fedNow
+            accountNumber: '1000001111'
+            tanEnabled: false
+            descriptors:
+              - type: routingNumber
+                value: '091009919'
+            transferInEnabled: true
+            transferOutEnabled: true
     ACHDetailsWithoutRTPDetailsExample:
       value:
         paymentInstruction:
@@ -23547,6 +23563,46 @@ components:
             descriptors:
               - type: routingNumber
                 value: '091000019'
+    ACHDetailsWithoutRTPDetailsV3Example:
+      value:
+        paymentInstruction:
+          - type: ach
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
+          - type: fedNow
+            accountNumber: '1000001111'
+            tanEnabled: false
+            descriptors:
+              - type: routingNumber
+                value: '091009919'
+            transferInEnabled: true
+            transferOutEnabled: true
+    ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example:
+      value:
+        paymentInstruction:
+          - type: ach
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
+    ACHDetailsExampleWithoutFedNowV3Example:
+      value:
+        paymentInstruction:
+          - type: ach
+            accountNumber: '1000001111'
+            descriptors:
+              - type: routingNumber
+                value: '091000019'
+          - type: rtp
+            accountNumber: '1000001115'
+            tanEnabled: false
+            descriptors:
+              - type: routingNumber
+                value: '091009910'
+            transferInEnabled: true
+            transferOutEnabled: true
     CustomerAuthorizationDetailsExample:
       value:
         institutionLoginId: 7008461438
@@ -24859,14 +24915,6 @@ components:
       schema:
         $ref: '#/components/schemas/ConsentReceiptId'
       example: cr_4pfI3r1X8aOHrDDwrwC01NHFxOXlT1
-    StatementTypeParameter:
-      name: type
-      in: query
-      required: false
-      description: The type of statement to retrieve
-      schema:
-        $ref: '#/components/schemas/StatementType'
-      example: taxStatement
     AccountTypeParameter:
       description: >-
         A filter to fetch accounts for the given type. Currently supported
@@ -26969,8 +27017,8 @@ components:
     AssetId:
       type: string
       description: >-
-        An asset ID. Generated by Connect or by using the Store Customer Pay
-        Statement API.
+        An asset ID. Generated by Data Connect or by using the Store Customer
+        Pay Statement API.
       example: 097545c5-1c2a-4f20-a5ef-77f0820344c9-2018601178
     AvailableBalance:
       required:
@@ -29198,7 +29246,8 @@ components:
         passed to the reports that support it.
 
 
-        However, Connect doesn't pass this parameter to the following reports:
+        However, Data Connect doesn't pass this parameter to the following
+        reports:
 
         * Pay Statement Extraction Report
 
@@ -29285,8 +29334,8 @@ components:
           $ref: '#/components/schemas/SingleUseUrl'
     ConnectLanguage:
       description: |
-        By default, the Connect application is in English. You don't need to pass this parameter unless
-        you want to translate Connect into one of our supported languages.
+        By default, the Data Connect application is in English. You don't need to pass this parameter unless
+        you want to translate Data Connect into one of our supported languages.
 
         * Spanish (United States): `es`
         * French (Canada): `fr`
@@ -30852,7 +30901,7 @@ components:
         be 0.
       example: 453
     EmailOptions:
-      description: Configuration for the Connect email's sent to customers
+      description: Configuration for the Data Connect email's sent to customers
       required:
         - to
       type: object
@@ -30860,12 +30909,12 @@ components:
         to:
           type: string
           description:
-            The email address for the customer receiving the Connect email
+            The email address for the customer receiving the Data Connect email
           example: bob@example.com
         from:
           type: string
           description:
-            The name of a person or business sending the Connect email
+            The name of a person or business sending the Data Connect email
           example: test.lender@test.com
         supportPhone:
           type: string
@@ -31111,7 +31160,8 @@ components:
 
         * Popular institutions: displayed on the Bank Search page
 
-        * Report: the credit decisioning report to send when Connect completes.
+        * Report: the credit decisioning report to send when Data Connect
+        completes.
 
         * MVS modules: financial, payroll, paystub
 
@@ -32445,7 +32495,7 @@ components:
             Beta Data - Can be ignored. Should use `status` field instead.
             The overall status for the institution:
               - online - Connection is active, financial institution is available and functioning
-              - offline - Connection is inactive due to an issue. Financial institution is not available in Connect search
+              - offline - Connection is inactive due to an issue. Financial institution is not available in Data Connect search
               - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
               - testing (Limited Availability)  - A new connection with the financial institution is still undergoing development and is only available to some select partners
               - investigating - Connection is new and/or under monitoring due to instability
@@ -32710,15 +32760,16 @@ components:
       example: 0.123
     isHostedInMobileApp:
       description:
-        Indicates whether Connect is hosted in a web view / secure container of
-        the partner mobile app. It is only required for NON SDK integrations.
+        Indicates whether Data Connect is hosted in a web view / secure
+        container of the partner mobile app. It is only required for NON SDK
+        integrations.
       type: boolean
       example: false
     IsWebView:
       type: boolean
       description: >-
-        "true": Indicates that the Connect Session will be displayed within a
-        WebView. When the `isWebView` parameter is `true` the `redirectUri`
+        "true": Indicates that the Data Connect Session will be displayed within
+        a WebView. When the `isWebView` parameter is `true` the `redirectUri`
         parameter is required.
 
 
@@ -35177,10 +35228,10 @@ components:
       type: string
       description: >-
         The URL that customers will be redirected to after completing Finicity
-        Connect.  Required unless Connect is embedded inside our application
-        (iframe). Required for NON SDK integrations, should be iOS universal
-        link OR Android app link  when Connect is hosted in a web view / secure
-        container of the partner mobile app.
+        Connect.  Required unless Data Connect is embedded inside our
+        application (iframe). Required for NON SDK integrations, should be iOS
+        universal link OR Android app link  when Data Connect is hosted in a web
+        view / secure container of the partner mobile app.
       example: 'https://www.finicity.com/connect/'
     RegisteredApplication:
       required:
@@ -35852,7 +35903,7 @@ components:
     SingleUseUrl:
       type: boolean
       description: >-
-        "true": The URL link expires after a Connect session successfully
+        "true": The URL link expires after a Data Connect session successfully
         completes.
 
 
@@ -37131,7 +37182,7 @@ components:
         serviceAgreement:
           $ref: '#/components/schemas/ServiceAgreement'
         accounts:
-          $ref: '#/components/schemas/DepositSwitchAccounts'
+          $ref: '#/components/schemas/BankAccounts'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
@@ -37140,8 +37191,8 @@ components:
           $ref: '#/components/schemas/TransferExperience'
         language:
           description: |
-            By default, the Connect application is in English. You don't need to pass this parameter unless
-            you want to translate Connect into one of our supported languages.
+            By default, the Data Connect application is in English. You don't need to pass this parameter unless
+            you want to translate Data Connect into one of our supported languages.
 
             * Spanish (United States): `es`
           type: string
@@ -37194,15 +37245,15 @@ components:
         external:
           $ref: '#/components/schemas/ExternalTransferDetails'
         accounts:
-          $ref: '#/components/schemas/DepositSwitchAccounts'
+          $ref: '#/components/schemas/BankAccounts'
         partnerId:
           $ref: '#/components/schemas/PartnerId'
         customerId:
           $ref: '#/components/schemas/CustomerId'
         language:
           description: |
-            By default, the Connect application is in English. You don't need to pass this parameter unless
-            you want to translate Connect into one of our supported languages.
+            By default, the Connect Transfer application is in English. You don't need to pass this parameter unless
+            you want to translate Connect Transfer into one of our supported languages.
 
             * Spanish (United States): `es`
           type: string
@@ -37229,14 +37280,14 @@ components:
           deprecated: true
           description: >-
             Allows additional identifiable information to be inserted into the
-            payload of connect webhook events. See: [Custom
+            payload of Connect webhook events. See: [Custom
             Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
         webhookHeaders:
           type: object
           deprecated: true
           description: >-
             Allows additional identifiable information to be included as headers
-            of connect webhook event. See: [Custom
+            of the Connect webhook event. See: [Custom
             Webhooks](https://developer.mastercard.com/open-finance-us/documentation/webhooks/webhooks-custom/).
         redirectUri:
           $ref: '#/components/schemas/RedirectUri'
@@ -37244,7 +37295,7 @@ components:
           $ref: '#/components/schemas/TransferExperience'
     TxPushCallbackUrl:
       type: string
-      description: A callback URL where to receive TxPush notifications
+      description: A callback URL to receive TxPush notifications
       example: 'https://www.example.com/txpush/listener'
     TxPushSubscriptionParameters:
       required:
@@ -38931,6 +38982,8 @@ components:
 
             2. RTP: when payment instruction type is RTP (Real-Time Payments)
 
+            3. FEDNOW: when account type is FEDNOW (Real-Time Payments)
+
           example: ach
         accountNumber:
           type: string
@@ -38952,13 +39005,13 @@ components:
           type: boolean
           description:
             'Indicates whether transfer to this account is enabled or not.
-            Applicable for "RTP" type only.'
+            Applicable for "RTP" and "FEDNOW" type only.'
           example: true
         transferOutEnabled:
           type: boolean
           description:
             'Indicates whether transfer from this account is enabled or not.
-            Applicable for "RTP" type only.'
+            Applicable for "RTP" and "FEDNOW" type only.'
           example: true
     Descriptor:
       required:
@@ -39179,35 +39232,35 @@ components:
               failureReason:
                 type: string
                 description: |
-                  Deposit switch failure reason. Possible values include - 
-                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts. 
+                  Deposit switch failure reason. Possible values include -
+                  * account-lockout - The account is locked out, most likely the end user has had too many failed attempts.
                   * account-setup-incomplete - The user's account in the payroll system is not fully set up and will require additional
-                  information from the user. 
+                  information from the user.
                   * account-unusable - The user's bank account is unusable for the selected product or use case.
-                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason. 
+                  * bad-credentials - Either the username or password was incorrect. This is our most common fail reason.
                   * connection-error - A network error occurred which caused the connection between our system and the payroll system to be
-                  lost. 
+                  lost.
                   * distribution-not-supported - The payroll system did not support the type of distribution requested. For example,
                   the user attempted to allocate a percentage of their paycheck, but is only eligible for fixed amounts and remainder/net
-                  balance. 
-                  * device-disconnected - The device used to start the task is no longer connected. 
+                  balance.
+                  * device-disconnected - The device used to start the task is no longer connected.
                   * enrolled-in-paycard - The user is enrolled in a paycard program instead of direct deposit via
-                  their bank. 
-                  * expired - The user's password has expired and they must create a new one. 
-                  * no-data-found - No verify data was found for the user. 
+                  their bank.
+                  * expired - The user's password has expired and they must create a new one.
+                  * no-data-found - No verify data was found for the user.
                   * product-not-supported - The payroll system did not allow the action to be taken. Many payroll
                   systems allow HR to customize what is allowed in their system.
                   Direct Deposit may be allowed by a payroll system, but may be disallowed by a specific employer. Therefore, when an employee
-                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code. 
-                  * routing-number-not-supported - The account did not support the routing number entered. 
-                  * session-timeout - The user's session timed out. 
+                  of that company goes to set up Direct Deposit it is rejected, resulting in this error code.
+                  * routing-number-not-supported - The account did not support the routing number entered.
+                  * session-timeout - The user's session timed out.
                   * system-unavailable - The system was unavailable. For example,
                   the site is undergoing maintenance or it is outside the window
-                  of scheduled availability for the site. 
-                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time. 
-                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed. 
-                  * unknown-failure - We encountered an unexpected error. 
-                  * user-abandon - The user was asked an MFA question, but did not answer the question. 
+                  of scheduled availability for the site.
+                  * transaction-pending - There is a deposit allocation already in progress and additional updates cannot be made at this time.
+                  For example, if an employer has an approval process in place, they may disallow modifications until the update has been processed.
+                  * unknown-failure - We encountered an unexpected error.
+                  * user-abandon - The user was asked an MFA question, but did not answer the question.
                   * work-status-terminated - The task could not be completed because the user's employment has been terminated.
                 example: bad-credentials
               createdDate:
@@ -39613,10 +39666,10 @@ components:
           description: User email address
           example: 'jane.doe@example.com'
           maxLength: 100
-    DepositSwitchAccounts:
+    BankAccounts:
       type: array
       items:
-        $ref: '#/components/schemas/DepositSwitchAccount'
+        $ref: '#/components/schemas/BankAccount'
       description: List of customer accounts (one or more) for Deposit Switch.
       example:
         - accountNumber: '7526894126'
@@ -39627,7 +39680,7 @@ components:
           bankIdentifier: '110000000'
           title: 'Checking account 8560'
           type: 'checking'
-    DepositSwitchAccount:
+    BankAccount:
       description: Deposit Switch account
       type: object
       required:

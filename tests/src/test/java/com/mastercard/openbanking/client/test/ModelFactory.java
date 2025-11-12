@@ -85,10 +85,10 @@ public final class ModelFactory {
             .state(state)
             .zipCode(zipCode)
             .phone(phone);
-    }    
+    }
 
-    public static DepositSwitchAccount newDepositSwitchAccount(String accountNumber, String bankIdentifier, String type) {
-        return new DepositSwitchAccount()
+    public static BankAccount newBankAccount(String accountNumber, String bankIdentifier, String type) {
+        return new BankAccount()
             .accountNumber(accountNumber)
             .bankIdentifier(bankIdentifier)
             .type(type);
