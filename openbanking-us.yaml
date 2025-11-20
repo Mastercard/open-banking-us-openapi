@@ -6282,17 +6282,10 @@ components:
           schema:
             $ref: '#/components/schemas/PaymentInstructions'
           examples:
-            ACHDetailsV3Example:
-              $ref: '#/components/examples/ACHDetailsV3Example'
-            ACHDetailsWithoutRTPDetailsV3Example:
-              $ref: >-
-                #/components/examples/ACHDetailsWithoutRTPDetailsV3Example
-            ACHDetailsExampleWithoutFedNowV3Example:
-              $ref: >-
-                #/components/examples/ACHDetailsExampleWithoutFedNowV3Example
-            ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example:
-              $ref: >-
-                #/components/examples/ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example
+            ACHDetailsExample:
+              $ref: '#/components/examples/ACHDetailsExample'
+            ACHDetailsWithoutRTPDetailsExample:
+              $ref: '#/components/examples/ACHDetailsWithoutRTPDetailsExample'
             CustomerAuthorizationDetailsExample:
               $ref: '#/components/examples/CustomerAuthorizationDetailsExample'
     GetCustomerAuthorizationDetailsNotFoundErrorResponse:
@@ -23529,7 +23522,7 @@ components:
                 - '29'
                 - '3'
                 - '30'
-    ACHDetailsV3Example:
+    ACHDetailsExample:
       value:
         paymentInstruction:
           - type: ach
@@ -23546,14 +23539,6 @@ components:
                 value: '091000019'
             transferInEnabled: true
             transferOutEnabled: true
-          - type: fedNow
-            accountNumber: '1000001111'
-            tanEnabled: false
-            descriptors:
-              - type: routingNumber
-                value: '091009919'
-            transferInEnabled: true
-            transferOutEnabled: true
     ACHDetailsWithoutRTPDetailsExample:
       value:
         paymentInstruction:
@@ -23563,46 +23548,6 @@ components:
             descriptors:
               - type: routingNumber
                 value: '091000019'
-    ACHDetailsWithoutRTPDetailsV3Example:
-      value:
-        paymentInstruction:
-          - type: ach
-            accountNumber: '1000001111'
-            descriptors:
-              - type: routingNumber
-                value: '091000019'
-          - type: fedNow
-            accountNumber: '1000001111'
-            tanEnabled: false
-            descriptors:
-              - type: routingNumber
-                value: '091009919'
-            transferInEnabled: true
-            transferOutEnabled: true
-    ACHDetailsExampleWithoutFedNowAndWithoutRTPV3Example:
-      value:
-        paymentInstruction:
-          - type: ach
-            accountNumber: '1000001111'
-            descriptors:
-              - type: routingNumber
-                value: '091000019'
-    ACHDetailsExampleWithoutFedNowV3Example:
-      value:
-        paymentInstruction:
-          - type: ach
-            accountNumber: '1000001111'
-            descriptors:
-              - type: routingNumber
-                value: '091000019'
-          - type: rtp
-            accountNumber: '1000001115'
-            tanEnabled: false
-            descriptors:
-              - type: routingNumber
-                value: '091009910'
-            transferInEnabled: true
-            transferOutEnabled: true
     CustomerAuthorizationDetailsExample:
       value:
         institutionLoginId: 7008461438
@@ -38982,8 +38927,6 @@ components:
 
             2. RTP: when payment instruction type is RTP (Real-Time Payments)
 
-            3. FEDNOW: when account type is FEDNOW (Real-Time Payments)
-
           example: ach
         accountNumber:
           type: string
@@ -39005,13 +38948,13 @@ components:
           type: boolean
           description:
             'Indicates whether transfer to this account is enabled or not.
-            Applicable for "RTP" and "FEDNOW" type only.'
+            Applicable for "RTP" type only.'
           example: true
         transferOutEnabled:
           type: boolean
           description:
             'Indicates whether transfer from this account is enabled or not.
-            Applicable for "RTP" and "FEDNOW" type only.'
+            Applicable for "RTP" type only.'
           example: true
     Descriptor:
       required:
