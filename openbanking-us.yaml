@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.32.3
+  version: 1.32.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -720,6 +720,7 @@ paths:
         for further clarification.
 
 
+        The recommended timeout setting for this request is 180 seconds in order
         The recommended timeout setting for this request is 180 seconds in order
         to receive a response. However, you can terminate the connection after
         making the call the operation will still complete. You will have to pull
@@ -1488,25 +1489,10 @@ paths:
     get:
       tags:
         - App Registration
-      summary: Get App Registration Status (Deprecated)
+      summary: Get App Registration Status
       deprecated: true
       description: >-
-        This endpoint will not be supported after May 2026.
-
-
-        You must update your code to use one of the following alternatives.
-
-        *  To check the status of your app registrations on Mastercard's
-           Open Finance platform, use:
-
-           [GET /applications](#getApplications)
-
-
-        * To check the status of your application with a particular
-          Financial Institution, use:
-
-          [GET
-        /applications/{application_id}/institutions](#getRegisteredInstitutions)
+        Get the status of your application registration(s).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -1533,7 +1519,7 @@ paths:
     get:
       tags:
         - App Registration
-      summary: Get App Registration Details
+      summary: Get App Details
       description: >-
         This endpoint returns the status of the submitted application and
         provides additional details.
@@ -1643,16 +1629,8 @@ paths:
         - Institutions
       summary: Get Certified Institutions With RSSD
       description: >-
-        Search for financial institutions by certified product type. Returns a
-        list of financial institutions, including the institution's
-        certification details and RSSD identifier. The returned institutions can
-        be filtered based on specified search criteria, provided using the
-        request’s query parameters. If no institutions are found, a 200 response
-        will be returned with an empty institutions array in the response body.
+        Search for certified financial institutions w/RSSD.
 
-        This is not a billable endpoint.
-
-        Response time for this endpoint should be < 500 milliseconds on average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCertifiedInstitutionsWithRSSD
@@ -1660,11 +1638,11 @@ paths:
         - $ref: '#/components/parameters/InstitutionSearchParameter'
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
-        - $ref: '#/components/parameters/ProductTypesParameter'
+        - $ref: '#/components/parameters/ProductTypeParameter'
         - $ref: '#/components/parameters/SupportedCountriesParameter'
       responses:
         '200':
-          $ref: '#/components/responses/GetCertifiedInstitutionsWithRssdResponse'
+          $ref: '#/components/responses/GetCertifiedInstitutionsResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -1675,14 +1653,8 @@ paths:
         - Institutions
       summary: Get Institutions
       description: >-
-        Search for financial institutions. The returned list of institutions can
-        be filtered based on specified search criteria, provided using the
-        request’s query parameters. If no institutions are found, a 200 response
-        will be returned with an empty institutions array in the response body. 
+        Search for financial institutions.
 
-        This is not a billable endpoint.
-
-        Response time for this endpoint should be < 500 milliseconds on average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutions
@@ -1705,16 +1677,8 @@ paths:
         - Institutions
       summary: Get Certified Institutions
       description: >-
-        Search for financial institutions by certified product type. Returns a
-        list of financial institutions, including the institution's
-        certification details. The returned institutions can be filtered based
-        on specified search criteria, provided using the request’s query
-        parameters. If no institutions are found, a 200 response will be
-        returned with an empty institutions array in the response body. 
+        Search for financial institutions by certified product.
 
-        This is not a billable endpoint.
-
-        Response time for this endpoint should be < 500 milliseconds on average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetCertifiedInstitutions
@@ -1722,7 +1686,7 @@ paths:
         - $ref: '#/components/parameters/InstitutionSearchParameter'
         - $ref: '#/components/parameters/StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
-        - $ref: '#/components/parameters/ProductTypesParameter'
+        - $ref: '#/components/parameters/ProductTypeParameter'
         - $ref: '#/components/parameters/SupportedCountriesParameter'
       responses:
         '200':
@@ -1737,13 +1701,8 @@ paths:
         - Institutions
       summary: Get Institution by ID
       description: >-
-        Get financial institution details by institution ID. If an institution
-        was not found for the requested institution ID, the response status will
-        be a 404. 
+        Get financial institution details by ID.
 
-        This is not a billable endpoint.
-
-        Response time for this endpoint should be < 500 milliseconds on average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitution
@@ -1764,14 +1723,8 @@ paths:
         - Institutions
       summary: Get Institution Branding by ID
       description: >-
-        Get the branding assets for a single financial institution, given the
-        institution’s ID. Branding assets are stored in S3 as SVGs, and links to
-        the assets are returned on the response payload. If branding does not
-        exist for the requested institution, the response status will be a 404.
+        Return the branding information for a financial institution.
 
-        This is not a billable endpoint.
-
-        Response time for this endpoint should be < 500 milliseconds on average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutionBranding
@@ -1792,17 +1745,12 @@ paths:
       description: >-
         Get institution details for a given routing number. The endpoint will
         return an error if it is unable to find a match for the routing number
-        (404 response), or if the routing number provided is not the correct
-        length (400 response).
-
+        or if the routing number provided is not the correct length.  <br><br>
         Please note, this endpoint only returns FIs that are mapped to
-        Mastercard financial institutions. Not every institution can be mapped
+        Mastercard financial institutions.  Not every institution can be mapped
         as not every institution type has a routing number.
 
-        This is not a billable endpoint.
 
-        Response time for this endpoint should be < 1000 milliseconds on
-        average.
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetInstitutionsByRoutingNumber
@@ -1817,8 +1765,6 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voa':
     post:
       tags:
@@ -3224,7 +3170,7 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/GetAssetNotFoundErrorResponse'
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/availableBalance/live':
     get:
       tags:
@@ -3540,7 +3486,9 @@ paths:
     get:
       tags:
         - Customer Authorization Details
-      summary: Get Customer Authorization Details
+      summary:
+        Returns customer authorization details for the institution login
+        identification.
       description: >-
         The endpoint provides customer authorization details like authorization
         start date, authorization end date against the requested institution
@@ -5423,12 +5371,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CertifiedInstitutions'
-    GetCertifiedInstitutionsWithRssdResponse:
-      description: Institutions were successfully retrieved
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CertifiedInstitutionsWithRssd'
     GetInstitutionResponse:
       description: Institution was successfully retrieved
       content:
@@ -6120,17 +6062,6 @@ components:
       description:
         The service can't accept more requests or is not available from the Test
         Drive.
-    GetAssetNotFoundErrorResponse:
-      description: The resource doesn't exist
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            CustomerNotFoundExample:
-              $ref: '#/components/examples/CustomerNotFoundExample'
-            AssetNotFoundExample:
-              $ref: '#/components/examples/AssetNotFoundExample'
     ResourceNotFoundErrorResponse:
       description: The resource doesn't exist
       content:
@@ -7277,10 +7208,6 @@ components:
       value:
         code: 14001
         message: 'Resource not found.'
-    AssetNotFoundExample:
-      value:
-        code: 13002
-        message: 'Asset not found'
     ForbiddenErrorResponseExample:
       value:
         code: 10405
@@ -24819,30 +24746,12 @@ components:
       schema:
         $ref: '#/components/schemas/SettleByDate'
       example: '2023-03-30'
-    ProductTypesParameter:
-      name: type
-      in: query
-      description: The certified product type(s) to filter by. For example, if
-        “type=voa”, only institutions with the certified product type “voa” will
-        be returned (i.e. where “voa=true” for that institution). Multiple types
-        may be specified. For example, “type=voa,voi,ach” will only return
-        institutions certified for “voa”, “voi”, and “ach”.
-
-        Product types include "transAgg", "ach", "stateAgg", "voi", "voa",
-        "aha", "availBalance", and "accountOwner".
-      required: false
-      schema:
-        type: string
-        example: voa,voi
     ProductTypeParameter:
       name: type
       in: query
-      description: The certified product type to filter by. For example, if
-        “type=voa”, only institutions with the certified product type “voa” will
-        be returned (i.e. where “voa=true” for that institution).
-
-        Product types include "transAgg", "ach", "stateAgg", "voi", "voa",
-        "aha", "availBalance", and "accountOwner".
+      description:
+        'A product type: "transAgg", "ach", "stateAgg", "voi", "voa", "aha",
+        "availBalance", "accountOwner"'
       required: false
       schema:
         type: string
@@ -24850,15 +24759,13 @@ components:
     SupportedCountriesParameter:
       name: supportedCountries
       in: query
-      description:
-        A two-letter country code, or a list of comma separated two-letter
-        country codes. This query parameter is used to ensure that all
-        institution search results are supported in the county specified. The
-        default is “*” for all countries.
+      description: A list of country codes, '*' for all countries.
       required: false
       schema:
-        type: string
-        pattern: ^(\*|[a-zA-Z]{2}(,[a-zA-Z]{2})*)$
+        type: array
+        items:
+          type: string
+          pattern: ^(\*|[a-z]{2})$
         example: us
       style: form
       explode: false
@@ -24866,9 +24773,8 @@ components:
       name: search
       in: query
       description:
-        The institution name to search by. Fuzzy searching is used, therefore
-        the search term does not need to exactly match the institution’s name
-        for it to be returned in the results.
+        Search term (financial institution `name` field). Leave empty for all
+        FIs.
       required: false
       schema:
         type: string
@@ -29125,12 +29031,22 @@ components:
       required:
         - name
         - id
-        - oauthEnabled
-        - productionStatus
+        - transAgg
+        - ach
+        - stateAgg
+        - voi
+        - voa
+        - aha
+        - availBalance
+        - accountOwner
+        - loanPaymentDetails
+        - studentLoanData
       type: object
       properties:
         id:
           $ref: '#/components/schemas/NumericInstitutionId'
+        rssd:
+          $ref: '#/components/schemas/Rssd'
         name:
           $ref: '#/components/schemas/InstitutionName'
         transAgg:
@@ -29153,52 +29069,12 @@ components:
           $ref: '#/components/schemas/StudentLoanDataCertification'
         loanPaymentDetails:
           $ref: '#/components/schemas/LoanPaymentDetailCertification'
-        liabilityData:
-          $ref: '#/components/schemas/LiabilityDataCertification'
-        billPayData:
-          $ref: '#/components/schemas/BillPayDataCertification'
-        oauthEnabled:
-          $ref: '#/components/schemas/InstitutionOauthEnabled'
-        productionStatus:
-          $ref: '#/components/schemas/InstitutionProductionStatus'
-    CertifiedInstitutionsWithRssd:
-      description:
-        A list of financial institutions from the Get Certified Institutions
-        with RSSD API
-      required:
-        - found
-        - displaying
-        - moreAvailable
-        - requestedDate
-        - institutions
-      type: object
-      properties:
-        found:
-          $ref: '#/components/schemas/FoundResults'
-        displaying:
-          $ref: '#/components/schemas/DisplayingResults'
-        moreAvailable:
-          $ref: '#/components/schemas/MoreResultsAvailable'
-        requestedDate:
-          $ref: '#/components/schemas/UnixDate'
-        institutions:
-          description: A list of institutions
-          maxItems: 1000
+        childInstitutions:
+          description: An array of child financial institutions
           minItems: 0
           type: array
           items:
-            allOf:
-              - $ref: '#/components/schemas/CertifiedInstitution'
-              - type: object
-                properties:
-                  rssd:
-                    $ref: '#/components/schemas/Rssd'
-                  childInstitutions:
-                    description: An array of child financial institutions
-                    minItems: 0
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ChildInstitution'
+            $ref: '#/components/schemas/ChildInstitution'
     CertifiedInstitutions:
       description:
         A list of financial institutions from the Get Certified Institutions API
@@ -32201,36 +32077,72 @@ components:
           $ref: '#/components/schemas/StudentLoanDataCertification'
         loanPaymentDetails:
           $ref: '#/components/schemas/LoanPaymentDetailCertification'
-        displayName:
-          $ref: '#/components/schemas/InstitutionDisplayName'
-        liabilityData:
-          $ref: '#/components/schemas/LiabilityDataCertification'
-        billPayData:
-          $ref: '#/components/schemas/BillPayDataCertification'
         accountTypeDescription:
-          $ref: '#/components/schemas/InstitutionAccountTypeDescription'
+          type: string
+          description: >-
+            Values: Banking, Investments, Credit Cards/Accounts, Workplace
+            Retirement, Mortgages and Loans, Insurance
+          example: Workplace Retirement
         phone:
           $ref: '#/components/schemas/PhoneNumber'
         urlHomeApp:
-          $ref: '#/components/schemas/InstitutionUrlHomeApp'
+          type: string
+          description: The URL of the institution's primary home page
+          example: 'https://www.example.com/home'
         urlLogonApp:
-          $ref: '#/components/schemas/InstitutionUrlLogonApp'
+          type: string
+          description: The URL of the institution's login page
+          example: 'https://www.example.com/login'
         oauthEnabled:
-          $ref: '#/components/schemas/InstitutionOauthEnabled'
+          type: boolean
+          description: |-
+            "true": The institution is an OAuth connection
+
+            "false": The institution isn't an OAuth connection
+          example: true
         urlForgotPassword:
-          $ref: '#/components/schemas/InstitutionUrlForgotPassword'
+          type: string
+          description: Institution's forgot password page
+          example: 'https://www.example.com/forgotPassword.do'
         urlOnlineRegistration:
-          $ref: '#/components/schemas/InstitutionUrlOnlineRegistration'
+          type: string
+          description: Institution's signup page
+          example: 'https://www.example.com/signup'
         class:
-          $ref: '#/components/schemas/InstitutionClass'
+          type: string
+          description: Institution's class
+          example: retirement
         specialText:
-          $ref: '#/components/schemas/InstitutionSpecialText'
+          type: string
+          description: Special instructions given to customers for login
+          example: >-
+            Please enter your Principal Financial - Retirement (Personal)
+            Username and Password.
         timeZone:
-          $ref: '#/components/schemas/InstitutionTimeZone'
+          type: string
+          description: The time zone of the institution.
+          example: America/Denver
         specialInstructions:
-          $ref: '#/components/schemas/InstitutionSpecialInstructions'
-        specialInstructionsTitle:
-          $ref: '#/components/schemas/InstitutionSpecialInstructionsTitle'
+          type: array
+          items:
+            type: string
+          description: >-
+            Instructions given to the customer before they are sent to the
+            institution website to login for OAuth institutions.
+
+
+            Note: this helps the customer to provide the proper permission for
+            data needed for the application.
+          example:
+            - Account details
+            - Balances and transactions
+            - Personal and account ownership info
+        specialInstutionsTitle:
+          type: string
+          description:
+            'The title of the special instructions, if one exists or is
+            required.'
+          example: Special OAuth Login Instructions
         address:
           $ref: '#/components/schemas/InstitutionAddress'
         currency:
@@ -32238,13 +32150,15 @@ components:
         email:
           $ref: '#/components/schemas/EmailAddress'
         status:
-          $ref: '#/components/schemas/InstitutionStatus'
+          type: string
+          description: >-
+            Status for the institution: "online", "offline", "maintenance",
+            "testing", "beta", "validated", "migrating"
+          example: online
         newInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
         branding:
           $ref: '#/components/schemas/Branding'
-        productionStatus:
-          $ref: '#/components/schemas/InstitutionProductionStatus'
         oauthInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
     InstitutionAccountOwner:
@@ -32348,137 +32262,6 @@ components:
       properties:
         institution:
           $ref: '#/components/schemas/Institution'
-    InstitutionConnectionHealth:
-      type: object
-      description: Health status and success rates for connection features.
-      properties:
-        overallHealth:
-          type: string
-          description: >-
-            Overall health status. Valid statuses are: Healthy, Degraded,
-            Unhealthy, Insufficient Data
-          minLength: 0
-          maxLength: 255
-          example: healthy
-        overallSuccessRate:
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 100
-          description: Overall success rate (0-100).
-          example: 92
-        durability:
-          type: integer
-          description: Durability metric for the connection.
-        accountLinkingHealth:
-          type: string
-          description: >-
-            Account linking health status. Valid statuses are: Healthy,
-            Degraded, Down, Insufficient Data.
-          example: Healthy
-        accountLinkingSuccessRate:
-          type: integer
-          description: >-
-            Account linking success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-        transAggHealth:
-          type: string
-          description: >-
-            Trans agg health status. Valid statuses are: Healthy, Degraded,
-            Down, Insufficient Data.
-          example: Healthy
-        transAggSuccessRate:
-          type: integer
-          description: >-
-            Trans agg success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-        accountOwnerHealth:
-          type: string
-          description: >-
-            Account owner health status. Valid statuses are: Valid statuses are:
-            Healthy, Degraded, Down, Insufficient Data.
-          example: healthy
-        accountOwnerSuccessRate:
-          type: integer
-          description: >-
-            Account owner success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-        achHealth:
-          type: string
-          description: >-
-            Ach health status. Valid statuses are: Healthy, Degraded, Down,
-            Insufficient Data.
-          example: healthy
-        achSuccessRate:
-          type: integer
-          description: >-
-            ACH success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-        availBalanceHealth:
-          type: string
-          description: >-
-            Available balance health status. Valid statuses are: Healthy,
-            Degraded, Down, Insufficient Data.
-          example: Healthy
-        availBalanceSuccessRate:
-          type: integer
-          description: >-
-            Available balance success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-        stateAggHealth:
-          type: string
-          description: >-
-            Statement agg health status. Valid statuses are: Healthy, Degraded,
-            Down, Insufficient Data.
-          example: Healthy
-        stateAggSuccessRate:
-          type: integer
-          description: >-
-            Statement agg success rate (0-100).
-          format: int32
-          minimum: 0
-          maximum: 100
-          example: 92
-    InstitutionProductionStatus:
-      type: object
-      required:
-        - overallStatus
-        - transAgg
-        - voa
-        - voi
-        - stateAgg
-        - ach
-        - aha
-      properties:
-        overallStatus:
-          $ref: '#/components/schemas/InstitutionOverallStatus'
-        transAgg:
-          $ref: '#/components/schemas/InstitutionTransAgg_status'
-        stateAgg:
-          $ref: '#/components/schemas/InstitutionStateAgg_status'
-        voa:
-          $ref: '#/components/schemas/InstitutionVoa_status'
-        voi:
-          $ref: '#/components/schemas/InstitutionVoi_status'
-        ach:
-          $ref: '#/components/schemas/InstitutionAch_status'
-        aha:
-          $ref: '#/components/schemas/InstitutionAha_status'
     Institutions:
       description:
         A list of financial institutions from the Get Institutions API
@@ -32534,35 +32317,86 @@ components:
         loanPaymentDetails:
           $ref: '#/components/schemas/LoanPaymentDetailCertification'
         paymentInitiation:
-          $ref: '#/components/schemas/PaymentInitiationCertification'
+          description: Institution connection is certified for paymentInitiation
+          type: boolean
+          default: false
+          example: true
         billPayData:
-          $ref: '#/components/schemas/BillPayDataCertification'
+          description: billPayData is certified
+          type: boolean
+          default: false
+          example: true
         liabilityData:
-          $ref: '#/components/schemas/LiabilityDataCertification'
+          description: liabilityData is certified
+          type: boolean
+          default: false
+          example: true
         accountTypeDescription:
-          $ref: '#/components/schemas/InstitutionAccountTypeDescription'
+          type: string
+          description: >-
+            Values: Banking, Investments, Credit Cards/Accounts, Workplace
+            Retirement, Mortgages and Loans, Insurance
+          example: Workplace Retirement
         phone:
           $ref: '#/components/schemas/PhoneNumber'
         urlHomeApp:
-          $ref: '#/components/schemas/InstitutionUrlHomeApp'
+          type: string
+          description: The URL of the institution's primary home page
+          example: 'https://www.example.com/home'
         urlLogonApp:
-          $ref: '#/components/schemas/InstitutionUrlLogonApp'
+          type: string
+          description: The URL of the institution's login page
+          example: 'https://www.example.com/login'
         oauthEnabled:
-          $ref: '#/components/schemas/InstitutionOauthEnabled'
+          type: boolean
+          description: |-
+            "true": The institution is an OAuth connection
+
+            "false": The institution isn't an OAuth connection
+          example: true
         urlForgotPassword:
-          $ref: '#/components/schemas/InstitutionUrlForgotPassword'
+          type: string
+          description: Institution's forgot password page
+          example: 'https://www.example.com/forgotPassword.do'
         urlOnlineRegistration:
-          $ref: '#/components/schemas/InstitutionUrlOnlineRegistration'
+          type: string
+          description: Institution's signup page
+          example: 'https://www.example.com/signup'
         class:
-          $ref: '#/components/schemas/InstitutionClass'
+          type: string
+          description: Institution's class
+          example: retirement
         specialText:
-          $ref: '#/components/schemas/InstitutionSpecialText'
+          type: string
+          description: Special instructions given to customers for login
+          example: >-
+            Please enter your Principal Financial - Retirement (Personal)
+            Username and Password.
         timeZone:
-          $ref: '#/components/schemas/InstitutionTimeZone'
+          type: string
+          description: The time zone of the institution.
+          example: America/Denver
         specialInstructions:
-          $ref: '#/components/schemas/InstitutionSpecialInstructions'
-        specialInstructionsTitle:
-          $ref: '#/components/schemas/InstitutionSpecialInstructionsTitle'
+          type: array
+          items:
+            type: string
+          description: >-
+            Instructions given to the customer before they are sent to the
+            institution website to login for OAuth institutions.
+
+
+            Note: this helps the customer to provide the proper permission for
+            data needed for the application.
+          example:
+            - Account details
+            - Balances and transactions
+            - Personal and account ownership info
+        specialInstutionsTitle:
+          type: string
+          description:
+            'The title of the special instructions, if one exists or is
+            required.'
+          example: Special OAuth Login Instructions
         address:
           $ref: '#/components/schemas/InstitutionAddress'
         currency:
@@ -32570,31 +32404,108 @@ components:
         email:
           $ref: '#/components/schemas/EmailAddress'
         status:
-          $ref: '#/components/schemas/InstitutionStatus'
+          type: string
+          description: >-
+            Status for the institution: "online", "offline", "maintenance",
+            "testing", "beta", "validated", "migrating"
+          example: online
         newInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
         branding:
           $ref: '#/components/schemas/Branding'
         displayName:
-          $ref: '#/components/schemas/InstitutionDisplayName'
+          description:
+            A version of the institution connection name that is more user
+            friendly
+          type: string
+          minLength: 0
+          maxLength: 255
+          example: Finbank
         oauthInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
         countryCodes:
-          $ref: '#/components/schemas/InstitutionCountryCodes'
+          type: array
+          items:
+            description: Countries for which this connection is valid
+            type: object
+            properties:
+              countryCode:
+                description: 'Two character country code'
+                type: string
+                minLength: 2
+                maxLength: 2
+                example: US
         overallStatusTemp:
-          $ref: '#/components/schemas/InstitutionOverallStatusTemp'
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The overall status for the institution:
+              - online - Connection is active, financial institution is available and functioning
+              - offline - Connection is inactive due to an issue. Financial institution is not available in Data Connect search
+              - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
+              - testing (Limited Availability)  - A new connection with the financial institution is still undergoing development and is only available to some select partners
+              - investigating - Connection is new and/or under monitoring due to instability
+          type: string
+          example: online
         transAgg_status:
-          $ref: '#/components/schemas/InstitutionTransAgg_status'
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Transaction Aggregation product for the
+            institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
         voa_status:
-          $ref: '#/components/schemas/InstitutionVoa_status'
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the VOA  product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
         voi_status:
-          $ref: '#/components/schemas/InstitutionVoi_status'
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the VOI product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
         stateAgg_status:
-          $ref: '#/components/schemas/InstitutionStateAgg_status'
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Statement Aggregation product for the
+            institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
         ach_status:
-          $ref: '#/components/schemas/InstitutionAch_status'
+          description: |-
+            Beta Data - Can be ignored. Should use `status` field instead.
+            The production status for the ACH product for the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
         aha_status:
-          $ref: '#/components/schemas/InstitutionAha_status'
+          description: >-
+            Beta Data - Can be ignored. Should use `status` field instead. The
+            production status for the Account History Aggregation product for
+            the institution.
+              - online - product is functioning correctly for the institution
+              - investigating - product is degraded for the institution and is
+            being investigated
+              - offline - product is offline for the institution
+          type: string
+          example: online
     InstitutionResponse:
       type: object
       properties:
@@ -33429,191 +33340,6 @@ components:
       type: integer
       format: int64
       example: 4222
-    PaymentInitiationCertification:
-      description: Institution connection is certified for paymentInitiation
-      type: boolean
-      default: false
-      example: true
-    BillPayDataCertification:
-      description: billPayData is certified
-      type: boolean
-      default: false
-      example: true
-    LiabilityDataCertification:
-      description: liabilityData is certified
-      type: boolean
-      default: false
-      example: true
-    InstitutionAccountTypeDescription:
-      type: string
-      description: >-
-        Values: Banking, Investments, Credit Cards/Accounts, Workplace
-        Retirement, Mortgages and Loans, Insurance
-      example: Workplace Retirement
-    InstitutionUrlHomeApp:
-      type: string
-      description: The URL of the institution's primary home page
-      example: 'https://www.example.com/home'
-    InstitutionUrlLogonApp:
-      type: string
-      description: The URL of the institution's login page
-      example: 'https://www.example.com/login'
-    InstitutionOauthEnabled:
-      type: boolean
-      description: |-
-        "true": The institution is an OAuth connection
-
-        "false": The institution isn't an OAuth connection
-      example: true
-    InstitutionUrlForgotPassword:
-      type: string
-      description: Institution's forgot password page
-      example: 'https://www.example.com/forgotPassword.do'
-    InstitutionUrlOnlineRegistration:
-      type: string
-      description: Institution's signup page
-      example: 'https://www.example.com/signup'
-    InstitutionClass:
-      type: string
-      description: Institution's class
-      example: retirement
-    InstitutionSpecialText:
-      type: string
-      description: Special instructions given to customers for login
-      example: >-
-        Please enter your Principal Financial - Retirement (Personal) Username
-        and Password.
-    InstitutionTimeZone:
-      type: string
-      description: The time zone of the institution.
-      example: America/Denver
-    InstitutionSpecialInstructions:
-      type: array
-      items:
-        type: string
-      description: >-
-        Instructions given to the customer before they are sent to the
-        institution website to login for OAuth institutions.
-
-
-        Note: this helps the customer to provide the proper permission for data
-        needed for the application.
-      example:
-        - Account details
-        - Balances and transactions
-        - Personal and account ownership info
-    InstitutionSpecialInstructionsTitle:
-      type: string
-      description:
-        'The title of the special instructions, if one exists or is required.'
-      example: Special OAuth Login Instructions
-    InstitutionStatus:
-      type: string
-      description: >-
-        Status for the institution: "online", "offline", "maintenance",
-        "testing", "beta", "validated", "migrating"
-      example: online
-    InstitutionDisplayName:
-      description:
-        A version of the institution connection name that is more user friendly
-      type: string
-      minLength: 0
-      maxLength: 255
-      example: Finbank
-    InstitutionCountryCodes:
-      type: array
-      items:
-        description: Countries for which this connection is valid
-        type: object
-        properties:
-          countryCode:
-            description: 'Two character country code'
-            type: string
-            minLength: 2
-            maxLength: 2
-            example: US
-    InstitutionOverallStatusTemp:
-      description: |-
-        Beta Data - Can be ignored. Should use `status` field instead.
-        The overall status for the institution:
-          - online - Connection is active, financial institution is available and functioning
-          - offline - Connection is inactive due to an issue. Financial institution is not available in Data Connect search
-          - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
-          - testing (Limited Availability)  - A new connection with the financial institution is still undergoing development and is only available to some select partners
-          - investigating - Connection is new and/or under monitoring due to instability
-      type: string
-      example: online
-    InstitutionOverallStatus:
-      description: |-
-        Beta Data - Can be ignored.
-        The overall status for the institution:
-          - online - Connection is active, financial institution is available and functioning
-          - offline - Connection is inactive due to an issue. Financial institution is not available in Data Connect search
-          - maintenance - Financial institution is undergoing planned maintenance and is not available at this time
-          - testing (Limited Availability)  - A new connection with the financial institution is still undergoing development and is only available to some select partners
-          - investigating - Connection is new and/or under monitoring due to instability
-      type: string
-      example: online
-    InstitutionTransAgg_status:
-      description: >-
-        Beta Data - Can be ignored. Should use `status` field instead. The
-        production status for the Transaction Aggregation product for the
-        institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is
-        being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
-    InstitutionVoa_status:
-      description: |-
-        Beta Data - Can be ignored. Should use `status` field instead.
-        The production status for the VOA  product for the institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
-    InstitutionVoi_status:
-      description: |-
-        Beta Data - Can be ignored. Should use `status` field instead.
-        The production status for the VOI product for the institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
-    InstitutionStateAgg_status:
-      description: >-
-        Beta Data - Can be ignored. Should use `status` field instead. The
-        production status for the Statement Aggregation product for the
-        institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is
-        being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
-    InstitutionAch_status:
-      description: |-
-        Beta Data - Can be ignored. Should use `status` field instead.
-        The production status for the ACH product for the institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
-    InstitutionAha_status:
-      description: >-
-        Beta Data - Can be ignored. Should use `status` field instead. The
-        production status for the Account History Aggregation product for the
-        institution.
-          - online - product is functioning correctly for the institution
-          - investigating - product is degraded for the institution and is
-        being investigated
-          - offline - product is offline for the institution
-      type: string
-      example: online
     NumericInstitutionLoginId:
       type: integer
       format: int64
