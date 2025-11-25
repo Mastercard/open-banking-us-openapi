@@ -57,7 +57,7 @@ class InstitutionsApiTest extends BaseTest {
     @Test
     void getCertifiedInstitutionsTest_WithCountries() {
         try {
-            var institutions = api.getCertifiedInstitutions(null, null, null, null, Collections.singletonList("us"));
+            var institutions = api.getCertifiedInstitutions(null, null, null, null, "us");
             assertTrue(institutions.getFound() > 0);
         } catch (ApiException e) {
             Assertions.fail(e);
