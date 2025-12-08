@@ -1,6 +1,7 @@
 package com.mastercard.openbanking.client.api;
 
 import com.mastercard.openbanking.client.ApiException;
+import com.mastercard.openbanking.client.model.AccountIds;
 import com.mastercard.openbanking.client.model.TransactionsReportConstraints;
 import com.mastercard.openbanking.client.test.BaseTest;
 import com.mastercard.openbanking.client.test.utils.AccountUtils;
@@ -53,7 +54,7 @@ class TransactionsApiTest extends BaseTest {
     void generateTransactionsReportTest() {
         try {
             var constraints = new TransactionsReportConstraints().accountIds(customerAccountList);
-            var reportAck = api.generateTransactionsReport(CUSTOMER_ID,  constraints, null,fromDate,toDate, true);
+            var reportAck = api.generateTransactionsReport(CUSTOMER_ID, constraints, null, fromDate, toDate, true);
             assertEquals("inProgress", reportAck.getStatus());
             assertEquals("transactions", reportAck.getType());
         } catch (ApiException e) {
@@ -75,7 +76,7 @@ class TransactionsApiTest extends BaseTest {
     @Test
     void getCustomerAccountTransactionsTest() {
         try {
-            var transactions = api.getCustomerAccountTransactions(CUSTOMER_ID, existingAccountId, fromDate, toDate, null, null, null, true,false);
+            var transactions = api.getCustomerAccountTransactions(CUSTOMER_ID, existingAccountId, fromDate, toDate, null, null, null, true, false);
             assertTrue(transactions.getTransactions().size() > 0);
         } catch (ApiException e) {
             Assertions.fail(e);
@@ -96,6 +97,16 @@ class TransactionsApiTest extends BaseTest {
     void loadHistoricTransactionsForCustomerAccountTest() {
         try {
             api.loadHistoricTransactionsForCustomerAccount(CUSTOMER_ID, existingAccountId);
+        } catch (ApiException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    void getRecurringTransactionsTest() {
+        try {
+            AccountIds accountIds = new AccountIds().addAccountIdsItem(existingAccountId);
+            api.getRecurringTransactions(CUSTOMER_ID, accountIds);
         } catch (ApiException e) {
             Assertions.fail(e);
         }

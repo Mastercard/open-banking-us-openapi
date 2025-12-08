@@ -10,10 +10,11 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.32.3
+  version: 1.33.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
+
 tags:
   - name: Accounts
     description: Fetch or refresh customer accounts
@@ -90,11 +91,15 @@ tags:
     description: Generate income and employment reports asynchronously
   - name: Transaction Data Enrichment
     description: Enhance the transaction data set
+  - name: Small Business Credit Analytics
+    description: Fetch merchant location matches and generate reports
   - name: Webhook Subscription
     description: APIs for Managing Partner Webhook Event Subscriptions
+
 security:
   - FinicityAppKey: []
     FinicityAppToken: []
+
 paths:
   /aggregation/v2/partners/authentication:
     post:
@@ -1819,6 +1824,38 @@ paths:
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/sbca/location-matches':
+    get:
+      tags:
+        - Small Business Credit Analytics
+      summary: Get Merchant Location Matches
+      description: >-
+        Using the provided merchant metadata, similarity to merchant information
+        in Mastercard's central locations table is determined and up to 3 of the
+        best matches are returned for consideration. Merchant details can be
+        searched using one of the following two ways </BR> 1. Using idType,
+        idValue </BR> 2. Using merchantName, address details.</BR>
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+
+      operationId: GetLocationMatches
+      parameters:
+        - $ref: '#/components/parameters/IdTypeParameter'
+        - $ref: '#/components/parameters/IdValueParameter'
+        - $ref: '#/components/parameters/MerchantNameParameter'
+        - $ref: '#/components/parameters/StreetAddressParameter'
+        - $ref: '#/components/parameters/CityParameter'
+        - $ref: '#/components/parameters/StateProvinceRegionParameter'
+        - $ref: '#/components/parameters/PostalCodeParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/LocationMatchesResponse'
+        '400':
+          $ref: '#/components/responses/SbcaBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/SbcaUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/SbcaResourceNotFoundErrorResponse'
   '/decisioning/v2/customers/{customerId}/voa':
     post:
       tags:
@@ -2523,6 +2560,33 @@ paths:
           $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+
+  '/aggregation/customers/{customerId}/recurring-transactions':
+    post:
+      tags:
+        - Transactions
+      summary: Get Recurring Transactions for Customer
+      description: >-
+        Identify recurring debit and credit transactions within an account or
+        set of accounts 
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetRecurringTransactions
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GetRecurringTransactionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetRecurringTransactionsResponse'
+        '400':
+          $ref: '#/components/responses/GetRecurringTransactionsBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetRecurringTransactionsResourceNotFoundErrorResponse'
+
   '/decisioning/v2/customers/{customerId}/reports/balance-analytics/userTypes/{userType}':
     post:
       tags:
@@ -4506,6 +4570,32 @@ paths:
           $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/GetPaymentEnablementBundleResourceNotFoundForAccountIdErrorResponse'
+  '/decisioning/customers/{customerId}/sbca':
+    post:
+      tags:
+        - Small Business Credit Analytics
+      summary: Generate Small Business Credit Analytics Report
+      description: >-
+        Generate a report with Merchant performance metrics (Retail Sales
+        Analytics)  or Merchant benchmarking metrics (Retail Sales Benchmarks).
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateSBCAMetricsReport
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateSBCAMetricsReportRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GenerateSBCAReportResponse'
+        '400':
+          $ref: '#/components/responses/SBCABadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/SBCAUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/SBCAResourceNotFoundErrorResponse'
+
 components:
   securitySchemes:
     FinicityAppKey:
@@ -4519,6 +4609,12 @@ components:
       in: header
       description: A token returned by the `/authentication` API
   requestBodies:
+    GetRecurringTransactionRequest:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountIds'
     LenderRequest:
       required: true
       content:
@@ -4996,7 +5092,92 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PaymentSuccessIndicatorsProperties'
+    GenerateSBCAMetricsReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SBCAMetricsReportConstraints'
+
   responses:
+    LocationMatchesResponse:
+      description: The location matches were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LocationMatches'
+          examples:
+            LocationMatchesResponseExample:
+              $ref: '#/components/examples/LocationMatchesResponseExample'
+    SbcaUnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check
+        "Finicity-App-Key" or "Finicity-App-Token".
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ExpiredTokenExample:
+              $ref: '#/components/examples/ExpiredTokenExample'
+            InvalidFinicityAppKeyExample:
+              $ref: '#/components/examples/InvalidFinicityAppKeyExample'
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/MissingFinicityAppKeyExample'
+            MissingFinicityAppTokenExample:
+              $ref: '#/components/examples/MissingFinicityAppTokenExample'
+    SbcaBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingSbcaMandatoryDataExample:
+              $ref: '#/components/examples/MissingSbcaMandatoryDataExample'
+            InvalidSbcaDataExample:
+              $ref: '#/components/examples/InvalidSbcaDataExample'
+            InvalidSbcaDataCombinationExample:
+              $ref: '#/components/examples/InvalidSbcaDataCombinationExample'
+    SbcaResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NoLocationMatchFoundExample:
+              $ref: '#/components/examples/NoLocationMatchFoundExample'
+    GetRecurringTransactionsResponse:
+      description: The recurring transactions were successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecurringTransactionsDetails'
+    GetRecurringTransactionsBadRequestErrorResponse:
+      description: >-
+        We couldn't handle your request, see response payload for more
+        information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+    GetRecurringTransactionsResourceNotFoundErrorResponse:
+      description: Customer ID or Account ID does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NoAccountForCustomerIdExample:
+              $ref: '#/components/examples/NoAccountForCustomerIdExample'
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+            TransactionNotFoundExample:
+              $ref: '#/components/examples/TransactionNotFoundExample'
     GenerateForesightAnalyticsNonCraReportResponse:
       description: >-
         The report is being generated. When finished, a notification will be
@@ -6091,6 +6272,8 @@ components:
               $ref: '#/components/examples/ResellerInvalidDateRangeGreaterThan31DaysExample'
             CustomerReportLimitExceedExample:
               $ref: '#/components/examples/CustomerReportLimitExceedExample'
+            InvalidValue:
+              $ref: '#/components/examples/InvalidValueExample'
     InitiateMicroEntriesBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -6882,7 +7065,125 @@ components:
               $ref: '#/components/examples/InvalidFieldParameterExample'
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
+    GenerateSBCAMetricsReportRequest:
+      description: >-
+        Request constraints to generate Small Business Credit Analytics report.
+        Based on parameter provided either of following report will be
+        generated:<\br> - Small Business Credit Analytics Report - Small
+        Business Credit Benchmark Report
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SBCAMetricsReportConstraints'
+    GenerateSBCAReportResponse:
+      description: >-
+        The report provides real-time transaction-based  insights to build a
+        more complete view of business performance and creditworthiness, helping
+        them underwrite more businesses and reduce risk.</br>
+
+        The report can also be fetched using Get Report APIs at later times.
+
+      content:
+        application/json:
+          schema:
+            description: >-
+              A generated report for Small Business Credit Analytics.</br> Based
+              of report type either `retailSalesAnalyticsMetrics` or
+              `retailSalesBenchmarkMetrics` will be available in the report.
+            oneOf:
+              - $ref: '#/components/schemas/SBCAAnalyticsReport'
+              - $ref: '#/components/schemas/SBCABenchmarkReport'
+          examples:
+            GenerateRetailSalesAnalyticsReportExample:
+              $ref: '#/components/examples/GenerateRetailSalesAnalyticsReportExample'
+            GenerateRetailSalesBenchmarksReportExample:
+              $ref: '#/components/examples/GenerateRetailSalesBenchmarksReportExample'
+    SBCABadRequestErrorResponse:
+      description:
+        The request was rejected to Generate Small Business Credit Analytics
+        report
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingSBCAMandatoryDataExample:
+              $ref: '#/components/examples/MissingSBCAMandatoryDataExample'
+            InvalidSBCADataExample:
+              $ref: '#/components/examples/InvalidSBCADataExample'
+            InvalidSBCADataCombinationExample:
+              $ref: '#/components/examples/InvalidSBCADataCombinationExample'
+    SBCAUnauthorizedErrorResponse:
+      description: >-
+        The request lacks valid authentication credentials. Check
+        `Finicity-App-Key` or `Finicity-App-Token`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ExpiredTokenExample:
+              $ref: '#/components/examples/ExpiredTokenExample'
+            MissingFinicityAppKeyExample:
+              $ref: '#/components/examples/MissingFinicityAppKeyExample'
+            InvalidFinicityAppKeyExample:
+              $ref: '#/components/examples/InvalidFinicityAppKeyExample'
+            ExpiredFinicityAppTokenExample:
+              $ref: '#/components/examples/ExpiredFinicityAppTokenExample'
+            MissingFinicityAppTokenExample:
+              $ref: '#/components/examples/MissingFinicityAppTokenExample'
+    SBCAResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MetricsNotFoundExample:
+              $ref: '#/components/examples/MetricsNotFoundExample'
+
   examples:
+    LocationMatchesResponseExample:
+      value:
+        locationMatches:
+          - locationId: a1b2c3d4-0000-1234-abcd-000000000001
+            matchRank: 1
+            merchantName: Artisan Emporium
+            streetAddress: 2000 Purchase St
+            city: Purchase
+            state: NY
+            postalCode: 10577
+            countryCode: USA
+    NoLocationMatchFoundExample:
+      value:
+        code: '10100'
+        message: 'No potential location matches found.'
+    MissingSbcaMandatoryDataExample:
+      value:
+        code: '10020'
+        status: '400'
+        message: 'Data missing : MerchantName, streetAddress.'
+        user_message: >-
+          One or more of the fields are missing. Please ensure you have entered
+          the correct data.
+    InvalidSbcaDataExample:
+      value:
+        code: '10025'
+        status: '400'
+        message: 'Invalid data: IdType, IdValue.'
+        user_message: The data provided in one or more fields is invalid.
+    InvalidSbcaDataCombinationExample:
+      value:
+        code: '10030'
+        status: '400'
+        message: 'Invalid data combination.'
+        user_message: >-
+          Both Idtype/Idvalue and Merchant name/Address data combinations are
+          present in the input.
+    TransactionNotFoundExample:
+      value:
+        code: 24553
+        message: Transaction not found.
     GenerateForesightAnalyticsNonCraReportRequestExample:
       value:
         fromDate: 1580558400
@@ -6898,6 +7199,8 @@ components:
           analytics:
             - benchmarking
             - forecasting
+          income: 1000
+          age: 26
     GenerateForesightAnalyticsNonCraReportResponseExample:
       value:
         id: 247th25xwyhd-farpbfnoncra
@@ -6922,6 +7225,8 @@ components:
             analytics:
               - benchmarking
               - forecasting
+            income: 1000
+            age: 26
     TimedOutRequestErrorMessage:
       value:
         code: '10030'
@@ -6979,6 +7284,10 @@ components:
       value:
         code: 10024
         message: Missing parameter (Finicity-App-Token)
+    InvalidFinicityAppKeyExample:
+      value:
+        code: '10027'
+        message: Invalid parameter (Finicity-App-Key)
     InvalidFinicityAppTokenExample:
       value:
         code: 10022
@@ -7044,6 +7353,11 @@ components:
         code: 20400
         message:
           'The max report generation limit was exceeded for this customer.'
+    InvalidValueExample:
+      value:
+        code: 1618
+        message:
+          'Negative or invalid value entered. Please use positive numbers only.'
     AccountTypeNotSupportedExample:
       value:
         code: 14020
@@ -10995,6 +11309,7 @@ components:
             firstName: 'BarkFirst'
             lastName: 'BarkLast'
             lastFourReportId: 'twxe'
+            reportId: 'abcdeftwxe-voieTxVerify'
             createdDate: 1560244594
             reportType: 'voieTxVerify'
             status: 'failure'
@@ -11010,6 +11325,7 @@ components:
             platformProvider: 'provider'
             customerId: 889079
             lastFourReportId: '7gg5'
+            reportId: 'abcdef7gg5-voi'
             createdDate: 1560244594
             reportType: voi
             status: 'failure'
@@ -11764,6 +12080,8 @@ components:
             analytics:
               - benchmarking
               - forecasting
+            income: 1000
+            age: 25
         startDate: 1676666492
         endDate: 1739824892
         days: 731
@@ -23624,8 +23942,8 @@ components:
     CustomerAuthorizationDetailsExample:
       value:
         institutionLoginId: 7008461438
-        authorizationStartDate: 2024-12-31T16:11:23:20Z
-        authorizationEndDate: 2024-01-01T16:11:23:20Z
+        authorizationStartDate: 2024-01-01T16:11:23.20Z
+        authorizationEndDate: 2024-12-31T16:11:23.20Z
     InstitutionLoginIdNotFoundErrorResponseExample:
       value:
         code: '3003'
@@ -24260,8 +24578,200 @@ components:
       value:
         code: 38003
         message: Customer does not have any accounts
+    GenerateRetailSalesAnalyticsReportExample:
+      value:
+        id: y3pic4xhda-sbcaanalyticsnoncra
+        customerType: testing
+        customerId: 1001483250
+        createdDate: 1739824892
+        requestId: y3pic4xhda
+        requestorName: ABC Partner
+        partnerName: ABC partner
+        type: sbcaanalyticsnoncra
+        title: Mastercard Open Banking Small Business Credit Analytics
+        constraints:
+          analyticsReportData:
+            sbcaParams:
+              hasConsent: true
+              metricFrequency: weekly
+              metricType: retail_sales_analytics
+              locationId: a1b2c3d4-0000-1234-abcd-000000000001
+            businessDetails:
+              name: ABC Tires Inc
+              personallyLiable: true
+              address:
+                addressLine1: 434 W Ascension Way
+                addressLine2: 'Suite #200'
+                city: Murray
+                state: UT
+                country: US
+                postalCode: '84123'
+              phoneNumber:
+                countryCode: '1'
+                phoneNo: '8042221111'
+        retailSalesAnalyticsMetrics:
+          - locationId: a1b2c3d4-0000-1234-abcd-000000000001
+            merchantCategoryCode: 478
+            naicsCode: 454113
+            industryName: Arts and Craft Stores
+            firstSeenTxnDate: '2008-08-14'
+            lastSeenTxnDate: '2023-02-18'
+            metricsFrequency: Weekly
+            metricsLists:
+              - periodStartDate: '2022-01-09'
+                periodEndDate: '2022-01-15'
+                year: 2022
+                metrics:
+                  - name: txn_amt
+                    value: 16198.060138
+                  - name: txn_cnt
+                    value: 238
+              - periodStartDate: '2022-02-13'
+                periodEndDate: '2022-02-19'
+                year: 2022
+                metrics:
+                  - name: txn_amt
+                    value: 19942.409207
+                  - name: txn_cnt
+                    value: 269
+    GenerateRetailSalesBenchmarksReportExample:
+      value:
+        id: y3pic4xhda-sbcabenchmarksnoncra
+        customerType: testing
+        customerId: 1001483250
+        createdDate: 1739824892
+        requestId: y3pic4xhda
+        requestorName: ABC Partner
+        partnerName: ABC partner
+        type: sbcabenchmarksnoncra
+        title: Mastercard Open Banking Small Business Credit Analytics
+        constraints:
+          analyticsReportData:
+            sbcaParams:
+              hasConsent: true
+              metricFrequency: monthly
+              metricType: retail_sales_benchmarks
+              locationId: a1b2c3d4-0000-1234-abcd-000000000001
+            businessDetails:
+              name: ABC Tires Inc
+              personallyLiable: true
+              address:
+                addressLine1: 434 W Ascension Way
+                addressLine2: 'Suite #200'
+                city: Murray
+                state: UT
+                country: USA
+                postalCode: '84123'
+              phoneNumber:
+                countryCode: '1'
+                phoneNo: '8042221111'
+        retailSalesBenchmarksMetrics:
+          - locationId: a1b2c3d4-0000-1234-abcd-000000000001
+            merchantCategoryCode: 478
+            naicsCode: 454113
+            industryName: Arts and Craft Stores
+            firstSeenTxnDate: '2008-08-14'
+            lastSeenTxnDate: '2023-02-18'
+            metricsFrequency: Monthly
+            metricsLists:
+              - periodStartDate: '2023-02-01'
+                periodEndDate: '2023-02-28'
+                year: 2023
+                metrics:
+                  - name: txn_cnt_index
+                    value: 118
+                  - name: num_cards_index
+                    value: 121
+    MissingSBCAMandatoryDataExample:
+      value:
+        code: '10020'
+        status: '400'
+        message: 'Data missing : MerchantName, streetAddress.'
+        user_message: >-
+          One or more of the fields are missing. Please ensure you have entered
+          the correct data.
+    InvalidSBCADataExample:
+      value:
+        code: '10025'
+        status: '400'
+        message: 'Invalid data: IdType, IdValue.'
+        user_message: The data provided in one or more fields is invalid.
+    InvalidSBCADataCombinationExample:
+      value:
+        code: '10030'
+        status: '400'
+        message: 'Invalid data combination.'
+        user_message: >-
+          Both Idtype/Idvalue and Company name/Address data combinations are
+          present in the input.
+    MetricsNotFoundExample:
+      value:
+        code: '10100'
+        message: 'No potential merchant metrics found.'
 
   parameters:
+    IdTypeParameter:
+      name: idType
+      in: query
+      description: The identifier type for finding the merchant.
+      required: false
+      schema:
+        $ref: '#/components/schemas/IdType'
+      example: MERCHANT_ID
+    IdValueParameter:
+      name: idValue
+      in: query
+      description: The identifier value pertaining to the identifier type.
+      required: false
+      schema:
+        $ref: '#/components/schemas/IdValue'
+      example: 106241230D01
+    MerchantNameParameter:
+      name: merchantName
+      in: query
+      description: The name of the merchant.
+      required: false
+      schema:
+        $ref: '#/components/schemas/MerchantName'
+      example: Artisan Emporium
+    StreetAddressParameter:
+      name: streetAddress
+      in: query
+      description: The full street address of the merchant.
+      required: false
+      schema:
+        $ref: '#/components/schemas/StreetAddress'
+      example: 123 Main St
+    CityParameter:
+      name: city
+      in: query
+      description: >-
+        The city name in the merchant's address. This is limited to alphanumeric
+        characters, spaces, single quotes, and commas.
+      required: false
+      schema:
+        $ref: '#/components/schemas/City'
+      example: Murray
+    StateProvinceRegionParameter:
+      name: stateProvinceRegion
+      in: query
+      description:
+        The state, province, department or region abbreviation in the merchant's
+        address will vary based on the country code.
+      required: false
+      schema:
+        $ref: '#/components/schemas/State'
+      example: UT
+    PostalCodeParameter:
+      name: postalCode
+      in: query
+      description:
+        The postal code in the merchant's address. Expected format will be
+        determined based on the country_code.
+      required: false
+      schema:
+        $ref: '#/components/schemas/PostalCode'
+      example: '84123'
     AssetIdParameter:
       description: The asset ID
       name: assetId
@@ -25120,6 +25630,237 @@ components:
       example: 1
 
   schemas:
+    LocationMatches:
+      description: SBCA location match response data
+      type: object
+      properties:
+        locationMatches:
+          type: array
+          description: List of location details
+          items:
+            $ref: '#/components/schemas/LocationDetail'
+    LocationDetail:
+      description: A Location detail
+      type: object
+      properties:
+        locationId:
+          $ref: '#/components/schemas/LocationId'
+        matchRank:
+          $ref: '#/components/schemas/MatchRank'
+        merchantName:
+          $ref: '#/components/schemas/MerchantName'
+        streetAddress:
+          $ref: '#/components/schemas/StreetAddress'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          $ref: '#/components/schemas/State'
+        postalCode:
+          $ref: '#/components/schemas/ZipCode'
+        countryCode:
+          $ref: '#/components/schemas/Country'
+    IdType:
+      type: string
+      description: The identifier type for finding the merchant.
+      maxLength: 100
+      example: MERCHANT_ID
+    IdValue:
+      type: string
+      description: The identifier value pertaining to the identifier type.
+      maxLength: 100
+      example: 106241230D01
+    MatchRank:
+      type: integer
+      description: The rank of the match compared to other potential matches.
+      format: int32
+      example: 1
+    MerchantName:
+      type: string
+      description: Name of merchant.
+      maxLength: 250
+      example: Artisan Emporium
+    StreetAddress:
+      type: string
+      description: The full street address of the merchant.
+      maxLength: 250
+      example: 2000 Purchase St
+    PostalCode:
+      type: string
+      description: The postal code in the merchant's address.
+      example: 10577
+    RecurringTransactionsDetails:
+      description: Recurring transactions details
+      type: object
+      properties:
+        customerRecurringTransactions:
+          $ref: '#/components/schemas/CustomerRecurringTransactions'
+        accountRecurringTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRecurringTransactions'
+    CustomerRecurringTransactions:
+      description: Recurring transactions for customer
+      type: object
+      properties:
+        recurringOutflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringOutFlowTransaction'
+        recurringInflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringInFlowTransaction'
+    RecurringOutFlowTransaction:
+      type: object
+      description: Debit recurring transaction stream.
+      properties:
+        normalizedPayeeName:
+          type: string
+          description: >-
+            A normalized payee, derived from the transaction's description and
+            memo fields
+          example: Netflix
+        transactionCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Categories'
+        transactionIds:
+          type: array
+          items:
+            type: string
+            example: 21284820852
+            description:
+              List of transaction IDs associated with this debit stream
+        cadence:
+          type: integer
+          description: Mean number of days between transactions
+          example: 30
+        status:
+          type: string
+          description:
+            Indicates if the debit stream is currently active or inactive.
+          example: ACTIVE
+        expectedNextTransactionDate:
+          type: string
+          format: date
+          description: The estimated date of the next debit transaction
+          example: 2025-08-07
+        expectedNextTransactionAmount:
+          type: number
+          description: The estimated amount of the next debit transaction
+          example: -15.99
+        minimumHistoricalAmount:
+          type: number
+          description:
+            Minimum historical amount for this recurring debit transaction
+          example: -20.99
+        maximumHistoricalAmount:
+          type: number
+          description:
+            Maximum historical amount for this recurring debit transaction
+          example: -8.99
+        meanHistoricalAmount:
+          type: number
+          description:
+            Average historical amount for this recurring debit transaction
+          example: -15.99
+        medianHistoricalAmount:
+          type: number
+          description:
+            Median historical amount for this recurring debit transaction
+          example: -15.99
+        countOfTransactions:
+          type: integer
+          description:
+            Number of debit transactions identified within this stream
+          example: 1
+    AccountIds:
+      description: A list of account IDs
+      type: object
+      properties:
+        accountIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountId'
+          description: List of account IDs
+    RecurringInFlowTransaction:
+      type: object
+      description: Credit recurring transaction stream.
+      properties:
+        normalizedPayeeName:
+          type: string
+          description: >-
+            A normalized payee, derived from the transaction's description and
+            memo fields
+          example: Netflix
+        transactionCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Categories'
+        transactionIds:
+          type: array
+          items:
+            type: string
+            example: 21284820851
+            description:
+              List of transaction IDs associated with this credit stream
+        cadence:
+          type: integer
+          description: Mean number of days between transactions
+          example: 30
+        status:
+          type: string
+          description:
+            Indicates if the credit stream is currently active or inactive.
+          example: ACTIVE
+        expectedNextTransactionDate:
+          type: string
+          format: date
+          description: The estimated date of the next credit transaction
+          example: 2025-08-07
+        expectedNextTransactionAmount:
+          type: number
+          description: The estimated amount of the next credit transaction
+          example: 1234.56
+        minimumHistoricalAmount:
+          type: number
+          description:
+            Minimum historical amount for this recurring credit transaction
+          example: 1055.22
+        maximumHistoricalAmount:
+          type: number
+          description:
+            Maximum historical amount for this recurring credit transaction
+          example: 1488.22
+        meanHistoricalAmount:
+          type: number
+          description:
+            Average historical amount for this recurring credit transaction
+          example: 1234.56
+        medianHistoricalAmount:
+          type: number
+          description:
+            Median historical amount for this recurring credit transaction
+          example: 1234.56
+        countOfTransactions:
+          type: integer
+          description:
+            Number of credit transactions identified within this stream
+          example: 1
+    AccountRecurringTransactions:
+      description: Recurring transactions for each account
+      type: object
+      properties:
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        recurringOutflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringOutFlowTransaction'
+        recurringInflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringInFlowTransaction'
     GeoLocation:
       type: array
       items:
@@ -25181,6 +25922,10 @@ components:
           items:
             $ref: '#/components/schemas/TimeIntervalType'
           type: array
+        income:
+          $ref: '#/components/schemas/Income'
+        age:
+          $ref: '#/components/schemas/Age'
       required:
         - forCraPurpose
       type: object
@@ -27298,6 +28043,7 @@ components:
         constraints:
           anyOf:
             - $ref: '#/components/schemas/AnalyticsReportConstraintsOut'
+            - $ref: '#/components/schemas/ForesightAnalyticsReportConstraints'
             - $ref: '#/components/schemas/CashFlowReportConstraintsOut'
             - $ref: '#/components/schemas/VOIEWithTXVerifyReportConstraintsOut'
             - $ref: '#/components/schemas/VOIEReportConstraints'
@@ -29090,7 +29836,7 @@ components:
         * "Veterinary"
 
         * "Internet / Broadband Charges"
-      example: ATM Fee
+      example: Streaming Service
     Categorization:
       required:
         - normalizedPayeeName
@@ -35616,6 +36362,8 @@ components:
         lastFourReportId:
           description: This represents the last four character of Report
           type: string
+        reportId:
+          $ref: '#/components/schemas/ReportId'
         createdDate:
           $ref: '#/components/schemas/UnixDate'
         reportType:
@@ -36053,6 +36801,18 @@ components:
 
         * `phrbftc`
 
+        * `sbcaanalyticsnoncra`
+
+        * `sbcabenchmarksnoncra`
+      type: string
+      example: voi
+    SBCAReportType:
+      description: |
+        A Small Business Credit Analytics Report type. Possible values:
+
+        * `sbcaanalyticsnoncra`
+
+        * `sbcabenchmarksnoncra`
       type: string
       example: voi
     RoutingNumber:
@@ -37560,6 +38320,25 @@ components:
         Times](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/).
       format: int64
       example: 1607450357
+    Income:
+      type: integer
+      description: >-
+        Income is an optional parameter. It is the dollar amount for the
+        customer's annual 
+                household income and is used to determine the income band the
+        customer falls into.
+      format: int64
+      example: 1000
+      minimum: 0
+    Age:
+      type: integer
+      description: >-
+        Age is an optional parameter. This data is used to determine the age
+        band the customer falls into.
+      format: int64
+      example: 25
+      minimum: 0
+      maximum: 125
     UserType:
       type: string
       description: Type of User, Allowed values Personal/Business
@@ -38947,11 +39726,11 @@ components:
         authorizationStartDate:
           type: string
           description: Authorization start date and time in ISO 8601 format.
-          example: 2020-07-30T16:11:23:20Z
+          example: 2024-01-01T16:11:23.20Z
         authorizationEndDate:
           type: string
           description: Authorization end date and time in ISO 8601 format.
-          example: 2020-07-30T16:11:23:20Z
+          example: 2024-12-31T16:11:23.20Z
       required:
         - institutionLoginId
         - authorizationStartDate
@@ -41052,3 +41831,400 @@ components:
           $ref: '#/components/schemas/AggregationStatusCode'
         currency:
           $ref: '#/components/schemas/Currency'
+    PhoneNumberWithCountryCode:
+      type: object
+      description: A phone number with corresponding country code.
+      required:
+        - countryCode
+        - phoneNo
+      properties:
+        countryCode:
+          type: string
+          description:
+            The country code digit representing the phone number for specific
+            country.
+          minLength: 1
+          maxLength: 3
+          example: '1'
+        phoneNo:
+          type: string
+          description: A phone number (E.164 format)
+          minLength: 7
+          maxLength: 12
+          example: '8042221111'
+    BusinessURL:
+      type: string
+      description: A URL for the business website.
+      minLength: 0
+      maxLength: 2000
+      example: 'https://www.finicity.com/'
+    BusinessTaxId:
+      type: string
+      description: Provide details of the tax id for the business
+      maxLength: 15
+      minLength: 9
+      example: 'A1234561Z'
+    BusinessType:
+      type: string
+      description:
+        The business type eg LLC, Corp, S Corp, C Corp, B Corp, Sole
+        Propriertorship, Nonprofit, etc.
+      maxLength: 150
+      minLength: 0
+      example: 'Nonprofit'
+    BusinessPersonallyLiable:
+      type: boolean
+      description:
+        Indicates whether a business owner is personally liable for a loan.
+      example: false
+    BusinessDetailsRequest:
+      required:
+        - name
+        - address
+        - personallyLiable
+        - phoneNumber
+      properties:
+        name:
+          $ref: '#/components/schemas/BusinessName'
+        personallyLiable:
+          $ref: '#/components/schemas/BusinessPersonallyLiable'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumberWithCountryCode'
+        address:
+          type: object
+          description: >-
+            Business address where business is registered/located.
+          required:
+            - addressLine1
+            - city
+            - state
+            - country
+            - postalCode
+          properties:
+            addressLine1:
+              $ref: '#/components/schemas/BusinessAddressLine1'
+            addressLine2:
+              $ref: '#/components/schemas/BusinessAddressLine2'
+            city:
+              $ref: '#/components/schemas/City'
+            state:
+              $ref: '#/components/schemas/State'
+            country:
+              $ref: '#/components/schemas/Country'
+            postalCode:
+              $ref: '#/components/schemas/ZipCode'
+    LocationId:
+      type: string
+      description: The unique identifier for the merchant location.
+      format: uuid
+      example: 'a1b2c3d4-0000-1234-abcd-000000000001'
+    MetricType:
+      type: string
+      description: >-
+        The metric family or report type.</br> Possible values are
+        retail_sales_analytics, retail_sales_benchmarks
+      example: retail_sales_analytics
+    MetricFrequency:
+      type: string
+      description: >-
+        Frequency of the metric aggregation/reporting.</br> Possible values are
+        Monthly, Weekly.
+      example: 'Weekly'
+    HasConsent:
+      type: boolean
+      description: Indicates that the merchant has provided explicit consent.
+    SBCAParams:
+      type: object
+      description:
+        Parameters for small business credit analytics metrics retrieval.
+      required:
+        - hasConsent
+        - metricFrequency
+        - locationId
+        - metricType
+      properties:
+        hasConsent:
+          $ref: '#/components/schemas/HasConsent'
+        metricFrequency:
+          $ref: '#/components/schemas/MetricFrequency'
+        metricType:
+          $ref: '#/components/schemas/MetricType'
+        locationId:
+          $ref: '#/components/schemas/LocationId'
+    SBCAMetricsReportConstraints:
+      type: object
+      description: >-
+        Request constraints required to create Small Business Credit Analytics
+        report.
+      required:
+        - analyticsReportData
+      properties:
+        analyticsReportData:
+          $ref: '#/components/schemas/SBCAanalyticsReportData'
+
+    SBCAanalyticsReportData:
+      type: object
+      description: >-
+        Analytics reports data required to create business analytics.
+      required:
+        - sbcaParams
+        - businessDetails
+      properties:
+        sbcaParams:
+          $ref: '#/components/schemas/SBCAParams'
+        businessDetails:
+          $ref: '#/components/schemas/BusinessDetailsRequest'
+    SBCAAnalyticsReport:
+      description: >-
+        A generated report for Small Business Credit Analytics.</br> The report
+        is enriched 
+        with retail sales analytics metrics.
+      type: object
+      required:
+        - id
+        - customerType
+        - customerId
+        - createdDate
+        - requestId
+        - requesterName
+        - partnerName
+        - type
+        - title
+        - status
+        - constraints
+      properties:
+        id:
+          $ref: '#/components/schemas/ReportId'
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        requestId:
+          $ref: '#/components/schemas/ReportRequestId'
+        requesterName:
+          $ref: '#/components/schemas/PartnerName'
+        partnerName:
+          $ref: '#/components/schemas/PartnerName'
+        type:
+          $ref: '#/components/schemas/SBCAReportType'
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+        status:
+          type: string
+          description: |-
+            A report generation status. Possible values:
+            * `success`
+            * `failure`
+          example: success
+        constraints:
+          $ref: '#/components/schemas/SBCAMetricsReportConstraints'
+        retailSalesAnalyticsMetrics:
+          $ref: '#/components/schemas/SBCAAnalyticsResponseData'
+    SBCABenchmarkReport:
+      description: >-
+        A generated report for Small Business Credit Analytics.</br> The report
+        is enriched 
+        with retail sales benchmark metrics.
+      type: object
+      required:
+        - id
+        - customerType
+        - customerId
+        - createdDate
+        - requestId
+        - requesterName
+        - partnerName
+        - type
+        - title
+        - status
+        - constraints
+      properties:
+        id:
+          $ref: '#/components/schemas/ReportId'
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        createdDate:
+          $ref: '#/components/schemas/UnixDate'
+        requestId:
+          $ref: '#/components/schemas/ReportRequestId'
+        requesterName:
+          $ref: '#/components/schemas/PartnerName'
+        partnerName:
+          $ref: '#/components/schemas/PartnerName'
+        type:
+          $ref: '#/components/schemas/SBCAReportType'
+        title:
+          $ref: '#/components/schemas/ReportTitle'
+        status:
+          type: string
+          description: |-
+            A report generation status. Possible values:
+            * `success`
+            * `failure`
+          example: success
+        constraints:
+          $ref: '#/components/schemas/SBCAMetricsReportConstraints'
+        retailSalesBenchmarksMetrics:
+          $ref: '#/components/schemas/SBCABenchmarkResponseData'
+    SBCAAnalyticsResponseData:
+      type: array
+      description: >-
+        Analytics response data for SBCA report. This will be present in the
+        report for the report `retail_sales_analytics`.
+      minItems: 0
+      maxItems: 10
+      items:
+        type: object
+        properties:
+          locationId:
+            $ref: '#/components/schemas/LocationId'
+          merchantCategoryCode:
+            type: number
+            description: The merchant category code (MCC) for the business.
+            example: 5812
+          naicsCode:
+            type: number
+            description:
+              The North American Industry Classification System (NAICS) code for
+              the business.
+            example: 445110
+          industryName:
+            type: string
+            description: The industry name associated with the NAICS code.
+            example:
+              'Supermarkets and Other Grocery (except Convenience) Stores'
+          firstSeenTxnDate:
+            type: string
+            description: The date of the first seen transaction.
+            format: date
+            example: '2023-01-01'
+          lastSeenTxnDate:
+            type: string
+            description: The date of the last seen transaction.
+            format: date
+            example: '2023-12-31'
+          metricsFrequency:
+            $ref: '#/components/schemas/MetricFrequency'
+          metricsLists:
+            type: array
+            description: List of metrics data.
+            items:
+              type: object
+              properties:
+                periodStartDate:
+                  type: string
+                  description: The start date for the metric data.
+                  format: date
+                  example: '2023-06-30'
+                periodEndDate:
+                  type: string
+                  description: The end date for the metric data.
+                  format: date
+                  example: '2023-07-30'
+                year:
+                  type: number
+                  description: The year for the metric data.
+                  example: 2023
+                metrics:
+                  type: array
+                  description: List of individual metrics.
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: The name of the metric.
+                        example: txn_amt
+                      value:
+                        type: number
+                        description: The value of the metric.
+                        example: 150000.75
+    SBCABenchmarkResponseData:
+      type: array
+      description: >-
+        Benchmark response data for SBCA report. This will be present in the
+        report for the report `retail_sales_benchmarks`.
+      minItems: 0
+      maxItems: 10
+      items:
+        type: object
+        properties:
+          locationId:
+            $ref: '#/components/schemas/LocationId'
+          merchantCategoryCode:
+            type: number
+            description: The merchant category code (MCC) for the business.
+            example: 5812
+          naicsCode:
+            type: number
+            description:
+              The North American Industry Classification System (NAICS) code for
+              the business.
+            example: 445110
+          industryName:
+            type: string
+            description: The industry name associated with the NAICS code.
+            example:
+              'Supermarkets and Other Grocery (except Convenience) Stores'
+          firstSeenTxnDate:
+            type: string
+            description: The date of the first seen transaction.
+            format: date
+            example: '2023-01-01'
+          lastSeenTxnDate:
+            type: string
+            description: The date of the last seen transaction.
+            format: date
+            example: '2023-12-31'
+          metricsFrequency:
+            $ref: '#/components/schemas/MetricFrequency'
+          metricsLists:
+            type: array
+            description: List of metrics data.
+            items:
+              type: object
+              properties:
+                periodStartDate:
+                  type: string
+                  description: The start date for the metric data.
+                  format: date
+                  example: '2023-06-30'
+                periodEndDate:
+                  type: string
+                  description: The end date for the metric data.
+                  format: date
+                  example: '2023-07-30'
+                year:
+                  type: number
+                  description: The year for the metric data.
+                  example: 2023
+                metrics:
+                  type: array
+                  description: List of individual metrics.
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: The name of the metric.
+                        example: txn_amt
+                      value:
+                        type: number
+                        description: The value of the metric.
+                        example: 150000.75
+    BusinessAddressLine1:
+      type: string
+      minLength: 0
+      maxLength: 50
+      description: A street address
+      example: 434 W Ascension Way
+    BusinessAddressLine2:
+      type: string
+      minLength: 0
+      maxLength: 50
+      description: Address Line2, Apt/Unit Details
+      example: Apt E226
