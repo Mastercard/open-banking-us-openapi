@@ -41977,8 +41977,7 @@ components:
     SBCAAnalyticsReport:
       description: >-
         A generated report for Small Business Credit Analytics.</br> The report
-        is enriched 
-        with retail sales analytics metrics.
+        is enriched  with retail sales analytics metrics.
       type: object
       required:
         - id
@@ -42025,8 +42024,7 @@ components:
     SBCABenchmarkReport:
       description: >-
         A generated report for Small Business Credit Analytics.</br> The report
-        is enriched 
-        with retail sales benchmark metrics.
+        is enriched  with retail sales benchmark metrics.
       type: object
       required:
         - id
