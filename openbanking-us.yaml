@@ -2702,10 +2702,9 @@ paths:
         history and risk score based on a customer's financial history.
 
 
-        Before calling this API, a Business entity must be created, 
-        and a Consumer entity may need to be created for the given customer ID, 
-        based on whether the purpose is CRA or Non-CRA (see Consumer/Business
-        APIs).
+        Before calling this API, a Business entity must be created,  and a
+        Consumer entity may need to be created for the given customer ID,  based
+        on whether the purpose is CRA or Non-CRA (see Consumer/Business APIs).
 
 
         If no account type of checking or savings is found, the service will
@@ -42028,8 +42027,7 @@ components:
     SBCAAnalyticsReport:
       description: >-
         A generated report for Small Business Credit Analytics.</br> The report
-        is enriched 
-        with retail sales analytics metrics.
+        is enriched  with retail sales analytics metrics.
       type: object
       required:
         - id
@@ -42077,8 +42075,7 @@ components:
     SBCABenchmarkReport:
       description: >-
         A generated report for Small Business Credit Analytics.</br> The report
-        is enriched 
-        with retail sales benchmark metrics.
+        is enriched  with retail sales benchmark metrics.
       type: object
       required:
         - id
