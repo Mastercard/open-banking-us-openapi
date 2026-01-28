@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.34.0
+  version: 1.35.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -24008,7 +24008,7 @@ components:
         code: '4004'
         status: '404'
         message:
-          The requested experience could not be found for the enternal app name.
+          The requested experience could not be found for the external app name.
         user_message: The requested entity was not found.
     GetExternalSwitchesResourceNotFoundErrorExample:
       value:
@@ -24175,7 +24175,7 @@ components:
                 - '100010'
                 - '100011'
                 - '100012'
-          - url: 'https://example.com/overrident_webhookurl'
+          - url: 'https://example.com/overridden_webhookurl'
             name: 'mastercard.openbanking.customer.consent'
     UpdateEventRequestExample:
       summary: Example of updating an event in a subscription
@@ -24211,7 +24211,7 @@ components:
                 - '100012'
             status: 'pending'
           - webhookEventId: '661f3c48-f596-423b-81f5-d275d4dd1348'
-            url: 'https://example.com/overrident_webhookurl'
+            url: 'https://example.com/overridden_webhookurl'
             name: 'mastercard.openbanking.customer.consent'
             status: 'pending'
         status: 'pending'
@@ -26384,7 +26384,7 @@ components:
         type:
           description: >-
             The business type eg LLC, Corp, S Corp, C Corp, B Corp, Sole
-            Propriertorship, Nonprofit, etc.
+            Proprietorship, Nonprofit, etc.
           maxLength: 150
           minLength: 0
           type: string
@@ -26540,7 +26540,7 @@ components:
           minimum: 0
           maximum: 100
           description:
-            'This score represent the matching between user input "addresss"
+            'This score represent the matching between user input "address"
             sub-attributes (line1,line2, line3, city, state, country,
             postalCode) with the account owner details fetch ownerAddress'
           example: 0
@@ -30888,9 +30888,9 @@ components:
           description: (Mortgage/Loan) Tax paid year-to-date
           example: 1489
         autoPayEnrolled:
-          type: boolean
-          description: (Mortgage/Loan) Enrolled in autopay (F/Y)
-          example: true
+          type: string
+          description: (Mortgage/Loan) Enrolled in autopay (T/F or Y/N).
+          example: Y
         marginAllowed:
           type: boolean
           description: Margin trading indicator (true / false)
@@ -31975,7 +31975,7 @@ components:
             back to your systems.
           example: 'MAC1005061234'
           minLength: 1
-          maxLength: 511
+          maxLength: 100
         tags:
           type: string
           description: Categories that the error belongs to
@@ -32696,7 +32696,7 @@ components:
       properties:
         result:
           description:
-            The result object containing the unauthoried return risk score
+            The result object containing the unauthorized return risk score
           properties:
             score:
               description:
@@ -40955,14 +40955,14 @@ components:
           format: date-time
           minLength: 1
           maxLength: 255
-          description: Subcription creation date.
+          description: Subscription creation date.
           example: '2024-01-01T11:18:50Z'
         lastUpdatedDate:
           type: string
           format: date-time
           minLength: 1
           maxLength: 255
-          description: Subcription last updated date.
+          description: Subscription last updated date.
           example: '2024-01-01T11:18:50Z'
     Events:
       type: array
