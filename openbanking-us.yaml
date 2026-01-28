@@ -3085,7 +3085,7 @@ paths:
         $ref: '#/components/requestBodies/LenderRequest'
       responses:
         '200':
-          $ref: '#/components/responses/GetReportResponse'
+          $ref: '#/components/responses/GetReportWithFirstThirdPartyResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -3645,9 +3645,20 @@ paths:
         - Customer Authorization Details
       summary: Get Customer Authorization Details
       description: >-
-        The endpoint provides customer authorization details like authorization
-        start date, authorization end date against the requested institution
-        login id
+        Retrieve the start date and end date of Data Connect authorization
+        granted by a customer for a specific financial institution.
+
+
+        Requires the customer's `institutionLoginId`.
+
+
+        Note: details can only be retrieved for authorizations granted via an
+        OAuth connection. If authorization was granted via a legacy connection,
+        the endpoint returns error code 3003.
+
+
+        Note: if authorization was granted before this endpoint was introduced,
+        authorization details may be unavailable (error code 3004).
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4519,6 +4530,59 @@ paths:
           $ref: '#/components/responses/SecurityFreezeErrorResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/decisioning/reports/foresight-analytics/userTypes/{userType}':
+    post:
+      tags:
+        - Analytics
+      summary:
+        Generate Non CRA Foresight Analytics Report Using 1st/3rd Party
+        Transaction Data
+      description: >-
+        Generate a non-CRA Foresight Analytics report for the provided customer.
+        The report includes benchmarking and forecasting insights into the
+        customer's spending habits compared against other Mastercard profiles
+        across various inputted segments.
+
+
+        To use third-party data permissioned via Data Connect, provide a
+        `customerId` value in the request body.
+
+
+        To use first-party data you submitted via Data Enrichment, provide the
+        `externalCustomerId` you supplied when uploading the data.
+
+
+        You can use third-party data, first-party data, or both in the same
+        request.
+
+
+        Supported account types are checking, savings and credit card. A
+        consumer is not required to generate this report.
+
+
+        This is a premium service, billable per every successful API call. A
+        successful call to this API will generate a Foresight Analytics report
+        which is retrieved by calling Get Report by Report ID.
+
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GenerateForesightAnalyticsFirstThirdPartyNonCraReport
+      parameters:
+        - $ref: '#/components/parameters/PersonalUserTypeParameter'
+        - $ref: '#/components/parameters/ReportCallbackUrlParameter'
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateForesightAnalyticsFirstThirdPartyNonCraReportRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/GenerateForesightAnalyticsFirstThirdPartyNonCraReportResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/SecurityFreezeErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
   '/transfer/customers/{customer_id}/bill-pay-switches/{switch_id}':
     get:
       tags:
@@ -5114,6 +5178,15 @@ components:
           examples:
             GenerateForesightAnalyticsNonCraReportRequestExample:
               $ref: '#/components/examples/GenerateForesightAnalyticsNonCraReportRequestExample'
+    GenerateForesightAnalyticsFirstThirdPartyNonCraReportRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForesightAnalyticsReportFirstThirdPartyConstraints'
+          examples:
+            GenerateForesightAnalyticsNonCraReportRequestExample:
+              $ref: '#/components/examples/GenerateForesightAnalyticsFirstThirdPartyNonCraReportRequestExample'
     EnrichTransactionsPayload:
       required: true
       description:
@@ -5241,6 +5314,29 @@ components:
           examples:
             GenerateForesightAnalyticsNonCraReportResponseExample:
               $ref: '#/components/examples/GenerateForesightAnalyticsNonCraReportResponseExample'
+    GenerateForesightAnalyticsFirstThirdPartyNonCraReportResponse:
+      description: >-
+        The report is being generated. When finished, a notification will be
+        sent to the specified callback URL (Report Listener Service) and the
+        report can be fetched using Get Report APIs. If you don't use a callback
+        URL, Get Report returns a minimal report with the following status:
+        'inProgress'. Repeat the call every 20 seconds until Get Report returns
+        a different status.
+      headers:
+        Location:
+          schema:
+            type: string
+          description: >-
+            Please Check the Report status at URL
+            /decisioning/v3/reports/{report_id}
+          example: '/decisioning/v3/reports/247th25xwyhd-farpbfnoncra'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForesightAnalyticsFirstThirdPartyReportAck'
+          examples:
+            GenerateForesightAnalyticsNonCraReportResponseExample:
+              $ref: '#/components/examples/GenerateForesightAnalyticsFirstThirdPartyNonCraReportResponseExample'
     AccountOwnerVerificationErrorResponse:
       description: The customer or account does not exist
       content:
@@ -5995,6 +6091,79 @@ components:
               $ref: '#/components/examples/VOIEPaystubReportExample'
             VOIEPaystubWithTXVerifyReportExample:
               $ref: '#/components/examples/VOIEPaystubWithTXVerifyReportExample'
+    GetReportWithFirstThirdPartyResponse:
+      description: The report was successfully retrieved
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/Report'
+              - $ref: '#/components/schemas/ReportWithFirstThirdParty'
+          examples:
+            ForesightAnalyticsNonCraReportResponseExample:
+              $ref: '#/components/examples/ForesightAnalyticsNonCraReportResponseExample'
+            ForesightAnalyticsFirstThirdPartyNonCraReportResponseExample:
+              $ref: '#/components/examples/ForesightAnalyticsFirstThirdPartyNonCraReportResponseExample'
+            BalanceBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessCraAnalyticsReportResponseExample'
+            BalanceBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessNonCraAnalyticsReportResponseExample'
+            BalanceBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalanceBusinessFtcAnalyticsReportResponseExample'
+            BalancePersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalancePersonalCraAnalyticsReportResponseExample'
+            BalancePersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/BalancePersonalNonCraAnalyticsReportResponseExample'
+            CashFlowBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessCraAnalyticsReportResponseExample'
+            CashFlowBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessNonCraAnalyticsReportResponseExample'
+            CashFlowBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowBusinessFtcAnalyticsReportResponseExample'
+            CashFlowPersonalCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowPersonalCraAnalyticsReportResponseExample'
+            CashFlowPersonalNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/CashflowPersonalNonCraAnalyticsReportResponseExample'
+            CashFlowPersonalReportExample:
+              $ref: '#/components/examples/CashFlowPersonalReportExample'
+            CashFlowBusinessReportExample:
+              $ref: '#/components/examples/CashFlowBusinessReportExample'
+            SbcaRetailSalesAnalyticsReportExample:
+              $ref: '#/components/examples/GenerateRetailSalesAnalyticsReportExample'
+            SbcaRetailSalesBenchmarksReportExample:
+              $ref: '#/components/examples/GenerateRetailSalesBenchmarksReportExample'
+            PrequalificationCRAReportExample:
+              $ref: '#/components/examples/PrequalificationCRAReportExample'
+            PrequalificationNonCRAReportExample:
+              $ref: '#/components/examples/PrequalificationNonCRAReportExample'
+            PaymentHistoryBusinessCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/PaymentHistoryBusinessCraAnalyticsReportResponseExample'
+            PaymentHistoryBusinessNonCraAnalyticsReportResponseExample:
+              $ref: '#/components/examples/PaymentHistoryBusinessNonCraAnalyticsReportResponseExample'
+            PaymentHistoryBusinessFtcAnalyticsReportResponseExample:
+              $ref: '#/components/examples/PaymentHistoryBusinessFtcAnalyticsReportResponseExample'
+            PayStatementReportExample:
+              $ref: '#/components/examples/PayStatementReportExample'
+            StatementReportExample:
+              $ref: '#/components/examples/StatementReportExample'
+            TransactionsReportExample:
+              $ref: '#/components/examples/TransactionsReportExample'
+            VOAReportExample:
+              $ref: '#/components/examples/VOAReportExample'
+            VOAWithIncomeReportExample:
+              $ref: '#/components/examples/VOAWithIncomeReportExample'
+            VOEPayrollReportExample:
+              $ref: '#/components/examples/VOEPayrollReportExample'
+            VOETransactionsReportExample:
+              $ref: '#/components/examples/VOETransactionsReportExample'
+            VOIReportExample:
+              $ref: '#/components/examples/VOIReportExample'
+            VOIEPayrollReportExample:
+              $ref: '#/components/examples/VOIEPayrollReportExample'
+            VOIEPaystubReportExample:
+              $ref: '#/components/examples/VOIEPaystubReportExample'
+            VOIEPaystubWithTXVerifyReportExample:
+              $ref: '#/components/examples/VOIEPaystubWithTXVerifyReportExample'
     GetReportsResponse:
       description: The reports summaries were successfully retrieved
       content:
@@ -6290,6 +6459,8 @@ components:
           examples:
             PermissiblePurposeCodeExample:
               $ref: '#/components/examples/PermissiblePurposeCodeExample'
+            InvalidForesightReportRequestExample:
+              $ref: '#/components/examples/InvalidForesightReportRequestExample'
             MissingFieldExample:
               $ref: '#/components/examples/MissingFieldExample'
             InvalidFieldExample:
@@ -7269,6 +7440,25 @@ components:
             - forecasting
           income: 1000
           age: 26
+    GenerateForesightAnalyticsFirstThirdPartyNonCraReportRequestExample:
+      value:
+        customerId: 1001483250
+        externalCustomerId: 1234abcd
+        fromDate: 1580558400
+        accountIds: '1000535275 1000535276'
+        analyticsReportData:
+          forCraPurpose: false
+          timeIntervalTypes:
+            - MONTHLY_CALENDAR
+          segments:
+            geolocation:
+              - label: POSTAL_CODE
+                value: 84123
+          analytics:
+            - benchmarking
+            - forecasting
+          income: 1000
+          age: 26
     GenerateForesightAnalyticsNonCraReportResponseExample:
       value:
         id: 247th25xwyhd-farpbfnoncra
@@ -7282,6 +7472,35 @@ components:
         type: farpbfnoncra
         status: inProgress
         constraints:
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+            segments:
+              geolocation:
+                - label: POSTAL_CODE
+                  value: 84123
+            analytics:
+              - benchmarking
+              - forecasting
+            income: 1000
+            age: 26
+    GenerateForesightAnalyticsFirstThirdPartyNonCraReportResponseExample:
+      value:
+        id: 247th25xwyhd-farpbfnoncra
+        customerType: testing
+        customerId: 1001483250
+        externalCustomerId: 1234abcd
+        requestId: y3pic4xhda
+        requesterName: Intuit Facade Demo (KEEP)
+        createdDate: 1739824892
+        title: Mastercard Open Banking Foresight Analytics
+        reportPin: XYeyLA
+        type: farpbfnoncra
+        status: inProgress
+        constraints:
+          customerId: 1001483250
+          externalCustomerId: 1234abcd
           analyticsReportData:
             forCraPurpose: false
             timeIntervalTypes:
@@ -7534,6 +7753,12 @@ components:
         code: '10100'
         status: '400'
         message: 'Permissible Purpose Code is required'
+    InvalidForesightReportRequestExample:
+      value:
+        code: '10100'
+        message:
+          'At least one of customerId or externalCustomerId must be provided;
+          both are also allowed.'
     DisputeStatementErrorExample:
       value:
         code: '10406'
@@ -12982,6 +13207,2476 @@ components:
                 currentBalance: 217.42
                 availableBalance: 217.42
                 balanceDate: 1739824938
+                analytics:
+                  transactionalAttributes:
+                    - attributeName: ACCOMMODATION_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: ENTERTAINMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FUEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: BOOKS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: COMMUNICATION_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CONSUMER_ELECTRONICS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: PHARMACY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: EATING_PLACES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CLOTHING_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FINANCIAL_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: GROCERIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HEALTH_BEAUTY_MEDICAL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HOME_IMPROVEMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: INSURANCE_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: TRAVEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: UTILITIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: DISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: NONDISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                  stateAttributes: []
+                  streams:
+                    - id: d5740963-b2d7-4ac9-a5a2-7ba323bfa14b
+                      payor: Account Owner (Name Unavailable)
+                      payee: td ameritrade
+                      cadence: 0
+                      status: inactive
+                      recency: 639
+                      earliestObservedDate: '2023-04-25T07:12:33'
+                      latestObservedDate: '2023-05-01T07:12:33'
+                      count: 2
+                      sum: -465.84
+                      min: -382.92
+                      max: -82.92
+                      mean: -232.92
+                      median: -232.92
+                      standardDeviation: 212.13203435596427
+                      minimumCadence: null
+                      maximumCadence: null
+                      medianCadence: null
+                      modeCadence: null
+                      standardDeviationCadence: null
+                      transactionIds:
+                        - '1'
+                        - '2'
+                currency: USD
+            oauthEnabled: false
+        customerAnalytics:
+          transactionalAttributes:
+            - attributeName: ACCOMMODATION_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: -382.92
+                      count: 1
+                      mean: -382.92
+                      median: -382.92
+                      min: -382.92
+                      max: -382.92
+                      standardDeviation: null
+                      comparedToCohorts:
+                        - cohortType: POSTAL_CODE
+                          totalDifferenceToCohort: -260.61
+                          percentageDifferenceToCohort: -213.07
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -122.31
+              transactionIds:
+                - '1'
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: ENTERTAINMENT_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -180.55
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: FUEL_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -89.14
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: BOOKS_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -14.09
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: COMMUNICATION_SERVICES_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -159.09
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: CONSUMER_ELECTRONICS_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -84.48
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: PHARMACY_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -22.39
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: EATING_PLACES_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -110.58
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: CLOTHING_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: -82.92
+                      count: 1
+                      mean: -82.92
+                      median: -82.92
+                      min: -82.92
+                      max: -82.92
+                      standardDeviation: null
+                      comparedToCohorts:
+                        - cohortType: POSTAL_CODE
+                          totalDifferenceToCohort: 171.57
+                          percentageDifferenceToCohort: 67.42
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -254.49
+              transactionIds:
+                - '2'
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: FINANCIAL_SERVICES_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -996.25
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: GROCERIES_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -87.78
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: HEALTH_BEAUTY_MEDICAL_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -34.61
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: HOME_IMPROVEMENT_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -183.85
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: INSURANCE_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -332.33
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: TRAVEL_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -513.38
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: UTILITIES_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: null
+                      count: 0
+                      mean: null
+                      median: null
+                      min: null
+                      max: null
+                      standardDeviation: null
+                      comparedToCohorts: []
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: -149.45
+              transactionIds: []
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: DISCRETIONARY_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: -382.92
+                      count: 1
+                      mean: -382.92
+                      median: -382.92
+                      min: -382.92
+                      max: -382.92
+                      standardDeviation: null
+                      comparedToCohorts:
+                        - cohortType: POSTAL_CODE
+                          totalDifferenceToCohort: -382.92
+                          percentageDifferenceToCohort: null
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: 0
+              transactionIds:
+                - '1'
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+            - attributeName: NONDISCRETIONARY_SPENDING
+              aggregatedByTimePeriods:
+                - timeIntervalType: HISTORICALLY
+                  periods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      sum: -82.92
+                      count: 1
+                      mean: -82.92
+                      median: -82.92
+                      min: -82.92
+                      max: -82.92
+                      standardDeviation: null
+                      comparedToCohorts:
+                        - cohortType: POSTAL_CODE
+                          totalDifferenceToCohort: -82.92
+                          percentageDifferenceToCohort: null
+                  cohortBenchmarkPeriods:
+                    - startDate: '2023-04-25'
+                      endDate: '2023-05-01'
+                      cohortValues:
+                        - cohortType: POSTAL_CODE
+                          value: 0
+              transactionIds:
+                - '2'
+              projectedValues:
+                - timeUnit: MONTHS
+                  timeValue: 3
+                  projectionValue: -20
+                - timeUnit: MONTHS
+                  timeValue: 6
+                  projectionValue: -40
+                - timeUnit: MONTHS
+                  timeValue: 9
+                  projectionValue: -60
+                - timeUnit: MONTHS
+                  timeValue: 12
+                  projectionValue: -80
+              streamIds: []
+              streamConfidences: null
+          stateAttributes: []
+          streams:
+            - id: d5740963-b2d7-4ac9-a5a2-7ba323bfa14b
+              payor: Account Owner (Name Unavailable)
+              payee: td ameritrade
+              cadence: 0
+              status: inactive
+              recency: 639
+              earliestObservedDate: '2023-04-25T07:12:33'
+              latestObservedDate: '2023-05-01T07:12:33'
+              count: 2
+              sum: -465.84
+              min: -382.92
+              max: -82.92
+              mean: -232.92
+              median: -232.92
+              standardDeviation: 212.13203435596427
+              minimumCadence: null
+              maximumCadence: null
+              medianCadence: null
+              modeCadence: null
+              standardDeviationCadence: null
+              transactionIds:
+                - '1'
+                - '2'
+        gseEnabled: true
+    ForesightAnalyticsFirstThirdPartyNonCraReportResponseExample:
+      value:
+        id: 247th25xwyhd-farpbfnoncra
+        customerType: testing
+        customerId: 1001483250
+        externalCustomerId: 1005061234
+        requestId: y3pic4xhda
+        requesterName: Intuit Facade Demo (KEEP)
+        createdDate: 1739824892
+        title: Mastercard Open Banking Foresight Analytics
+        reportPin: XYeyLA
+        type: farpbfnoncra
+        status: success
+        constraints:
+          customerId: 1001483250
+          externalCustomerId: 1005061234
+          analyticsReportData:
+            forCraPurpose: false
+            timeIntervalTypes:
+              - MONTHLY_CALENDAR
+            segments:
+              geolocation:
+                - label: POSTAL_CODE
+                  value: 84123
+            analytics:
+              - benchmarking
+              - forecasting
+            income: 1000
+            age: 25
+        startDate: 1676666492
+        endDate: 1739824892
+        days: 731
+        institutions:
+          - id: 101732
+            name: FinBank
+            urlHomeApp: 'https://finbank01.stg.fini.city/FinBank/greetings.jsp'
+            accounts:
+              - id: 1005179748
+                name: Credit Card
+                number: '7777'
+                type: creditCard
+                aggregationStatusCode: 0
+                currentBalance: 217.41
+                balanceDate: 1739824918
+                analytics:
+                  transactionalAttributes:
+                    - attributeName: ACCOMMODATION_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: ENTERTAINMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FUEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: BOOKS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: COMMUNICATION_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CONSUMER_ELECTRONICS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: PHARMACY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: EATING_PLACES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CLOTHING_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FINANCIAL_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: GROCERIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HEALTH_BEAUTY_MEDICAL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HOME_IMPROVEMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: INSURANCE_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: TRAVEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: UTILITIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: DISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: NONDISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                  stateAttributes: []
+                  streams:
+                    - id: d5740963-b2d7-4ac9-a5a2-7ba323bfa14b
+                      payor: Account Owner (Name Unavailable)
+                      payee: td ameritrade
+                      cadence: 0
+                      status: inactive
+                      recency: 639
+                      earliestObservedDate: '2023-04-25T07:12:33'
+                      latestObservedDate: '2023-05-01T07:12:33'
+                      count: 2
+                      sum: -465.84
+                      min: -382.92
+                      max: -82.92
+                      mean: -232.92
+                      median: -232.92
+                      standardDeviation: 212.13203435596427
+                      minimumCadence: null
+                      maximumCadence: null
+                      medianCadence: null
+                      modeCadence: null
+                      standardDeviationCadence: null
+                      transactionIds:
+                        - '1'
+                        - '2'
+                currency: USD
+              - id: 1005179749
+                name: Savings
+                number: '2222'
+                type: savings
+                aggregationStatusCode: 0
+                currentBalance: 217.42
+                availableBalance: 217.42
+                balanceDate: 1739824929
+                analytics:
+                  transactionalAttributes:
+                    - attributeName: ACCOMMODATION_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: ENTERTAINMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FUEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: BOOKS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: COMMUNICATION_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CONSUMER_ELECTRONICS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: PHARMACY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: EATING_PLACES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CLOTHING_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FINANCIAL_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: GROCERIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HEALTH_BEAUTY_MEDICAL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HOME_IMPROVEMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: INSURANCE_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: TRAVEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: UTILITIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: DISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: NONDISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                  stateAttributes: []
+                  streams:
+                    - id: d5740963-b2d7-4ac9-a5a2-7ba323bfa14b
+                      payor: Account Owner (Name Unavailable)
+                      payee: td ameritrade
+                      cadence: 0
+                      status: inactive
+                      recency: 639
+                      earliestObservedDate: '2023-04-25T07:12:33'
+                      latestObservedDate: '2023-05-01T07:12:33'
+                      count: 2
+                      sum: -465.84
+                      min: -382.92
+                      max: -82.92
+                      mean: -232.92
+                      median: -232.92
+                      standardDeviation: 212.13203435596427
+                      minimumCadence: null
+                      maximumCadence: null
+                      medianCadence: null
+                      modeCadence: null
+                      standardDeviationCadence: null
+                      transactionIds:
+                        - '1'
+                        - '2'
+                currency: USD
+              - id: 1005179750
+                name: Checking
+                number: '1111'
+                type: checking
+                aggregationStatusCode: 0
+                currentBalance: 217.42
+                availableBalance: 217.42
+                balanceDate: 1739824938
+                analytics:
+                  transactionalAttributes:
+                    - attributeName: ACCOMMODATION_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: ENTERTAINMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FUEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: BOOKS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: COMMUNICATION_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CONSUMER_ELECTRONICS_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: PHARMACY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: EATING_PLACES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: CLOTHING_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: FINANCIAL_SERVICES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: GROCERIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HEALTH_BEAUTY_MEDICAL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: HOME_IMPROVEMENT_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: INSURANCE_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: TRAVEL_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: UTILITIES_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: null
+                              count: 0
+                              mean: null
+                              median: null
+                              min: null
+                              max: null
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds: []
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: DISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -382.92
+                              count: 1
+                              mean: -382.92
+                              median: -382.92
+                              min: -382.92
+                              max: -382.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '1'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                    - attributeName: NONDISCRETIONARY_SPENDING
+                      aggregatedByTimePeriods:
+                        - timeIntervalType: HISTORICALLY
+                          periods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              sum: -82.92
+                              count: 1
+                              mean: -82.92
+                              median: -82.92
+                              min: -82.92
+                              max: -82.92
+                              standardDeviation: null
+                              comparedToCohorts: []
+                          cohortBenchmarkPeriods:
+                            - startDate: '2023-04-25'
+                              endDate: '2023-05-01'
+                              cohortValues: []
+                      transactionIds:
+                        - '2'
+                      projectedValues: []
+                      streamIds: []
+                      streamConfidences: null
+                  stateAttributes: []
+                  streams:
+                    - id: d5740963-b2d7-4ac9-a5a2-7ba323bfa14b
+                      payor: Account Owner (Name Unavailable)
+                      payee: td ameritrade
+                      cadence: 0
+                      status: inactive
+                      recency: 639
+                      earliestObservedDate: '2023-04-25T07:12:33'
+                      latestObservedDate: '2023-05-01T07:12:33'
+                      count: 2
+                      sum: -465.84
+                      min: -382.92
+                      max: -82.92
+                      mean: -232.92
+                      median: -232.92
+                      standardDeviation: 212.13203435596427
+                      minimumCadence: null
+                      maximumCadence: null
+                      medianCadence: null
+                      modeCadence: null
+                      standardDeviationCadence: null
+                      transactionIds:
+                        - '1'
+                        - '2'
+                currency: USD
+          - id: 41
+            name: Decisioning API Tests
+            accounts:
+              - id: 1005179748
+                type: savings
                 analytics:
                   transactionalAttributes:
                     - attributeName: ACCOMMODATION_SPENDING
@@ -25991,6 +28686,15 @@ components:
       required:
         - forCraPurpose
       type: object
+    ForesightAnalyticsReportFirstThirdPartyConstraints:
+      allOf:
+        - $ref: '#/components/schemas/ForesightAnalyticsReportConstraints'
+        - type: object
+          properties:
+            customerId:
+              $ref: '#/components/schemas/NumericCustomerId'
+            externalCustomerId:
+              $ref: '#/components/schemas/ExternalCustomerId'
     ForesightAnalyticsReportConstraints:
       type: object
       properties:
@@ -27153,6 +29857,34 @@ components:
                 individual accounts used in this report
             customerAnalytics:
               $ref: '#/components/schemas/CustomerAnalytics'
+    ForesightAnalyticsFirstThirdPartyReport:
+      description: A Foresight Analytics Report
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ForesightAnalyticsFirstThirdPartyReportAck'
+        - type: object
+          properties:
+            startDate:
+              $ref: '#/components/schemas/ReportStartDate'
+            endDate:
+              $ref: '#/components/schemas/ReportEndDate'
+            days:
+              type: integer
+              description: Number of days covered by the report
+              example: 730
+            seasoned:
+              type: boolean
+              description: '"true" if the report covers more than 365 days'
+              example: true
+            institutions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReportInstitution'
+              description: >-
+                A list of institution records, including information about the
+                individual accounts used in this report
+            customerAnalytics:
+              $ref: '#/components/schemas/CustomerAnalytics'
     AFBalanceAnalyticsReport:
       description: A Balance Analytics Report
       type: object
@@ -27293,6 +30025,27 @@ components:
               $ref: '#/components/schemas/ReportPin'
             constraints:
               $ref: '#/components/schemas/ForesightAnalyticsReportConstraints'
+    ForesightAnalyticsFirstThirdPartyReportAck:
+      required:
+        - id
+        - requestId
+        - requesterName
+        - createdDate
+        - title
+        - type
+        - status
+        - reportPin
+        - constraints
+      allOf:
+        - $ref: '#/components/schemas/BaseReportAck'
+        - type: object
+          properties:
+            externalCustomerId:
+              $ref: '#/components/schemas/ExternalCustomerId'
+            reportPin:
+              $ref: '#/components/schemas/ReportPin'
+            constraints:
+              $ref: '#/components/schemas/ForesightAnalyticsReportFirstThirdPartyConstraints'
     AnalyticsReportAck:
       required:
         - id
@@ -34242,6 +36995,20 @@ components:
         A customer ID represented as a number. See Add Customer API for how to
         create a customer ID.
       example: 1005061234
+    ExternalCustomerId:
+      type: string
+      description:
+        External Customer ID is a unique identifier assigned to the customer by
+        the data holder. This field allows you to map the customer (and
+        transactions) back to your dataset and to provide the link to
+        Mastercard's dataset that was requested to be enriched. This ID must be
+        obfuscated through cryptographically strong hashing using SHA-2 or SHA-3
+        methods. Do not send plaintext ids to Mastercard. Provide this
+        identifier if you want the Mastercard enriched dataset to be used as
+        input to this report.
+      minLength: 1
+      maxLength: 100
+      example: '1005061234'
     NumericInstitutionId:
       description: 'The ID of a financial institution, represented as a number'
       type: integer
@@ -36327,6 +39094,21 @@ components:
         - $ref: '#/components/schemas/VOIEPayrollReport'
         - $ref: '#/components/schemas/VOIEPaystubReport'
         - $ref: '#/components/schemas/VOIEPaystubWithTXVerifyReport'
+    ReportWithFirstThirdParty:
+      description: A report
+      type: object
+      required:
+        - id
+        - requestId
+        - requesterName
+        - createdDate
+        - reportRefreshNumber
+        - originalReportCreatedDate
+        - title
+        - type
+        - status
+      allOf:
+        - $ref: '#/components/schemas/ForesightAnalyticsFirstThirdPartyReport'
     ReportAccountIds:
       description: >-
         An array of account IDs to be included in the report (all accounts will
