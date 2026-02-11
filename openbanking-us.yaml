@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.35.0
+  version: 1.36.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -24,8 +24,6 @@ tags:
     description: Micro entries and account verification
   - name: App Registration
     description: Register and assign apps to customers
-  - name: Assets
-    description: Download asset files
   - name: Authentication
     description: Generate authentication tokens and manage credentials
   - name: Balance Analytics
@@ -2335,8 +2333,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountStatementResponse'
-        '203':
-          $ref: '#/components/responses/MFAChallengeNeededResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2402,8 +2398,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerAccountsMultipleStatementResponse'
-        '203':
-          $ref: '#/components/responses/MFAChallengeNeededResponse'
         '400':
           $ref: '#/components/responses/GenericBadRequestErrorResponse'
         '401':
@@ -3304,7 +3298,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/assets/{assetId}':
     get:
       tags:
-        - Assets
+        - Bank Statements
       summary: Get Asset by Customer and ID
       description: >-
         Retrieve a binary file for the given asset ID.
@@ -4699,6 +4693,29 @@ paths:
           $ref: '#/components/responses/SBCAUnauthorizedErrorResponse'
         '404':
           $ref: '#/components/responses/SBCAResourceNotFoundErrorResponse'
+  '/decisioning/v1/portfolios/{portfolioId}':
+    get:
+      tags:
+        - Portfolios
+      summary: Get Portfolio by Portfolio ID
+      description: >-
+        Returns a summary for a single portfolio.
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: GetPortfolioByPathParamPortFolioID
+      parameters:
+        - $ref: '#/components/parameters/PortfolioIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPortfolioResponse'
+        '204':
+          $ref: '#/components/responses/NoFannieReportsFoundResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestPortfolioResponse'
+        '403':
+          $ref: '#/components/responses/PortfolioForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/PortfolioNotFoundResponse'
 
 components:
   securitySchemes:
@@ -7380,6 +7397,56 @@ components:
           examples:
             MetricsNotFoundExample:
               $ref: '#/components/examples/MetricsNotFoundExample'
+    NoFannieReportsFoundResponse:
+      description: No Fannie Mae reports found for the specified portfolio ID.
+    AccessForbiddenResponse:
+      description:
+        Access forbidden - insufficient permissions to retrieve portfolio
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FannieErrorMessage'
+    BadRequestPortfolioResponse:
+      description:
+        Bad request - can be either a BadRequest exception (Error format) or
+        FanniePortfolioException with status 400 (FannieErrorMessage format)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FannieErrorMessage'
+          examples:
+            InvalidPortfolioIdFormatExample:
+              $ref: '#/components/examples/InvalidPortfolioIdFormatExample'
+            FannieBadRequestPortfolioExample:
+              $ref: '#/components/examples/FannieBadRequestPortfolioExample'
+    PortfolioNotFoundResponse:
+      description: Portfolio not found or no valid reports for portfolio
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FannieErrorMessage'
+          examples:
+            PortfolioNotFoundExample:
+              $ref: '#/components/examples/PortfolioNotFoundExample'
+    PortfolioForbiddenResponse:
+      description:
+        Access forbidden - insufficient permissions to access portfolio
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FannieErrorMessage'
+          examples:
+            PortfolioForbiddenExample:
+              $ref: '#/components/examples/PortfolioForbiddenExample'
+    GetPortfolioResponse:
+      description: The portfolio summary was successfully retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PortfolioSummaryForSinglePortfolio'
+          examples:
+            PortfolioSummaryExample:
+              $ref: '#/components/examples/PortfolioSummaryExample'
 
   examples:
     LocationMatchesResponseExample:
@@ -27465,6 +27532,67 @@ components:
       value:
         code: '10100'
         message: 'No potential merchant metrics found.'
+    InvalidPortfolioIdFormatExample:
+      value:
+        trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
+        code: '10100'
+        message:
+          'Invalid portfolioId format, cannot parse version. portfolioId:
+          y4zsgccj4xpw-port'
+    FannieBadRequestPortfolioExample:
+      value:
+        trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
+        code: '10010'
+        message: 'Invalid portfolio ID format'
+    PortfolioNotFoundExample:
+      value:
+        trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
+        code: '10010'
+        message: 'No report found for portfolioId y4zsgccj4xpw-port.'
+    PortfolioForbiddenExample:
+      value:
+        trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
+        code: '10405'
+        status: '403'
+        message:
+          'Access forbidden - insufficient permissions to access portfolio'
+    PortfolioSummaryExample:
+      value:
+        portfolioId: 'y4zsgccj4xpw1-port'
+        consumer:
+          id: '3f7ff2cf0ffb3d0cd5987'
+          firstName: 'John'
+          lastName: 'Doe'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '1-212-555-1234'
+          email: 'john.doe@example.com'
+          ssn: 'XXX-XX-6789'
+          birthday:
+            year: 1990
+            month: 1
+            dayOfMonth: 1
+          customerId: 1005061234
+          createdDate: 1560244594
+          middleName: 'Michael'
+          suffix: 'Jr'
+          endUser:
+            name: 'John Doe'
+            address: '123 Main St'
+            city: 'Murray'
+            state: 'UT'
+            zip: '84123'
+            phone: '1-801-443-7288'
+            email: 'john.doe@example.com'
+            url: 'example.com'
+        reports:
+          - id: 'v29j6qabmr8j-voietxverify'
+            portfolioId: 'y4zsgccj4xpw1-port'
+            type: 'voieTxVerify'
+            status: 'success'
+            createdDate: 1743292752
 
   parameters:
     IdTypeParameter:
@@ -27988,12 +28116,12 @@ components:
         Request details of statements with comma-separated indexes between 1-24.
         The default value is 1 which will return details of the most recent
         statement. Increasing the index will return details of older statements,
-        for example, setting the index value to 6 will return data on the sixth
+        for example, setting the index value to 2 will return data on the second
         most recent statement.
       schema:
         type: string
         default: '1'
-        example: '1,2,3,4,5,6'
+        example: '1,2'
     PartnerIdParameter:
       name: partnerId
       in: path
@@ -28385,6 +28513,14 @@ components:
       schema:
         $ref: '#/components/schemas/PebAllowedBalanceCacheInterval'
       example: 1
+    PortfolioIdPathParameter:
+      description: A portfolio ID
+      name: portfolioId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PortfolioId'
+      example: 'y4zsgccj4xpw-port'
 
   schemas:
     LocationMatches:
@@ -30455,7 +30591,11 @@ components:
         description:
           $ref: '#/components/schemas/Description'
         asOfDate:
-          $ref: '#/components/schemas/UnixDate'
+          type: integer
+          description: >
+            Displays the time where a client pulls the statement.
+          format: int64
+          example: 1607450357
         documentDate:
           $ref: '#/components/schemas/DocumentDate'
         index:
@@ -43948,7 +44088,7 @@ components:
             back to your systems.
           type: string
           minLength: 1
-          maxLength: 511
+          maxLength: 100
           example: 'MAC1005061233'
         postedTimestamp:
           type: string
@@ -44106,7 +44246,7 @@ components:
             back to your systems.
           type: string
           minLength: 1
-          maxLength: 511
+          maxLength: 100
           example: 'MAC1005061233'
         postedTimestamp:
           type: string
@@ -45084,3 +45224,47 @@ components:
       maxLength: 50
       description: Address Line2, Apt/Unit Details
       example: Apt E226
+    PortfolioSummaryForSinglePortfolio:
+      type: object
+      description:
+        A portfolio summary of a single portfolio report and consumer
+        information
+      required:
+        - portfolioId
+        - consumer
+        - reports
+      properties:
+        portfolioId:
+          $ref: '#/components/schemas/PortfolioId'
+        consumer:
+          $ref: '#/components/schemas/Consumer'
+        reports:
+          type: array
+          description: A list of a single portfolio report in the portfolio
+          items:
+            $ref: '#/components/schemas/PortfolioReport'
+    FannieErrorMessage:
+      required:
+        - trackingId
+        - code
+        - message
+      type: object
+      properties:
+        trackingId:
+          type: string
+          description: Unique key that can be used to track requests
+          example: 69a6933d-befe-48c2-8ed0-ab5b04082f02
+          pattern: '[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}'
+        code:
+          type: object
+          description: >-
+            An error code (can be returned as a number or a string).
+          example: '10100'
+        status:
+          type: string
+          description: A status code
+          example: '403'
+        message:
+          type: string
+          description: An error message
+          example: No reports found for portfolioId.
