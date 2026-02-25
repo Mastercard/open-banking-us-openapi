@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.36.0
+  version: 1.37.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -1565,9 +1565,9 @@ paths:
       summary: Get App Registration Status by Institution
       description: >-
         Query the status of your application registration. If you specify the ID
-        of a financial instituion in your query then the status for that
+        of a financial institution in your query then the status for that
         institution is returned. If you do not specify an instituion ID then the
-        status for all financial instituions is returned.
+        status for all financial institutions is returned.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -2437,9 +2437,30 @@ paths:
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
+        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+  '/aggregation/customers/{customerId}/transactions/{uniqueTransactionId}':
+    get:
+      tags:
+        - Transactions
+      summary: Get Transaction by UniqueTransactionId
+      description: >-
+        Retrieve a transaction for the given customer using uniqueTransactionId.
+      operationId: GetTransactionByUniqueTransactionId
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerTransactionResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -2460,6 +2481,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/TransactionIdParameter'
+        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionResponse'
@@ -2501,6 +2523,7 @@ paths:
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
         - $ref: '#/components/parameters/ShowDailyBalanceParameter'
+        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionsResponse'
@@ -2541,6 +2564,7 @@ paths:
         - $ref: '#/components/parameters/RequiredTransactionReportFromDateParameter'
         - $ref: '#/components/parameters/RequiredTransactionReportToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
+        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateTransactionsReportRequest'
       responses:
@@ -3945,7 +3969,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Create Webhook Subscription
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Creates a new webhook subscription for receiving event notifications.
         You can specify the URL for receiving notifications and select the
         events to subscribe to, including any conditions for filtering. Each
@@ -3977,7 +4006,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: List Webhook Subscriptions
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Retrieves a list of all webhook subscriptions. The response includes
         details of each subscription, such as the subscription ID, URL, events,
         and their conditions. This API provides an overview of all active and
@@ -4009,7 +4043,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Get Webhook Subscription Details
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Retrieves detailed information about a specific webhook subscription
         using the provided subscription ID. The response includes subscription
         details such as the events, conditions, and current status.
@@ -4038,7 +4077,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Update Webhook Subscription
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Updates an existing webhook subscription with the specified subscription
         ID. You can modify the subscription URL and the events associated with
         it.
@@ -4069,7 +4113,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Delete Webhook Subscription
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Deletes a subscription specified by its ID. Once deleted, the
         subscription and its associated events will no longer be active or
         receive notifications
@@ -4097,8 +4146,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Update Webhook Subscription Event
-
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Updates a specific webhook event in a subscription. Use subscription Id
         and webhook Event Id to identify the event and modify its details.
 
@@ -4129,7 +4182,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Delete Webhook Subscription Event
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Deletes a specific webhook event from a subscription identified by
         subscription Id and webhook Event Id.
 
@@ -4159,7 +4217,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Enable or Disable Webhook Subscription Event
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Enables or disables a specific webhook event within a subscription
         identified by subscription ID and webhook event ID. Update the event's
         status to either active or inactive.
@@ -4192,7 +4255,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: List Available Webhook Subscription Events
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Allows partners to retrieve a list of all event subscriptions supported
         by the Open Finance system.  This endpoint provides information about
         each subscription, including the webhook URL and associated events,
@@ -4219,9 +4287,13 @@ paths:
       tags:
         - Webhook Subscription
       summary:
-        Enable or disable all the webhook event under a given webhook
-        subscription
+        Enable or Disable All Webhook Events Under a Given Webhook Subscription
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Enables or disables all webhook subscription event for partner. Update
         the  status to either active or inactive. _Supported regions_:
         ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4249,7 +4321,12 @@ paths:
       tags:
         - Webhook Subscription
       summary: Test Webhook Subscription Based on Subscription ID
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Test all the webhook event under the given webhook subscription using
         subscription_id. _Supported regions_:
         ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -4275,8 +4352,13 @@ paths:
       tags:
         - Webhook Subscription
       summary:
-        Test Webhook Subscription Based on Subscription id & Webhook event id.
+        Test Webhook Subscription Based on Subscription ID and Webhook Event ID
+      deprecated: true
       description: >-
+        _The OBWMS endpoints will be replaced by a new standalone service during
+        2026. Speak to your Customer Service Manager for details._
+
+
         Test the webhook event under the given webhook subscription using
         subscription_id & webhook event id. _Supported regions_:
         ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -8032,7 +8114,6 @@ components:
             shown: true
         payStatementsFromDate: 1580558400
         marketSegment: Mortgage
-        excludeEmpInfo: false
         purpose: '31'
     GenerateVOEPayrollReportResponseExample:
       value:
@@ -27966,6 +28047,16 @@ components:
       schema:
         $ref: '#/components/schemas/CustomerType'
       example: 'active'
+    UniqueTransactionIdParameter:
+      name: uniqueTransactionId
+      in: path
+      required: true
+      description:
+        A globally unique transaction identifier in the format
+        "accountId-transactionId".
+      schema:
+        $ref: '#/components/schemas/UniqueTransactionId'
+      example: '87529-543210'
     AccountIdParameter:
       description: The account ID
       name: accountId
@@ -30229,9 +30320,13 @@ components:
           example: Checking
         number:
           type: string
-          description: >-
-            The account number from the institution (obfuscated)
-          example: XX1111
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         type:
           type: string
           description: The list of supported account types.
@@ -32202,9 +32297,13 @@ components:
           example: Checking
         number:
           type: string
-          description: >-
-            The account number from the institution (obfuscated)
-          example: XX1111
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         type:
           type: string
           description: >-
@@ -32319,9 +32418,13 @@ components:
           example: Checking
         number:
           type: string
-          description: >-
-            The account number from the institution (obfuscated)
-          example: XX1111
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         type:
           type: string
           description: >-
@@ -34138,6 +34241,10 @@ components:
           type: number
           description: The total cost of acquiring the security
           example: 190.01
+        paidPrice:
+          type: number
+          description: The price per unit of a holding at the time of purchase
+          example: 11.1526
         holdType:
           type: string
           description: The type of the holding
@@ -34877,13 +34984,6 @@ components:
       description: 'Possible values: "HIGH", "MODERATE", "LOW", "NO"'
       type: string
       example: HIGH
-    ExcludeEmpInfo:
-      type: boolean
-      description: >-
-        Only used on an exception basis for clients that need to exclude EmpInfo
-        data from the VOE-Payroll or VOIE-Payroll report. If true is passed
-        EmpInfo payroll provider's data will not be searched or returned.
-      example: false
     ExpectedPayoffDate:
       type: integer
       description: >-
@@ -37358,9 +37458,14 @@ components:
       description: Details of the account and financial institution
       properties:
         accountNumberDisplay:
-          description:
-            The account number from a financial institution in truncated format
-          example: '8888'
+          description: |-
+            Account identifier derived by Mastercard from the account number provided by the financial institution. The format varies depending on the institution. We recommend using this to identify accounts if available.
+            Below is a non-exhaustive list of examples for the `accountNumberDisplay` field.
+            * 5720
+            * 3539-259
+            * 1500-1
+            * 0824-S0050
+          example: '7528'
           type: string
           minLength: 0
           maxLength: 50
@@ -37412,8 +37517,10 @@ components:
           minLength: 0
           maxLength: 50
         realAccountNumberLast4:
-          description: The last 4 digits of the ACH account number
-          example: 5678
+          description: |-
+            The last 4 digits of the account number, derived by Mastercard from the account number provided by the financial institution.
+            This is only returned for ACH-enabled accounts.
+          example: '5678'
           type: integer
         status:
           description: >-
@@ -38510,8 +38617,6 @@ components:
           $ref: '#/components/schemas/PayStatementsFromDate'
         marketSegment:
           $ref: '#/components/schemas/MarketSegment'
-        excludeEmpInfo:
-          $ref: '#/components/schemas/ExcludeEmpInfo'
         purpose:
           $ref: '#/components/schemas/PurposeCode'
     PayrollReportConstraintsOut:
@@ -38907,10 +39012,13 @@ components:
           example: 1000023996
         number:
           type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         ownerName:
           $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
@@ -40439,6 +40547,8 @@ components:
             The total amount of the transaction. Transactions for deposits are
             positive values, withdrawals and debits are negative values.
           example: -828.9
+        uniqueTransactionId:
+          $ref: '#/components/schemas/UniqueTransactionId'
         accountId:
           $ref: '#/components/schemas/NumericAccountId'
         customerId:
@@ -40801,9 +40911,13 @@ components:
           example: Super Checking
         number:
           type: string
-          description: >-
-            The account number from the financial institution (obfuscated)
-          example: '5015'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         type:
           type: string
           description: The list of supported account types.
@@ -41471,10 +41585,13 @@ components:
           example: 1000023996
         number:
           type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         ownerName:
           $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
@@ -41815,10 +41932,13 @@ components:
           example: 1000023996
         number:
           type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         ownerName:
           $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
@@ -42332,10 +42452,13 @@ components:
           example: 1000023996
         number:
           type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         ownerName:
           $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
@@ -42631,10 +42754,13 @@ components:
           example: 1000023996
         number:
           type: string
-          description: >-
-            The account number from the institution (all digits except the last
-            four are obfuscated)
-          example: '1111'
+          description: |-
+            Account number provided by the financial institution. The format varies depending on the institution. Some digits may be masked. If an ACH number is needed, call the ACH endpoints.
+            Below is a non-exhaustive list of examples for the `number` field.
+            * 8089258
+            * 103275057=01
+            * 2000004444
+          example: '201940541'
         ownerName:
           $ref: '#/components/schemas/ReportAccountOwnerName'
         ownerAddress:
@@ -45268,3 +45394,9 @@ components:
           type: string
           description: An error message
           example: No reports found for portfolioId.
+    UniqueTransactionId:
+      type: string
+      description: >-
+        A globally unique transaction identifier derived from accountId and
+        transactionId.
+      example: '87529-543210'
