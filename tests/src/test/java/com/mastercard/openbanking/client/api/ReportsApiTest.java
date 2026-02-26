@@ -39,6 +39,7 @@ class ReportsApiTest extends BaseTest {
     private static final String SUCCESS_STATUS = "success";
     private final static String ON_BEHALF_OF = "Someone";
     private final static String PURPOSE = "99";
+    private static String uniqueTransactionId;
 
     @BeforeAll
     protected static void beforeAll() {
@@ -269,7 +270,8 @@ class ReportsApiTest extends BaseTest {
                 // Create a report the first time
                 var toDate = LocalDateTime.now().toEpochSecond(UTC);
                 var fromDate = LocalDateTime.now().minusYears(2).toEpochSecond(UTC);
-                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID,  new TransactionsReportConstraints(), null, fromDate,toDate,true);
+                  uniqueTransactionId="1234";
+                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, uniqueTransactionId, new TransactionsReportConstraints(), null, fromDate,toDate,true);
                 reportId = reportAck.getId();
             }
             fetchReport(reportId, consumerId);
