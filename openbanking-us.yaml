@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.37.0
+  version: 1.38.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2437,7 +2437,6 @@ paths:
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
-        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionsResponse'
@@ -2481,7 +2480,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/TransactionIdParameter'
-        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionResponse'
@@ -2523,7 +2521,6 @@ paths:
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
         - $ref: '#/components/parameters/ShowDailyBalanceParameter'
-        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetCustomerTransactionsResponse'
@@ -2564,7 +2561,6 @@ paths:
         - $ref: '#/components/parameters/RequiredTransactionReportFromDateParameter'
         - $ref: '#/components/parameters/RequiredTransactionReportToDateParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
-        - $ref: '#/components/parameters/UniqueTransactionIdParameter'
       requestBody:
         $ref: '#/components/requestBodies/GenerateTransactionsReportRequest'
       responses:
@@ -4798,6 +4794,58 @@ paths:
           $ref: '#/components/responses/PortfolioForbiddenResponse'
         '404':
           $ref: '#/components/responses/PortfolioNotFoundResponse'
+  '/aggregation/analytics/customers/{customerId}/accounts-summary':
+    get:
+      tags:
+        - Account Key
+      summary: Get Account Key by Customer ID
+      description: >-
+        Retrieve an account key for a given customer ID, along with a list of
+        linked accounts. An account key is a persistent identifier that informs
+        you if an account/routing number combination or a TAN has already been
+        linked to Open Finance using Get Account ACH Details.
+
+
+        _Supported regions_: ![ 🇺🇸 ](https://flagcdn.com/20x15/us.png)
+      operationId: GetAccountKeyByCustomerId
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+      responses:
+        '202':
+          $ref: '#/components/responses/GetAccountKeyResponseByCustomerId'
+        '400':
+          $ref: '#/components/responses/GetAccountKeyBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetAccountKeyNotFoundErrorResponse'
+  '/aggregation/analytics/customers/{customerId}/accounts/{accountId}/accounts-summary':
+    get:
+      tags:
+        - Account Key
+      summary: Get Account Key by Customer ID and Account ID
+      description: >-
+        Retrieve an account key for a given customer ID and account ID, along
+        with a list of linked accounts. An account key is a persistent
+        identifier that informs you if an account/routing number combination or
+        a TAN has already been linked to Open Finance using Get Account ACH
+        Details.
+
+
+        _Supported regions_: ![ 🇺🇸 ](https://flagcdn.com/20x15/us.png)
+      operationId: GetAccountKeyByCustomerIdAndAccountId
+      parameters:
+        - $ref: '#/components/parameters/CustomerIdParameter'
+        - $ref: '#/components/parameters/AccountIdParameter'
+      responses:
+        '202':
+          $ref: '#/components/responses/GetAccountKeyResponseByCustomerIdAndAccountId'
+        '400':
+          $ref: '#/components/responses/GetAccountKeyBadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetAccountKeyNotFoundErrorResponse'
 
 components:
   securitySchemes:
@@ -7529,7 +7577,40 @@ components:
           examples:
             PortfolioSummaryExample:
               $ref: '#/components/examples/PortfolioSummaryExample'
-
+    GetAccountKeyResponseByCustomerId:
+      description: Account key was successfully retrieved.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountKeyByCustomerId'
+    GetAccountKeyResponseByCustomerIdAndAccountId:
+      description: Account key was successfully retrieved.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountKeyByCustomerIdAndAccountId'
+    GetAccountKeyNotFoundErrorResponse:
+      description: >-
+        We couldn't handle your request, see response payload for more
+        information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+    GetAccountKeyBadRequestErrorResponse:
+      description: >-
+        We couldn't handle your request, see response payload for more
+        information.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
   examples:
     LocationMatchesResponseExample:
       value:
@@ -45400,3 +45481,94 @@ components:
         A globally unique transaction identifier derived from accountId and
         transactionId.
       example: '87529-543210'
+    AccountKey:
+      type: string
+      format: uuid
+      description: Unique identifier for account key
+      example: bec83f1a-5f65-44f5-8f00-b4a0fc60c2cc
+      minLength: 36
+      maxLength: 36
+    LinkedAccounts:
+      type: array
+      description:
+        Linked accounts returned based on customerId, or based on customerId and
+        accountId
+      items:
+        type: object
+        properties:
+          partnerId:
+            $ref: '#/components/schemas/PartnerId'
+          customerId:
+            $ref: '#/components/schemas/CustomerId'
+          accountId:
+            $ref: '#/components/schemas/AccountId'
+          linkedAt:
+            $ref: '#/components/schemas/NoZoneDateTime'
+    ConnectCount7days:
+      type: integer
+      format: int32
+      description: Total count of the accounts added in 7 days returned.
+      example: 5
+    ConnectCount30days:
+      type: integer
+      format: int32
+      description: Total count of the accounts added in 30 days returned.
+      example: 25
+    TotalConnectCount:
+      type: integer
+      format: int32
+      description: Total count of the accounts added
+      example: 50
+    DaysSinceFirstConnect:
+      type: integer
+      format: int32
+      description: Days lapsed since the first connect
+      example: 510
+    PlatformConnectDetails:
+      type: object
+      description:
+        Platform connect details giving the count of last 7, 30, total count and
+        days since first connect
+      properties:
+        connect_count_7d:
+          $ref: '#/components/schemas/ConnectCount7days'
+        connect_count_30d:
+          $ref: '#/components/schemas/ConnectCount30days'
+        total_connect_count:
+          $ref: '#/components/schemas/TotalConnectCount'
+        days_since_first_connect:
+          $ref: '#/components/schemas/DaysSinceFirstConnect'
+    AccountKeyByCustomerId:
+      type: object
+      description: Account key by customerId
+      properties:
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accounts:
+          type: array
+          description: List of accounts requested.
+          items:
+            type: object
+            properties:
+              accountId:
+                $ref: '#/components/schemas/AccountId'
+              accountKey:
+                $ref: '#/components/schemas/AccountKey'
+              linkedAccounts:
+                $ref: '#/components/schemas/LinkedAccounts'
+              platformConnectDetails:
+                $ref: '#/components/schemas/PlatformConnectDetails'
+    AccountKeyByCustomerIdAndAccountId:
+      type: object
+      description: Account key by customerId and accountId
+      properties:
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        accountId:
+          $ref: '#/components/schemas/AccountId'
+        accountKey:
+          $ref: '#/components/schemas/AccountKey'
+        linkedAccounts:
+          $ref: '#/components/schemas/LinkedAccounts'
+        platformConnectDetails:
+          $ref: '#/components/schemas/PlatformConnectDetails'

@@ -270,8 +270,7 @@ class ReportsApiTest extends BaseTest {
                 // Create a report the first time
                 var toDate = LocalDateTime.now().toEpochSecond(UTC);
                 var fromDate = LocalDateTime.now().minusYears(2).toEpochSecond(UTC);
-                  uniqueTransactionId="1234";
-                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, uniqueTransactionId, new TransactionsReportConstraints(), null, fromDate,toDate,true);
+                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, new TransactionsReportConstraints(), null, fromDate,toDate,true);
                 reportId = reportAck.getId();
             }
             fetchReport(reportId, consumerId);
