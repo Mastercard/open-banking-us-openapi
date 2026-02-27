@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.38.0
+  version: 1.37.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
