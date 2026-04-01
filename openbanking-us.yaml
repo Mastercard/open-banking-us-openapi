@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.38.1
+  version: 1.38.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -133,6 +133,8 @@ paths:
           $ref: '#/components/responses/GeneralBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/AuthenticationUnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/PartnerNotFoundResponse'
       security:
         - FinicityAppKey: []
     put:
@@ -418,7 +420,7 @@ paths:
         '201':
           $ref: '#/components/responses/AddCustomerResponse'
         '400':
-          $ref: '#/components/responses/GeneralBadRequestErrorResponse'
+          $ref: '#/components/responses/AddCustomerBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '409':
@@ -445,7 +447,7 @@ paths:
         '201':
           $ref: '#/components/responses/AddCustomerResponse'
         '400':
-          $ref: '#/components/responses/GeneralBadRequestErrorResponse'
+          $ref: '#/components/responses/AddCustomerBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '409':
@@ -474,9 +476,11 @@ paths:
         '200':
           $ref: '#/components/responses/GetCustomersResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GetCustomerBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '404':
+          $ref: '#/components/responses/GetCustomerResourceNotFoundResponse'
   '/aggregation/v1/customers/{customerId}/application':
     get:
       tags:
@@ -495,11 +499,11 @@ paths:
         '200':
           $ref: '#/components/responses/GetCustomerWithAppDataResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GetCustomerAppDataBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+          $ref: '#/components/responses/GetCustomerAppDataResourceNotFoundErrorResponse'
   '/aggregation/v1/customers/{customerId}':
     get:
       tags:
@@ -517,7 +521,7 @@ paths:
         '200':
           $ref: '#/components/responses/GetCustomerResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GetCustomerByIdBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
@@ -543,13 +547,13 @@ paths:
         '204':
           $ref: '#/components/responses/ModifyCustomerResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/ModifyCustomerBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '403':
           $ref: '#/components/responses/DisputeStatementErrorResponse'
-        '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+        '409':
+          $ref: '#/components/responses/ModifyCustomerConflictErrorResponse'
     delete:
       tags:
         - Customers
@@ -572,10 +576,12 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/DeleteCustomerResponse'
+        '400':
+          $ref: '#/components/responses/DeleteCustomerAppDataBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+          $ref: '#/components/responses/DeleteCustomerResourceNotFoundErrorResponse'
   '/decisioning/v1/customers/{customerId}/consumer':
     post:
       tags:
@@ -585,6 +591,18 @@ paths:
         Create a consumer record associated with the given customer. A consumer
         persists as the owner of any reports that are generated, even after the
         original customer is deleted from the system.
+
+
+        Along with the required fields, the following fields are conditionally
+        required:
+
+        1. **SSN & Birthday(DOB):** 
+            - Either `ssn` or `birthday` must be provided. Both can also be
+        provided together.
+
+        2. **Phone & Email:** 
+            - Either `phone` or `email` must be provided. Both can also be
+        provided together.
 
 
         A consumer must be created for the given customer before calling any of
@@ -656,9 +674,8 @@ paths:
         - Consumers
       summary: Modify Consumer by ID
       description: >-
-        Modify an existing consumer. All fields are required for a consumer
-        record, but individual fields for this call are optional because fields
-        that are not specified will be left unchanged.
+        Modify an existing consumer. Fields that are not specified will be left
+        unchanged.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -696,11 +713,11 @@ paths:
         '200':
           $ref: '#/components/responses/GetCustomerAccountsResponse'
         '400':
-          $ref: '#/components/responses/BadRequestErrorResponse'
+          $ref: '#/components/responses/GetAccountsInstitutionIdBadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
         '404':
-          $ref: '#/components/responses/ResourceNotFoundErrorResponse'
+          $ref: '#/components/responses/GetAccountsInstitutionIdResourceNotFoundErrorResponse'
     post:
       tags:
         - Accounts
@@ -1160,7 +1177,7 @@ paths:
   '/aggregation/v1/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
-        - Payments
+        - Identity
       summary: Get Account Owner
       description: >-
         Retrieve the names and addresses of the account owner from a financial
@@ -1194,7 +1211,7 @@ paths:
   '/aggregation/v3/customers/{customerId}/accounts/{accountId}/owner':
     get:
       tags:
-        - Payments
+        - Identity
       summary: Get Account Owner Details
       description: >-
         This service retrieves the account details for an account holder from an
@@ -1213,7 +1230,7 @@ paths:
         * Phones
 
 
-        * Documentations
+        * Documentations (not currently available in the US region)
 
 
         * Identity Insights
@@ -4919,6 +4936,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NewConsumer'
+          examples:
+            ConsumerWithAllValues:
+              $ref: '#/components/examples/ConsumerWithAllValuesExample'
+            ConsumerWithSsnAndPhone:
+              $ref: '#/components/examples/ConsumerWithSsnPhoneExample'
+            ConsumerWithSsnEmail:
+              $ref: '#/components/examples/ConsumerWithSsnEmailExample'
+            ConsumerWithBirthdayPhone:
+              $ref: '#/components/examples/ConsumerWithBirthdayPhoneExample'
+            ConsumerWithBirthdayEmail:
+              $ref: '#/components/examples/ConsumerWithBirthdayEmailExample'
+            ConsumerWithSsnBirthdayPhone:
+              $ref: '#/components/examples/ConsumerWithSsnBirthdayPhoneExample'
+            ConsumerWithSsnBirthdayEmail:
+              $ref: '#/components/examples/ConsumerWithSsnBirthdayEmailExample'
+            ConsumerWithBirthdayPhoneEmail:
+              $ref: '#/components/examples/ConsumerWithBirthdayPhoneEmailExample'
+            ConsumerWithSsnPhoneEmail:
+              $ref: '#/components/examples/ConsumerWithSsnPhoneEmailExample'
     ModifyConsumerRequest:
       required: true
       content:
@@ -5524,6 +5560,8 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
             InvalidNewPartnerSecretExample:
               $ref: '#/components/examples/InvalidNewPartnerSecretExample'
             GenericBadRequestExample:
@@ -6475,6 +6513,8 @@ components:
               $ref: '#/components/examples/MissingFinicityAppKeyExample'
             InvalidCredentialsExample:
               $ref: '#/components/examples/InvalidCredentialsExample'
+            NotAuthorizedExample:
+              $ref: '#/components/examples/NotAuthorizedExample'
     UnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check
@@ -6535,6 +6575,21 @@ components:
               $ref: '#/components/examples/MissingFieldExample'
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
+    AddCustomerBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            UserNameNotAsPerPolicyExample:
+              $ref: '#/components/examples/UserNameNotAsPerPolicyExample'
+            InvalidCharactorExample:
+              $ref: '#/components/examples/InvalidCharactorExample'
     GenericBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -6577,8 +6632,111 @@ components:
               $ref: '#/components/examples/ResellerInvalidDateRangeGreaterThan31DaysExample'
             CustomerReportLimitExceedExample:
               $ref: '#/components/examples/CustomerReportLimitExceedExample'
+            InvalidConsumerSSNExample:
+              $ref: '#/components/examples/InvalidConsumerSSNExample'
+            InvalidConsumerPhoneExample:
+              $ref: '#/components/examples/InvalidConsumerPhoneExample'
+            InvalidConsumerEmailExample:
+              $ref: '#/components/examples/InvalidConsumerEmailExample'
             InvalidValue:
               $ref: '#/components/examples/InvalidValueExample'
+    GetCustomerBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InvalidForesightReportRequestExample:
+              $ref: '#/components/examples/InvalidForesightReportRequestExample'
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            InvalidCustomerTypeExample:
+              $ref: '#/components/examples/InvalidCustomerTypeExample'
+            InvalidStartIndexExample:
+              $ref: '#/components/examples/InvalidStartIndexExample'
+            InvalidLimitExample:
+              $ref: '#/components/examples/InvalidLimitExample'
+    ModifyCustomerBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            UserNameNotAsPerPolicyExample:
+              $ref: '#/components/examples/UserNameNotAsPerPolicyExample'
+            NoDataToUpdateExample:
+              $ref: '#/components/examples/NoDataToUpdateExample'
+            InvalidCharactorExample:
+              $ref: '#/components/examples/InvalidCharactorExample'
+    ModifyCustomerConflictErrorResponse:
+      description: The resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            UsernameNotAvailableExample:
+              $ref: '#/components/examples/UsernameNotAvailableExample'
+    GetCustomerByIdBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+    GetCustomerAppDataBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            InvalidCustomerIdExample:
+              $ref: '#/components/examples/InvalidCustomerIdExample'
+    GetAccountsInstitutionIdBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            InvalidStatusParameterExample:
+              $ref: '#/components/examples/InvalidStatusParameterExample'
+    DeleteCustomerAppDataBadRequestErrorResponse:
+      description: The request was rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            MissingFieldExample:
+              $ref: '#/components/examples/MissingFieldExample'
+            GenericBadRequestExample:
+              $ref: '#/components/examples/GenericBadRequestExample'
+            InvalidCustomerIdExample:
+              $ref: '#/components/examples/InvalidCustomerIdExample'
+            TemporaryCustomerCannotDeletedExample:
+              $ref: '#/components/examples/TemporaryCustomerCannotDeletedExample'
     InitiateMicroEntriesBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -6642,6 +6800,30 @@ components:
               $ref: '#/components/examples/ResellerNoDataForPartnerExample'
             ResellerNoReportForPartnerExample:
               $ref: '#/components/examples/ResellerNoReportForPartnerExample'
+    GetCustomerAppDataResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+            NoRegisteredApplicationExample:
+              $ref: '#/components/examples/NoRegisteredApplicationExample'
+            NoAssignedApplicationExample:
+              $ref: '#/components/examples/NoAssignedApplicationExample'
+    GetAccountsInstitutionIdResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            CustomerNotFoundExample:
+              $ref: '#/components/examples/CustomerNotFoundExample'
+            NoAccountForInstitutionLoginIdExample:
+              $ref: '#/components/examples/NoAccountForInstitutionLoginIdExample'
     ForbiddenErrorResponse:
       description: Forbidden
       content:
@@ -6988,6 +7170,43 @@ components:
               $ref: '#/components/examples/SwitchDetailsNotFoundExample'
             ResourceNotFoundExample:
               $ref: '#/components/examples/ResourceNotFoundExample'
+    GetCustomerResourceNotFoundResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            AggregationConnectPartnerNotFoundExample:
+              $ref: '#/components/examples/AggregationConnectPartnerNotFoundExample'
+            PartnerNotFoundExample:
+              $ref: '#/components/examples/PartnerNotFoundExample'
+    DeleteCustomerResourceNotFoundErrorResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            PartnerNotFoundExample:
+              $ref: '#/components/examples/PartnerNotFoundExample'
+            InstitutionNotFoundExample:
+              $ref: '#/components/examples/InstitutionNotFoundExample'
+            NoActiveSubscriptionFoundExample:
+              $ref: '#/components/examples/NoActiveSubscriptionFoundExample'
+    GetCustomerByIdResourceNotFoundResponse:
+      description: The resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NoRegisteredApplicationExample:
+              $ref: '#/components/examples/NoRegisteredApplicationExample'
+            NoAssignedApplicationExample:
+              $ref: '#/components/examples/NoAssignedApplicationExample'
+            PartnerNotFoundExample:
+              $ref: '#/components/examples/PartnerNotFoundExample'
     ObwmsUnauthorizedErrorResponse:
       description: >-
         The request lacks valid authentication credentials. Check "App-Key" or
@@ -7505,6 +7724,15 @@ components:
           examples:
             PortfolioNotFoundExample:
               $ref: '#/components/examples/PortfolioNotFoundExample'
+    PartnerNotFoundResponse:
+      description: Partner was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorWrapper'
+          examples:
+            PartnerNotFoundExample:
+              $ref: '#/components/examples/PartnerNotFoundExample'
     PortfolioForbiddenResponse:
       description:
         Access forbidden - insufficient permissions to access portfolio
@@ -7710,6 +7938,10 @@ components:
       value:
         code: 10026
         message: Missing parameter (Finicity-App-Key)
+    NotAuthorizedExample:
+      value:
+        code: 10021
+        message: You are not authorized.
     MissingFinicityAppTokenExample:
       value:
         code: 10024
@@ -7734,6 +7966,18 @@ components:
       value:
         code: 14020
         message: Bad request.
+    UserNameNotAsPerPolicyExample:
+      value:
+        code: 110039
+        message: Username is not as per the policy.
+    NoDataToUpdateExample:
+      value:
+        code: 10025
+        message: No data to update.
+    InvalidCharactorExample:
+      value:
+        code: 45003
+        message: Invalid character in name fields.
     GenericBadRequestError:
       value:
         code: 14020
@@ -7778,6 +8022,19 @@ components:
         code: 10100
         message:
           'RESELLER_BILLING_REPORT: Invalid date range - It is more than 31 days'
+    InvalidConsumerSSNExample:
+      value:
+        code: '10100'
+        message:
+          'Invalid format for field consumer.ssn.  Required format is 9 digits.'
+    InvalidConsumerPhoneExample:
+      value:
+        code: '10100'
+        message: 'Invalid format for field consumer.phone.'
+    InvalidConsumerEmailExample:
+      value:
+        code: '10100'
+        message: 'Invalid format for field consumer.email.'
     CustomerReportLimitExceedExample:
       value:
         code: 20400
@@ -7814,6 +8071,10 @@ components:
       value:
         code: 10005
         message: invalid purpose code
+    InvalidStatusParameterExample:
+      value:
+        code: 18017
+        message: status parameter value must be 'active' or 'pending
     InvalidSettleByDateExample:
       value:
         code: 10006
@@ -7877,20 +8138,48 @@ components:
       value:
         code: 3200004
         message: Microdeposit amounts didn't match
+    NoActiveSubscriptionFoundExample:
+      value:
+        code: 60013
+        message: No active subscription found for a given customer.
     TooManyRequestsExample:
       value:
         code: 3300001
         message: 'Too many request. Please try after some time'
+    TemporaryCustomerCannotDeletedExample:
+      value:
+        code: 50016
+        message:
+          'Accounts for temporary customers are maintained by the system, and
+          cannot be deleted through the API.'
     MissingFieldExample:
       value:
-        code: '10010'
-        status: '400'
-        message: '"partnerId" is required'
-        user_message: >-
-          One or more of the fields could not be validated. Please ensure you
-          have entered the correct data.
-        tags: ''
-        title: 'Incomplete submission'
+        code: 10005
+        message: 'Missing parameter (partnerId)'
+    InvalidCustomerTypeExample:
+      value:
+        code: 14016
+        message: Invalid customer type.
+    InvalidCustomerIdExample:
+      value:
+        code: 14023
+        message: Invalid customer id. customerId = (customerId)
+    InvalidStartIndexExample:
+      value:
+        code: 41003
+        message: Start index cannot be less than one.
+    InvalidLimitExample:
+      value:
+        code: 41004
+        message: Limit cannot be less than one.
+    InstitutionNotFoundExample:
+      value:
+        code: 14006
+        message: Institution not found.
+    AggregationConnectPartnerNotFoundExample:
+      value:
+        code: 14003
+        message: Aggregation connect partner not found.
     PermissiblePurposeCodeExample:
       value:
         code: '10100'
@@ -7971,23 +8260,11 @@ components:
         message: New password is not as per policy
     ExpiredTokenExample:
       value:
-        code: '10022'
-        status: '401'
-        message: Invalid authorization credentials
-        user_message:
-          Your connection timed out due to inactivity. Please log in again to
-          complete your account linking.
-        tags: ''
+        code: 10023
+        message: Expired (Finicity-App-Token)
     NoAccountForInstitutionLoginIdExample:
       value:
-        code: '38007'
-        status: '404'
-        title: Connecting accounts error
-        user_message:
-          Customer does not have any accounts associated with
-          institutionLoginId.
-        tags: ''
-        level: 'error'
+        code: 38007
         message:
           'Customer does not have any accounts associated with
           institutionLoginId.'
@@ -8045,6 +8322,10 @@ components:
       value:
         code: 50051
         message: 'No registered partner applications found.'
+    NoAssignedApplicationExample:
+      value:
+        code: 50052
+        message: 'Customer has no assigned application.'
     ConsumerExistsConflictExample:
       value:
         code: 11000
@@ -8096,6 +8377,138 @@ components:
     LenderRequestExample:
       value:
         purpose: 31
+
+    ConsumerWithAllValuesExample:
+      value:
+        firstName: John
+        lastName: Doe
+        address: 434 W Ascension Way
+        city: Murray
+        state: UT
+        zip: '84123'
+        phone: 1-3-1234-1234
+        ssn: '989898989'
+        birthday:
+          year: '1989'
+          month: '12'
+          dayOfMonth: '13'
+        email: someone@test.com
+        suffix: Mr
+        middleName: Doe
+        endUser:
+          name: Jane
+          address: 434 W Ascension Way
+          city: Murray
+          state: UT
+          zip: '84123'
+          phone: 1-3-1234-123
+          email: someone@test.com
+          url: testurl.com
+    ConsumerWithSsnPhoneExample:
+      value:
+        firstName: John
+        lastName: Doe
+        address: 434 W Ascension Way
+        city: Murray
+        phone: 1-212-555-1234
+        ssn: '989898989'
+        suffix: Mr
+        endUser:
+          name: John
+          address: 434 W Ascension Way
+          city: Murray
+          state: UT
+          zip: '84123'
+          phone: 1-212-555-1234
+          email: someone@test.com
+          url: testurl.com
+    ConsumerWithSsnEmailExample:
+      value:
+        firstName: Jane
+        lastName: Smith
+        address: 456 Oak Ave
+        city: Salt Lake City
+        state: UT
+        zip: '84111'
+        ssn: '987654321'
+        email: jane.smith@example.com
+    ConsumerWithBirthdayPhoneExample:
+      value:
+        firstName: Alice
+        lastName: Brown
+        address: 789 Pine Rd
+        city: Provo
+        state: UT
+        zip: '84601'
+        birthday: { year: 1985, month: 5, dayOfMonth: 15 }
+        phone: '1-212-555-1234'
+    ConsumerWithBirthdayEmailExample:
+      value:
+        firstName: Bob
+        lastName: White
+        address: 321 Maple St
+        city: Ogden
+        state: UT
+        zip: '84401'
+        birthday: { year: 1975, month: 12, dayOfMonth: 25 }
+        email: bob.white@example.com
+    ConsumerWithSsnBirthdayPhoneExample:
+      value:
+        firstName: Carol
+        lastName: Green
+        address: 654 Cedar Ave
+        city: Layton
+        state: UT
+        zip: '84041'
+        ssn: '555443333'
+        birthday: { year: 1992, month: 7, dayOfMonth: 4 }
+        phone: '1-212-555-1234'
+    ConsumerWithSsnBirthdayEmailExample:
+      value:
+        firstName: Dave
+        lastName: Black
+        address: 987 Spruce Dr
+        city: Logan
+        state: UT
+        zip: '84321'
+        ssn: '222334444'
+        birthday: { year: 1980, month: 3, dayOfMonth: 10 }
+        email: dave.black@example.com
+    ConsumerWithBirthdayPhoneEmailExample:
+      value:
+        firstName: Eve
+        lastName: Blue
+        address: 159 Elm St
+        city: St. George
+        state: UT
+        zip: '84770'
+        birthday: { year: 1995, month: 9, dayOfMonth: 30 }
+        phone: '1-212-555-1234'
+        email: eve.blue@example.com
+    ConsumerWithSsnPhoneEmailExample:
+      value:
+        firstName: Frank
+        lastName: Yellow
+        address: 753 Willow Ln
+        city: Orem
+        state: UT
+        zip: '84057'
+        ssn: '111223333'
+        phone: '1-212-555-1234'
+        email: frank.yellow@example.com
+    ConsumerWithSsnBirthdayPhoneEmailExample:
+      value:
+        firstName: John
+        lastName: Doe
+        address: 123 Main St
+        city: Murray
+        state: UT
+        zip: '84123'
+        ssn: '123456789'
+        birthday: { year: 1990, month: 1, dayOfMonth: 1 }
+        phone: '1-212-555-1234'
+        email: john.doe@example.com
+
     GeneratePayrollReportRequestExample:
       value:
         payrollData:
@@ -27624,6 +28037,10 @@ components:
         trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
         code: '10010'
         message: 'No report found for portfolioId y4zsgccj4xpw-port.'
+    PartnerNotFoundExample:
+      value:
+        code: 12401
+        message: 'partner not found'
     PortfolioForbiddenExample:
       value:
         trackingId: '69a6933d-befe-48c2-8ed0-ab5b04082f02'
@@ -29629,7 +30046,9 @@ components:
         governmentId:
           $ref: '#/components/schemas/GovernmentId'
     AccountOwnerDocumentations:
-      description: List of account owner documentation
+      description:
+        List of account owner documentation. Not currently available in the US
+        region.
       type: array
       items:
         $ref: '#/components/schemas/AccountOwnerDocumentation'
@@ -33426,7 +33845,7 @@ components:
       description:
         Country code is Iso3166-1 Alpha-2 code and Alpha 3 standard (max length
         3).
-      example: USA
+      example: CAN
     CreatedConsumer:
       description: A consumer that was just created
       type: object
@@ -33900,9 +34319,9 @@ components:
         firstPaymentDate:
           $ref: '#/components/schemas/FirstPaymentDate'
         firstMortgage:
-          type: boolean
-          description: (Mortgage/Loan) First mortgage (F/Y)
-          example: true
+          type: string
+          description: (Mortgage/Loan) First mortgage (Y/N)
+          example: Y
         loanPaymentFreq:
           type: string
           description: '(Mortgage/Loan) Frequency of payments (monthly, etc.)'
@@ -35149,13 +35568,6 @@ components:
       type: string
       description: |-
         A federal or state issued identification number in alphanumeric characters.
-        * **United States**:
-
-          * Passport: 6-9 digits.
-
-          * US Visa: 8 digits.
-
-          * Driver's license: 1-19 digits
         * **Canada**:
 
           * Passport: 8 digits
@@ -37142,17 +37554,17 @@ components:
             'Total income during the given month, across all income streams'
           example: 2004.77
     NewConsumer:
-      description: A new consumer to be created
+      description: |-
+        A new consumer to be created. Along with the required fields, the following fields are conditionally required: 
+        1. **SSN & Birthday(DOB):** 
+            - Either `ssn` or `birthday` must be provided. Both can also be provided together.
+
+        2. **Phone & Email:** 
+            - Either `phone` or `email` must be provided. Both can also be provided together.
       required:
         - firstName
         - lastName
-        - address
-        - city
         - state
-        - zip
-        - phone
-        - ssn
-        - birthday
       type: object
       properties:
         firstName:
@@ -40285,11 +40697,6 @@ components:
       type: string
       description: >-
         Country specific tax ID associated with the customer.
-
-        * **United States**: Social Security number (SSN) or Taxpayer
-                Identification Number (TIN)
-
-          * Format: 123-45-7890
 
         * **Canada**: Social Insurance Number (SIM) or Numero d'assurance
         sociale (NAS)
