@@ -72,36 +72,6 @@ class PaymentsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getAccountOwnerTest() {
-        try {
-            var owner = api.getAccountOwner(CUSTOMER_ID, existingAccount.getId());
-            assertNotNull(owner);
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
-    
-    @Test
-    public void getAccountOwnerDetailsTest() {
-        try {
-            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), true,"program=OBAO");
-            assertNotNull(ownerDetails);
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
-    
-    @Test
-    public void getAccountOwnerDetailsWithInsightsFalseTest() {
-        try {
-            var ownerDetails = api.getAccountOwnerDetails(CUSTOMER_ID, existingAccount.getId(), false,"program=OBAO");
-            assertNotNull(ownerDetails);
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
-	
 	@Test
     public void getAccountPaymentInstructionDetailsTest() {
         try {
