@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.38.2
+  version: 1.38.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -46,6 +46,8 @@ tags:
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
+  - name: Consumer Foresight
+    description: Generate consumer foresight analytics reports
   - name: Consumers
     description:
       Create and manage consumers associated with customers in order to use
@@ -4579,7 +4581,7 @@ paths:
   '/decisioning/customers/{customerId}/reports/foresight-analytics/userTypes/{userType}':
     post:
       tags:
-        - Analytics
+        - Consumer Foresight
       summary:
         Generate foresight analytics non-CRA report for the customer - Personal
       description: >-
@@ -4622,7 +4624,7 @@ paths:
   '/decisioning/reports/foresight-analytics/userTypes/{userType}':
     post:
       tags:
-        - Analytics
+        - Consumer Foresight
       summary:
         Generate Non CRA Foresight Analytics Report Using 1st/3rd Party
         Transaction Data
@@ -27761,6 +27763,9 @@ components:
               createdDate: '2023-06-26T11:14:11Z'
               currency: USD
               displayPosition: 1
+              authorizationStartDate: '2023-06-26T11:14:11Z'
+              authorizationEndDate: '2023-07-26T11:14:11Z'
+              authorizationExpires: true
               parentAccount: '5011648377'
             balanceDetails:
               id: 5011648377
@@ -27836,6 +27841,9 @@ components:
               createdDate: '2023-06-26T11:14:11'
               currency: USD
               displayPosition: 1
+              authorizationStartDate: 1607450357
+              authorizationEndDate: 1607459357
+              authorizationExpires: true
               parentAccount: '5011648377'
             paymentInstruction:
               type: ach
@@ -33343,6 +33351,16 @@ components:
             duplicated information and numbers and special characters
           type: string
           example: VERIZON WIRELESS PAYMENTS
+        entityStandardizationConfidenceScore:
+          type: number
+          format: double
+          description:
+            A confidence score indicating the entity name returned is correctly
+            standardized to a standard entity name. If no score is returned, the
+            entity has not been standardized.
+          minimum: 0
+          maximum: 100.0
+          example: 18.95
       description: Categorization Record
     CertifiedInstitution:
       required:
@@ -33991,6 +34009,12 @@ components:
           $ref: '#/components/schemas/CustomerAccountOldestTransactionDate'
         institutionLoginId:
           $ref: '#/components/schemas/NumericInstitutionLoginId'
+        authorizationStartDate:
+          $ref: '#/components/schemas/AuthorizationStartDate'
+        authorizationEndDate:
+          $ref: '#/components/schemas/AuthorizationEndDate'
+        authorizationExpires:
+          $ref: '#/components/schemas/AuthorizationExpires'
         detail:
           $ref: '#/components/schemas/CustomerAccountDetail'
         position:
@@ -34808,6 +34832,12 @@ components:
           $ref: '#/components/schemas/Currency'
         institutionLoginId:
           $ref: '#/components/schemas/NumericInstitutionLoginId'
+        authorizationStartDate:
+          $ref: '#/components/schemas/AuthorizationStartDate'
+        authorizationEndDate:
+          $ref: '#/components/schemas/AuthorizationEndDate'
+        authorizationExpires:
+          $ref: '#/components/schemas/AuthorizationExpires'
         displayPosition:
           $ref: '#/components/schemas/DisplayPosition'
         parentAccount:
@@ -34864,6 +34894,23 @@ components:
       description:
         A customer ID. See Add Customer API for how to create a customer ID.
       example: '1005061234'
+    AuthorizationStartDate:
+      type: integer
+      format: int64
+      description: Authorization start date and time in epoch format.
+      example: 1541030399
+    AuthorizationEndDate:
+      type: integer
+      format: int64
+      description: Authorization end date and time in epoch format.
+      example: 1641030399
+    AuthorizationExpires:
+      type: boolean
+      description:
+        A Boolean flag that indicates whether the customer’s authorization
+        period has a defined authorization end date.
+      example: true
+      default: false
     ExternalId:
       type: string
       description:
@@ -45034,16 +45081,6 @@ components:
             minLength: 1
             maxLength: 500
             example: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5NDU0MTYwNjM1OTA0MA==/logo.svg'
-          entityStandardizationConfidenceScore:
-            type: number
-            format: double
-            description:
-              A confidence score indicating the entity name returned is
-              correctly standardized to a standard entity name. If no score is
-              returned, the entity has not been standardized.
-            minimum: 0
-            maximum: 100.0
-            example: 18.95
     InputMerchantInformation:
       description:
         InputMerchantInformation is an object containing merchant details in the
@@ -45253,6 +45290,12 @@ components:
           $ref: '#/components/schemas/Currency'
         displayPosition:
           $ref: '#/components/schemas/DisplayPosition'
+        authorizationStartDate:
+          $ref: '#/components/schemas/AuthorizationStartDate'
+        authorizationEndDate:
+          $ref: '#/components/schemas/AuthorizationEndDate'
+        authorizationExpires:
+          $ref: '#/components/schemas/AuthorizationExpires'
         parentAccount:
           $ref: '#/components/schemas/AccountId'
     PaymentInstructionPEB:
