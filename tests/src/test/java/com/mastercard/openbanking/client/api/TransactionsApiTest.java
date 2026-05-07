@@ -6,6 +6,7 @@ import com.mastercard.openbanking.client.model.Transaction;
 import com.mastercard.openbanking.client.model.TransactionsReportConstraints;
 import com.mastercard.openbanking.client.test.BaseTest;
 import com.mastercard.openbanking.client.test.utils.AccountUtils;
+import com.mastercard.openbanking.client.test.ModelFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -140,6 +141,28 @@ class TransactionsApiTest extends BaseTest {
         Assertions.assertThrows(ApiException.class, () -> {
             api.getTransactionByUniqueTransactionId("testCustomer", null);
         });
+    }
+
+    @Test
+    public void refreshTransactionsTest() {
+        try {
+            var newRefreshRequestInitiated = api.refreshTransactions(CUSTOMER_ID, ModelFactory.newTransactionRefreshInitiation(existingAccountId));
+            assertNotNull(newRefreshRequestInitiated);
+            assertNotNull(newRefreshRequestInitiated.getRefreshId());
+        } catch (ApiException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public void getTransactionRefreshStatusTest() {
+        try {
+            var newRefreshRequestInitiated = api.refreshTransactions(CUSTOMER_ID, ModelFactory.newTransactionRefreshInitiation(existingAccountId));
+            var transactionRefreshStatus = api.getTransactionRefreshStatus(CUSTOMER_ID, newRefreshRequestInitiated.getRefreshId());
+            assertNotNull(transactionRefreshStatus);
+        } catch (ApiException e) {
+            Assertions.fail(e);
+        }
     }
 
 }

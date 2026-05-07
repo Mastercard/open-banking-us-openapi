@@ -40,8 +40,8 @@ public final class ModelFactory {
                 .email("mastercard@test.com")
                 .url(URI.create("https://www.mastercard.com/"))
                 .phoneNumber(new PhoneNumberFormat()
-                            .countryCode("91")
-                            .phoneNo("9663214765")
+                        .countryCode("91")
+                        .phoneNo("9663214765")
                 )
                 .type("Nonprofit")
                 .personallyLiable(true)
@@ -58,41 +58,41 @@ public final class ModelFactory {
 
     public static Borrower newBorrower(String borrower, String consumerId, String customerId) {
         return new Borrower()
-            .consumerId(consumerId)
-            .customerId(customerId)
-            .type(borrower)
-            .optionalConsumerInfo(new ConsumerInfo()
-                    .ssn("999999999")
-                    .dob(470275200L)
-            );
+                .consumerId(consumerId)
+                .customerId(customerId)
+                .type(borrower)
+                .optionalConsumerInfo(new ConsumerInfo()
+                        .ssn("999999999")
+                        .dob(470275200L)
+                );
     }
 
     public static Card newCard(String title, String number, String expiry, String cvv, String brand) {
         return new Card()
-            .title(title)
-            .number(number)
-            .expiry(expiry)
-            .cvv(cvv)
-            .brand(brand);
+                .title(title)
+                .number(number)
+                .expiry(expiry)
+                .cvv(cvv)
+                .brand(brand);
     }
-    
+
     public static BillPaySwitchIdentity newBillPaySwitchIdentity(String firstName, String lastName, String address, String city, String state, String zipCode, String phone) {
         return new BillPaySwitchIdentity()
-            .firstName(firstName)
-            .lastName(lastName)
-            .address(address)
-            .city(city)
-            .state(state)
-            .zipCode(zipCode)
-            .phone(phone);
+                .firstName(firstName)
+                .lastName(lastName)
+                .address(address)
+                .city(city)
+                .state(state)
+                .zipCode(zipCode)
+                .phone(phone);
     }
 
     public static BankAccount newBankAccount(String accountNumber, String bankIdentifier, String type) {
         return new BankAccount()
-            .accountNumber(accountNumber)
-            .bankIdentifier(bankIdentifier)
-            .type(type);
-    }    
+                .accountNumber(accountNumber)
+                .bankIdentifier(bankIdentifier)
+                .type(type);
+    }
 
     public static NewCustomer newCustomer() {
         var username = "customer_" + randomStr();
@@ -183,26 +183,26 @@ public final class ModelFactory {
         data.addProductsItem(product);
         return data;
     }
-    
+
     public static Subscription newSubscription() {
         var data = new Subscription();
         data.setUrl("https://example.com");
         data.addEventsItem(getWebhookEvent());
         data.addEventsItem(getWebhookEvent1());
         data.addEventsItem(getWebhookEvent2());
-        
+
         return data;
     }
 
     public static WebhookEvent getWebhookEvent2() {
-		WebhookEvent event2 = new WebhookEvent();
+        WebhookEvent event2 = new WebhookEvent();
         event2.setName("mastercard.openbanking.customer.consent");
         event2.setUrl("https://example.com/");
-		return event2;
-	}
+        return event2;
+    }
 
     public static WebhookEvent getWebhookEvent1() {
-		WebhookEvent event1 = new WebhookEvent();
+        WebhookEvent event1 = new WebhookEvent();
         event1.setName("manage.txpush.account.created");
         Condition condition1 = new Condition();
         condition1.setSubscribeFor("accountId");
@@ -210,11 +210,11 @@ public final class ModelFactory {
         condition1.addExcludesItem("100011");
         condition1.addExcludesItem("10012");
         event1.setCondition(condition1);
-		return event1;
-	}
+        return event1;
+    }
 
     public static WebhookEvent getWebhookEvent() {
-		WebhookEvent event = new WebhookEvent();
+        WebhookEvent event = new WebhookEvent();
         event.setName("authorization.accesstoken.expiry");
         Condition condition = new Condition();
         condition.setSubscribeFor("institutionId");
@@ -222,6 +222,12 @@ public final class ModelFactory {
         condition.addExcludesItem("170788");
         condition.addExcludesItem("188797");
         event.setCondition(condition);
-		return event;
-	}
+        return event;
+    }
+
+    public static InitiateNewTransactionRefresh newTransactionRefreshInitiation(String accountId) {
+        return new InitiateNewTransactionRefresh()
+                .addAccountIdsItem(accountId)
+                .mode("standard");
+    }
 }
