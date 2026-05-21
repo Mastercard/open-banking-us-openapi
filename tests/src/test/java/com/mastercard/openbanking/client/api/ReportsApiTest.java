@@ -60,7 +60,7 @@ class ReportsApiTest extends BaseTest {
             existingAccountId = account.get().getId();
 
             // Fetch existing reports
-            var reports = new ReportsApi(apiClient).getReportsByCustomerId(CUSTOMER_ID, null);
+            var reports = new ReportsApi(apiClient).getReportsByCustomerId(CUSTOMER_ID);
             reportsByType = reports.getReports()
                     .stream()
                     .collect(Collectors.toMap(ReportSummary::getType, ReportSummary::getId, (key1, key2) -> key1));
@@ -72,7 +72,7 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getReportsByConsumerTest() {
         try {
-            var reports = api.getReportsByConsumerId(consumerId, null);
+            var reports = api.getReportsByConsumerId(consumerId);
             assertNotNull(reports);
         } catch (ApiException e) {
             fail(e);
@@ -82,7 +82,7 @@ class ReportsApiTest extends BaseTest {
     @Test
     void getReportsByCustomerTest() {
         try {
-            var reports = api.getReportsByCustomerId(CUSTOMER_ID, null);
+            var reports = api.getReportsByCustomerId(CUSTOMER_ID);
             assertNotNull(reports);
         } catch (ApiException e) {
             fail(e);
@@ -412,14 +412,6 @@ class ReportsApiTest extends BaseTest {
     if (report instanceof AFCashFlowAnalyticsReport) {
         return ((AFCashFlowAnalyticsReport) report).getStatus();
     }
-
-
-
-
-
-
-
-
 
 
 
