@@ -1,142 +1,114 @@
-package com.mastercard.openbanking.client.api;
+ package com.mastercard.openbanking.client.api;
 
-import com.mastercard.openbanking.client.ApiException;
-import com.mastercard.openbanking.client.model.*;
-import com.mastercard.openbanking.client.test.utils.AccountUtils;
-import com.mastercard.openbanking.client.test.BaseTest;
+ import com.mastercard.openbanking.client.ApiException;
+ import com.mastercard.openbanking.client.model.*;
+ import com.mastercard.openbanking.client.model.AccountOwnerVerificationMatchResults;
+ import com.mastercard.openbanking.client.model.AccountOwnerVerificationMatchingRequest;
+ import com.mastercard.openbanking.client.model.ErrorMessage;
+ import com.mastercard.openbanking.client.test.ModelFactory;
+ import com.mastercard.openbanking.client.test.utils.AccountUtils;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+ import com.mastercard.openbanking.client.test.BaseTest;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+ import static org.junit.jupiter.api.Assertions.*;
 
-class AccountOwnerMatchingApiTest extends BaseTest {
 
-    private final IdentityApi IdentityApi = new IdentityApi();
-    private final static AccountsApi api = new AccountsApi(apiClient);
-    private static String existingInstitutionLoginId;
-    private static Long existingInstitutionId;
-    private static String existingAccountId;
 
-    /**
-     * Verify and provide additional details about the accounts for which customer has given the consent.
-     * Match and provide scoring details for the claimed account associated with a specific customer in comparision with the user input with the consent given for a account matching information. _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-     * @throws ApiException if the Api call fails
-     */
 
-    @BeforeAll
-    protected static void beforeAll() {
-        try {
-            // Load existing IDs to be used in the subsequent tests
-            var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
-            existingInstitutionLoginId = existingAccount.getInstitutionLoginId().toString();
-            existingAccountId = existingAccount.getId();
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
 
-    @Test
-    public void accountMatchingScoreDetailsTest() {
-        try {
-            AccountOwnerVerificationMatchingRequestName name = new AccountOwnerVerificationMatchingRequestName();
-            name.setFirstName("John");
-            name.setLastName("Doe");
+ class AccountOwnerMatchingApiTest extends BaseTest {
 
-            AccountOwnerVerificationMatchingRequestOneOf oneOf = new AccountOwnerVerificationMatchingRequestOneOf();
-            oneOf.setName(name);
+     private final IdentityApi IdentityApi = new IdentityApi();
+     private final static AccountsApi api = new AccountsApi(apiClient);
+     private static String existingInstitutionLoginId;
+     private static Long existingInstitutionId;
+     private static String existingAccountId;
 
-            AccountOwnerVerificationMatchingRequest request = new AccountOwnerVerificationMatchingRequest();
-            request.setActualInstance(oneOf);
 
-            Boolean withInsights = false;
-            var response = IdentityApi.accountMatchingScoreDetails(
-                    CUSTOMER_ID,
-                    existingAccountId,
-                    request,
-                    withInsights
-            );
-            assertNotNull(response);
-        }
-        catch (ApiException e) {
-            fail(e);
-        }
-    }
+     /**
+      * Verify and provide additional details about the accounts for which customer has given the consent.
+      *
+      * Match and provide scoring details for the claimed account associated with a specific customer in comparision with the user input with the consent given for a account matching information. _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      *
+      * @throws ApiException if the Api call fails
+      */
 
-    @Test
-    public void accountMatchingScoreFirstNameFieldValidations() {
-        try {
-            AccountOwnerVerificationMatchingRequestName name = new AccountOwnerVerificationMatchingRequestName()
-                    .middleName("MiddleName")
-                    .lastName("LastName")
-                    .suffix("Suffix");
+     @BeforeAll
+     protected static void beforeAll() {
+         try {
+             // Load existing IDs to be used in the subsequent tests
+             var existingAccount = AccountUtils.getCustomerAccounts(api, CUSTOMER_ID).get(0);
+             existingInstitutionLoginId = existingAccount.getInstitutionLoginId().toString();
+             existingAccountId = existingAccount.getId();
+         } catch (ApiException e) {
+             fail(e);
+         }
+     }
 
-            AccountOwnerVerificationMatchingRequestOneOf oneOf = new AccountOwnerVerificationMatchingRequestOneOf();
-            oneOf.setName(name);
+     @Test
+     public void accountMatchingScoreDetailsTest() {
 
-            AccountOwnerVerificationMatchingRequest request = new AccountOwnerVerificationMatchingRequest();
-            request.setActualInstance(oneOf);
+         try {
+             var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
+             Boolean withInsights = false;
 
-            Boolean withInsights = false;
-            AccountOwnerVerificationMatchResults response = IdentityApi.accountMatchingScoreDetails(
-                    CUSTOMER_ID,
-                    existingAccountId,
-                    request,
-                    withInsights
-            );
-            Assertions.fail();
-        }
-        catch (ApiException e) {
-            logApiException(e);
-            assertErrorCodeEquals(1002, e);
-            assertErrorMessageEquals("Improperly Formatted Request Body", e);
-        }
-    }
+             var response = IdentityApi.accountMatchingScoreDetails(CUSTOMER_ID, existingAccountId, accountownerverificationmatchingrequest, withInsights);
+             assertNotNull(response);
+         }
+         catch (ApiException e) {
+             fail(e);
+         }
+     }
 
-    @Test
-    public void accountMatchingScoreBusinessNameFieldValidation() {
-        try {
-            AccountOwnerVerificationMatchingRequestOneOf1 oneOf1 = new AccountOwnerVerificationMatchingRequestOneOf1();
-            oneOf1.setBusinessName("ABC Tires Inc");
 
-            AccountOwnerVerificationMatchingRequest request = new AccountOwnerVerificationMatchingRequest();
-            request.setActualInstance(oneOf1);
+     @Test
+     public void accountMatchingScoreFirstNameFieldValidations() {
 
-            Boolean withInsights = false;
-            var response = IdentityApi.accountMatchingScoreDetails(
-                    CUSTOMER_ID,
-                    existingAccountId,
-                    request,
-                    withInsights
-            );
-            assertNotNull(response);
-        } catch (ApiException e) {
-            logApiException(e);
-        }
-    }
+         try {
+             var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
+             accountownerverificationmatchingrequest.name(new AccountOwnerVerificationMatchingRequestName()
+                     .middleName("MiddleName")
+                     .lastName("LastName")
+                     .suffix("Suffix")
+             );
+             Boolean withInsights = false;
+             AccountOwnerVerificationMatchResults response = IdentityApi.accountMatchingScoreDetails(CUSTOMER_ID, existingAccountId, accountownerverificationmatchingrequest, withInsights);
 
-    @Test
-    public void invalid_whenNeitherNameNorBusinessNameProvided() {
-        try {
-            AccountOwnerVerificationMatchingRequest request = new AccountOwnerVerificationMatchingRequest();
+             Assertions.fail();
+         }
+         catch (ApiException e) {
+             logApiException(e);
+             assertErrorCodeEquals(1002, e);
+             assertErrorMessageEquals("Improperly Formatted Request Body", e);
+         }
+     }
 
-            Boolean withInsights = false;
 
-            IdentityApi.accountMatchingScoreDetails(
-                    CUSTOMER_ID,
-                    existingAccountId,
-                    request,
-                    withInsights
-            );
+     @Test
+     public void accountMatchingScoreOwnerNameFieldValidation() {
+         try {
+             var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
 
-            Assertions.fail("Expected validation error when neither name nor businessName are provided");
-        }
-        catch (ApiException e) {
-            logApiException(e);
-            assertErrorCodeEquals(1002, e);
-            assertErrorMessageEquals("Improperly Formatted Request Body", e);
-        }
-    }
+             // Set only the optional ownerName field
+             accountownerverificationmatchingrequest.ownerName("Test Owner Name");
 
-}
+             Boolean withInsights = false;
+
+             var response = IdentityApi.accountMatchingScoreDetails(
+                     CUSTOMER_ID,
+                     existingAccountId,
+                     accountownerverificationmatchingrequest,
+                     withInsights
+             );
+
+             assertNotNull(response);
+             // Optionally, assert specific fields in the response if needed
+         } catch (ApiException e) {
+             logApiException(e);
+         }
+     }
+
+ }

@@ -3935,8 +3935,8 @@ paths:
       description: >-
         Creates a new experience configuration for indirect partners by
         duplicating an existing experience through the API, enabling them to
-        manage customer onboarding flows based on the  configuration of the
-        source experience.
+        manage customer onboarding flows based on the 
+        configuration of the source experience.
       operationId: CreateConnectExperience
       security:
         - FinicityAppToken: []
@@ -8131,7 +8131,7 @@ components:
         user_message: Business ID was not found.
     CustomerIdNotFound:
       value:
-        code: '10036'
+        code: '10002'
         message: Customer ID was not found.
         status: '404'
         title: Customer ID was not found.
@@ -29816,70 +29816,51 @@ components:
       example: true
     NameScore:
       required:
-      description:
-        'List of account owner Identity Insights. It will contain either
-        ownerName score or businessName score based on the user input components
-        - businessName or name'
+        - ownerName
+      description: List of account owner Identity Insights
       type: object
-      oneOf:
-        - type: object
-          required:
-            - ownerName
-          properties:
-            ownerName:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represent the matching between user input "name"
-                sub-attributes (firstName, middleName, lastName, suffix) against
-                the "ownerName" returned. In this score, middleName and suffix
-                values are de-emphasized'
-              example: 0
-            firstName:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represent the matching between user input with the
-                account owner details fetch'
-              example: 100
-            middleName:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represent the matching between user input with the
-                account owner details fetch'
-              example: 100
-            lastName:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represent the matching between user input with the
-                account owner details fetch'
-              example: 100
-            suffix:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represent the matching between user input with the
-                account owner details fetch'
-              example: 100
-        - type: object
-          required:
-            - businessName
-          properties:
-            businessName:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description:
-                'This score represents the matching between user input
-                "businessName" against the account owner details fetched'
-              example: 90
+      properties:
+        ownerName:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description:
+            'This score represent the matching between user input "name"
+            sub-attributes (firstName, middleName, lastName, suffix) along with
+            the account owner details fetch ownerName'
+          example: 0
+        firstName:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description:
+            'This score represent the matching between user input with the
+            account owner details fetch'
+          example: 100
+        middleName:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description:
+            'This score represent the matching between user input with the
+            account owner details fetch'
+          example: 100
+        lastName:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description:
+            'This score represent the matching between user input with the
+            account owner details fetch'
+          example: 100
+        suffix:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description:
+            'This score represent the matching between user input with the
+            account owner details fetch'
+          example: 100
     AccountOwnerVerificationMatchingDetails:
       required:
         - ownerName
@@ -30003,21 +29984,13 @@ components:
           example: 'Home'
     AccountOwnerVerificationMatchingRequest:
       type: object
-      description: User input for account owner matching
-      oneOf:
-        - type: object
-          required:
-            - name
-          properties:
-            name:
-              $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestName'
-        - type: object
-          required:
-            - businessName
-          properties:
-            businessName:
-              $ref: '#/components/schemas/AccountOwnerName'
+      required:
+        - name
       properties:
+        ownerName:
+          $ref: '#/components/schemas/AccountOwnerName'
+        name:
+          $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestName'
         address:
           $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestAddress'
         phone:
