@@ -52,7 +52,7 @@
      public void accountMatchingScoreDetailsTest() {
 
          try {
-             var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
+                 var accountownerverificationmatchingrequest = ModelFactory.accountOwnerVerificationMatchingRequest();
              Boolean withInsights = false;
 
              var response = IdentityApi.accountMatchingScoreDetails(CUSTOMER_ID, existingAccountId, accountownerverificationmatchingrequest, withInsights);
