@@ -3935,8 +3935,8 @@ paths:
       description: >-
         Creates a new experience configuration for indirect partners by
         duplicating an existing experience through the API, enabling them to
-        manage customer onboarding flows based on the 
-        configuration of the source experience.
+        manage customer onboarding flows based on the  configuration of the
+        source experience.
       operationId: CreateConnectExperience
       security:
         - FinicityAppToken: []
