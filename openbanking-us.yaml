@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.39.0
+  version: 1.40.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -472,7 +472,7 @@ paths:
         - $ref: '#/components/parameters/CustomerUsernameParameter'
         - $ref: '#/components/parameters/CustomerTypeParameter'
         - $ref: '#/components/parameters/CustomerSearchParameter'
-        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/DSAPI_StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
       responses:
         '200':
@@ -2452,7 +2452,7 @@ paths:
         - $ref: '#/components/parameters/CustomerIdParameter'
         - $ref: '#/components/parameters/RequiredFromDateParameter'
         - $ref: '#/components/parameters/RequiredToDateParameter'
-        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/DSAPI_StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
@@ -2535,7 +2535,7 @@ paths:
         - $ref: '#/components/parameters/AccountIdParameter'
         - $ref: '#/components/parameters/RequiredFromDateParameter'
         - $ref: '#/components/parameters/RequiredToDateParameter'
-        - $ref: '#/components/parameters/StartParameter'
+        - $ref: '#/components/parameters/DSAPI_StartParameter'
         - $ref: '#/components/parameters/LimitParameter'
         - $ref: '#/components/parameters/SortParameter'
         - $ref: '#/components/parameters/IncludePendingParameter'
@@ -3224,7 +3224,6 @@ paths:
       operationId: GetReportsByCustomerId
       parameters:
         - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/PurposeParameter'
       responses:
         '200':
           $ref: '#/components/responses/GetReportsResponse'
@@ -3256,7 +3255,6 @@ paths:
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: GetReportsByConsumerId
       parameters:
-        - $ref: '#/components/parameters/PurposeParameter'
         - $ref: '#/components/parameters/ConsumerIdParameter'
       responses:
         '200':
@@ -3929,6 +3927,31 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '404':
           $ref: '#/components/responses/ResourceNotFoundResponse'
+  /connect/experiences/{experience_id}/duplicate:
+    post:
+      tags:
+        - Connect
+      summary: Duplicate Experience for Indirect Partner
+      description: >-
+        Creates a new experience configuration for indirect partners by
+        duplicating an existing experience through the API, enabling them to
+        manage customer onboarding flows based on the  configuration of the
+        source experience.
+      operationId: CreateConnectExperience
+      security:
+        - FinicityAppToken: []
+        - FinicityAppKey: []
+      parameters:
+        - $ref: '#/components/parameters/ExperienceIdParam'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateExperienceForIndirectPartnerRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateExperienceForIndirectPartnerResponse'
+        '400':
+          $ref: '#/components/responses/ExperienceBadRequest'
+        '401':
+          $ref: '#/components/responses/ExpiredToken'
   '/transfer/customers/{customer_id}/deposit-switches':
     get:
       tags:
@@ -5045,6 +5068,12 @@ components:
               $ref: '#/components/examples/ConsumerWithBirthdayPhoneEmailExample'
             ConsumerWithSsnPhoneEmail:
               $ref: '#/components/examples/ConsumerWithSsnPhoneEmailExample'
+    CreateExperienceForIndirectPartnerRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IndirectPartnerRequest'
     ModifyConsumerRequest:
       required: true
       content:
@@ -5756,6 +5785,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CreatedConsumer'
+    CreateExperienceForIndirectPartnerResponse:
+      description: Experience created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateExperience'
     GetConsumerForCustomerResponse:
       description: The consumer was successfully retrieved
       content:
@@ -7370,6 +7405,24 @@ components:
       description: Subscription deleted successfully
     EventDeletedResponse:
       description: Event deleted successfully
+    ExperienceBadRequest:
+      description: The request was rejected.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            ExperienceBadRequest:
+              $ref: '#/components/examples/ExperienceBadRequest'
+    ExpiredToken:
+      description: Unauthorized request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            UnauthorizedRequest:
+              $ref: '#/components/examples/ExpiredTokenRequest'
     SubscriptionsResponse:
       description:
         List of all subscriptions with pagination and availability details.
@@ -8078,7 +8131,7 @@ components:
         user_message: Business ID was not found.
     CustomerIdNotFound:
       value:
-        code: '10002'
+        code: '10036'
         message: Customer ID was not found.
         status: '404'
         title: Customer ID was not found.
@@ -8103,6 +8156,22 @@ components:
       value:
         code: '10022'
         message: Invalid (Finicity-App-Token)
+    ExperienceBadRequest:
+      value:
+        code: '1003'
+        status: '400'
+        message: '"experienceId" must be a valid GUID.'
+        user_message:
+          One or more of the fields could not be validated. Please ensure you
+          have entered the correct data.
+    ExpiredTokenRequest:
+      value:
+        code: '10023'
+        status: '401'
+        message: Expired (Finicity-App-Token)
+        user_message:
+          Your connection timed out due to inactivity. Please log in again to
+          complete your account linking.
     ExpiredFinicityAppTokenExample:
       value:
         code: '10023'
@@ -28813,9 +28882,12 @@ components:
       required: false
       description: >-
         2-digit code from [Permissible Purpose
-        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/lend/report-handling/permissible-purpose-codes/),
+        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/lend/permissible-purpose-codes/),
         specifying the reason for retrieving this report. Required for
-        retrieving some reports.
+        retrieving CRA reports. Validation enforcing the use of a valid
+        [Permissible Purpose
+        Code](https://developer.mastercard.com/open-finance-us/documentation/products/lend/permissible-purpose-codes/)
+        for CRA reports will be enabled on 11 August 2026.
       schema:
         $ref: '#/components/schemas/PurposeCode'
       example: '3F'
@@ -28886,6 +28958,22 @@ components:
         type: integer
         format: int32
         default: 1
+      example: 1
+    DSAPI_StartParameter:
+      name: start
+      in: query
+      required: false
+      description: |
+        Represents the index of the first record to return within a batch of `limit`.
+
+        Example: 
+          - `limit=15&start=1`; records 1–15 
+          - `limit=15&start=16`; records 16–30
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
         example: 1
     LimitParameter:
       name: limit
@@ -28896,8 +28984,9 @@ components:
         type: integer
         format: int32
         default: 25
+        minimum: 1
         maximum: 1000
-        example: 1
+        example: 20
     SortParameter:
       name: sort
       in: query
@@ -29131,6 +29220,17 @@ components:
       schema:
         type: string
       example: test app
+    ExperienceIdParam:
+      name: experience_id
+      description: UUID that distinguishes each experience
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 84fd419a-1add-4bf4-961b-16e8285b3a92
+        minLength: 36
+        maxLength: 36
     AllowedBalanceCacheIntervalParameter:
       description: |-
         `balance_cache_interval` (in minutes) is used to decide whether to return existing cached balance or retrieve from financial institution in real-time. Details explained below:
@@ -29306,6 +29406,16 @@ components:
       description: The identifier value pertaining to the identifier type.
       maxLength: 100
       example: '106241230D01'
+    IndirectPartnerRequest:
+      type: object
+      required:
+        - indirectPartnerId
+      properties:
+        indirectPartnerId:
+          type: integer
+          format: int64
+          description: The ID of the indirect partner
+          example: 423456789
     MatchRank:
       type: integer
       description: The rank of the match compared to other potential matches.
@@ -29706,51 +29816,70 @@ components:
       example: true
     NameScore:
       required:
-        - ownerName
-      description: List of account owner Identity Insights
+      description:
+        'List of account owner Identity Insights. It will contain either
+        ownerName score or businessName score based on the user input components
+        - businessName or name'
       type: object
-      properties:
-        ownerName:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description:
-            'This score represent the matching between user input "name"
-            sub-attributes (firstName, middleName, lastName, suffix) along with
-            the account owner details fetch ownerName'
-          example: 0
-        firstName:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
-          example: 100
-        middleName:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
-          example: 100
-        lastName:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
-          example: 100
-        suffix:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description:
-            'This score represent the matching between user input with the
-            account owner details fetch'
-          example: 100
+      oneOf:
+        - type: object
+          required:
+            - ownerName
+          properties:
+            ownerName:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represent the matching between user input "name"
+                sub-attributes (firstName, middleName, lastName, suffix) against
+                the "ownerName" returned. In this score, middleName and suffix
+                values are de-emphasized'
+              example: 0
+            firstName:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represent the matching between user input with the
+                account owner details fetch'
+              example: 100
+            middleName:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represent the matching between user input with the
+                account owner details fetch'
+              example: 100
+            lastName:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represent the matching between user input with the
+                account owner details fetch'
+              example: 100
+            suffix:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represent the matching between user input with the
+                account owner details fetch'
+              example: 100
+        - type: object
+          required:
+            - businessName
+          properties:
+            businessName:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description:
+                'This score represents the matching between user input
+                "businessName" against the account owner details fetched'
+              example: 90
     AccountOwnerVerificationMatchingDetails:
       required:
         - ownerName
@@ -29874,13 +30003,21 @@ components:
           example: 'Home'
     AccountOwnerVerificationMatchingRequest:
       type: object
-      required:
-        - name
+      description: User input for account owner matching
+      oneOf:
+        - type: object
+          required:
+            - name
+          properties:
+            name:
+              $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestName'
+        - type: object
+          required:
+            - businessName
+          properties:
+            businessName:
+              $ref: '#/components/schemas/AccountOwnerName'
       properties:
-        ownerName:
-          $ref: '#/components/schemas/AccountOwnerName'
-        name:
-          $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestName'
         address:
           $ref: '#/components/schemas/AccountOwnerVerificationMatchingRequestAddress'
         phone:
@@ -35136,7 +35273,9 @@ components:
     AuthorizationEndDate:
       type: integer
       format: int64
-      description: Authorization end date and time in epoch format.
+      description:
+        Authorization end date and time in epoch format (not used if
+        AuthorizationExpires is false).
       example: 1641030399
     AuthorizationExpires:
       type: boolean
@@ -43929,6 +44068,16 @@ components:
             type: string
             minLength: 1
             maxLength: 10
+    CreateExperience:
+      type: object
+      properties:
+        experienceId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: UUID that distinguishes each experience
+          example: 84fd419a-1add-4bf4-961b-16e8285b3a92
     EndUserUrl:
       type: string
       description: Reseller end user URL
