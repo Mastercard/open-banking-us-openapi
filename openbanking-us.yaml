@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.40.0
+  version: 1.40.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -607,8 +607,8 @@ paths:
         provided together.
 
 
-        A consumer must be created for the given customer before calling any of
-        the Generate Report services.
+        A consumer must be created for the given customer before creating a CRA
+        report through our Generate Report services.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -3935,8 +3935,8 @@ paths:
       description: >-
         Creates a new experience configuration for indirect partners by
         duplicating an existing experience through the API, enabling them to
-        manage customer onboarding flows based on the  configuration of the
-        source experience.
+        manage customer onboarding flows based on the 
+        configuration of the source experience.
       operationId: CreateConnectExperience
       security:
         - FinicityAppToken: []
