@@ -60,11 +60,17 @@ public abstract class BaseTest {
     }
 
     private static ErrorMessage parseError(ApiException e) {
-        return new Gson().fromJson(e.getResponseBody(), ErrorMessage.class);
+        var responseBody = e.getResponseBody();
+        if (responseBody == null || responseBody.isBlank()) {
+            return new ErrorMessage();
+        }
+
+        var errorMessage = new Gson().fromJson(responseBody, ErrorMessage.class);
+        return errorMessage != null ? errorMessage : new ErrorMessage();
     }
 
     protected static void assertErrorCodeEquals(String expectedCode, ApiException e) {
-        assertEquals(expectedCode, parseError(e).getCode().toString());
+        assertEquals(expectedCode, String.valueOf(parseError(e).getCode()));
     }
 
     protected static void assertErrorCodeEquals(Integer expectedCode, ApiException e) {

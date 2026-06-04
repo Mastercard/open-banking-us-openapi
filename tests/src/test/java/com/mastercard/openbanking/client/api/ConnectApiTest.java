@@ -15,20 +15,27 @@ import java.util.Arrays;
 class ConnectApiTest extends BaseTest {
 
     private final ConnectApi api = new ConnectApi(apiClient);
-    private final static Long FINBANK_A = 102105L;
-    private final static String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
-    private final static String ACCOUNT_ID = "6025959239";
+    private static final Long FINBANK_A = 102105L;
+    private static final String CONSUMER_ID = "0bf46322c167b562e6cbed9d40e19a4c";
+    private static final String CUSTOMER_ID_PARAM = "customerId=";
+    private static final String PARTNER_ID_PARAM = "partnerId=";
+    private static final String COMPANY_EMAIL = "someone@company.com";
+
+    private static ReportCustomField requiredReportCustomField() {
+        return new ReportCustomField().label("test").value("test").shown(false);
+    }
     @Test
     void generateConnectUrlTest() {
         try {
             var params = new ConnectParameters()
                     .customerId(CUSTOMER_ID)
                     .language("fr-CA")
-                    .partnerId(PARTNER_ID);
+                    .partnerId(PARTNER_ID)
+                    .addReportCustomFieldsItem(requiredReportCustomField());
             var connectUrl = api.generateConnectUrl(params);
             var link = connectUrl.getLink();
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
@@ -44,10 +51,9 @@ class ConnectApiTest extends BaseTest {
             api.generateLiteConnectUrl(params);
             fail();
         } catch (ApiException e) {
-            // {"code":"10010","status":"400","message":"Customer ID does not exist or does not belong to this partner","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
             logApiException(e);
             assertErrorCodeEquals("10010", e);
-           assertErrorMessageEquals("Request failed with status code 404 GET /aggregation/v1/customers/1234", e);
+            assertErrorMessageEquals("Request failed with status code 404 GET /aggregation/v1/customers/1234", e);
         }
     }
 
@@ -61,7 +67,6 @@ class ConnectApiTest extends BaseTest {
             api.generateLiteConnectUrl(params);
             fail();
         } catch (ApiException e) {
-            // {"code":"10010","status":"400","message":"Invalid \"partnerId\" in request body","user_message":"One or more of the fields could not be validated. Please ensure you have entered the correct data.","tags":""}
             logApiException(e);
             assertErrorCodeEquals("10010", e);
             assertErrorMessageEquals("Invalid \"partnerId\" in request body", e);
@@ -79,8 +84,8 @@ class ConnectApiTest extends BaseTest {
             var link = connectUrl.getLink();
             assertTrue(link.contains("type=lite"));
             assertTrue(link.contains("institutionId=" + FINBANK_A));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
@@ -96,7 +101,6 @@ class ConnectApiTest extends BaseTest {
             api.generateFixConnectUrl(params);
             fail();
         } catch (ApiException e) {
-            // {"code":"38007","status":"404","title":"Connecting accounts error","user_message":"Customer does not have any accounts associated with institutionLoginId.","tags":"","level":"error","message":"Customer does not have any accounts associated with institutionLoginId."}
             logApiException(e);
             assertErrorCodeEquals("38007", e);
             assertErrorMessageEquals("Customer does not have any accounts associated with institutionLoginId.", e);
@@ -116,8 +120,8 @@ class ConnectApiTest extends BaseTest {
             var link = connectUrl.getLink();
             assertTrue(link.contains("type=fix"));
             assertTrue(link.contains("institutionLoginId=" + institutionLoginId));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
@@ -131,14 +135,15 @@ class ConnectApiTest extends BaseTest {
                     .partnerId(PARTNER_ID)
                     .consumerId(CONSUMER_ID)
                     .language("fr-CA")
-                    .email(new EmailOptions().to("someone@company.com"));
+                    .addReportCustomFieldsItem(requiredReportCustomField())
+                    .email(new EmailOptions().to(COMPANY_EMAIL));
             var connectEmailUrl = api.sendConnectEmail(params);
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
             assertTrue(link.contains("origin=email"));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
-            assertEquals("someone@company.com", emailConfig.getTo());
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
+            assertEquals(COMPANY_EMAIL, emailConfig.getTo());
         } catch (ApiException e) {
             fail(e);
         }
@@ -149,13 +154,14 @@ class ConnectApiTest extends BaseTest {
         try {
             var params = new ConnectJointBorrowerParameters()
                     .partnerId(PARTNER_ID)
+                    .addReportCustomFieldsItem(requiredReportCustomField())
                     .addBorrowersItem(ModelFactory.newBorrower("primary", CONSUMER_ID, CUSTOMER_ID))
                     .addBorrowersItem(ModelFactory.newBorrower("jointBorrower", CONSUMER_ID, CUSTOMER_ID));
             var connectUrl = api.generateJointBorrowerConnectUrl(params);
             var link = connectUrl.getLink();
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
             assertTrue(link.contains("consumerId=" + CONSUMER_ID));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
         } catch (ApiException e) {
             fail(e);
         }
@@ -166,17 +172,18 @@ class ConnectApiTest extends BaseTest {
         try {
             var params = new ConnectJointBorrowerEmailParameters()
                     .partnerId(PARTNER_ID)
+                    .addReportCustomFieldsItem(requiredReportCustomField())
                     .addBorrowersItem(ModelFactory.newBorrower("primary", CONSUMER_ID, CUSTOMER_ID))
                     .addBorrowersItem(ModelFactory.newBorrower("jointBorrower", CONSUMER_ID, CUSTOMER_ID))
-                    .email(new EmailOptions().to("someone@company.com"));
+                    .email(new EmailOptions().to(COMPANY_EMAIL));
             var connectEmailUrl = api.sendJointBorrowerConnectEmail(params);
             var link = connectEmailUrl.getLink();
             var emailConfig = connectEmailUrl.getEmailConfig();
             assertTrue(link.contains("origin=email"));
             assertTrue(link.contains("consumerId=" + CONSUMER_ID));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
-            assertEquals("someone@company.com", emailConfig.getTo());
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
+            assertEquals(COMPANY_EMAIL, emailConfig.getTo());
         } catch (ApiException e) {
             fail(e);
         }
@@ -202,13 +209,13 @@ class ConnectApiTest extends BaseTest {
             var connectVerifyUrl = api.verifyMicroEntryMicrodeposit(params);
             var link = connectVerifyUrl.getLink();
             assertTrue(link.contains("accountId=" + accountId));
-            assertTrue(link.contains("customerId=" + customerId));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + customerId));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
     }
-    
+
     @Test
     void generateConnectTransferBillPaySwitchUrlTest() {
         try {
@@ -221,14 +228,14 @@ class ConnectApiTest extends BaseTest {
             var connectUrl = api.generateTransferBillPaySwitchUrl(params);
             var link = connectUrl.getLink();
             assertTrue(link.contains("type=transferBillPaySwitch"));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
     }
 
-    
+
     @Test
     void generateConnectTransferDepositUrlTest() {
         try {
@@ -237,15 +244,15 @@ class ConnectApiTest extends BaseTest {
                     .partnerId(PARTNER_ID)
                     .addAccountsItem(ModelFactory.newBankAccount("7526894126", "110000000", "checking"))
                     .external(new ExternalTransferDetails()
-                        .id("external-123")
-                        .context(Context.EMAIL));
+                            .id("external-123")
+                            .context(Context.EMAIL));
 
             var connectUrl = api.generateTransferDepositSwitchUrl(params);
             var link = connectUrl.getLink();
 
             assertTrue(link.contains("type=transferDepositSwitch"));
-            assertTrue(link.contains("customerId=" + CUSTOMER_ID));
-            assertTrue(link.contains("partnerId=" + PARTNER_ID));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + CUSTOMER_ID));
+            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
         }
