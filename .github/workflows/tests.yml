@@ -14,21 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK 18
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '18'
-          distribution: adopt
-      - name: Cache local Maven repository
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          distribution: temurin
+          cache: maven
+      - name: Provision customer
+        run: |
+          customer_id=$(./bin/setup.sh "${{ secrets.PARTNER_ID }}" "${{ secrets.PARTNER_SECRET }}" "${{ secrets.APP_KEY }}" --no-interaction | grep -oP '(?<=CUSTOMER_ID: )\d+')
+          echo "CUSTOMER_ID=$customer_id" >> "$GITHUB_ENV"
       - name: Run Tests
         run: |
-          customer_id=$(./bin/setup.sh ${{ secrets.PARTNER_ID }} ${{ secrets.PARTNER_SECRET }} ${{ secrets.APP_KEY }} --no-interaction | grep -oP '(?<=CUSTOMER_ID: )\d+')
           cd tests
           mvn clean test -DpartnerId=${{ secrets.PARTNER_ID }} -DpartnerSecret=${{ secrets.PARTNER_SECRET }} -DappKey=${{ secrets.APP_KEY }} -DcustomerId=$customer_id
