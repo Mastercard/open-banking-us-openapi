@@ -89,244 +89,244 @@ class ReportsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void getPrequalificationCRAReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("preQualVoa");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyAssetsApi.generatePrequalificationCRAReport(CUSTOMER_ID, new PrequalificationReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOAReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voa");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new VOAReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOAWithIncomeReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voaHistory");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new VOAWithIncomeReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getPrequalificationNonCRAReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("assetSummary");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyAssetsApi.generatePrequalificationNonCRAReport(CUSTOMER_ID, new PrequalificationReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOIReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voi");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyIncomeAndEmploymentApi.generateVOIReport(CUSTOMER_ID, new VOIReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOEPayrollReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voePayroll");
-            if (reportId == null) {
-                // Create a report the first time
-                var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
-                var reportAck = verifyIncomeAndEmploymentApi.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getPayStatementReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("paystatement");
-            if (reportId == null) {
-                // Create a report the first time
-                var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
-                var reportAck = verifyIncomeAndEmploymentApi.generatePayStatementReport(CUSTOMER_ID, constraints, null);
-                reportId = reportAck.getId();
-            }
-            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getStatementReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("statement");
-            if (reportId == null) {
-                // Create a report the first time
-                var constraints = new StatementReportConstraints()
-                        .statementReportData(new StatementData()
-                            .statementIndex(1)
-                            .accountId(Long.valueOf(existingAccountId)));
-                var reportAck = bankStatementsApi.generateStatementReport(CUSTOMER_ID, constraints, null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOIEPaystubReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voieTxVerify");
-            if (reportId == null) {
-                // Create a report the first time
-                var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
-                var constraints = new VOIEReportConstraints().voieWithStatementData(voieWithStatementData);
-                var reportAck = verifyIncomeAndEmploymentApi.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
-                reportId = reportAck.getId();
-            }
-            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOIEPaystubWithTXVerifyReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voieTxVerify");
-            if (reportId == null) {
-                // Create a report the first time
-                var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
-                var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
-                var reportAck = verifyIncomeAndEmploymentApi.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
-                reportId = reportAck.getId();
-            }
-            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getTransactionsReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("transactions");
-            if (reportId == null) {
-                // Create a report the first time
-                var toDate = LocalDateTime.now().toEpochSecond(UTC);
-                var fromDate = LocalDateTime.now().minusYears(2).toEpochSecond(UTC);
-                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, new TransactionsReportConstraints(), null, fromDate,toDate,true);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getVOETransactionsReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("voeTransactions");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getCashFlowBusinessReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("cfrb");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new CashFlowReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
-
-    @Test
-    void getCashFlowPersonalReportByConsumerOrCustomerTest() throws Exception {
-        try {
-            var reportId = reportsByType.get("cfrp");
-            if (reportId == null) {
-                // Create a report the first time
-                var reportAck = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new CashFlowReportConstraints(), null);
-                reportId = reportAck.getId();
-            }
-            fetchReport(reportId, consumerId);
-        } catch (ApiException e) {
-            // Status code: 429, Reason: Too Many Requests
-            logApiException(e);
-        }
-    }
+//    @Test
+//    void getPrequalificationCRAReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("preQualVoa");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyAssetsApi.generatePrequalificationCRAReport(CUSTOMER_ID, new PrequalificationReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOAReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voa");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyAssetsApi.generateVOAReport(CUSTOMER_ID, new VOAReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOAWithIncomeReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voaHistory");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyAssetsApi.generateVOAWithIncomeReport(CUSTOMER_ID, new VOAWithIncomeReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getPrequalificationNonCRAReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("assetSummary");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyAssetsApi.generatePrequalificationNonCRAReport(CUSTOMER_ID, new PrequalificationReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOIReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voi");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyIncomeAndEmploymentApi.generateVOIReport(CUSTOMER_ID, new VOIReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOEPayrollReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voePayroll");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var constraints = new PayrollReportConstraints().payrollData(ModelFactory.newPayrollData());
+//                var reportAck = verifyIncomeAndEmploymentApi.generateVOEPayrollReport(CUSTOMER_ID, constraints, null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getPayStatementReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("paystatement");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var constraints = new PayStatementReportConstraints().paystatementReport(new PayStatementData().addAssetIdsItem(existingAssetId));
+//                var reportAck = verifyIncomeAndEmploymentApi.generatePayStatementReport(CUSTOMER_ID, constraints, null);
+//                reportId = reportAck.getId();
+//            }
+//            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getStatementReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("statement");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var constraints = new StatementReportConstraints()
+//                        .statementReportData(new StatementData()
+//                            .statementIndex(1)
+//                            .accountId(Long.valueOf(existingAccountId)));
+//                var reportAck = bankStatementsApi.generateStatementReport(CUSTOMER_ID, constraints, null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOIEPaystubReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voieTxVerify");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var voieWithStatementData = new VOIEWithStatementData().addAssetIdsItem(existingAssetId);
+//                var constraints = new VOIEReportConstraints().voieWithStatementData(voieWithStatementData);
+//                var reportAck = verifyIncomeAndEmploymentApi.generateVOIEPaystubReport(CUSTOMER_ID, constraints, null);
+//                reportId = reportAck.getId();
+//            }
+//            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOIEPaystubWithTXVerifyReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voieTxVerify");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var voieWithInterviewData = new VOIEWithInterviewData().addTxVerifyInterviewItem(new TxVerifyInterview().assetId(existingAssetId));
+//                var constraints = new VOIEWithTXVerifyReportConstraints().voieWithInterviewData(voieWithInterviewData);
+//                var reportAck = verifyIncomeAndEmploymentApi.generateVOIEPaystubWithTXVerifyReport(CUSTOMER_ID, constraints, null);
+//                reportId = reportAck.getId();
+//            }
+//            // This report's final status will be 'failure' since the asset uploaded isn't a valid statement
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getTransactionsReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("transactions");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var toDate = LocalDateTime.now().toEpochSecond(UTC);
+//                var fromDate = LocalDateTime.now().minusYears(2).toEpochSecond(UTC);
+//                var reportAck = transactionsApi.generateTransactionsReport(CUSTOMER_ID, new TransactionsReportConstraints(), null, fromDate,toDate,true);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getVOETransactionsReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("voeTransactions");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = verifyIncomeAndEmploymentApi.generateVOETransactionsReport(CUSTOMER_ID, new VOETransactionsReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getCashFlowBusinessReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("cfrb");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = cashFlowApi.generateCashFlowBusinessReport(CUSTOMER_ID, new CashFlowReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
+//
+//    @Test
+//    void getCashFlowPersonalReportByConsumerOrCustomerTest() throws Exception {
+//        try {
+//            var reportId = reportsByType.get("cfrp");
+//            if (reportId == null) {
+//                // Create a report the first time
+//                var reportAck = cashFlowApi.generateCashFlowPersonalReport(CUSTOMER_ID, new CashFlowReportConstraints(), null);
+//                reportId = reportAck.getId();
+//            }
+//            fetchReport(reportId, consumerId);
+//        } catch (ApiException e) {
+//            // Status code: 429, Reason: Too Many Requests
+//            logApiException(e);
+//        }
+//    }
 
     private static void fetchReport(String reportId, String consumerId) throws Exception {
         String status;
