@@ -38,7 +38,7 @@ class ReportsApiTest extends BaseTest {
     private final static Set<String> NON_FINAL_STATUS = Set.of("inProgress", "editing");
     private static final String SUCCESS_STATUS = "success";
     private final static String ON_BEHALF_OF = "Someone";
-    private final static String PURPOSE = "99";
+    private final static String PURPOSE = "1W";
     private static String uniqueTransactionId;
 
     @BeforeAll
