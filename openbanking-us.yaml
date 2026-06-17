@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.41.0
+  version: 1.41.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2735,9 +2735,20 @@ paths:
         history and risk score based on a customer's financial history.
 
 
-        Before calling this API, a Business entity must be created, and a
-        Consumer entity may need to be created for the given customer ID, based
-        on whether the purpose is CRA or Non-CRA (see Consumer/Business APIs).
+        Before calling this API, a business record must be created for the given
+        customer ID (see Businesses API).
+
+
+        Whether you also need a consumer record depends on the report's purpose,
+        which you set using the `forCraPurpose` field:
+
+
+        - For a CRA (FCRA) purpose, set `forCraPurpose` to `true`. You must also
+        create a consumer record for the customer (see Consumers APIs).
+
+
+        - For a non-CRA (non-FCRA) purpose, set `forCraPurpose` to `false`. A
+        consumer record is not required.
 
 
         If no account type of checking or savings is found, the service will
@@ -6814,6 +6825,8 @@ components:
               $ref: '#/components/examples/PermissiblePurposeCodeExample'
             InvalidForesightReportRequestExample:
               $ref: '#/components/examples/InvalidForesightReportRequestExample'
+            BothCraAndFtcPurposeTrueExample:
+              $ref: '#/components/examples/BothCraAndFtcPurposeTrueExample'
             MissingFieldExample:
               $ref: '#/components/examples/MissingFieldExample'
             InvalidFieldExample:
@@ -8539,6 +8552,11 @@ components:
         message:
           'At least one of customerId or externalCustomerId must be provided;
           both are also allowed.'
+    BothCraAndFtcPurposeTrueExample:
+      value:
+        code: '10100'
+        status: '400'
+        message: 'forCRAPurpose and forFTCPurpose may not both be TRUE.'
     DisputeStatementErrorExample:
       value:
         code: '10406'
@@ -9243,6 +9261,7 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: true
+          forFtcPurpose: false
           applicantIsPersonalGuarantor: true
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -9268,6 +9287,8 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: false
+          forFtcPurpose: false
+          applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
         accountIds: '1000535275 1000535276'
@@ -9291,7 +9312,8 @@ components:
     GenerateBalanceBusinessFtcAnalyticsReportRequestExample:
       value:
         analyticsReportData:
-          forCraPurpose: true
+          forCraPurpose: false
+          forFtcPurpose: true
           applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -9365,6 +9387,7 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: true
+          forFtcPurpose: false
           applicantIsPersonalGuarantor: true
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -9390,6 +9413,8 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: false
+          forFtcPurpose: false
+          applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
         accountIds: '1000535275 1000535276'
@@ -9413,7 +9438,8 @@ components:
     GenerateCashflowBusinessFtcAnalyticsReportRequestExample:
       value:
         analyticsReportData:
-          forCraPurpose: true
+          forCraPurpose: false
+          forFtcPurpose: true
           applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -9487,6 +9513,7 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: true
+          forFtcPurpose: false
           applicantIsPersonalGuarantor: true
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -9512,6 +9539,8 @@ components:
       value:
         analyticsReportData:
           forCraPurpose: false
+          forFtcPurpose: false
+          applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
         accountIds: '1000535275 1000535276'
@@ -9535,7 +9564,8 @@ components:
     GeneratePaymentHistoryBusinessFtcAnalyticsReportRequestExample:
       value:
         analyticsReportData:
-          forCraPurpose: true
+          forCraPurpose: false
+          forFtcPurpose: true
           applicantIsPersonalGuarantor: false
           timeIntervalTypes:
             - MONTHLY_CALENDAR
@@ -18374,6 +18404,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -18422,6 +18453,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
           accountIds:
@@ -18468,7 +18501,8 @@ components:
         reportPin: '2398jk'
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -18645,6 +18679,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -18693,6 +18728,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
           accountIds:
@@ -18739,7 +18776,8 @@ components:
         reportPin: '2398jk'
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -19074,6 +19112,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -19115,6 +19154,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
           accountIds:
@@ -19154,7 +19195,8 @@ components:
             postalCode: 84116
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -23724,6 +23766,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -23994,6 +24037,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
         type: barbnoncra
@@ -24262,7 +24307,8 @@ components:
         reportPin: '2398jk'
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -25099,6 +25145,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -25850,7 +25897,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
-            applicantIsPersonalGuarantor: true
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
         startDate: 1658660184
@@ -26825,7 +26873,8 @@ components:
             postalCode: '84116'
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - MONTHLY_CALENDAR
@@ -30035,6 +30084,7 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: true
+            forFtcPurpose: false
             applicantIsPersonalGuarantor: true
             timeIntervalTypes:
               - HISTORICALLY
@@ -31189,6 +31239,8 @@ components:
         constraints:
           analyticsReportData:
             forCraPurpose: false
+            forFtcPurpose: false
+            applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - HISTORICALLY
         type: phrbnoncra
@@ -32340,7 +32392,8 @@ components:
             postalCode: 84116
         constraints:
           analyticsReportData:
-            forCraPurpose: true
+            forCraPurpose: false
+            forFtcPurpose: true
             applicantIsPersonalGuarantor: false
             timeIntervalTypes:
               - HISTORICALLY
@@ -35861,8 +35914,6 @@ components:
           $ref: '#/components/schemas/Income'
         age:
           $ref: '#/components/schemas/Age'
-      required:
-        - forCraPurpose
       type: object
     ForesightAnalyticsReportFirstThirdPartyConstraints:
       allOf:
@@ -37485,6 +37536,12 @@ components:
             Field to indicate if the business owner will personally guarantee
             the loan. If true, a consumer record will be required.
           example: true
+        forFtcPurpose:
+          type: boolean
+          description:
+            Field to indicate if the requested report is for FTC purpose. Only
+            applicable to business reports.
+          example: false
         timeIntervalTypes:
           description: >-
             Requested time interval for attribute values.
@@ -37494,8 +37551,6 @@ components:
           items:
             $ref: '#/components/schemas/TimeIntervalType'
           type: array
-      required:
-        - forCraPurpose
       type: object
     AnnualIncome:
       required:
