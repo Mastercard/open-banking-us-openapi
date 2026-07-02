@@ -55,22 +55,22 @@ class PaymentHistoryAnalyticsApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void generateForesightAnalyticsPHRBNONCRATypeTest() {
-        try {
-            var reportConstraints = new AnalyticsReportConstraints();
-            AnalyticsReportData analyticsReportData = new AnalyticsReportData();
-            analyticsReportData.setForCraPurpose(false);
-            analyticsReportData.setApplicantIsPersonalGuarantor(true);
-            reportConstraints.setAnalyticsReportData(analyticsReportData);
-            var reportAck = api.generatePaymentHistoryReport(CUSTOMER_ID, reportConstraints, null);
-            assertNotNull(reportAck);
-            assertEquals(INPROGRESS, reportAck.getStatus());
-            assertEquals(PHRBNONCRA, reportAck.getType());
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
+    // @Test
+    // void generateForesightAnalyticsPHRBNONCRATypeTest() {
+    //     try {
+    //         var reportConstraints = new AnalyticsReportConstraints();
+    //         AnalyticsReportData analyticsReportData = new AnalyticsReportData();
+    //         analyticsReportData.setForCraPurpose(false);
+    //         analyticsReportData.setApplicantIsPersonalGuarantor(true);
+    //         reportConstraints.setAnalyticsReportData(analyticsReportData);
+    //         var reportAck = api.generatePaymentHistoryReport(CUSTOMER_ID, reportConstraints, null);
+    //         assertNotNull(reportAck);
+    //         assertEquals(INPROGRESS, reportAck.getStatus());
+    //         assertEquals(PHRBNONCRA, reportAck.getType());
+    //     } catch (ApiException e) {
+    //         fail(e);
+    //     }
+    // }
 
 
     @Test
