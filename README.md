@@ -4,11 +4,11 @@
 
 ## Overview
 
-The OpenAPI specification for [Open Banking APIs](https://developer.mastercard.com/open-banking-us/documentation) (🇺🇸), along with a suite of [tests](./tests/src/test/java/com/mastercard/openbanking/client/api) using a generated API client and the Test Drive plan.
+The OpenAPI specification for [Open Finance APIs](https://developer.mastercard.com/open-banking-us/documentation) (🇺🇸), along with a suite of [tests](./tests/src/test/java/com/mastercard/openbanking/client/api) using a generated API client and the Test Drive plan.
 
 ## Workflows
 
-The following workflows ensure the API specification stays in good shape and can be used to consume the Open Banking APIs from your application:
+The following workflows ensure the API specification stays in good shape and can be used to consume the Open Finance APIs from your application:
 
 [![](https://github.com/Mastercard/open-banking-us-openapi/actions/workflows/prettier.yml/badge.svg)](https://github.com/Mastercard/open-banking-us-openapi/actions/workflows/prettier.yml)
 [![](https://github.com/Mastercard/open-banking-us-openapi/actions/workflows/swagger-editor.yml/badge.svg)](https://github.com/Mastercard/open-banking-us-openapi/actions/workflows/swagger-editor.yml)
@@ -54,14 +54,14 @@ The following workflows ensure the API specification stays in good shape and can
 
 ## What's Next?
 
-The [Open Banking API specification](./openbanking-us.yaml) and a [generated API client](./tests) are the only things you need to call Open Banking APIs from your application. 
+The [Open Finance API specification](./openbanking-us.yaml) and a [generated API client](./tests) are the only things you need to call Open Banking APIs from your application. 
 
 * For other software development frameworks and languages, see: OpenAPI Generator > [Generators List](https://openapi-generator.tech/docs/generators).
 * You may also be interested in trying our [Postman collection](https://github.com/Mastercard/open-banking-us-postman).
 
 ## Guidelines
 
-When updating the Open Banking API specification:
+When updating the Open Finance API specification:
 1. Ensure it can be rendered without errors in [Swagger Editor](https://editor.swagger.io/?url=https%3A%2F%2Fraw.githubusercontent.com%2FMastercard%2Fopen-banking-us-openapi%2Fmain%2Fopenbanking-us.yaml) or [Redoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Mastercard/open-banking-us-openapi/main/openbanking-us.yaml&nocors)
 2. Ensure an API client can be generated using [OpenAPI Generator](https://openapi-generator.tech/)
 3. Prettify the YAML using `npx prettier --write --single-quote --prose-wrap always openbanking-us.yaml`
