@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.43.1
+  version: 1.43.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -9893,6 +9893,7 @@ components:
             shown: false
         showNsf: false
         incomeStreamConfidenceMinimum: 50
+        analyticsProfile: income-current
     GenerateVOAWithIncomeReportResponseExample:
       value:
         id: u4hstnyak45g
@@ -9949,6 +9950,7 @@ components:
               shown: false
           showNsf: false
           incomeStreamConfidenceMinimum: 50
+          analyticsProfile: income-current
         type: voaHistory
         status: inProgress
     GeneratePrequalificationReportRequestExample:
@@ -17537,6 +17539,7 @@ components:
               value: PSC Finance
               shown: false
           showNsf: false
+          analyticsProfile: income-current
         type: voaHistory
         status: success
         createdDate: 1588350269
@@ -17597,34 +17600,34 @@ components:
                 currentPrice: 280.71
                 securityType: Stock
             incomeStreams:
-              id: dens28i3vsch-voah
-              name: none
-              status: ACTIVE
-              estimateInclusion: MODERATE
-              confidence: 70
-              cadence:
-                startDate: 1577986990
-                stopDate: 1587986990
-                days: 14
-              netMonthly:
-                - month: 1522562400
-                  net: 2004.77
-                  gross: 2400.00
-              netAnnual: 110475.7
-              projectedNetAnnual: 0
-              estimatedGrossAnnual: 0
-              projectedGrossAnnual: 151609
-              averageMonthlyIncomeNet: 9206.31
-              averageMonthlyIncomeGross: 11300.00
-              incomeStreamMonths: 18
-              transactions:
-                - id: 100000527471
-                  amount: 22.21
-                  postedDate: 1582286400
-                  description: FINICITY INC PAYROLL
-                  normalizedPayee: Finicity
-                  institutionTransactionId: '100000000'
-                  category: Paycheck
+              - id: dens28i3vsch-voah
+                name: none
+                status: ACTIVE
+                estimateInclusion: MODERATE
+                confidence: 70
+                cadence:
+                  startDate: 1577986990
+                  stopDate: 1587986990
+                  days: 14
+                netMonthly:
+                  - month: 1522562400
+                    net: 2004.77
+                    gross: 2400.00
+                netAnnual: 110475.7
+                projectedNetAnnual: 0
+                estimatedGrossAnnual: 0
+                projectedGrossAnnual: 151609
+                averageMonthlyIncomeNet: 9206.31
+                averageMonthlyIncomeGross: 11300.00
+                incomeStreamMonths: 18
+                transactions:
+                  - id: 100000527471
+                    amount: 22.21
+                    postedDate: 1582286400
+                    description: MASTERCARD INC PAYROLL
+                    normalizedPayee: Mastercard
+                    institutionTransactionId: '100000000'
+                    category: Paycheck
         assets:
           currentBalance: 1000
           twoMonthAverage: -1865.96
@@ -17637,13 +17640,13 @@ components:
               - month: 1522562400
                 net: 2004.77
                 gross: 2400.00
-            averageMonthlyIncomeNet: 9206.31
-            averageMonthlyIncomeGross: 11300.00
             incomeEstimate:
               netAnnual: 1000.12
               projectedNetAnnual: 1500.23
               estimatedGrossAnnual: 2000.12
               projectedGrossAnnual: 2500.23
+              averageMonthlyNet: 9206.31
+              averageMonthlyGross: 11300.00
     VOIEWithStatementReportExample:
       summary: VOIE With Statement Report
       value:
@@ -17932,6 +17935,11 @@ components:
           email: 'customerservice@example.com'
           url: 'example.com'
         requestId: sfb7xp4wer
+        constraints:
+          accountIds:
+            - '1000023996'
+          fromDate: 1572625469
+          analyticsProfile: income-current
         type: voi
         status: success
         createdDate: 1588350269
@@ -17956,34 +17964,34 @@ components:
             type: checking
             aggregationStatusCode: 0
             incomeStreams:
-              id: dens28i3vsch-voi1
-              name: none
-              status: ACTIVE
-              estimateInclusion: MODERATE
-              confidence: 70
-              cadence:
-                startDate: 1577986990
-                stopDate: 1587986990
-                days: 14
-              netMonthly:
-                - month: 1522562400
-                  net: 2004.77
-                  gross: 2400.00
-              netAnnual: 110475.7
-              projectedNetAnnual: 0
-              estimatedGrossAnnual: 0
-              projectedGrossAnnual: 151609
-              averageMonthlyIncomeNet: 9206.31
-              averageMonthlyIncomeGross: 11300.00
-              incomeStreamMonths: 18
-              transactions:
-                - id: 100000527471
-                  amount: 22.21
-                  postedDate: 1582286400
-                  description: FINICITY INC PAYROLL
-                  memo: Finicity amount credit
-                  institutionTransactionId: '100000000'
-                  category: Paycheck
+              - id: dens28i3vsch-voi1
+                name: none
+                status: ACTIVE
+                estimateInclusion: MODERATE
+                confidence: 70
+                cadence:
+                  startDate: 1577986990
+                  stopDate: 1587986990
+                  days: 14
+                netMonthly:
+                  - month: 1522562400
+                    net: 2004.77
+                    gross: 2400.00
+                netAnnual: 110475.7
+                projectedNetAnnual: 0
+                estimatedGrossAnnual: 0
+                projectedGrossAnnual: 151609
+                averageMonthlyIncomeNet: 9206.31
+                averageMonthlyIncomeGross: 11300.00
+                incomeStreamMonths: 18
+                transactions:
+                  - id: 100000527471
+                    amount: 22.21
+                    postedDate: 1582286400
+                    description: MASTERCARD INC PAYROLL
+                    memo: Mastercard amount credit
+                    institutionTransactionId: '100000000'
+                    category: Paycheck
             balance: 714.16
             averageMonthlyBalance: 720.75
             transactions: []
@@ -18004,13 +18012,13 @@ components:
               - month: 1522562400
                 net: 2004.77
                 gross: 2400.00
-            averageMonthlyIncomeNet: 9206.31
-            averageMonthlyIncomeGross: 11300.00
             incomeEstimate:
               netAnnual: 1000.12
               projectedNetAnnual: 1500.23
               estimatedGrossAnnual: 2000.12
               projectedGrossAnnual: 2500.23
+              averageMonthlyNet: 9206.31
+              averageMonthlyGross: 11300.00
     VOIEPayrollReportExample:
       summary: VOIE - Payroll Report
       value:
@@ -18366,12 +18374,13 @@ components:
                 projectedGrossAnnual: 151609
                 incomeStreamMonths: 24
                 averageMonthlyIncomeNet: 9206.31
+                averageMonthlyIncomeGross: 11300.00
                 transactions:
                   - id: 100000527471
                     amount: 1802.22
                     postedDate: 1559241000
-                    description: FINICITY INC PAYROLL
-                    memo: Finicity amount credit
+                    description: MASTERCARD INC PAYROLL
+                    memo: Mastercard amount credit
                     institutionTransactionId: '100000000'
                     category: Paycheck
                     payStatementMatchTypes:
@@ -18395,12 +18404,13 @@ components:
                   projectedGrossAnnual: 151609
                   incomeStreamMonths: 24
                   averageMonthlyIncomeNet: 9206.31
+                  averageMonthlyIncomeGross: 11300.00
                   transactions:
                     - id: 100000527471
                       amount: 1802.22
                       postedDate: 1559241000
-                      description: FINICITY INC PAYROLL
-                      memo: Finicity amount credit
+                      description: MASTERCARD INC PAYROLL
+                      memo: Mastercard amount credit
                       institutionTransactionId: '100000000'
                       category: Paycheck
                       payStatementMatchTypes:
@@ -18439,13 +18449,14 @@ components:
                   estimatedGrossAnnual: 0
                   projectedGrossAnnual: 151609
                   averageMonthlyIncomeNet: 9206.31
+                  averageMonthlyIncomeGross: 11300.00
                   incomeStreamMonths: 24
                   transactions:
                     - id: 100000527471
                       amount: 1802.22
                       postedDate: 1559241000
-                      description: FINICITY INC PAYROLL
-                      memo: Finicity amount credit
+                      description: MASTERCARD INC PAYROLL
+                      memo: Mastercard amount credit
                       institutionTransactionId: '100000000'
                       category: Paycheck
               balance: 123.45
@@ -43388,6 +43399,28 @@ components:
         streams with a confidence score of 50 or higher.
       format: int32
       example: 50
+    AnalyticsProfile:
+      type: string
+      nullable: true
+      description: >-
+        Optional constraint that specifies the analytics output profile used
+        when generating a report. Partners should use the profile assigned to
+        their integration. The default (current) profile is most common. If a
+        value is omitted, the default profile will be used.
+
+
+        Each profile has three supported variants: `previous`, `current`, and
+        `preview`, using the format `<profile>-<variant>`; for example,
+        `income-current`. The default production profile is `current`. Temporary
+        compatibility with prior supported behavior is provided via `previous`.
+        Approved partners can evaluate upcoming changes before they become
+        current via `preview`.
+
+
+        Currently supported values: `income-previous`, `income-current`,
+        `income-preview`. If an unsupported value is provided, the API returns
+        an error (code `1619`).
+      example: income-current
     InitialMlDate:
       type: integer
       description: >-
@@ -47021,6 +47054,8 @@ components:
         - projectedNetAnnual
         - estimatedGrossAnnual
         - projectedGrossAnnual
+        - averageMonthlyNet
+        - averageMonthlyGross
       type: object
       properties:
         netAnnual:
@@ -47046,6 +47081,14 @@ components:
             income streams, based on `projectedNetAnnual`
           type: number
           example: 2500.23
+        averageMonthlyNet:
+          type: number
+          description: Monthly average net amount over the previous 12 months
+          example: 9206.31
+        averageMonthlyGross:
+          type: number
+          description: Monthly average gross amount over the previous 12 months
+          example: 11300.00
     ReportIncomeStreamSummary:
       required:
         - confidenceType
@@ -47062,14 +47105,6 @@ components:
           description: >-
             A list of net monthly records. One instance for each complete
             calendar month in the report.
-        averageMonthlyIncomeNet:
-          type: number
-          description: Monthly average net amount over the previous 12 months
-          example: 9206.31
-        averageMonthlyIncomeGross:
-          type: number
-          description: Monthly average gross amount over the previous 12 months
-          example: 11300.00
         incomeEstimate:
           $ref: '#/components/schemas/ReportIncomeEstimate'
     ReportInstitution:
@@ -49393,6 +49428,8 @@ components:
           $ref: '#/components/schemas/VOAIncomeReportIncomeFromDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
+        analyticsProfile:
+          $ref: '#/components/schemas/AnalyticsProfile'
     VOAWithIncomeReportConstraintsOut:
       type: object
       properties:
@@ -49415,6 +49452,8 @@ components:
           example: true
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
+        analyticsProfile:
+          $ref: '#/components/schemas/AnalyticsProfile'
     VOEPayrollReport:
       description: A VOE Payroll report
       type: object
@@ -50176,6 +50215,10 @@ components:
           type: number
           description: Monthly average net amount over the previous 12 months
           example: 9206.31
+        averageMonthlyIncomeGross:
+          type: number
+          description: Monthly average gross amount over the previous 12 months
+          example: 11300.00
         incomeStreamMonths:
           type: integer
           description: The number of months the income transactions are observed
@@ -50423,6 +50466,8 @@ components:
           $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
+        analyticsProfile:
+          $ref: '#/components/schemas/AnalyticsProfile'
     VOIReportConstraintsOut:
       type: object
       properties:
@@ -50434,6 +50479,8 @@ components:
           $ref: '#/components/schemas/UnixDate'
         incomeStreamConfidenceMinimum:
           $ref: '#/components/schemas/IncomeStreamConfidenceMinimum'
+        analyticsProfile:
+          $ref: '#/components/schemas/AnalyticsProfile'
     VOIReportIncomeStream:
       type: object
       required:
