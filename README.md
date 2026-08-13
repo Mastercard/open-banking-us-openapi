@@ -54,7 +54,7 @@ The following workflows ensure the API specification stays in good shape and can
 
 ## What's Next?
 
-The [Open Finance API specification](./openbanking-us.yaml) and a [generated API client](./tests) are the only things you need to call Open Banking APIs from your application. 
+The [Open Finance API specification](./openbanking-us.yaml) and a [generated API client](./tests) are the only things you need to call Open Finance APIs from your application. 
 
 * For other software development frameworks and languages, see: OpenAPI Generator > [Generators List](https://openapi-generator.tech/docs/generators).
 * You may also be interested in trying our [Postman collection](https://github.com/Mastercard/open-banking-us-postman).
