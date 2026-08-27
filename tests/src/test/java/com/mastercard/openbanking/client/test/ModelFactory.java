@@ -157,7 +157,7 @@ public final class ModelFactory {
     public static MicroDepositInitiation newMicroDepositInitiation() {
         return new MicroDepositInitiation()
                 .receiver(new Receiver()
-                        .accountNumber("5111111111")
+                        .accountNumber("5" + RandomStringUtils.randomNumeric(9))
                         .routingNumber("011000138")
                         .accountType("personalChecking")
                         .name("API client test"));
