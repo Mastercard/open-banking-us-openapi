@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.43.2
+  version: 1.43.3
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -6916,8 +6916,10 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            PermissiblePurposeCodeExample:
-              $ref: '#/components/examples/PermissiblePurposeCodeExample'
+            MissingPermissiblePurposeCodeExample:
+              $ref: '#/components/examples/MissingPermissiblePurposeCodeExample'
+            InvalidPermissiblePurposeCodeExample:
+              $ref: '#/components/examples/InvalidPermissiblePurposeCodeExample'
             InvalidForesightReportRequestExample:
               $ref: '#/components/examples/InvalidForesightReportRequestExample'
             BothCraAndFtcPurposeTrueExample:
@@ -8682,11 +8684,18 @@ components:
       value:
         code: '14003'
         message: Aggregation connect partner not found.
-    PermissiblePurposeCodeExample:
+    MissingPermissiblePurposeCodeExample:
       value:
         code: '10100'
         status: '400'
         message: 'Permissible Purpose Code is required'
+    InvalidPermissiblePurposeCodeExample:
+      value:
+        code: '10100'
+        status: '400'
+        message:
+          'Invalid Permissible Purpose Code Submitted. Please use a valid
+          Permissible Purpose Code.'
     InvalidForesightReportRequestExample:
       value:
         code: '10100'
@@ -34156,10 +34165,10 @@ components:
             externalTransactionId: 'MAC1005061233'
             postedTimestamp: '2024-07-26T11:00:00Z'
             transactionTimestamp: '2024-07-26T11:00:00Z'
-            description: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+            description: 'STARBUCKS STORE MASTERCARD 06565 LITTLETON CO 07/26'
             memo: 'debit'
             amount: -13.26
-            transactionFee: 0.00
+            transactionFee: 0.10
             type: 'DEBIT'
             directionIndicator: 'Debit'
             additionalDetails:
@@ -34202,10 +34211,10 @@ components:
             externalTransactionId: 'MAC1005061233'
             postedTimestamp: '2024-07-26T11:00:00Z'
             transactionTimestamp: '2024-07-26T11:00:00Z'
-            description: 'STARBUCKS STORE 06565 LITTLETON CO 07/26'
+            description: 'STARBUCKS STORE MASTERCARD 06565 LITTLETON CO 07/26'
             memo: 'debit'
             amount: -13.26
-            transactionFee: 0.00
+            transactionFee: 0.10
             transactionCategory: 'Coffee Shops'
             transactionCategoryScore: 45.0
             transactionCategoryGroup: 'Groceries & Dining'
@@ -34218,7 +34227,17 @@ components:
                 group: 'Cafe'
                 website: 'https://starbucks.com'
                 logoUrl: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5NDU0MTYwNjM1OTA0MA==/logo.svg'
-                entityStandardizationConfidenceScore: 91.0
+                entityStandardizationConfidenceScore: 100.0
+            thirdParties:
+              - id: 'MTc5Mzc2OTMzNjA3NTE5NDM2OA=='
+                name: 'Mastercard'
+                category: 'Payment Network'
+                group: 'Financial Services'
+                website: 'https://mastercard.com/'
+                logoUrl: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc5Mzc2OTMzNjA3NTE5NDM2OA==/logo.svg'
+                entityStandardizationConfidenceScore: 100.0
+            thirdPartyCategories:
+              - 'Payment Network'
             address:
               line1: '10278 W'
               line2: 'Centennial Rd'
@@ -35262,10 +35281,7 @@ components:
         2-digit code from [Permissible Purpose
         Codes](https://developer.mastercard.com/open-finance-us/documentation/products/lend/permissible-purpose-codes/),
         specifying the reason for retrieving this report. Required for
-        retrieving CRA reports. Validation enforcing the use of a valid
-        [Permissible Purpose
-        Code](https://developer.mastercard.com/open-finance-us/documentation/products/lend/permissible-purpose-codes/)
-        for CRA reports will be enabled on 11 August 2026.
+        retrieving CRA reports.
       schema:
         $ref: '#/components/schemas/PurposeCode'
       example: '3F'
@@ -48144,10 +48160,13 @@ components:
         optionExpireDate:
           $ref: '#/components/schemas/TransactionOptionExpireDate'
         checkNum:
-          type: string
+          type: integer
           description:
-            The reference for the transaction provided by the originating
-            institution.
+            The check number of the transaction. This value is sourced from
+            OFX_CHECKNUM only. If no valid check number is available, this field
+            can be null.
+          format: int32
+          nullable: true
           example: 299
         escrowAmount:
           type: number
@@ -52061,6 +52080,22 @@ components:
           example: 'Debit'
         entities:
           $ref: '#/components/schemas/Entities'
+        thirdParties:
+          description:
+            These are a subset of 'Entities' flagged as third-party. Values are
+            distinct from and do not overlap with 'Entities' list.
+          allOf:
+            - $ref: '#/components/schemas/Entities'
+        thirdPartyCategories:
+          type: array
+          description:
+            List of categories of third party entities for the transaction.
+          items:
+            type: string
+          minItems: 0
+          example:
+            - 'Digital Wallet'
+            - 'Payment Gateway'
         address:
           $ref: '#/components/schemas/DESAddress'
         additionalDetails:
@@ -52235,6 +52270,16 @@ components:
             minLength: 1
             maxLength: 500
             example: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc1ODA5NDU0MTYwNjM1OTA0MA==/logo.svg'
+          entityStandardizationConfidenceScore:
+            type: number
+            format: double
+            description:
+              A confidence score indicating how confidently the found entity's
+              name has been standardized to its canonical form. If no score is
+              returned, the entity has not been standardized.
+            minimum: 0
+            maximum: 100.0
+            example: 18.95
     InputMerchantInformation:
       description:
         InputMerchantInformation is an object containing merchant details in the
@@ -52581,7 +52626,6 @@ components:
         - name
         - address
         - personallyLiable
-        - phoneNumber
       properties:
         name:
           $ref: '#/components/schemas/BusinessName'
