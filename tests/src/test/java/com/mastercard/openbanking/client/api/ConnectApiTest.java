@@ -5,7 +5,6 @@ import com.mastercard.openbanking.client.model.*;
 import com.mastercard.openbanking.client.test.BaseTest;
 import com.mastercard.openbanking.client.test.ModelFactory;
 import com.mastercard.openbanking.client.test.utils.AccountUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,16 +20,6 @@ class ConnectApiTest extends BaseTest {
     private static final String CUSTOMER_ID_PARAM = "customerId=";
     private static final String PARTNER_ID_PARAM = "partnerId=";
     private static final String COMPANY_EMAIL = "someone@company.com";
-    private static String microDepositCustomerId;
-    private static String microDepositAccountId;
-
-    @BeforeAll
-    static void beforeAll() throws ApiException {
-        microDepositCustomerId = customersApi.addTestingCustomer(ModelFactory.newCustomer()).getId();
-        createdCustomerIds.add(microDepositCustomerId);
-        AccountValidationAssistanceApi accountApi = new AccountValidationAssistanceApi(apiClient);
-        microDepositAccountId = accountApi.initiateMicroAmountDeposits(microDepositCustomerId, ModelFactory.newMicroDepositInitiation()).getAccountId();
-    }
 
     private static ReportCustomField requiredReportCustomField() {
         return new ReportCustomField().label("test").value("test").shown(false);
@@ -203,21 +192,24 @@ class ConnectApiTest extends BaseTest {
     @Test
     void verifyMicroDepositEntryTest() {
         try {
+            String customerId = createTestCustomer();
             AccountValidationAssistanceApi accountApi = new AccountValidationAssistanceApi(apiClient);
+            var response = accountApi.initiateMicroAmountDeposits(customerId, ModelFactory.newMicroDepositInitiation());
+            var accountId = response.getAccountId();
             String status;
             do {
-                var details = accountApi.getMicroDepositsDetails(microDepositCustomerId, microDepositAccountId);
+                var details = accountApi.getMicroDepositsDetails(customerId, accountId);
                 status = details.getStatus();
             } while (!"Completed".equals(status));
 
             var params = new MicroEntryVerifyRequestParameter()
                     .partnerId(PARTNER_ID)
-                    .customerId(microDepositCustomerId)
-                    .accountId(microDepositAccountId);
+                    .customerId(customerId)
+                    .accountId(accountId);
             var connectVerifyUrl = api.verifyMicroEntryMicrodeposit(params);
             var link = connectVerifyUrl.getLink();
-            assertTrue(link.contains("accountId=" + microDepositAccountId));
-            assertTrue(link.contains(CUSTOMER_ID_PARAM + microDepositCustomerId));
+            assertTrue(link.contains("accountId=" + accountId));
+            assertTrue(link.contains(CUSTOMER_ID_PARAM + customerId));
             assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
         } catch (ApiException e) {
             fail(e);
@@ -266,4 +258,10 @@ class ConnectApiTest extends BaseTest {
         }
     }
 
+    private static String createTestCustomer() throws ApiException {
+        var customer = customersApi.addTestingCustomer(ModelFactory.newCustomer());
+        var customerId = customer.getId();
+        createdCustomerIds.add(customerId);
+        return customerId;
+    }
 }
