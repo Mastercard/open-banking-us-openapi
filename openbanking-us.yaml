@@ -5270,6 +5270,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConsumerUpdate'
+          examples:
+            ModifyConsumerExample:
+              $ref: '#/components/examples/ModifyConsumerExample'
     RegisterAppRequest:
       required: true
       content:
@@ -5994,12 +5997,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Consumer'
+          examples:
+            GetConsumerExample:
+              $ref: '#/components/examples/GetConsumerExample'
     GetConsumerResponse:
       description: The consumer was successfully retrieved
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Consumer'
+          examples:
+            GetConsumerExample:
+              $ref: '#/components/examples/GetConsumerExample'
     GetCustomerAccountsSimpleResponse:
       description: The account list was successfully retrieved
       content:
@@ -8920,6 +8929,13 @@ components:
           phone: 1-3-1234-123
           email: someone@test.com
           url: testurl.com
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
     ConsumerWithSsnPhoneExample:
       value:
         firstName: John
@@ -9012,6 +9028,68 @@ components:
         ssn: '111223333'
         phone: '1-212-555-1234'
         email: frank.yellow@example.com
+    GetConsumerExample:
+      value:
+        id: '3f7ff2cf0ffb3d0cd59875e070c9b1d4'
+        firstName: John
+        lastName: Doe
+        customerId: 1000006677
+        address: 434 W Ascension Way
+        city: Murray
+        state: UT
+        zip: '84123'
+        phone: 1-3-1234-1234
+        ssn: '6789'
+        birthday:
+          year: '1989'
+          month: '12'
+          dayOfMonth: '13'
+        email: someone@test.com
+        createdDate: 1607450357
+        suffix: Mr
+        middleName: Doe
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '1-801-443-7288'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
+    ModifyConsumerExample:
+      value:
+        firstName: John
+        lastName: Doe
+        address: 434 W Ascension Way
+        city: Murray
+        state: UT
+        zip: '84123'
+        phone: 1-3-1234-1234
+        email: someone@test.com
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '1-801-443-7288'
+          email: 'customerservice@abcapartments.com'
+          url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
 
     GeneratePayrollReportRequestExample:
       value:
@@ -9045,6 +9123,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1579819592
         title: Mastercard Open Banking Verification of Employment - Payroll
         consumerId: 656cf7083c5c06e0c125a698579f0000
@@ -9099,6 +9184,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: 7a7qyps2iy
         type: voiePayroll
         reportStyle: credentialedPayroll
@@ -9158,6 +9250,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Mastercard Open Banking Pay Statement Extraction Report
         consumerId: 4089f408963dd6b90b28a935e9903c0e
@@ -9225,6 +9324,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1596226182
         title: Mastercard Open Banking Statement Report
         consumerId: 555595ec74c8ec57adf44dadddb6a35
@@ -9342,6 +9448,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Report - Personal
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -9754,6 +9867,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1594678007
         title: Mastercard Open Banking Transactions Report
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
@@ -9839,6 +9959,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Assets
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -9920,6 +10047,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Verification of Asset and Income - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10000,6 +10134,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Asset Ready Report (CRA)
         consumerId: cb619e10185177cd92271c4da2df3fa3
@@ -10113,6 +10254,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Mastercard Open Banking Verification Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10178,6 +10326,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1579819592
         title: Verification of Income and Employment - Paystub
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -10248,6 +10403,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: inProgress
@@ -10309,6 +10471,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Income
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -11194,6 +11363,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         title: Mastercard Open Banking Payment Risk Insights
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -17395,6 +17571,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: sfb7xp439w
         type: voa
         status: success
@@ -17525,6 +17708,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         constraints:
           accountIds:
             - '1000535275'
@@ -17943,6 +18133,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: sfb7xp4wer
         constraints:
           accountIds:
@@ -18062,6 +18259,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         type: voiePayroll
         reportStyle: credentialedPayroll
         status: success
@@ -18196,6 +18400,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -18279,6 +18490,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -28814,6 +29032,13 @@ components:
           phone: 555-2106
           email: customerservice@example.com
           url: example.com
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-3-1234-123
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 8d510370aae83d459da0b905ee59e714
         consumerSsn: '1147'
@@ -40859,6 +41084,17 @@ components:
           $ref: '#/components/schemas/Suffix'
         endUser:
           $ref: '#/components/schemas/ConsumerEndUser'
+        resellers:
+          description:
+            Any entity other than the partner generating the report (the
+            requestor) or the endUser that will procure the consumer report.
+            Conditionally populated if the consumer record was created with a
+            reseller.
+          type: array
+          minItems: 0
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Reseller'
     ConsumerDateOfBirth:
       type: integer
       description: >-
@@ -40909,6 +41145,19 @@ components:
           $ref: '#/components/schemas/Suffix'
         endUser:
           $ref: '#/components/schemas/ConsumerEndUser'
+        resellers:
+          description:
+            Any entity other than the partner generating the report (the
+            requestor) or the endUser that will procure the consumer report.
+            Conditionally required. The requestor is expected to include
+            reseller details when creating a consumer if there is any other
+            entity who will procure the consumer's reports, including a
+            reseller, who is not the requestor or the endUser.
+          type: array
+          minItems: 0
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Reseller'
     ConvertToRepayment:
       type: integer
       description: >-
@@ -44691,6 +44940,19 @@ components:
           $ref: '#/components/schemas/Suffix'
         endUser:
           $ref: '#/components/schemas/ConsumerEndUser'
+        resellers:
+          description:
+            Any entity other than the partner generating the report (the
+            requestor) or the endUser that will procure the consumer report.
+            Conditionally required. The requestor is expected to include
+            reseller details when creating a consumer if there is any other
+            entity who will procure the consumer's reports, including a
+            reseller, who is not the requestor or the endUser.
+          type: array
+          minItems: 0
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Reseller'
     NewCustomer:
       description: A new customer to be enrolled
       required:
@@ -50823,11 +51085,10 @@ components:
       example: 'testurl.com'
     ConsumerEndUser:
       description:
-        Reseller end user information. This is populated only when the report
-        requires a consumer record to be generated and the consumer object
-        includes end user details. The partner is expected to include endUser
-        details when creating a consumer if the end user of the consumer reports
-        is another entity than the partner generating the report.
+        The end user of the consumer report. Conditionally required. The partner
+        is expected to include endUser details when creating a consumer if the
+        end user is a separate entity from the partner generating the report
+        (the requestor).
       required:
         - name
         - address
@@ -50853,6 +51114,49 @@ components:
           $ref: '#/components/schemas/EmailAddress'
         url:
           $ref: '#/components/schemas/EndUserUrl'
+    Reseller:
+      description:
+        Reseller information. This is populated when a reseller is involved in
+        accessing a consumer's report. Partners must include reseller details
+        when a third-party reseller will have access to the consumer's report
+        data.
+      required:
+        - name
+        - address
+        - city
+        - state
+        - zip
+        - phone
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/FirstName'
+        address:
+          $ref: '#/components/schemas/AddressLine1'
+        city:
+          $ref: '#/components/schemas/City'
+        state:
+          type: string
+          description: Two-character state code (e.g., UT)
+          minLength: 2
+          maxLength: 2
+          example: UT
+        zip:
+          type: string
+          description: Five-digit ZIP code (e.g., 84118)
+          minLength: 5
+          maxLength: 5
+          pattern: '^\d{5}$'
+          example: '84123'
+        phone:
+          type: string
+          description:
+            Phone number, 10-15 digits. Accepts formatted values including
+            hyphens and optional country code prefix (e.g., 801-555-1212,
+            +18015551212).
+          minLength: 10
+          maxLength: 15
+          example: 1-801-443-7288
     DepositSwitchesSummary:
       required:
         - customerId
