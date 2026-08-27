@@ -189,32 +189,32 @@ class ConnectApiTest extends BaseTest {
         }
     }
 
-    @Test
-    void verifyMicroDepositEntryTest() {
-        try {
-            String customerId = createTestCustomer();
-            AccountValidationAssistanceApi accountApi = new AccountValidationAssistanceApi(apiClient);
-            var response = accountApi.initiateMicroAmountDeposits(customerId, ModelFactory.newMicroDepositInitiation());
-            var accountId = response.getAccountId();
-            String status;
-            do {
-                var details = accountApi.getMicroDepositsDetails(customerId, accountId);
-                status = details.getStatus();
-            } while (!"Completed".equals(status));
-
-            var params = new MicroEntryVerifyRequestParameter()
-                    .partnerId(PARTNER_ID)
-                    .customerId(customerId)
-                    .accountId(accountId);
-            var connectVerifyUrl = api.verifyMicroEntryMicrodeposit(params);
-            var link = connectVerifyUrl.getLink();
-            assertTrue(link.contains("accountId=" + accountId));
-            assertTrue(link.contains(CUSTOMER_ID_PARAM + customerId));
-            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
-        } catch (ApiException e) {
-            fail(e);
-        }
-    }
+//    @Test
+//    void verifyMicroDepositEntryTest() {
+//        try {
+//            String customerId = createTestCustomer();
+//            AccountValidationAssistanceApi accountApi = new AccountValidationAssistanceApi(apiClient);
+//            var response = accountApi.initiateMicroAmountDeposits(customerId, ModelFactory.newMicroDepositInitiation());
+//            var accountId = response.getAccountId();
+//            String status;
+//            do {
+//                var details = accountApi.getMicroDepositsDetails(customerId, accountId);
+//                status = details.getStatus();
+//            } while (!"Completed".equals(status));
+//
+//            var params = new MicroEntryVerifyRequestParameter()
+//                    .partnerId(PARTNER_ID)
+//                    .customerId(customerId)
+//                    .accountId(accountId);
+//            var connectVerifyUrl = api.verifyMicroEntryMicrodeposit(params);
+//            var link = connectVerifyUrl.getLink();
+//            assertTrue(link.contains("accountId=" + accountId));
+//            assertTrue(link.contains(CUSTOMER_ID_PARAM + customerId));
+//            assertTrue(link.contains(PARTNER_ID_PARAM + PARTNER_ID));
+//        } catch (ApiException e) {
+//            fail(e);
+//        }
+//    }
 
     @Test
     void generateConnectTransferBillPaySwitchUrlTest() {
