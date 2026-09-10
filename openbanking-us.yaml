@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.43.3
+  version: 1.43.4
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -52399,7 +52399,7 @@ components:
           minItems: 0
           example:
             - 'Digital Wallet'
-            - 'Payment Gateway'
+            - 'Payment Network'
         address:
           $ref: '#/components/schemas/DESAddress'
         additionalDetails:
