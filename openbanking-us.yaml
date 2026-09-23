@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.43.4
+  version: 1.44.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -71,6 +71,8 @@ tags:
     description: Payment History Report for business
   - name: Payment Success Indicator
     description: Predict a transaction's likelihood to settle
+  - name: Pay Feedback API
+    description: Real-time payment feedback submission and acknowledgements
   - name: Payment Enablement Bundle
     description: Any or all of the Payments endpoints in one API call
   - name: Portfolios
@@ -1260,6 +1262,55 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /payments/feedbacks:
+    post:
+      tags:
+        - Pay Feedback API
+      summary: Submit Payment Feedback
+      description: >-
+        Submit real-time payment outcomes to improve the accuracy of the Pay
+        products.
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: SubmitPaymentFeedback
+      requestBody:
+        $ref: '#/components/requestBodies/PayFeedbackData'
+      responses:
+        '200':
+          $ref: '#/components/responses/PayFeedbackResult'
+        '400':
+          $ref: '#/components/responses/PayFeedbackBadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
+  /payments/encrypted-feedbacks:
+    post:
+      tags:
+        - Pay Feedback API
+      summary: Submit Payment Feedback (encrypted)
+      description: >-
+        Submit real-time payment outcomes encrypted at the application layer.
+
+        The request body contains an opaque encrypted string representing a
+        serialized `PayFeedbackRequestProperties` payload.
+
+        The response body contains an opaque encrypted string representing a
+        serialized `PayFeedbackAcknowledgement` payload.
+
+        _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
+      operationId: SubmitPaymentFeedbackEncrypted
+      requestBody:
+        $ref: '#/components/requestBodies/EncryptedPayFeedbackData'
+      responses:
+        '200':
+          $ref: '#/components/responses/EncryptedPayFeedbackResult'
+        '400':
+          $ref: '#/components/responses/PayFeedbackBadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '406':
+          $ref: '#/components/responses/NotAllowedErrorResponse'
   /payments/customers/{customerId}/accounts/{accountId}/fcra-payment-success-indicators:
     post:
       tags:
@@ -3951,8 +4002,8 @@ paths:
       description: >-
         Creates a new experience configuration for indirect partners by
         duplicating an existing experience through the API, enabling them to
-        manage customer onboarding flows based on the 
-        configuration of the source experience.
+        manage customer onboarding flows based on the  configuration of the
+        source experience.
       operationId: CreateConnectExperience
       security:
         - FinicityAppToken: []
@@ -5647,6 +5698,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PaymentSuccessIndicatorsProperties'
+    PayFeedbackData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayFeedbackRequestProperties'
+          examples:
+            PSI_Settled_Y:
+              $ref: '#/components/examples/PSI_Settled_Y'
+            PSI_Settled_N:
+              $ref: '#/components/examples/PSI_Settled_N'
+            ACH_Settled_Y:
+              $ref: '#/components/examples/ACH_Settled_Y'
+            ACH_Settled_N:
+              $ref: '#/components/examples/ACH_Settled_N'
+    EncryptedPayFeedbackData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EncryptedFeedbackRequestProperties'
+          examples:
+            EncryptedFeedbackRequestExample:
+              $ref: '#/components/examples/EncryptedFeedbackRequestExample'
     GenerateSBCAMetricsReportRequest:
       required: true
       content:
@@ -6111,6 +6186,35 @@ components:
           examples:
             PaymentSuccessIndicatorsInProgressResponseExample:
               $ref: '#/components/examples/PaymentSuccessIndicatorsInProgressResponseExample'
+    PayFeedbackResult:
+      description: Successfully submitted payment feedback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayFeedbackAcknowledgement'
+          examples:
+            PayFeedbackSuccessResponse:
+              $ref: '#/components/examples/PayFeedbackSuccessResponse'
+            PayFeedbackPartialSuccessResponse:
+              $ref: '#/components/examples/PayFeedbackPartialSuccessResponse'
+    PayFeedbackBadRequestError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PayFeedbackValidationError'
+          examples:
+            PayFeedbackBadRequestErrorExample:
+              $ref: '#/components/examples/PayFeedbackBadRequestErrorExample'
+    EncryptedPayFeedbackResult:
+      description: Successfully submitted encrypted payment feedback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EncryptedFeedbackResponseProperties'
+          examples:
+            EncryptedFeedbackResponseExample:
+              $ref: '#/components/examples/EncryptedFeedbackResponseExample'
     RetrieveFcraPaymentSuccessIndicatorsResponse:
       description:
         Successfully requested to retrieve a Payment Success Indicators score
@@ -6918,6 +7022,15 @@ components:
           examples:
             GenericBadRequestExample:
               $ref: '#/components/examples/GenericBadRequestExample'
+    BadRequestError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          examples:
+            BadRequestErrorResponseExample:
+              $ref: '#/components/examples/BadRequestErrorResponseExample'
     BadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -8911,7 +9024,7 @@ components:
         city: Murray
         state: UT
         zip: '84123'
-        phone: 1-3-1234-1234
+        phone: 1-801-555-01734
         ssn: '989898989'
         birthday:
           year: '1989'
@@ -8926,7 +9039,7 @@ components:
           city: Murray
           state: UT
           zip: '84123'
-          phone: 1-3-1234-123
+          phone: 1-801-555-0173
           email: someone@test.com
           url: testurl.com
         resellers:
@@ -8935,7 +9048,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
     ConsumerWithSsnPhoneExample:
       value:
         firstName: John
@@ -8954,6 +9067,13 @@ components:
           phone: 1-212-555-1234
           email: someone@test.com
           url: testurl.com
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
     ConsumerWithSsnEmailExample:
       value:
         firstName: Jane
@@ -9038,7 +9158,7 @@ components:
         city: Murray
         state: UT
         zip: '84123'
-        phone: 1-3-1234-1234
+        phone: 1-801-555-01734
         ssn: '6789'
         birthday:
           year: '1989'
@@ -9063,7 +9183,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
     ModifyConsumerExample:
       value:
         firstName: John
@@ -9072,7 +9192,7 @@ components:
         city: Murray
         state: UT
         zip: '84123'
-        phone: 1-3-1234-1234
+        phone: 1-801-555-01734
         email: someone@test.com
         endUser:
           name: 'ABC Apartments'
@@ -9089,7 +9209,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
 
     GeneratePayrollReportRequestExample:
       value:
@@ -9129,7 +9249,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Verification of Employment - Payroll
         consumerId: 656cf7083c5c06e0c125a698579f0000
@@ -9190,7 +9310,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: 7a7qyps2iy
         type: voiePayroll
         reportStyle: credentialedPayroll
@@ -9256,7 +9376,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Mastercard Open Banking Pay Statement Extraction Report
         consumerId: 4089f408963dd6b90b28a935e9903c0e
@@ -9330,7 +9450,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1596226182
         title: Mastercard Open Banking Statement Report
         consumerId: 555595ec74c8ec57adf44dadddb6a35
@@ -9395,6 +9515,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Report - Business
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -9454,7 +9581,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Report - Personal
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -9873,7 +10000,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1594678007
         title: Mastercard Open Banking Transactions Report
         consumerId: a925b07c9e028c680ad9c1d18d2e7199
@@ -9965,7 +10092,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Assets
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10053,7 +10180,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Verification of Asset and Income - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10140,7 +10267,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Asset Ready Report (CRA)
         consumerId: cb619e10185177cd92271c4da2df3fa3
@@ -10260,7 +10387,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Mastercard Open Banking Verification Employment - Transactions
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10332,7 +10459,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Verification of Income and Employment - Paystub
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -10409,7 +10536,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: inProgress
@@ -10477,7 +10604,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         createdDate: 1588350269
         title: Mastercard Open Banking Verification of Income
         consumerId: ac39e237c7619a4ecf014b8d399c0696
@@ -10535,6 +10662,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         consumerId: 555595ec74c8ec57adf44dadddb6a35
         consumerSsn: '1111'
         consumerDetails:
@@ -10754,6 +10888,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         type: cfrb
         status: success
         createdDate: 1575666823
@@ -11047,6 +11188,99 @@ components:
       value:
         code: 1001
         message: Account Error - use different account
+    PSI_Settled_Y:
+      summary: PSI Settled = Y (settledDate required)
+      description: PSI payload when the transaction is settled.
+      value:
+        payFeedbacks:
+          - product: PSI
+            partnerId: 1234567890
+            customerId: 9876543210
+            paymentId: '9988776655'
+            settled: 'Y'
+            initiationDate: '2025-09-10'
+            settledDate: '2025-09-11'
+            initiationAmount: 250.75
+            payReqId: '123456789'
+    PSI_Settled_N:
+      summary: PSI Settled = N (returnDate and returnReason required)
+      description: PSI payload when the transaction is not settled.
+      value:
+        payFeedbacks:
+          - product: PSI
+            partnerId: 1234567890
+            customerId: 9876543210
+            paymentId: '9988776655'
+            settled: 'N'
+            initiationDate: '2025-09-10'
+            returnDate: '2025-09-15'
+            returnReason: 'R01'
+            initiationAmount: 250.75
+            payReqId: '123456789'
+    ACH_Settled_N:
+      summary: ACH Settled = N (returnDate and returnReason required)
+      description: ACH payload when the transaction is not settled.
+      value:
+        payFeedbacks:
+          - product: ACH
+            partnerId: 1234567890
+            customerId: 9876543210
+            paymentId: '9988776655'
+            settled: 'N'
+            initiationDate: '2025-09-10'
+            returnDate: '2025-09-15'
+            returnReason: R01
+            accountId: '789456123'
+            accountNumberLast4: '4567'
+            routingNumber: '021000021'
+    ACH_Settled_Y:
+      summary: ACH Settled = Y (settledDate required)
+      description: ACH payload when the transaction is settled.
+      value:
+        payFeedbacks:
+          - product: ACH
+            partnerId: 1234567890
+            customerId: 9876543210
+            paymentId: '9988776655'
+            settled: 'Y'
+            initiationDate: '2025-09-10'
+            settledDate: '2025-09-11'
+            accountId: '789456123'
+            accountNumberLast4: '4567'
+            routingNumber: '021000021'
+    EncryptedFeedbackRequestExample:
+      value:
+        encryptedFeedbackRequestProperties: eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw==
+    PayFeedbackSuccessResponse:
+      value:
+        totalFeedbackCount: 150
+        successFeedbackCount: 150
+        errorFeedbackCount: 0
+        errorItems: []
+    PayFeedbackBadRequestErrorExample:
+      value:
+        code: 10001
+        status: '400'
+        message: Payload Validation Failed
+        errorDetails:
+          - field: paymentId
+            message: paymentId is a required parameter
+            product: PSI
+            paymentId: '1234567890'
+    PayFeedbackPartialSuccessResponse:
+      value:
+        totalFeedbackCount: 150
+        successFeedbackCount: 149
+        errorFeedbackCount: 1
+        errorItems:
+          - product: PSI
+            paymentId: '9988776655'
+            errorCode: '450004'
+            errorMessage:
+              'Invalid Combination of PartnerId,CustomerId and Account'
+    EncryptedFeedbackResponseExample:
+      value:
+        encryptedFeedbackResponseProperties: eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw==
     PaymentSuccessIndicatorsInProgressResponseExample:
       value:
         payRequestId: '476412776235977427'
@@ -11171,6 +11405,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         requestId: sfb7xacr9w
         type: preQualVoa
         status: success
@@ -11274,6 +11515,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         requestId: sfb7xp4iui
         type: assetSummary
         status: success
@@ -11369,7 +11617,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment Risk Insights
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -12537,6 +12785,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment Risk Insights
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -13716,6 +13971,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment Risk Insights
         disputeStatement: 'Invalid data present.'
         constraints:
@@ -14869,6 +15131,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment Risk Insights
         disputeStatement: 'Invalid data present.'
         businessDetails:
@@ -16034,6 +16303,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@abcapartments.com'
           url: 'abcapartments.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment Risk Insights
         disputeStatement: 'Invalid data present.'
         businessDetails:
@@ -17213,6 +17489,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         requestId: 8wy5htqg8u
         type: paystatement
         status: success
@@ -17316,6 +17599,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         constraints:
           statementReportData:
             accountId: 1000076901
@@ -17362,6 +17652,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         constraints:
           accountIds:
             - '1000075473'
@@ -17577,7 +17874,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: sfb7xp439w
         type: voa
         status: success
@@ -17714,7 +18011,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         constraints:
           accountIds:
             - '1000535275'
@@ -17961,6 +18258,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         requestId: 7a7qyps2iy
         customerType: active
         customerId: 1275320
@@ -18052,6 +18356,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         constraints:
           reportId: j7k8qbgwsa7d-voietxverify
           reportCustomFields:
@@ -18139,7 +18450,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: sfb7xp4wer
         constraints:
           accountIds:
@@ -18265,7 +18576,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         type: voiePayroll
         reportStyle: credentialedPayroll
         status: success
@@ -18406,7 +18717,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -18496,7 +18807,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         requestId: 7a7qyps2iy
         type: voieTxVerify
         status: success
@@ -18772,6 +19083,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -18943,6 +19261,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -19003,6 +19328,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Balance Analytics
         constraints:
@@ -19048,6 +19380,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -19218,6 +19557,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -19277,6 +19623,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Cash Flow Analytics
         constraints:
@@ -19482,6 +19835,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         createdDate: 1579819592
         title: Mastercard Open Banking Payment History Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
@@ -24135,6 +24495,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -24972,6 +25339,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Balance Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -25254,6 +25628,13 @@ components:
           phone: '555-2106'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Balance Analytics
         constraints:
           analyticsReportData:
@@ -29038,7 +29419,7 @@ components:
             city: Murray
             state: UT
             zip: '84123'
-            phone: 1-3-1234-123
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Cash Flow Analytics
         consumerId: 8d510370aae83d459da0b905ee59e714
         consumerSsn: '1147'
@@ -30461,6 +30842,13 @@ components:
           phone: '1-801-443-7288'
           email: 'customerservice@example.com'
           url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
         title: Mastercard Open Banking Payment History Analytics
         consumerId: 3f7ff2cf0ffb3d0cd59875e070c9b1d4
         consumerSsn: '1234'
@@ -34880,6 +35268,13 @@ components:
             phone: '1-801-443-7288'
             email: 'john.doe@example.com'
             url: 'example.com'
+          resellers:
+            - name: Jane
+              address: 434 W Ascension Way
+              city: Murray
+              state: UT
+              zip: '84123'
+              phone: 1-801-555-0173
         reports:
           - id: 'v29j6qabmr8j-voietxverify'
             portfolioId: 'y4zsgccj4xpw1-port'
@@ -38759,6 +39154,17 @@ components:
           $ref: '#/components/schemas/PartnerName'
         endUser:
           $ref: '#/components/schemas/ConsumerEndUser'
+        resellers:
+          description:
+            Any entity other than the partner generating the report (the
+            requestor) or the endUser that will procure the consumer report.
+            Conditionally populated if the consumer record was created with a
+            reseller.
+          type: array
+          minItems: 0
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Reseller'
         createdDate:
           $ref: '#/components/schemas/ReportCreatedDate'
         title:
@@ -42700,6 +43106,244 @@ components:
       description:
         Name of the employer as stated by the employer in the payroll system
       example: ACME INC
+    PayFeedbackRequestProperties:
+      description: Properties to submit payment feedback.
+      type: object
+      properties:
+        payFeedbacks:
+          description: List of feedback items.
+          type: array
+          items:
+            $ref: '#/components/schemas/PayFeedbackItem'
+          minItems: 1
+          maxItems: 1000
+      required:
+        - payFeedbacks
+    PayFeedbackItem:
+      description: A single payment feedback item.
+      type: object
+      properties:
+        product:
+          description: Product identifier.
+          type: string
+          enum:
+            - PSI
+            - ACH
+          example: PSI
+        partnerId:
+          description: Partner ID provided by Mastercard.
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9223372036854775807
+          example: 1234567890
+        customerId:
+          description: Customer ID provided by Mastercard.
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9223372036854775807
+          example: 9876543210
+        paymentId:
+          description: Partner-provided identifier for the payment.
+          type: string
+          minLength: 1
+          maxLength: 30
+          pattern: '^[0-9]{1,30}$'
+          example: '9988776655'
+        settled:
+          description: Indicates whether the transaction settled.
+          type: string
+          enum:
+            - 'Y'
+            - 'N'
+          example: 'Y'
+        initiationDate:
+          description: Date the transaction was initiated (YYYY-MM-DD).
+          type: string
+          format: date
+          example: '2025-09-10'
+        settledDate:
+          description:
+            Date the transaction was settled (YYYY-MM-DD). This field is
+            required when settled is 'Y'.
+          type: string
+          format: date
+          example: '2025-09-11'
+        returnDate:
+          description:
+            Date the transaction was returned (YYYY-MM-DD). This field is
+            required when settled is 'N'.
+          type: string
+          format: date
+          example: '2025-09-15'
+        returnReason:
+          description:
+            Reason the transaction was returned. This field is required when
+            settled is 'N'.
+          type: string
+          example: R01
+        initiationAmount:
+          description: Transaction initiation amount.
+          type: number
+          format: double
+          example: 250.75
+        payReqId:
+          description: Pay Request ID.
+          type: string
+          example: '123456789'
+        accountId:
+          description: Account identifier.
+          type: string
+          example: '789456123'
+        accountNumberLast4:
+          description: Last four digits of the bank account number.
+          type: string
+          minLength: 4
+          maxLength: 4
+          pattern: '^[0-9]{4}$'
+          example: '4567'
+        routingNumber:
+          description: Bank routing number.
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: '^[0-9]{1,20}$'
+          example: '021000021'
+      additionalProperties: false
+      required:
+        - product
+        - partnerId
+        - customerId
+        - paymentId
+        - settled
+        - initiationDate
+    EncryptedFeedbackRequestProperties:
+      type: object
+      properties:
+        encryptedFeedbackRequestProperties:
+          description: Encrypted feedback request payload.
+          type: string
+          example: eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw==
+      required:
+        - encryptedFeedbackRequestProperties
+    EncryptedFeedbackResponseProperties:
+      type: object
+      properties:
+        encryptedFeedbackResponseProperties:
+          description: Encrypted feedback response payload.
+          type: string
+          example: eyJraWQiOiI3NjFiMDAzYzFlYWRlM(...)==.Y+oPYKZEMTKyYcSIVEgtQw==
+      required:
+        - encryptedFeedbackResponseProperties
+    PayFeedbackAcknowledgement:
+      type: object
+      properties:
+        totalFeedbackCount:
+          description:
+            Total number of feedback items associated with the partner.
+          type: integer
+          format: int32
+          example: 100
+        successFeedbackCount:
+          description: Number of successfully submitted feedback items.
+          type: integer
+          format: int32
+          example: 95
+        errorFeedbackCount:
+          description: Number of feedback items that failed submission.
+          type: integer
+          format: int32
+          example: 5
+        errorItems:
+          description: List of errored feedback items.
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFeedbackItem'
+      required:
+        - totalFeedbackCount
+        - successFeedbackCount
+        - errorFeedbackCount
+        - errorItems
+    ErrorFeedbackItem:
+      type: object
+      properties:
+        paymentId:
+          description: Unique identifier for the payment transaction.
+          type: string
+          example: PAY123456
+        product:
+          description:
+            Name or identifier of the product associated with the error.
+          type: string
+          example: ACH
+        errorCode:
+          description: Internal/system error code.
+          type: string
+          example: '450004'
+        errorMessage:
+          description: Human-readable error message.
+          type: string
+          example: 'Invalid Combination of PartnerId,CustomerId and Account'
+      required:
+        - paymentId
+        - product
+        - errorCode
+        - errorMessage
+    ValidationErrorDetail:
+      type: object
+      properties:
+        field:
+          description: Field that failed validation.
+          type: string
+          example: paymentId
+        message:
+          description: Human-readable validation message.
+          type: string
+          example: paymentId is a required parameter
+        product:
+          description:
+            Product associated with the invalid feedback item when available.
+          type: string
+          example: PSI
+        paymentId:
+          description:
+            Payment identifier associated with the invalid feedback item when
+            available.
+          type: string
+          example: '9988776655'
+      required:
+        - field
+        - message
+    ValidationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorMessage'
+        - type: object
+          properties:
+            errorDetails:
+              description:
+                List of field-level validation errors found in the payload.
+              type: array
+              items:
+                $ref: '#/components/schemas/ValidationErrorDetail'
+    PayFeedbackValidationError:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: integer
+          example: 10001
+        status:
+          type: string
+          example: '400'
+        message:
+          type: string
+          example: Payload Validation Failed
+        errorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetail'
     ErrorMessage:
       required:
         - code
@@ -43798,6 +44442,10 @@ components:
           $ref: '#/components/schemas/InstitutionProductionStatus'
         oauthInstitutionId:
           $ref: '#/components/schemas/NumericInstitutionId'
+        offersBusinessAccounts:
+          $ref: '#/components/schemas/InstitutionOffersBusinessAccounts'
+        offersPersonalAccounts:
+          $ref: '#/components/schemas/InstitutionOffersPersonalAccounts'
     InstitutionAccountOwner:
       type: boolean
       description: |-
@@ -44132,6 +44780,10 @@ components:
           $ref: '#/components/schemas/NumericInstitutionId'
         countryCodes:
           $ref: '#/components/schemas/InstitutionCountryCodes'
+        offersBusinessAccounts:
+          $ref: '#/components/schemas/InstitutionOffersBusinessAccounts'
+        offersPersonalAccounts:
+          $ref: '#/components/schemas/InstitutionOffersPersonalAccounts'
         overallStatusTemp:
           $ref: '#/components/schemas/InstitutionOverallStatusTemp'
         transAgg_status:
@@ -45057,6 +45709,18 @@ components:
         "true": The institution is an OAuth connection
 
         "false": The institution isn't an OAuth connection
+      example: true
+    InstitutionOffersBusinessAccounts:
+      description: Indicates whether the institution offers business accounts.
+      type: boolean
+      nullable: true
+      default: null
+      example: true
+    InstitutionOffersPersonalAccounts:
+      description: Indicates whether the institution offers personal accounts.
+      type: boolean
+      nullable: true
+      default: null
       example: true
     InstitutionUrlForgotPassword:
       type: string
@@ -52743,8 +53407,6 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/AccountId'
-        realAccountNumberLast4:
-          $ref: '#/components/schemas/AccountNumberLast4'
         institutionId:
           $ref: '#/components/schemas/InstitutionId'
         institutionName:
@@ -52775,6 +53437,8 @@ components:
           $ref: '#/components/schemas/AccountId'
         accountNumberDisplay:
           $ref: '#/components/schemas/AccountNumberDisplay'
+        realAccountNumberLast4:
+          $ref: '#/components/schemas/AccountNumberLast4'
         name:
           $ref: '#/components/schemas/Name'
         type:
@@ -52862,7 +53526,6 @@ components:
           example: FI Down for maintenance
     AvailableBalancePEB:
       required:
-        - realAccountNumberLast4
         - availableBalance
         - availableBalanceDate
         - clearedBalance
@@ -53859,8 +54522,7 @@ components:
       description: >-
         New transaction refresh request:  
          * Request must contain at least `institutionLoginId` OR
-        `accountIds`  
-         * If both are provided, `accountIds` takes preference  
+        `accountIds`, but not both   
          * "standard" is default mode  
          * `fromDate` & `toDate` are only required and considered when mode is
         "custom"
@@ -53881,6 +54543,12 @@ components:
     TransactionRefreshInitiated:
       type: object
       description: Transaction refresh response
+      required:
+        - refreshId
+        - customerId
+        - mode
+        - status
+        - createdAt
       properties:
         refreshId:
           $ref: '#/components/schemas/TransactionRefreshID'
@@ -53905,6 +54573,15 @@ components:
     TransactionRefreshStatusDetails:
       type: object
       description: Transaction refresh status
+      required:
+        - refreshId
+        - customerId
+        - accounts
+        - mode
+        - status
+        - totalCount
+        - successCount
+        - failedCount
       properties:
         refreshId:
           $ref: '#/components/schemas/TransactionRefreshID'
@@ -53917,6 +54594,10 @@ components:
             request.
           items:
             type: object
+            required:
+              - accountId
+              - institutionLoginId
+              - institutionId
             properties:
               accountId:
                 $ref: '#/components/schemas/AccountId'
@@ -53928,6 +54609,12 @@ components:
                 $ref: '#/components/schemas/AggregationStatusCode'
               aggregationSuccessDate:
                 $ref: '#/components/schemas/DateTimeWithZone'
+              aggregationAttemptDate:
+                $ref: '#/components/schemas/DateTimeWithZone'
+              code:
+                $ref: '#/components/schemas/Code'
+              message:
+                $ref: '#/components/schemas/Message'
         mode:
           $ref: '#/components/schemas/TransactionRefreshMode'
         status:
@@ -53938,3 +54625,14 @@ components:
           $ref: '#/components/schemas/TransactionRefreshSuccessCount'
         failedCount:
           $ref: '#/components/schemas/TransactionRefreshFailedCount'
+    Code:
+      type: integer
+      format: int32
+      description: |
+        An error code.  
+        Useful link: [Errors](https://developer.mastercard.com/open-finance-us/documentation/errors/)
+      example: 44000
+    Message:
+      type: string
+      description: An error message describing error occured
+      example: The request has been accepted for processing.
