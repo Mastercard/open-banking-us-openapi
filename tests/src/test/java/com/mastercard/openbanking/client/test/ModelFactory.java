@@ -94,6 +94,13 @@ public final class ModelFactory {
                 .type(type);
     }
 
+    public static DepositSwitchAccount newDepositSwitchAccount(String accountNumber, String bankIdentifier, String type) {
+        return new DepositSwitchAccount()
+            .accountNumber(accountNumber)
+            .bankIdentifier(bankIdentifier)
+            .type(DepositSwitchAccount.TypeEnum.fromValue(type));
+    }
+
     public static NewCustomer newCustomer() {
         var username = "customer_" + randomStr();
         return new NewCustomer()

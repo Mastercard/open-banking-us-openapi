@@ -16,7 +16,7 @@ import com.mastercard.openbanking.client.test.BaseTest;
 
 class PayFeedbackApiTest extends BaseTest {
 
-    private final PayFeedbackApiApi api = new PayFeedbackApiApi(apiClient);
+    private final PayFeedbackApi api = new PayFeedbackApi(apiClient);
 
     @Test
     @Disabled("Pay Feedback endpoints are not available in the CI environment yet")
