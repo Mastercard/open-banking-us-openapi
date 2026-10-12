@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.44.1
+  version: 1.45.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -42,6 +42,8 @@ tags:
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
+  - name: Instant Onboarding
+    description: Streamline the onboarding process for new customers
   - name: Connect Components
     description:
       Allow customers to log into their financial institutions and grant
@@ -315,6 +317,25 @@ paths:
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /connect/generate/instant-onboarding:
+    post:
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      tags:
+        - Instant Onboarding
+      summary: Connect Instant Onboarding URL
+      description: Generate a Connect Instant Onboarding URL
+      operationId: GenerateInstantOnboardingConnectUrl
+      requestBody:
+        $ref: '#/components/requestBodies/ConnectGenerateInstantOnboarding'
+      responses:
+        '200':
+          $ref: '#/components/responses/ConnectGenerateInstantOnboardingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
   /connect/v2/generate/microentry/verify:
     post:
       tags:
@@ -398,6 +419,25 @@ paths:
           $ref: '#/components/responses/SendConnectEmailResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+  /users/details:
+    post:
+      security:
+        - FinicityAppKey: []
+          FinicityAppToken: []
+      summary: Retrieves user details from a sessionData.
+      description: Retrieves user details from the downstream CAPI service.
+      tags:
+        - Instant Onboarding
+      operationId: GetUserDetails
+      requestBody:
+        $ref: '#/components/requestBodies/UserDetails'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponseUserDetails'
         '401':
           $ref: '#/components/responses/UnauthorizedErrorResponse'
   /aggregation/v2/customers/testing:
@@ -1696,7 +1736,6 @@ paths:
 
 
         This API returns a list of accounts for the given institution login ID.
-
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
       operationId: MigrateInstitutionLoginAccounts
@@ -5262,6 +5301,26 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectJointBorrowerParameters'
+    ConnectGenerateInstantOnboarding:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectGenerateInstantOnboarding'
+    UserDetails:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - customerId
+              - partnerId
+            properties:
+              customerId:
+                $ref: '#/components/schemas/CustomerId'
+              partnerId:
+                $ref: '#/components/schemas/PartnerId'
     MicroEntryVerifyRequest:
       required: true
       content:
@@ -5711,10 +5770,6 @@ components:
               $ref: '#/components/examples/PSI_Settled_Y'
             PSI_Settled_N:
               $ref: '#/components/examples/PSI_Settled_N'
-            ACH_Settled_Y:
-              $ref: '#/components/examples/ACH_Settled_Y'
-            ACH_Settled_N:
-              $ref: '#/components/examples/ACH_Settled_N'
     EncryptedPayFeedbackData:
       required: true
       content:
@@ -6005,6 +6060,100 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ConnectTransferBillPaySwitchLink'
+    ConnectGenerateInstantOnboardingResponse:
+      description: Successful response. Returns Connect URL.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GlobalHostLink'
+    UserDetailsResponse:
+      description: Returns user session details.
+      content:
+        application/json:
+          schema:
+            type: object
+            description: User details.
+            properties:
+              phone:
+                type: string
+                description: User phone number.
+                example: '2009046100'
+              firstName:
+                type: string
+                description: The user's first name.
+                example: 'Alika'
+              lastName:
+                type: string
+                description: The user's last name.
+                example: 'Pendleberry'
+              email:
+                type: string
+                description: The user's email address.
+                example: 'apendleberry16@salon.com'
+              addressLine1:
+                type: string
+                description: The first line of the user's street address.
+                example: '721 Annamark Street'
+              addressLine2:
+                type: string
+                description:
+                  The second line of the user's street address (e.g. apartment
+                  or suite number).
+                example: 'APT 1'
+              city:
+                type: string
+                description: The city of the user's address.
+                example: 'Midland'
+              state:
+                type: string
+                description: The state of the user's address.
+                example: 'TX'
+              zipCode:
+                type: string
+                description: The ZIP code of the user's address.
+                example: '79705'
+              country:
+                type: string
+                description: The country of the user's address.
+                example: 'United States'
+              dob:
+                type: string
+                description: The user's date of birth.
+                example: '1981-02-22'
+              ssn:
+                type: string
+                description: >-
+                  The user's full social security number. This field may be
+                  empty — that is expected behavior when the experience is
+                  configured to collect date of birth only.
+                example: '598-57-5072'
+              ssnLast4:
+                type: string
+                description: >-
+                  The last 4 digits of the user's social security number. This
+                  field may be empty — that is expected behavior when the
+                  experience is configured to collect date of birth only.
+                example: '5072'
+              accounts:
+                type: array
+                description: List of previously added account IDs.
+                items:
+                  type: string
+                example:
+                  - '5011648377'
+                  - '5011648378'
+          examples:
+            UserDetailsResponseExample:
+              $ref: '#/components/examples/UserDetailsResponseExample'
+    BadRequestErrorResponseUserDetails:
+      description: Invalid user details request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorWrapper'
+          examples:
+            InvalidUserDetails:
+              $ref: '#/components/examples/InvalidUserDetails'
     AppResponse:
       description: Response containing one or more application details.
       content:
@@ -8339,6 +8488,23 @@ components:
               $ref: '#/components/examples/ConsentMissingAppKeyExample'
 
   examples:
+    UserDetailsResponseExample:
+      value:
+        phone: '2009046100'
+        firstName: 'Alika'
+        lastName: 'Pendleberry'
+        email: 'apendleberry16@salon.com'
+        addressLine1: '721 Annamark Street'
+        addressLine2: 'APT 1'
+        city: 'Midland'
+        state: 'TX'
+        zipCode: '79705'
+        country: 'United States'
+        dob: '1981-02-22'
+        ssn: '598-57-5072'
+        ssnLast4: '5072'
+        accounts:
+          - '5011648377'
     TransferDepositSwitchUnauthorizedExample:
       value:
         message: Invalid authorization credentials
@@ -35306,6 +35472,17 @@ components:
             type: 'voieTxVerify'
             status: 'success'
             createdDate: 1743292752
+    InvalidUserDetails:
+      value:
+        Errors:
+          Error:
+            - Source: instant-onboarding-api
+              ReasonCode: '10001'
+              Description: Invalid customerId
+              Recoverable: true
+              Details:
+                The provided customerId or partnerId is invalid. Please verify
+                your credentials and try again.
     DataSharingConsentNotFoundError:
       value:
         code: '10215'
@@ -35430,7 +35607,6 @@ components:
         code: 10005
         message: >-
           Customer does not have the specified account (<message>)
-
   parameters:
     IdTypeParameter:
       name: idType
@@ -41368,6 +41544,31 @@ components:
       description: A generated Connect URL
       example: >-
         https://connect2.finicity.com?customerId=5025024821&institutionId=102105&origin=url&partnerId=2445583925753&signature=b5667164db7a9a0007b59267785c996ca3bc9ce97f2e72c98099cead76edfad9&timestamp=1648050761908&ttl=1648057961908&type=lite&webhookContentType=application%2Fjson
+    GlobalHostLink:
+      type: object
+      description: Contains URL to launch Global Host
+      properties:
+        link:
+          type: string
+          format: uri
+          description: Web URL to launch Global Host
+          example: https://app.openfinance.mastercard.com/connect/app/instant-onboarding?flowId=26a8e811-bd36-41b1-9c0b-3c5be353e12d'
+    ConnectGenerateInstantOnboarding:
+      type: object
+      required:
+        - customerId
+        - partnerId
+      properties:
+        partnerId:
+          description: A Finicity partner ID
+          type: string
+          example: '12221282'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        redirectUri:
+          $ref: '#/components/schemas/RedirectUri'
+        experience:
+          $ref: '#/components/schemas/Experience'
     ConnectParameters:
       required:
         - partnerId
@@ -41819,7 +42020,7 @@ components:
       description: >-
         Additional customer account details. Not all data points will return for
         each account type. You can see the account type that each data point
-        will return for in descriptions. The data point are also subject to
+        will return for in descriptions. The data points are also subject to
         availability by the institution.
       type: object
       properties:
