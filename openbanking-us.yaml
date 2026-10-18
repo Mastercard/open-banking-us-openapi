@@ -41212,13 +41212,12 @@ components:
       example: Streaming Service
     Categorization:
       required:
-        - normalizedPayeeName
         - category
-        - country
       type: object
       properties:
         normalizedPayeeName:
           type: string
+          nullable: true
           description: >-
             A normalized payee, derived from the transaction's description and
             memo fields
@@ -41799,6 +41798,7 @@ components:
       example: 1607450357
     Country:
       type: string
+      nullable: true
       description:
         Country code is Iso3166-1 Alpha-2 code and Alpha 3 standard (max length
         3).
@@ -46018,6 +46018,7 @@ components:
       description:
         A version of the institution connection name that is more user friendly
       type: string
+      nullable: true
       minLength: 0
       maxLength: 255
       example: Finbank
