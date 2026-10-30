@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.45.0
+  version: 1.46.0
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -42,7 +42,7 @@ tags:
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
-  - name: Instant Onboarding
+  - name: Connect Instant Onboarding
     description: Streamline the onboarding process for new customers
   - name: Connect Components
     description:
@@ -1484,76 +1484,6 @@ paths:
           $ref: '#/components/responses/ResourceNotFoundErrorResponse'
         '406':
           $ref: '#/components/responses/NotAllowedErrorResponse'
-  /aggregation/v1/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator/fcra:
-    get:
-      tags:
-        - Payment Success Indicator
-      summary: Get FCRA Payment Success Indicator (Legacy)
-      description: >-
-        Payment Success Indicator (PSI) allows the user to evaluate the
-        likelihood of a specific ACH transaction resulting in an insufficient
-        funds return (NSF). PSI is powered by a machine learning model trained
-        on Finicity’s consumer-permissioned data network. PSI provides a risk
-        assessment, which includes a real-time balance check, a predictive risk
-        score for the up to the next 9 days, and 8 risk attributes to explain
-        and enhance decisioning. Provision and use of this report is subject to
-        all applicable obligations of the FCRA and any applicable analogous
-        state law. This product may only be used for the stated permissible
-        purpose under the FCRA.
-
-
-         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetFCRAPaymentSuccessIndicator
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/AccountIdParameter'
-        - $ref: '#/components/parameters/SettlementAmountParameter'
-        - $ref: '#/components/parameters/SettleByDateParameter'
-        - $ref: '#/components/parameters/PayPurposeCodeParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
-        '400':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorFcraBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorNotFoundResponse'
-  /aggregation/v2/customers/{customerId}/accounts/{accountId}/payments/paymentIndicator:
-    get:
-      tags:
-        - Payment Success Indicator
-      summary: Get Non-FCRA Payment Success Indicator (Legacy)
-      description: >-
-        Payment Success Indicator (PSI) is a Payment Intelligence solution that
-        uses Financial Institution (FI) data to help payment originators
-        evaluate a consumer's ability to pay now and in the future within a
-        given time period. PSI is for payment originators to assess a consumer's
-        real-time FI account balance and historical FI account activities to
-        help minimize ACH declines and enable payment originators to gracefully
-        transition to alternative payment methods or schedules when payment
-        settlement using ACH / Account-based payment is less likely. PSI may not
-        be used for credit or insurance underwriting, employment or rental
-        screening, or any other purpose(s) that would implicate the Fair Credit
-        Reporting Act or other consumer reporting law.
-
-
-         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
-      operationId: GetPaymentSuccessIndicator
-      parameters:
-        - $ref: '#/components/parameters/CustomerIdParameter'
-        - $ref: '#/components/parameters/AccountIdParameter'
-        - $ref: '#/components/parameters/SettlementAmountParameter'
-        - $ref: '#/components/parameters/SettleByDateParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorResponse'
-        '400':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedErrorResponse'
-        '404':
-          $ref: '#/components/responses/GetPaymentSuccessIndicatorNotFoundResponse'
   /aggregation/v1/partners/applications:
     post:
       tags:
@@ -3306,7 +3236,7 @@ paths:
         - $ref: '#/components/parameters/OnBehalfOfParameter'
       responses:
         '200':
-          $ref: '#/components/responses/GetReportResponse'
+          $ref: '#/components/responses/GetReportWithFirstThirdPartyResponse'
         '400':
           $ref: '#/components/responses/BadRequestErrorResponse'
         '401':
@@ -6275,78 +6205,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CustomerAccounts'
-    GetPaymentSuccessIndicatorBadRequestResponse:
-      description: The request was rejected
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            GenericBadRequestExample:
-              $ref: '#/components/examples/GenericBadRequestExample'
-            MissingSettleByDateExample:
-              $ref: '#/components/examples/MissingSettleByDateExample'
-            MissingSettlementAmountExample:
-              $ref: '#/components/examples/MissingSettlementAmountExample'
-            InvalidSettleByDateExample:
-              $ref: '#/components/examples/InvalidSettleByDateExample'
-            IncorrectFieldTypeExample:
-              $ref: '#/components/examples/IncorrectFieldTypeExample'
-            AccountHasNoTransactionExample:
-              $ref: '#/components/examples/AccountHasNoTransactionExample'
-            RequiredFieldParameterExample:
-              $ref: '#/components/examples/RequiredFieldParameterExample'
-            InactiveAccountExample:
-              $ref: '#/components/examples/InactiveAccountExample'
-    GetPaymentSuccessIndicatorFcraBadRequestResponse:
-      description: The request was rejected
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            GenericBadRequestExample:
-              $ref: '#/components/examples/GenericBadRequestExample'
-            MissingSettleByDateExample:
-              $ref: '#/components/examples/MissingSettleByDateExample'
-            MissingSettlementAmountExample:
-              $ref: '#/components/examples/MissingSettlementAmountExample'
-            InvalidPurposeCodeExample:
-              $ref: '#/components/examples/InvalidPurposeCodeExample'
-            InvalidSettleByDateExample:
-              $ref: '#/components/examples/InvalidSettleByDateExample'
-            IncorrectFieldTypeExample:
-              $ref: '#/components/examples/IncorrectFieldTypeExample'
-            AccountHasNoTransactionExample:
-              $ref: '#/components/examples/AccountHasNoTransactionExample'
-            RequiredFieldParameterExample:
-              $ref: '#/components/examples/RequiredFieldParameterExample'
-            InactiveAccountExample:
-              $ref: '#/components/examples/InactiveAccountExample'
-            MissingEmailExample:
-              $ref: '#/components/examples/MissingEmailExample'
-    GetPaymentSuccessIndicatorNotFoundResponse:
-      description: Required details not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            CustomerNotFoundExample:
-              $ref: '#/components/examples/CustomerNotFoundExample'
-            InvalidAccountIdExample:
-              $ref: '#/components/examples/InvalidAccountIdExample'
-    GetPaymentSuccessIndicatorResponse:
-      description: The payment success indicator was successfully retrieved
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PaymentSuccessIndicator'
-          examples:
-            PaymentSuccessIndicatorExample:
-              $ref: '#/components/examples/PaymentSuccessIndicatorExample'
-            PaymentSuccessIndicatorWarningExample:
-              $ref: '#/components/examples/PaymentSuccessIndicatorWarningExample'
     GeneratePaymentSuccessIndicatorsResponse:
       description:
         Successfully requested to generate a Payment Success Indicators score
@@ -8647,6 +8505,7 @@ components:
         externalCustomerId: '1234abcd'
         fromDate: 1580558400
         accountIds: '1000535275 1000535276'
+        externalAccountIds: '1000535275 MjMxMjM0MjE0MTQxMzQyNA=='
         analyticsReportData:
           forCraPurpose: false
           timeIntervalTypes:
@@ -8702,6 +8561,12 @@ components:
         constraints:
           customerId: 1001483250
           externalCustomerId: 1234abcd
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          externalAccountIds:
+            - '1000535275'
+            - 'MjMxMjM0MjE0MTQxMzQyNA=='
           analyticsReportData:
             forCraPurpose: false
             timeIntervalTypes:
@@ -8913,39 +8778,10 @@ components:
         message:
           customer does not have given account (customerId =
           6018989036,    accountId = [6024048234])
-    InvalidPurposeCodeExample:
-      value:
-        code: '10005'
-        message: invalid purpose code
     InvalidStatusParameterExample:
       value:
         code: '18017'
         message: status parameter value must be 'active' or 'pending
-    InvalidSettleByDateExample:
-      value:
-        code: '10006'
-        message: settleByDate must not be in the past
-    IncorrectFieldTypeExample:
-      value:
-        code: '10007'
-        message: '[FIELD] is the incorrect type'
-    AccountHasNoTransactionExample:
-      value:
-        code: '10008'
-        message: account has no transactions
-    RequiredFieldParameterExample:
-      value:
-        code: '10009'
-        message: '[FIELD] is a required parameter'
-    InactiveAccountExample:
-      value:
-        code: '10013'
-        message:
-          Only active accounts can be used, please use a different account
-    MissingEmailExample:
-      value:
-        code: '12022'
-        message: An email is required when registering a customer for PSI-FCRA
     BadCredentialsExample:
       value:
         code: '24302'
@@ -11300,109 +11136,6 @@ components:
                     normalizedPayee: T-Mobile
                     institutionTransactionId: '0000000000'
                     category: Mobile Phone
-    PaymentSuccessIndicatorExample:
-      value:
-        customerId: '453752752892'
-        accountId: '453752772892'
-        payReqId: '484265782033818817'
-        settleByDate: '2023-06-07'
-        settlementAmount: 10.05
-        availableBalance: 823.32
-        indicatorsByDay:
-          - potentialSettlementDate: '2023-06-07'
-            compositeScore: 7
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-          - potentialSettlementDate: '2023-06-08'
-            compositeScore: 6
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-          - potentialSettlementDate: '2023-06-09'
-            compositeScore: 5
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-    PaymentSuccessIndicatorWarningExample:
-      value:
-        code: '2000'
-        message:
-          'Successful Warning - settlement amount exceeds available balance'
-        customerId: '453752752892'
-        accountId: '453752772892'
-        payReqId: '484265782033818817'
-        settleByDate: '2023-06-07'
-        settlementAmount: 102.05
-        availableBalance: 82.32
-        indicatorsByDay:
-          - potentialSettlementDate: '2023-06-07'
-            compositeScore: 7
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-          - potentialSettlementDate: '2023-06-08'
-            compositeScore: 6
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-          - potentialSettlementDate: '2023-06-09'
-            compositeScore: 5
-            scoreIndicator: Less Likely to Settle
-            reasons:
-              recentBalance: 12
-              balanceHistory: 23
-              nsfHistory: 40
-              recentNsfHistory: 78
-              recurringNsf: 34
-              spendHistory: 44
-              depositHistory: 10
-              transactionAmount: 65
-    MissingSettleByDateExample:
-      summary: Missing parameter (settleByDate)
-      value:
-        code: 10009
-        message: Missing parameter (settleByDate)
-    MissingSettlementAmountExample:
-      summary: Missing parameter (settlementAmount)
-      value:
-        code: 10009
-        message: Missing parameter (settlementAmount)
     PSIAccountErrorBadRequestExample:
       summary: PSI Bad Request
       value:
@@ -22216,6 +21949,11 @@ components:
         constraints:
           customerId: 1001483250
           externalCustomerId: '1005061234'
+          accountIds:
+            - '1000535275'
+            - '1000535276'
+          externalAccountIds:
+            - 'MjMxMjM0MjE0MTQxMzQyNA=='
           analyticsReportData:
             forCraPurpose: false
             timeIntervalTypes:
@@ -23548,6 +23286,7 @@ components:
             name: Decisioning API Tests
             accounts:
               - id: 1005179748
+                externalAccountId: MjMxMjM0MjE0MTQxMzQyNA==
                 type: savings
                 analytics:
                   transactionalAttributes:
@@ -36063,18 +35802,6 @@ components:
       schema:
         type: string
       example: '3F'
-    PayPurposeCodeParameter:
-      description: >-
-        The 2-digit code (1P) assigned to indicate the intended purpose. 1P
-        represents the following permissible purpose: “Determine whether a
-        consumers payment method may be accepted or authorized”, which falls
-        under the “Legitimate Business Need” permissible purpose under section
-        604 of the FCRA.
-      name: purposeCode
-      in: query
-      required: true
-      schema:
-        $ref: '#/components/schemas/PayPurposeCode'
     PayRequestIdParameter:
       name: payRequestId
       in: path
@@ -36231,29 +35958,6 @@ components:
         format: int32
         default: 1
         example: 20
-    SettlementAmountParameter:
-      description: The transaction amount in USD $.
-      name: settlementAmount
-      in: query
-      required: true
-      schema:
-        $ref: '#/components/schemas/SettlementAmount'
-      example: 10.05
-    SettleByDateParameter:
-      description: |-
-        The expected date that the funds, from the consumer’s account, will be moved to the receiving account.
-
-        `settleByDate` in ISO 8601 date format (YYYY-MM-DD).
-        `settleByDate` dictates the number of days the model responds with. The response can range from 3-10 days, including `day0`. Details explained below:
-        1. If `settleByDate` is 9 or more days out from today, the response includes 10 days of data, `day0` through `day9`.
-        2. If `settleByDate` is between 3 and 8 days out from today, the response includes 4-9 days of data, `day3-8`.
-        3. If `settleByDate` is between today and 2 days out from today, the response includes 3 days of data, `day0` through `day2`.
-      name: settleByDate
-      in: query
-      required: true
-      schema:
-        $ref: '#/components/schemas/SettleByDate'
-      example: '2023-03-30'
     ProductTypesParameter:
       name: type
       in: query
@@ -37103,14 +36807,35 @@ components:
           $ref: '#/components/schemas/Age'
       type: object
     ForesightAnalyticsReportFirstThirdPartyConstraints:
-      allOf:
-        - $ref: '#/components/schemas/ForesightAnalyticsReportConstraints'
-        - type: object
-          properties:
-            customerId:
-              $ref: '#/components/schemas/NumericCustomerId'
-            externalCustomerId:
-              $ref: '#/components/schemas/ExternalCustomerId'
+      type: object
+      properties:
+        analyticsReportData:
+          $ref: '#/components/schemas/ForesightAnalyticsReportData'
+        accountIds:
+          $ref: '#/components/schemas/ReportAccountIdsString'
+        externalAccountIds:
+          $ref: '#/components/schemas/ReportExternalAccountIdsString'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        externalCustomerId:
+          $ref: '#/components/schemas/ExternalCustomerId'
+    ForesightAnalyticsReportFirstThirdPartyConstraintsOut:
+      type: object
+      properties:
+        analyticsReportData:
+          $ref: '#/components/schemas/ForesightAnalyticsReportData'
+        accountIds:
+          $ref: '#/components/schemas/ReportAccountIds'
+        externalAccountIds:
+          $ref: '#/components/schemas/ReportExternalAccountIds'
+        fromDate:
+          $ref: '#/components/schemas/UnixDate'
+        customerId:
+          $ref: '#/components/schemas/NumericCustomerId'
+        externalCustomerId:
+          $ref: '#/components/schemas/ExternalCustomerId'
     PaymentRiskInsightsReportConstraints:
       type: object
       properties:
@@ -37609,6 +37334,10 @@ components:
           type: number
           description: The available balance for the account
           example: 1000
+    ExternalAccountId:
+      type: string
+      description: An alphanumeric external account ID
+      example: 'MjMxMjM0MjE0MTQxMzQyNA=='
     AccountDetailsTxBased:
       type: object
       allOf:
@@ -38479,7 +38208,7 @@ components:
       description: >-
         The status of the most recent aggregation attempt (see [Aggregation
         Status
-        Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/account-aggregation/#aggregation-status-codes)).
+        Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/account-errors/#aggregation-status-codes)).
         Won't be present until you have run your first aggregation for the
         account.
     PaymentRiskInsightsReportAck:
@@ -38544,7 +38273,7 @@ components:
             reportPin:
               $ref: '#/components/schemas/ReportPin'
             constraints:
-              $ref: '#/components/schemas/ForesightAnalyticsReportFirstThirdPartyConstraints'
+              $ref: '#/components/schemas/ForesightAnalyticsReportFirstThirdPartyConstraintsOut'
     AnalyticsReportAck:
       required:
         - id
@@ -39140,8 +38869,6 @@ components:
         - realAccountNumberLast4
         - availableBalance
         - availableBalanceDate
-        - clearedBalance
-        - clearedBalanceDate
         - aggregationStatusCode
         - currency
       type: object
@@ -41869,14 +41596,6 @@ components:
           $ref: '#/components/schemas/StringUnixDate'
         lastModifiedDate:
           $ref: '#/components/schemas/StringUnixDate'
-    CompositeScore:
-      type: integer
-      format: int32
-      minimum: 0
-      maximum: 100
-      description: |-
-        A risk score from 0-100 that indicates the likelihood of return risk, where a higher score indicates a higher likelihood of settlement or lower likelihood of return.
-      example: 6
     CustomerAccount:
       description: >-
         An account represents a bank account such as a checking or savings that
@@ -43559,10 +43278,10 @@ components:
           type: object
           description: >-
             An error code (can be returned as a number or a string). Useful
-            links: [Common API Status
-            Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/#common-api-status-codes),
+            links: [Error
+            Handling](https://developer.mastercard.com/open-finance-us/documentation/errors),
             [Aggregation Status
-            Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/account-aggregation/#aggregation-status-codes).
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/account-errors/#aggregation-status-codes).
           example: '10001'
         status:
           type: string
@@ -43613,10 +43332,10 @@ components:
           type: object
           description: >-
             An error code (can be returned as a number or a string). Useful
-            links: [Common API Status
-            Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/best-practices/#common-api-status-codes),
+            links: [Error
+            Handling](https://developer.mastercard.com/open-finance-us/documentation/errors),
             [Aggregation Status
-            Codes](https://developer.mastercard.com/open-finance-us/documentation/products/manage/account-aggregation/#aggregation-status-codes).
+            Codes](https://developer.mastercard.com/open-finance-us/documentation/errors/account-errors/#aggregation-status-codes).
           example: '10001'
         title:
           type: string
@@ -43834,143 +43553,6 @@ components:
         Comprehensive identity risk score with a higher score indicating a
         riskier account sign-up.
       example: 275
-    Indicator:
-      type: object
-      properties:
-        potentialSettlementDate:
-          $ref: '#/components/schemas/PotentialSettlementDate'
-        compositeScore:
-          $ref: '#/components/schemas/CompositeScore'
-        scoreIndicator:
-          $ref: '#/components/schemas/ScoreIndicator'
-        reasons:
-          $ref: '#/components/schemas/ReasonItem'
-      required:
-        - potentialSettlementDate
-        - compositeScore
-        - scoreIndicator
-        - reasons
-    IndicatorsByDay:
-      type: array
-      description:
-        An Array of 3-10 days, providing the potentialSettlementDate,
-        compositeScore, scoreIndicator, and reasons.
-      items:
-        $ref: '#/components/schemas/Indicator'
-      minItems: 3
-      maxItems: 10
-    PaymentSuccessIndicator:
-      type: object
-      properties:
-        code:
-          type: string
-          description: PSI error code for this scenario
-          example: '10001'
-        message:
-          type: string
-          description: Detailed reason about the source of the error
-          example: Account Error - use different account
-        customerId:
-          $ref: '#/components/schemas/CustomerId'
-        accountId:
-          $ref: '#/components/schemas/AccountId'
-        payReqId:
-          type: string
-          description:
-            The unique ID that represents the response generated for that
-            specific, customer, account, and transaction.
-          example: '453752752892280957'
-        settleByDate:
-          $ref: '#/components/schemas/SettleByDate'
-        settlementAmount:
-          $ref: '#/components/schemas/SettlementAmount'
-        availableBalance:
-          type: number
-          description: >-
-            The available balance provided, by the consumer’s financial
-            institution, at the time of the request.
-          example: 315.01
-        indicatorsByDay:
-          $ref: '#/components/schemas/IndicatorsByDay'
-      required:
-        - customerId
-        - accountId
-        - payReqId
-        - settleByDate
-        - settlementAmount
-        - availableBalance
-        - indicatorsByDay
-    ReasonItem:
-      type: object
-      description:
-        A collection of 8 reason codes, with a score ranging from 0-100, that
-        explains the drivers that caused the score.
-      properties:
-        recentBalance:
-          description: Evaluates the available balance in an account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 78
-        balanceHistory:
-          description: Evaluates balance trends in the account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 23
-        nsfHistory:
-          description: Evaluates the number of NSF occurrences in the account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 40
-        recentNsfHistory:
-          description: Evaluates the recent NSF occurrences in the account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 34
-        recurringNsf:
-          description:
-            Evaluates the frequency of NSF occurrences in the account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 34
-        spendHistory:
-          description: Evaluates the trends in spend activity in the account.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 44
-        depositHistory:
-          description:
-            Evaluates the trends of the consumer's permissioned account deposit
-            over a period of time.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 10
-        transactionAmount:
-          description: Evaluates the settlementAmount.
-          type: integer
-          minimum: 0
-          maximum: 100
-          example: 65
-      required:
-        - balanceHistory
-        - depositHistory
-        - nsfHistory
-        - recentBalance
-        - recentNsfHistory
-        - recurringNsf
-        - spendHistory
-        - transactionAmount
-    PotentialSettlementDate:
-      type: string
-      format: date
-      description: The date for all days included in the response.
-      example: '2023-03-30'
     SettleByDate:
       type: string
       format: date
@@ -44371,20 +43953,6 @@ components:
         Times](https://docs.finicity.com/endpoint-syntax-and-format/).
       format: int64
       example: 1607450357
-    SettlementAmount:
-      type: number
-      description: >-
-        The transaction amount in USD $.
-      example: 10.05
-    PayPurposeCode:
-      type: string
-      description: >-
-        The 2-digit code (1P) assigned to indicate the intended purpose. 1P
-        represents the following permissible purpose: “Determine whether a
-        consumers payment method may be accepted or authorized”, which falls
-        under the “Legitimate Business Need” permissible purpose under section
-        604 of the FCRA.
-      example: '1P'
     IdentityRiskReasonCode:
       type: string
       description: >-
@@ -48027,8 +47595,6 @@ components:
         - requestId
         - requesterName
         - createdDate
-        - reportRefreshNumber
-        - originalReportCreatedDate
         - title
         - type
         - status
@@ -48051,6 +47617,23 @@ components:
         A whitespace-separated list of account IDs to be included in the report
         (all accounts will be included if not set)
       example: 5011648377 5011648378 5011648379
+    ReportExternalAccountIdsString:
+      type: string
+      description: >-
+        A whitespace-separated list of external account IDs (1st party data) to
+        be included in the report constraint (all accounts will be included if
+        not set)
+      example: 5011648377 MjMxMjM0MjE0MTQxMzQyNA==
+    ReportExternalAccountIds:
+      description: >-
+        An array of external account IDs (1st party data) to be included in the
+        report (all accounts will be included if not set)
+      type: array
+      items:
+        $ref: '#/components/schemas/ExternalAccountId'
+      example:
+        - '5011648377'
+        - 'MjMxMjM0MjE0MTQxMzQyNA=='
     ReportCustomField:
       type: object
       properties:
@@ -48679,15 +48262,6 @@ components:
         institution, it cannot exceed 10 numerical digits.
       format: int64
       example: 490535
-    ScoreIndicator:
-      type: string
-      description:
-        '`scoreIndicator` conveys the `compositeScore`, projecting 3 possible
-        values: "Highly Likely to Settle", "Likely to Settle", and "Less Likely
-        to Settle"'
-      example: Likely to Settle
-      minLength: 1
-      maxLength: 50
     SecurityIdType:
       type: string
       description: >-
@@ -53798,8 +53372,6 @@ components:
       required:
         - availableBalance
         - availableBalanceDate
-        - clearedBalance
-        - clearedBalanceDate
         - aggregationStatusCode
         - currency
       type: object
