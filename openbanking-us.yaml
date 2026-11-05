@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.46.0
+  version: 1.46.1
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -2592,6 +2592,13 @@ paths:
 
 
         There cannot be more than 24 months between `fromDate` and `toDate`.
+
+
+        Use `findTransaction.includeTransactionIds` (up to 200 IDs) to always
+        include specific transactions in the report. If only some, or none, of
+        the submitted IDs are located, the report is still generated
+        successfully and the `errors` array of the report describes the missing
+        transactions.
 
 
         _Supported regions_: ![🇺🇸](https://flagcdn.com/20x15/us.png)
@@ -6655,6 +6662,12 @@ components:
               $ref: '#/components/examples/StatementReportExample'
             TransactionsReportExample:
               $ref: '#/components/examples/TransactionsReportExample'
+            TransactionsReportIncludeTransactionIdsExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsExample'
+            TransactionsReportIncludeTransactionIdsPartialExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsPartialExample'
+            TransactionsReportIncludeTransactionIdsNoMatchExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsNoMatchExample'
             TransactionNONCRAExample:
               $ref: '#/components/examples/TransactionNONCRAExample'
             VOAReportExample:
@@ -6732,6 +6745,12 @@ components:
               $ref: '#/components/examples/StatementReportExample'
             TransactionsReportExample:
               $ref: '#/components/examples/TransactionsReportExample'
+            TransactionsReportIncludeTransactionIdsExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsExample'
+            TransactionsReportIncludeTransactionIdsPartialExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsPartialExample'
+            TransactionsReportIncludeTransactionIdsNoMatchExample:
+              $ref: '#/components/examples/TransactionsReportIncludeTransactionIdsNoMatchExample'
             VOAReportExample:
               $ref: '#/components/examples/VOAReportExample'
             VOAWithIncomeReportExample:
@@ -7105,6 +7124,8 @@ components:
               $ref: '#/components/examples/InvalidConsumerEmailExample'
             InvalidValue:
               $ref: '#/components/examples/InvalidValueExample'
+            IncludeTransactionIdsLimitExceededExample:
+              $ref: '#/components/examples/IncludeTransactionIdsLimitExceededExample'
     GetCustomerBadRequestErrorResponse:
       description: The request was rejected
       content:
@@ -8904,6 +8925,13 @@ components:
           One or more of the fields could not be validated. Please ensure you
           have entered the correct data.
         tags: ''
+    IncludeTransactionIdsLimitExceededExample:
+      summary: includeTransactionIds exceeds the maximum of 200
+      value:
+        code: '10010'
+        message: >-
+          Transactions Exceed Max Limit: The submitted transaction Ids exceed
+          the 200 limit. Please review and resubmit if required.
     InvalidExperienceFieldExample:
       value:
         code: '10010'
@@ -9676,6 +9704,7 @@ components:
         type: cfrp
         status: inProgress
     GenerateTransactionsReportRequestExample:
+      summary: TACRA - Generate Transactions Report Request
       value:
         accountIds: 1027339038 1027339039
         reportCustomFields:
@@ -9703,6 +9732,9 @@ components:
           findTransactionCategory:
             - 'Payment'
             - 'Transfer'
+          includeTransactionIds:
+            - '100001490719'
+            - '100001490897'
     GenerateBalanceBusinessCraAnalyticsReportRequestExample:
       value:
         analyticsReportData:
@@ -10034,6 +10066,7 @@ components:
             shown: false
         fromDate: 1580558400
     GenerateTransactionsReportResponseExample:
+      summary: TACRA - Generate Transactions Report Response (In Progress)
       value:
         id: dnuru2ua2trs-transactions
         portfolioId: hupvwpdzr9dq-16-port
@@ -10073,6 +10106,8 @@ components:
           phone: '5551234567'
           ssn: '1234'
           email: 'john.doe@example.com'
+        type: transactions
+        status: inProgress
         constraints:
           accountIds:
             - '1000075473'
@@ -10102,8 +10137,9 @@ components:
             findTransactionCategory:
               - 'Payment'
               - 'Transfer'
-        type: transactions
-        status: inProgress
+            includeTransactionIds:
+              - '100001490719'
+              - '100001490897'
     GenerateVOAReportRequestExample:
       value:
         accountIds: '1000535275'
@@ -17564,9 +17600,6 @@ components:
           ssn: '1234'
           email: 'john.doe@example.com'
         disputeStatement: 'Invalid data present.'
-        type: transactions
-        status: success
-        createdDate: 1594678007
         endUser:
           name: 'ABC Apartments'
           address: '123 Main St'
@@ -17583,6 +17616,11 @@ components:
             state: UT
             zip: '84123'
             phone: 1-801-555-0173
+        type: transactions
+        status: success
+        createdDate: 1594678007
+        reportRefreshNumber: 2
+        originalReportCreatedDate: 1607450357
         constraints:
           accountIds:
             - '1000075473'
@@ -17648,6 +17686,284 @@ components:
                     institutionTransactionId: '0000000000'
                     category: Payment
                     memo: TMOBILE debit
+    TransactionsReportIncludeTransactionIdsExample:
+      summary: Transactions Report - IncludeTransactionIds
+      value:
+        id: '1000075473'
+        title: Mastercard Open Banking Transactions Report
+        customerType: testing
+        customerId: 1000018865
+        consumerId: a925b07c9e028c680ad9c1d18d2e7199
+        consumerSsn: '6789'
+        consumerDetails:
+          id: '3f7ff2cf0ffb3d0cd59875e070c9b1d4'
+          firstName: 'John'
+          middleName: 'Doe'
+          lastName: 'Jane'
+          address: '123 Marple Street'
+          city: 'Anytown'
+          state: 'PA'
+          zip: '17101'
+          phone: '5551234567'
+          ssn: '1234'
+          email: 'john.doe@example.com'
+        disputeStatement: 'Invalid data present.'
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@example.com'
+          url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
+        type: transactions
+        status: success
+        createdDate: 1594678007
+        reportRefreshNumber: 2
+        originalReportCreatedDate: 1607450357
+        constraints:
+          accountIds:
+            - '1000075473'
+          fromDate: 1578952809
+          toDate: 1594677609
+          includePending: true
+          findTransaction:
+            findTransactionDescriptionMemo: Payment to PSC Finance
+            findTransactionAmountFrom: 100.00
+            findTransactionAmountTo: 200.00
+            findTransactionCategory:
+              - Payment
+              - Transfer
+            includeTransactionIds:
+              - '100001490719'
+              - '100001490897'
+        startDate: 1579348800
+        endDate: 1594382400
+        days: 174
+        seasoned: false
+        portfolioId: wqbh0r2kbv5g-4-port
+        institutions:
+          - id: 102105
+            name: FinBank Profiles - A
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: 1000075473
+                number: '5015'
+                name: Super Checking
+                type: checking
+                availableBalance: 1000
+                aggregationStatusCode: 0
+                balance: 1000
+                balanceDate: 1594676289
+                transactionsCount: 2
+                transactions:
+                  - id: 100001490719
+                    amount: -99
+                    postedDate: 1594382400
+                    description: ACH Withdrawal AMERICA FIRST CR
+                    normalizedPayee: America First Cr
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                    memo: Payment to PSC Finance
+                  - id: 100001490897
+                    amount: 199.7
+                    postedDate: 1594123200
+                    description: Payment to PSC Finance
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Payment
+                    memo: TMOBILE debit
+    TransactionsReportIncludeTransactionIdsPartialExample:
+      summary: Transactions Report - IncludeTransactionIds Partial
+      description: >-
+        Only some of the submitted `includeTransactionIds` were located. The
+        report is still successful and the located transactions are returned.
+        The `errors` array at the bottom of the report describes the partial
+        match.
+      value:
+        id: '1000075473'
+        title: Mastercard Open Banking Transactions Report
+        customerType: testing
+        customerId: 1000018865
+        consumerId: a925b07c9e028c680ad9c1d18d2e7199
+        consumerSsn: '6789'
+        consumerDetails:
+          id: '3f7ff2cf0ffb3d0cd59875e070c9b1d4'
+          firstName: 'John'
+          middleName: 'Doe'
+          lastName: 'Jane'
+          address: '123 Marple Street'
+          city: 'Anytown'
+          state: 'PA'
+          zip: '17101'
+          phone: '5551234567'
+          ssn: '1234'
+          email: 'john.doe@example.com'
+        disputeStatement: 'Invalid data present.'
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@example.com'
+          url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
+        type: transactions
+        status: success
+        createdDate: 1594678007
+        reportRefreshNumber: 2
+        originalReportCreatedDate: 1607450357
+        constraints:
+          accountIds:
+            - '1000075473'
+          fromDate: 1578952809
+          toDate: 1594677609
+          includePending: true
+          findTransaction:
+            includeTransactionIds:
+              - '100001490719'
+              - '100001490897'
+              - '999999999999'
+        startDate: 1579348800
+        endDate: 1594382400
+        days: 174
+        seasoned: false
+        portfolioId: wqbh0r2kbv5g-4-port
+        institutions:
+          - id: 102105
+            name: FinBank Profiles - A
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: 1000075473
+                number: '5015'
+                name: Super Checking
+                type: checking
+                availableBalance: 1000
+                aggregationStatusCode: 0
+                balance: 1000
+                balanceDate: 1594676289
+                transactionsCount: 2
+                transactions:
+                  - id: 100001490719
+                    amount: -99
+                    postedDate: 1594382400
+                    description: ACH Withdrawal AMERICA FIRST CR
+                    normalizedPayee: America First Cr
+                    institutionTransactionId: '0000000000'
+                    category: Transfer
+                    memo: Payment to PSC Finance
+                  - id: 100001490897
+                    amount: 199.7
+                    postedDate: 1594123200
+                    description: Payment to PSC Finance
+                    normalizedPayee: T-Mobile
+                    institutionTransactionId: '0000000000'
+                    category: Payment
+                    memo: TMOBILE debit
+        errors:
+          - code: '10120'
+            message: >-
+              Partial Transactions Found: Only some of the requested
+              transactions were located. Please review and resubmit if required.
+    TransactionsReportIncludeTransactionIdsNoMatchExample:
+      summary: Transactions Report - IncludeTransactionIds No Match
+      description: >-
+        None of the submitted `includeTransactionIds` were located. The report
+        is still successful, no transactions are returned for the submitted IDs,
+        and the `errors` array at the bottom of the report describes the failed
+        match.
+      value:
+        id: '1000075473'
+        title: Mastercard Open Banking Transactions Report
+        customerType: testing
+        customerId: 1000018865
+        consumerId: a925b07c9e028c680ad9c1d18d2e7199
+        consumerSsn: '6789'
+        consumerDetails:
+          id: '3f7ff2cf0ffb3d0cd59875e070c9b1d4'
+          firstName: 'John'
+          middleName: 'Doe'
+          lastName: 'Jane'
+          address: '123 Marple Street'
+          city: 'Anytown'
+          state: 'PA'
+          zip: '17101'
+          phone: '5551234567'
+          ssn: '1234'
+          email: 'john.doe@example.com'
+        disputeStatement: 'Invalid data present.'
+        endUser:
+          name: 'ABC Apartments'
+          address: '123 Main St'
+          city: 'Murray'
+          state: 'UT'
+          zip: '84123'
+          phone: '555-2106'
+          email: 'customerservice@example.com'
+          url: 'example.com'
+        resellers:
+          - name: Jane
+            address: 434 W Ascension Way
+            city: Murray
+            state: UT
+            zip: '84123'
+            phone: 1-801-555-0173
+        type: transactions
+        status: success
+        createdDate: 1594678007
+        reportRefreshNumber: 2
+        originalReportCreatedDate: 1607450357
+        constraints:
+          accountIds:
+            - '1000075473'
+          fromDate: 1578952809
+          toDate: 1594677609
+          includePending: true
+          findTransaction:
+            includeTransactionIds:
+              - '999999999998'
+              - '999999999999'
+        startDate: 1579348800
+        endDate: 1594382400
+        days: 174
+        seasoned: false
+        portfolioId: wqbh0r2kbv5g-4-port
+        institutions:
+          - id: 102105
+            name: FinBank Profiles - A
+            urlHomeApp: http://www.finbank.com
+            accounts:
+              - id: 1000075473
+                number: '5015'
+                name: Super Checking
+                type: checking
+                availableBalance: 1000
+                aggregationStatusCode: 0
+                balance: 1000
+                balanceDate: 1594676289
+                transactionsCount: 0
+                transactions: []
+        errors:
+          - code: '10120'
+            message: >-
+              No Transactions Found: Unable to locate any of the requested
+              transactions. Please review and resubmit if required.
     TransactionNONCRAExample:
       summary: Transaction NON CRA Report Example
       value:
@@ -49411,7 +49727,12 @@ components:
     FindTransactionConstraints:
       description: >-
         Parameters used to return transactions matching the given criteria. The
-        presence of multiple parameters will be treated as an **AND**  function.
+        presence of multiple parameters (`findTransactionDescriptionMemo`,
+        `findTransactionAmountFrom`, `findTransactionAmountTo` and
+        `findTransactionCategory`) will be treated as an **AND**  function.
+        `includeTransactionIds` is treated as an **OR** against the result of
+        those parameters, so a transaction whose ID is submitted is always
+        included, even if it does not match the other parameters.
       type: object
       properties:
         findTransactionDescriptionMemo:
@@ -49422,6 +49743,23 @@ components:
           $ref: '#/components/schemas/FindTransactionAmountTo'
         findTransactionCategory:
           $ref: '#/components/schemas/FindTransactionCategory'
+        includeTransactionIds:
+          $ref: '#/components/schemas/IncludeTransactionIds'
+    IncludeTransactionIds:
+      type: array
+      description: >-
+        Allows the user to submit specific transaction IDs that should be
+        included in the generated report. Max # of transactions 200. A request
+        with more than 200 IDs is rejected with a `400` error. If only some, or
+        none, of the submitted IDs are located, the report is still generated
+        successfully and an object describing the missing transactions is added
+        to the `errors` array of the report.
+      maxItems: 200
+      items:
+        type: string
+      example:
+        - '100001490719'
+        - '100001490897'
     FindTransactionAmountTo:
       type: number
       description: >
@@ -49436,8 +49774,7 @@ components:
       type: array
       description: >
         An array of **categories** to return transactions with an exact match to
-        the array of **category**. Limit of 10.
-      maxItems: 10
+        the array of **category**.
       items:
         type: string
       example:
