@@ -10,7 +10,7 @@ info:
     name: API Support
     email: apisupport@mastercard.com
     url: 'https://developer.mastercard.com/open-finance-us/documentation/support/'
-  version: 1.46.1
+  version: 1.46.2
 servers:
   - url: 'https://api.finicity.com'
     description: Production
@@ -42,8 +42,6 @@ tags:
     description:
       Allow customers to log into their financial institutions and grant
       Finicity authorization
-  - name: Connect Instant Onboarding
-    description: Streamline the onboarding process for new customers
   - name: Connect Components
     description:
       Allow customers to log into their financial institutions and grant
@@ -63,6 +61,8 @@ tags:
   - name: Identity
     description:
       Match the request details to the Institution account holder details
+  - name: Instant Onboarding
+    description: Streamline the onboarding process for new customers
   - name: Institutions
     description: Search and fetch financial institutions
   - name: Payments
@@ -53234,7 +53234,7 @@ components:
             These are a subset of 'Entities' flagged as third-party. Values are
             distinct from and do not overlap with 'Entities' list.
           allOf:
-            - $ref: '#/components/schemas/Entities'
+            - $ref: '#/components/schemas/ThirdParties'
         thirdPartyCategories:
           type: array
           description:
@@ -53429,6 +53429,60 @@ components:
             minimum: 0
             maximum: 100.0
             example: 18.95
+    ThirdParties:
+      description:
+        Third-party entities associated with the transaction, distinct from
+        those in 'entities'.
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'MTc5Mzc2OTMzNjA3NTE5NDM2OA=='
+          name:
+            type: string
+            description: Name of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Mastercard'
+          group:
+            type: string
+            description: Group of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Financial Services'
+          category:
+            type: string
+            description: Category of the entity (entities).
+            minLength: 1
+            maxLength: 100
+            example: 'Payment Network'
+          website:
+            type: string
+            description: Website of the involved entity.
+            minLength: 1
+            maxLength: 100
+            example: 'https://mastercard.com/'
+          logoUrl:
+            type: string
+            description: Logo of the involved entity.
+            minLength: 1
+            maxLength: 500
+            example: 'https://institution-branding-assets-cf.openbanking.mastercard.com/MTc5Mzc2OTMzNjA3NTE5NDM2OA==/logo.svg'
+          entityStandardizationConfidenceScore:
+            type: number
+            format: double
+            description:
+              A confidence score indicating how confidently the found entity's
+              name has been standardized to its canonical form. If no score is
+              returned, the entity has not been standardized.
+            minimum: 0
+            maximum: 100.0
+            example: 100.0
     InputMerchantInformation:
       description:
         InputMerchantInformation is an object containing merchant details in the

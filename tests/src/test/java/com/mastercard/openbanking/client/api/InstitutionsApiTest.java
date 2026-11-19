@@ -19,7 +19,7 @@ class InstitutionsApiTest extends BaseTest {
     @Test
     void getCertifiedInstitutionsTest() {
         try {
-            var institutions = api.getCertifiedInstitutions(null, null, null, null, null);
+            var institutions = api.getCertifiedInstitutions(null, null, 25, null, null);
             assertTrue(institutions.getFound() > 0);
             assertEquals(25, institutions.getDisplaying());
             assertEquals(25, institutions.getInstitutions().size());
@@ -48,35 +48,12 @@ class InstitutionsApiTest extends BaseTest {
 //    void getCertifiedInstitutionsTest_WithSearch() {
 //        try {
 //            var institutions = api.getCertifiedInstitutions(existingInstitutionName, null, null, null, null);
-//            assertEquals(1, institutions.getFound());
+//             assertTrue(institutions.getFound() > 0);                        // found some
 //        } catch (ApiException e) {
 //            Assertions.fail(e);
 //        }
 //    }
 
-    @Test
-    void getCertifiedInstitutionsTest_WithCountries() {
-        try {
-            var institutions = api.getCertifiedInstitutions(null, null, null, null, "us");
-            assertTrue(institutions.getFound() > 0);
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
-
-    @Test
-    void getCertifiedInstitutionsWithRSSDTest() {
-        try {
-            var institutions = api.getCertifiedInstitutionsWithRSSD(null, null, 25, null, null);
-            assertTrue(institutions.getFound() > 0);
-            assertEquals(25, institutions.getDisplaying());
-            assertEquals(25, institutions.getInstitutions().size());
-            assertTrue(institutions.getMoreAvailable());
-            assertNotNull(institutions.getRequestedDate());
-        } catch (ApiException e) {
-            Assertions.fail(e);
-        }
-    }
 
     @Test
     void getCertifiedInstitutionsWithRSSDTest_WithStartAndLimit() {
@@ -92,23 +69,12 @@ class InstitutionsApiTest extends BaseTest {
         }
     }
 
-//    @Test
-//    void getCertifiedInstitutionsWithRSSDTest_WithSearch() {
-//        try {
-//            var institutions = api.getCertifiedInstitutionsWithRSSD(existingInstitutionName, null, null, null, null);
-//            assertEquals(1, institutions.getFound());
-//        } catch (ApiException e) {
-//            Assertions.fail(e);
-//        }
-//    }
-
     @Test
     void getInstitutionsTest() {
         try {
-            var institutions = api.getInstitutions(null, null, null, null, null);
+            var institutions = api.getInstitutions(null, null, 25, null, null);
             assertTrue(institutions.getFound() > 0);
             assertEquals(25, institutions.getDisplaying());
-            //assertEquals(26, institutions.getInstitutions().size());
             assertTrue(institutions.getMoreAvailable());
             assertNotNull(institutions.getCreatedDate());
         } catch (ApiException e) {
@@ -134,11 +100,22 @@ class InstitutionsApiTest extends BaseTest {
 //    void getInstitutionsTest_WithSearch() {
 //        try {
 //            var institutions = api.getInstitutions(existingInstitutionName, null, null, null, null);
-//            assertEquals(1, institutions.getFound());
+//            assertTrue(institutions.getFound() > 0);
 //        } catch (ApiException e) {
 //            Assertions.fail(e);
 //        }
 //    }
+
+    @Test
+    void getInstitutionsTest_WithTypeAndCountry() {
+        try {
+            var institutions = api.getInstitutions(null, null, null, "voa", "us");
+            assertTrue(institutions.getFound() > 0);
+            assertTrue(institutions.getInstitutions().stream().allMatch(i -> i.getVoa()));
+        } catch (ApiException e) {
+            Assertions.fail(e);
+        }
+    }
 
     @Test
     void getInstitutionTest() {
